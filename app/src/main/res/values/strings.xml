@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">База ПИК</string>
+    <string name="Dostup">Доступ к базе данных</string>
+    <string name="company_name">ООО НТЦ ПИК</string>
+    <string name="ip">IP-адрес</string>
+    <string name="user">Пользователь</string>
+    <string name="password">Пароль</string>
+    <string name="enter">ВОЙТИ</string>
+    <string name="pikovka270">pikovka270</string>
+    <string name="BazaDannyh">База данных</string>
+    <string name="EnterProperURL">Сервер не доступен\nИзмените URL :</string>
+    <string name="OK">ОК</string>
+    <string name="Error_in_app">ОШИБКА В ПРИЛОЖЕНИИ</string>
+    <string name="text_of_error">текст ошибки</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="textOnBtnPIK">ПИК</string>
+    <string name="TextOnBtnSearch">Искать</string>
+    <string name="menuSearch">Поиск</string>
+    <string name="menuSettings">Настройки</string>
+    <string name="menuExit">Выход</string>
+    <string name="search">ПОИСК</string>
+
+
+</resources>

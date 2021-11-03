@@ -1,0 +1,2 @@
+rootProject.name='BazaPik-mobile'
+include ':app'
