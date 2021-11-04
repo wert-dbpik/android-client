@@ -110,7 +110,7 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView mNumber;
         TextView mName;
-        ImageButton mShowDraft;
+        ImageButton mShowDraft; //кнопка в виде чертежика
 
         ViewHolder(View itemView) {
             super(itemView);

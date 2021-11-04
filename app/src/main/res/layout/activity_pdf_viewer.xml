@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".viewer.PdfViewerActivity">
 
-    <WebView
-        android:id="@+id/pdfWebview"
+    <com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/pdfView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

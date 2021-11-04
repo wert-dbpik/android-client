@@ -61,28 +61,28 @@ public class ViewerActivity extends BaseActivity {
 
         List<Bitmap> allImages = new ArrayList<>();
 
-        new Thread(()->{
-            String ext = "";
-            File file = null;
-            for(Long fileId : draftIds) {
-                Draft draft = DRAFT_SERVICE.findById(fileId);
-                ext = draft.getExtension();
-                //Загружаем файл во временную папку
-                file = downloadToTempDir(fileId, ext);
-            }
-            String finalExt = ext;
-            File finalFile = file;
-            runOnUiThread(()->{
-                if(finalExt.equals("pdf")) {
-                    List<Bitmap> imgs = separatePdfToBitmaps(finalFile);
-                    allImages.addAll(imgs);
-                } else {
-                    allImages.add(getBitmap(finalFile.getPath()));
-                }
-
-                mImageView.setImageBitmap(allImages.get(0));
-            });
-        }).start();
+//        new Thread(()->{
+//            String ext = "";
+//            File file = null;
+//            for(Long fileId : draftIds) {
+//                Draft draft = DRAFT_SERVICE.findById(fileId);
+//                ext = draft.getExtension();
+//                //Загружаем файл во временную папку
+//                file = downloadToTempDir(fileId, ext);
+//            }
+//            String finalExt = ext;
+//            File finalFile = file;
+//            runOnUiThread(()->{
+//                if(finalExt.equals("pdf")) {
+//                    List<Bitmap> imgs = separatePdfToBitmaps(finalFile);
+//                    allImages.addAll(imgs);
+//                } else {
+//                    allImages.add(getBitmap(finalFile.getPath()));
+//                }
+//
+//                mImageView.setImageBitmap(allImages.get(0));
+//            });
+//        }).start();
 
 
 

@@ -27,7 +27,7 @@ public class PdfViewerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf_viewer);
 
-        pdfVebView = findViewById(R.id.pdfWebview);
+//        pdfVebView = findViewById(R.id.pdfWebview);
 
         WebSettings settings = pdfVebView.getSettings();
         settings.setJavaScriptEnabled(true);
