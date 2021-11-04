@@ -48,9 +48,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Отображаем тост из любого потока
+     * @param text String текст сообщения
+     */
     protected void showToast(String text){
-        Toast toast = Toast.makeText(BaseActivity.this, text, Toast.LENGTH_LONG);
-        toast.show();
+        runOnUiThread(()->{
+            Toast toast = Toast.makeText(BaseActivity.this, text, Toast.LENGTH_LONG);
+            toast.show();
+        });
+
     }
 
     /**
