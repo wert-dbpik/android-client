@@ -70,7 +70,7 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
                 holder.mShowDraft.setBackgroundColor(Color.BLACK);
             else {
                 holder.mShowDraft.setBackgroundColor(Color.WHITE);
-                //При нажатии на кнопку сохдаем активити ViewerActivity, передаем ArrayList<String>, состоящий из id чертежей пасспорта
+                //При нажатии на кнопку создаем активити ViewerActivity, передаем ArrayList<String>, состоящий из id чертежей пасспорта
                 holder.mShowDraft.setOnClickListener(e->{
                     Intent intent = new Intent(context, ViewerActivity.class);
                     ArrayList<String> draftIds = (ArrayList<String>) ((Passport) item).getDraftIds().stream().map(Object::toString)

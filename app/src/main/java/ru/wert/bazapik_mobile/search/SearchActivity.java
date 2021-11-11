@@ -9,7 +9,6 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -19,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.wert.bazapik_mobile.info.PassportInfo;
+import ru.wert.bazapik_mobile.info.PassportInfoActivity;
 import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.R;
@@ -134,7 +133,7 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
      * @param position
      */
     private void openInfoView(int position){
-        Intent intent = new Intent(SearchActivity.this, PassportInfo.class);
+        Intent intent = new Intent(SearchActivity.this, PassportInfoActivity.class);
         intent.putExtra("PASSPORT_ID", String.valueOf(mAdapter.getItem(position).getId()));
         startActivity(intent);
     }

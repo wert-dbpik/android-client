@@ -26,6 +26,8 @@ public class DataLoader extends Application {
         //Создается DraftService, и затем DraftQuickService
         DraftService.getInstance();
         BaseActivity.DRAFT_SERVICE = DraftQuickService.getInstance();
+
+
     }
 
     /**
