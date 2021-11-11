@@ -51,7 +51,7 @@ public interface DraftApiInterface {
     Call<Draft> getById(@Path("id") Long id);
 
     @GET("drafts/passport-id/{id}")
-    Call<Draft> getByPassportId(@Path("id") Long id);
+    Call<List<Draft>> getByPassportId(@Path("id") Long id);
 
     @GET("drafts/all")
     Call<List<Draft>> getAll();

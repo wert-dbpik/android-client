@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile.data.serviceQUICK;
 
+import android.app.Application;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ import ru.wert.bazapik_mobile.data.models.Product;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.service_interfaces.IDraftService;
 
-public class DraftQuickService implements IDraftService {
+public class DraftQuickService extends Application implements IDraftService {
 
     private static DraftQuickService instance;
     private static List<Draft> drafts;
@@ -80,15 +82,14 @@ public class DraftQuickService implements IDraftService {
     }
 
 
-    public Draft findByPassportId(Long id) {
-        Draft foundDraft = null;
+    public List<Draft> findByPassportId(Long id) {
+        List<Draft> foundDrafts = new ArrayList<>();
         for(Draft draft : drafts){
             if(draft.getPassport().getId().equals(id)) {
-                foundDraft = draft;
-                break;
+                foundDrafts.add(draft);
             }
         }
-        return foundDraft;
+        return foundDrafts;
     }
 
     public Set<Draft> findAllByFolder(Folder folder) {

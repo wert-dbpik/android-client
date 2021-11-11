@@ -1,6 +1,8 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
 
+import android.app.Application;
+
 import org.apache.pdfbox.io.IOUtils;
 
 import java.io.File;
@@ -30,7 +32,7 @@ import ru.wert.bazapik_mobile.data.service_interfaces.IDraftService;
 //
 
 
-public class DraftService implements IDraftService {
+public class DraftService extends Application implements IDraftService {
 
     private static DraftService instance;
     private DraftApiInterface api;
@@ -166,9 +168,9 @@ public class DraftService implements IDraftService {
     }
 
     @Override
-    public Draft findByPassportId(Long id) {
+    public List<Draft> findByPassportId(Long id) {
         try {
-            Call<Draft> call = api.getByPassportId(id);
+            Call<List<Draft>> call = api.getByPassportId(id);
             return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -181,7 +183,7 @@ public class DraftService implements IDraftService {
     public List<Draft> findAll() {
         try {
             Call<List<Draft>> call = api.getAll();
-            return (call.execute().body());
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -15,6 +15,10 @@ import lombok.Getter;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 
+/**
+ * Класс создает временную папку,
+ * куда будут скачивать открываемые файлы
+ */
 public class TempDirectory extends Application {
     /**
      * TAG класса для логирования

@@ -61,71 +61,14 @@ public class ViewerActivity extends BaseActivity {
 
         List<Bitmap> allImages = new ArrayList<>();
 
-//        new Thread(()->{
-//            String ext = "";
-//            File file = null;
-//            for(Long fileId : draftIds) {
-//                Draft draft = DRAFT_SERVICE.findById(fileId);
-//                ext = draft.getExtension();
-//                //Загружаем файл во временную папку
-//                file = downloadToTempDir(fileId, ext);
-//            }
-//            String finalExt = ext;
-//            File finalFile = file;
-//            runOnUiThread(()->{
-//                if(finalExt.equals("pdf")) {
-//                    List<Bitmap> imgs = separatePdfToBitmaps(finalFile);
-//                    allImages.addAll(imgs);
-//                } else {
-//                    allImages.add(getBitmap(finalFile.getPath()));
-//                }
-//
-//                mImageView.setImageBitmap(allImages.get(0));
-//            });
-//        }).start();
+
 
 
 
 
     }
 
-    private List<Bitmap> separatePdfToBitmaps(File file) {
-        List<Bitmap> imgs = new ArrayList<>();
-        return imgs;
-    }
 
-    private void openPdfRenderer(File file) {
-        descriptor = null;
-        pdfRenderer = null;
-        try {
-            descriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-            pdfRenderer = new PdfRenderer(descriptor);
-        } catch (Exception e) {
-            Toast.makeText(this, "Ошибка", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public Bitmap getBitmap(String filePath) {
-
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, options);
-
-        Boolean scaleByHeight = Math.abs(options.outHeight - 100) >= Math
-                .abs(options.outWidth - 100);
-        if (options.outHeight * options.outWidth * 2 >= 16384) {
-            double sampleSize = scaleByHeight
-                    ? options.outHeight / 100
-                    : options.outWidth / 100;
-            options.inSampleSize =
-                    (int) Math.pow(2d, Math.floor(
-                            Math.log(sampleSize) / Math.log(2d)));
-        }
-        options.inJustDecodeBounds = false;
-        options.inTempStorage = new byte[512];
-        Bitmap output = BitmapFactory.decodeFile(filePath, options);
-        return output;
-    }
 
     /**
      * Загружаем файл во временную папку TEMP_DIR

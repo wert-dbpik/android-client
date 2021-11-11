@@ -38,7 +38,7 @@ public interface IDraftService extends ItemService<Draft> {
 
 
     //==============================================
-    Draft findByPassportId(Long id);
+    List<Draft> findByPassportId(Long id);
 
 
 }

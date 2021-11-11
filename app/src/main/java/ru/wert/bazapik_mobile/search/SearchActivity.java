@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile.search;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -18,11 +19,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.wert.bazapik_mobile.info.PassportInfo;
 import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 
+/**
+ * Окно поиска чертежа.
+ * Состоит из
+ * 1) текстового поля поиска - mEditTextSearch
+ * 2) Списка найденных элементов (Passport) - mRecViewItems
+ * 3) Всплывающей клавиатуры - keyboardView
+ *
+ * @param <P>
+ */
 public class SearchActivity<P extends Item> extends BaseActivity implements ItemRecViewAdapter.ItemClickListener{
     private static final String TAG = "SearchActivity";
 
@@ -113,8 +124,19 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
      */
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "Clicked : "
-                + mAdapter.getItem(position), Toast.LENGTH_LONG).show();
+
+        openInfoView(position);
+
+    }
+
+    /**
+     * Открываем окно с информацией об элементе, и доступных чертежах
+     * @param position
+     */
+    private void openInfoView(int position){
+        Intent intent = new Intent(SearchActivity.this, PassportInfo.class);
+        intent.putExtra("PASSPORT_ID", String.valueOf(mAdapter.getItem(position).getId()));
+        startActivity(intent);
     }
 
     /**

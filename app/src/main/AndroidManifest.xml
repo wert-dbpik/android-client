@@ -14,6 +14,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".info.PassportInfo"
+            android:exported="false" />
+        <activity
             android:name=".viewer.PdfViewerActivity"
             android:exported="true" />
         <activity android:name=".dataPreloading.DataLoadingActivity" />

@@ -50,8 +50,8 @@ public class DataLoader extends Application {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            PassportQuickService.reload();
-            DraftQuickService.reload();
+//            PassportQuickService.reload();
+//            DraftQuickService.reload();
             return null;
         }
 
