@@ -56,7 +56,7 @@ public class PdfViewerActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf_viewer);
-        tvTest = findViewById(R.id.tvTest);
+//        tvTest = findViewById(R.id.tvTest);
         pdfView = findViewById(R.id.pdfView);
 
         //Из интента получаем id чертежа

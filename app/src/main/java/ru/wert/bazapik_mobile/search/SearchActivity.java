@@ -1,15 +1,18 @@
 package ru.wert.bazapik_mobile.search;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.wert.bazapik_mobile.constants.StaticMethods;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
 import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
@@ -200,7 +204,7 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
     }
 
     /**
-     * Создаем главное меню
+     * Создаем меню для окна с поиском
      * @param menu
      * @return
      */
@@ -208,8 +212,51 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        getMenuInflater().inflate(R.menu.menu_start, menu);
         return true;
+    }
+
+    /**
+     * Обработка выбора меню
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // получим идентификатор выбранного пункта меню
+        int id = item.getItemId();
+
+        // Операции для выбранного пункта меню
+        switch (id) {
+            case R.id.action_catalog:
+                //Открываем интент с каталогом
+                return true;
+            case R.id.action_settings:
+                //открываем интент с настройками
+                return true;
+            case R.id.action_exit:
+                StaticMethods.clearAppCash();
+                System.exit(0);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Выход тут!")
+                .setMessage("Хотите выйти?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        SearchActivity.super.onBackPressed();
+                        StaticMethods.clearAppCash();
+                        System.exit(0);
+                    }
+                }).create().show();
+
     }
 
     /**
