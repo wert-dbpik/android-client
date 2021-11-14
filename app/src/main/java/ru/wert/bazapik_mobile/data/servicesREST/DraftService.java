@@ -66,7 +66,8 @@ public class DraftService extends Application implements IDraftService {
 
     @Override
     public boolean download(String path, String fileName, String ext, String tempDir) {
-        String file = fileName + "." + ext;
+        //ext уже с точкой
+        String file = fileName + ext;
         try {
             Call<ResponseBody> call = api.download(path, file);
             Response<ResponseBody> r = call.execute();
@@ -74,7 +75,7 @@ public class DraftService extends Application implements IDraftService {
 
 //                if (ext.toLowerCase().equals(".pdf")) {
                 InputStream inputStream = r.body().byteStream();
-                try (OutputStream outputStream = new FileOutputStream(tempDir + "/" + fileName + ext)) {
+                try (OutputStream outputStream = new FileOutputStream(tempDir + "/" + fileName  + ext)) {
                     IOUtils.copy(inputStream, outputStream);
                 } catch (IOException e) {
                     e.printStackTrace();

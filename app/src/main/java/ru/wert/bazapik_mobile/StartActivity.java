@@ -12,17 +12,19 @@ import android.widget.ImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.wert.bazapik_mobile.constants.Consts;
+import ru.wert.bazapik_mobile.data.garbage.RetrofitClient;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.data.models.User;
-import ru.wert.bazapik_mobile.data.garbage.RetrofitClient;
 import ru.wert.bazapik_mobile.data.servicesREST.UserService;
 
 public class StartActivity extends BaseActivity {
 
     private static final String TAG = "StartActivity";
     EditText editTextIp;
-    String ip, baseUrl;
+    private String ip;
+    private String baseUrl;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -52,10 +54,10 @@ public class StartActivity extends BaseActivity {
 
     private void startRetrofit(){
         ip = String.valueOf(editTextIp.getText());
-        baseUrl = "http://" + ip + ":8080/";
+        Consts.DATA_BASE_URL = "http://" + ip + ":8080/";
 
         Thread t = new Thread(() -> {
-            RetrofitClient.setBASE_URL(baseUrl);
+            RetrofitClient.setBASE_URL(Consts.DATA_BASE_URL);
             Log.d(TAG, "startRetrofit: " + String.format("base url = %s", baseUrl) );
             UserService.getInstance().getApi().getById(1L).enqueue(new Callback<User>() {
                 @Override

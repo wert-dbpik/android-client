@@ -1,25 +1,55 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import android.content.Intent;
+import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
+
+import android.content.Context;
+import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.util.FitPolicy;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
+import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.main.BaseActivity;
-import ru.wert.bazapik_mobile.data.models.Draft;
-import ru.wert.bazapik_mobile.utils.TempDirectory;
 
 public class PdfViewerActivity extends BaseActivity {
     public static final String TAG = "PdfViewerActivity";
 
     private Long draftId;
     private PDFView pdfView;
+    /**
+     * Тестовое сообщение на экране
+     */
     private TextView tvTest;
+    /**
+     * Путь к удаленному файлу PDF (на сервере)
+     */
+    private String remotePdfFile;
+    /**
+     * Путь к локальному файлу PDF
+     */
+    private File localPdfFile;
+    int oldOrientation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,40 +58,52 @@ public class PdfViewerActivity extends BaseActivity {
         tvTest = findViewById(R.id.tvTest);
         pdfView = findViewById(R.id.pdfView);
 
+//        //SCROLLBAR TO ENABLE SCROLLING
+//        ScrollBar scrollBar = (ScrollBar) findViewById(R.id.scrollBar);
+//        pdfView.setScrollBar(scrollBar);
+//        //VERTICAL SCROLLING
+//        scrollBar.setHorizontal(false);
+
+        //Из интента получаем id чертежа
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
 
-        tvTest.setText(String.valueOf(draftId));
+//        String dbdir = "http://192.168.1.84:8080/drafts/download/drafts/";
+        String dbdir = Consts.DATA_BASE_URL + "drafts/download/drafts/";
 
-//        File tempDir = TempDirectory.getInstance(PdfViewerActivity.this).getTempDir();
-//        new Thread(()->{
-////            Draft draft = DraftService.getInstance().findById(draftId);
-////            DraftService.getInstance().download("drafts",
-////                    String.valueOf(draftId),
-////                    "." + draft.getExtension(),
-////                    tempDir.getPath());
-//            runOnUiThread(()->{
-//                tvTest.setText(String.valueOf(draftId));
-//            });
-//
-//        }).start();
+        remotePdfFile = dbdir + draftId + ".pdf";
 
+        File a = new File(TEMP_DIR + "/" + draftId + ".pdf");
+        File parentFolder = new File(a.getParent());
+        try {
+            localPdfFile = a.getCanonicalFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-
-//        String pdfFile = "http://192.168.1.84:8080/drafts/download/drafts/37.pdf";
-
-
-
-
+//        if (localPdfFile.exists()) {
+//            tvTest.setText("ЕСТЬ ТАКОЕ");
+//            showPdfUsing(localPdfFile);
+//        }
+//        else
+            downloadAndShowPDF();
 
     }
 
+    private void downloadAndShowPDF() {
+        new Thread(()->{
+            DownloadTask downloadTask = new DownloadTask(PdfViewerActivity.this);
+            downloadTask.execute(remotePdfFile);
+
+            runOnUiThread(()->showPdfUsing(localPdfFile));
+        }).start();
+
+    }
 
 
     //	reload on resume
     @Override
     protected void onResume() {
         super.onResume();
-//        pdfVebView.loadUrl( "javascript:window.location.reload( true )" );
 
     }
 
@@ -69,7 +111,106 @@ public class PdfViewerActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        pdfVebView.clearCache(true);
+
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if(newConfig.orientation != oldOrientation)
+            downloadAndShowPDF();
+
+    }
+
+    private class DownloadTask extends AsyncTask<String, Integer, String> {
+
+        private Context context;
+        private PowerManager.WakeLock mWakeLock;
+
+        public DownloadTask(Context context) {
+            this.context = context;
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected String doInBackground(String... sUrl) {
+            InputStream input = null;
+            OutputStream output = null;
+            HttpURLConnection connection = null;
+
+            try {
+                URL url = new URL(sUrl[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                //Возвращаем сообщение об ошибке, если что-то пошло не так
+                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                    return "Server returned HTTP " + connection.getResponseCode()
+                            + " " + connection.getResponseMessage();
+                }
+
+                //скачиваем файл
+                input = connection.getInputStream();
+
+                output = new FileOutputStream(localPdfFile);
+
+                byte data[] = new byte[4096];
+                long total = 0;
+                int count;
+                while ((count = input.read(data)) != -1) {
+                    // отменить загрузку при нажатии на кнопку назад
+                    if (isCancelled()) {
+                        input.close();
+                        Log.d(TAG, "Загрузка отменена пользователем");
+                        return null;
+                    }
+                    total += count;
+                    output.write(data, 0, count);
+                }
+
+            } catch (Exception e) {
+                return e.toString();
+            } finally {
+                try {
+                    if (output != null)
+                        output.close();
+                    if (input != null)
+                        input.close();
+                } catch (IOException ignored) {
+                }
+
+                if (connection != null)
+                    connection.disconnect();
+            }
+
+            return null;
+        }
+    }
+
+
+    private void showPdfUsing(File localPdfFile) {
+        Log.i(TAG, "+++++++Файл " + localPdfFile);
+//        if (localPdfFile.exists()) tvTest.setText(localPdfFile.getPath());
+        if (localPdfFile.canRead()) {
+//            pdfView.fromFile(localPdfFile).defaultPage(1).onLoad(
+//                    nbPages ->
+//                            Toast.makeText(PdfViewerActivity.this, "Страниц: " + nbPages,
+//                                    Toast.LENGTH_LONG).show())
+//                    .load();
+
+            Uri uri = Uri.fromFile(localPdfFile);
+            pdfView.fromUri(uri)
+                    .defaultPage(0)
+                    .pageFitPolicy(FitPolicy.WIDTH)
+                    .fitEachPage(true)
+                    .onLoad(
+                            nbPages ->
+                                    Toast.makeText(PdfViewerActivity.this, "Страниц: " + nbPages,
+                                            Toast.LENGTH_LONG).show())
+                    .defaultPage(0)
+                    .load();
+        }
+
 
     }
 }

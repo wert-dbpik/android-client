@@ -2,6 +2,8 @@ package ru.wert.bazapik_mobile.data.retrofit;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import lombok.Getter;
 import lombok.extern.java.Log;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -12,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Log
 public class RetrofitClient {
     private static final String TAG = "RetrofitClient";
-    static String BASE_URL = "";
+    @Getter private static String BASE_URL = "";
     private static RetrofitClient mInstance;
     private static Retrofit mRetrofit;
     private Gson gson;
@@ -40,13 +42,13 @@ public class RetrofitClient {
 //            return chain.proceed(requestBuilder.build());
 //        };
 //
-//        OkHttpClient.Builder client1 = new OkHttpClient.Builder()
-//                .addInterceptor(interceptor1);
+        OkHttpClient.Builder client1 = new OkHttpClient.Builder()
+                .addInterceptor(interceptor);
 
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
-//                .client(client.build()) // логгирование ответа
+                .client(client.build()) // логгирование ответа
 //                .client(client1.build()) // json forever!
                 .build();
     }

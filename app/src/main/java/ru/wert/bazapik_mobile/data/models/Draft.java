@@ -43,4 +43,9 @@ public class Draft extends _BaseEntity implements Item, Comparable<Draft> {
     public int compareTo(Draft o) {
         return toUsefulString().toLowerCase().compareTo(o.toUsefulString().toLowerCase());
     }
+
+    public String getFileName(){
+        return
+                getId() + "." + getExtension();
+    }
 }
