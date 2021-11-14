@@ -20,6 +20,7 @@ public class FirstMenuActivity extends BaseActivity {
 
         //Получаем временную папку
         Consts.TEMP_DIR = FirstMenuActivity.this.getCacheDir(); // context being the Activity pointer
+        Consts.TEMP_DIR.deleteOnExit();
 
         mBtnSearch = findViewById(R.id.btnSearch);
         mBtnSearch.setOnClickListener((e)->{

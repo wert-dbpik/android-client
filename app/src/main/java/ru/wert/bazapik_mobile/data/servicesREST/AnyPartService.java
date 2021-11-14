@@ -5,7 +5,7 @@ import ru.wert.bazapik_mobile.data.api_interfaces.AnyPartApiInterface;
 import ru.wert.bazapik_mobile.data.service_interfaces.IAnyPartService;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
 import ru.wert.bazapik_mobile.data.models.AnyPart;
-import ru.wert.bazapik_mobile.data.garbage.RetrofitClient;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.util.BLlinks;
 
 

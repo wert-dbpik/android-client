@@ -5,7 +5,7 @@ import ru.wert.bazapik_mobile.data.api_interfaces.ProductGroupApiInterface;
 import ru.wert.bazapik_mobile.data.service_interfaces.IProductGroupService;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
-import ru.wert.bazapik_mobile.data.garbage.RetrofitClient;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.util.BLlinks;
 
 import java.io.IOException;

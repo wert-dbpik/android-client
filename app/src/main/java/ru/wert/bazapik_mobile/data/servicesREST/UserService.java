@@ -5,7 +5,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
-import ru.wert.bazapik_mobile.data.garbage.RetrofitClient;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
 import ru.wert.bazapik_mobile.data.service_interfaces.IUserService;
 import ru.wert.bazapik_mobile.data.util.BLlinks;

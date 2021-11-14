@@ -2,7 +2,7 @@ package ru.wert.bazapik_mobile.data.servicesREST;
 
 import retrofit2.Call;
 import ru.wert.bazapik_mobile.data.api_interfaces.DetailApiInterface;
-import ru.wert.bazapik_mobile.data.garbage.RetrofitClient;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.interfaces.PartItem;
 import ru.wert.bazapik_mobile.data.models.Detail;

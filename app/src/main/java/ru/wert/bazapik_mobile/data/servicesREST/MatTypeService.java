@@ -5,7 +5,7 @@ import ru.wert.bazapik_mobile.data.api_interfaces.MatTypeApiInterface;
 import ru.wert.bazapik_mobile.data.service_interfaces.IMatTypeService;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
 import ru.wert.bazapik_mobile.data.models.MatType;
-import ru.wert.bazapik_mobile.data.garbage.RetrofitClient;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.util.BLlinks;
 
 import java.io.IOException;

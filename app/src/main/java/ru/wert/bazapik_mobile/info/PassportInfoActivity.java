@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
@@ -99,4 +101,6 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
         intent.putExtra("DRAFT_ID", String.valueOf(mAdapter.getItem(position).getId()));
         startActivity(intent);
     }
+
+
 }

@@ -5,7 +5,7 @@ import ru.wert.bazapik_mobile.data.api_interfaces.PrefixApiInterface;
 import ru.wert.bazapik_mobile.data.service_interfaces.IPrefixService;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
 import ru.wert.bazapik_mobile.data.models.Prefix;
-import ru.wert.bazapik_mobile.data.garbage.RetrofitClient;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.util.BLlinks;
 
 import java.io.IOException;

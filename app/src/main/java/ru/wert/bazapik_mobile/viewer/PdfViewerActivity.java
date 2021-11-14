@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile.viewer;
 
 import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
+import static ru.wert.bazapik_mobile.constants.StaticMethods.clearAppCash;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -58,12 +59,6 @@ public class PdfViewerActivity extends BaseActivity {
         tvTest = findViewById(R.id.tvTest);
         pdfView = findViewById(R.id.pdfView);
 
-//        //SCROLLBAR TO ENABLE SCROLLING
-//        ScrollBar scrollBar = (ScrollBar) findViewById(R.id.scrollBar);
-//        pdfView.setScrollBar(scrollBar);
-//        //VERTICAL SCROLLING
-//        scrollBar.setHorizontal(false);
-
         //Из интента получаем id чертежа
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
 
@@ -72,31 +67,19 @@ public class PdfViewerActivity extends BaseActivity {
 
         remotePdfFile = dbdir + draftId + ".pdf";
 
-        File a = new File(TEMP_DIR + "/" + draftId + ".pdf");
-        File parentFolder = new File(a.getParent());
-        try {
-            localPdfFile = a.getCanonicalFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        localPdfFile = new File(TEMP_DIR + "/" + draftId + ".pdf");
 
-//        if (localPdfFile.exists()) {
-//            tvTest.setText("ЕСТЬ ТАКОЕ");
-//            showPdfUsing(localPdfFile);
-//        }
-//        else
-            downloadAndShowPDF();
+        showPDF();
 
     }
 
-    private void downloadAndShowPDF() {
-        new Thread(()->{
+    private void showPDF() {
+        if (localPdfFile.exists() && localPdfFile.getTotalSpace() > 10L) {
+            showPdfUsing(localPdfFile);
+        } else {
             DownloadTask downloadTask = new DownloadTask(PdfViewerActivity.this);
             downloadTask.execute(remotePdfFile);
-
-            runOnUiThread(()->showPdfUsing(localPdfFile));
-        }).start();
-
+        }
     }
 
 
@@ -104,21 +87,21 @@ public class PdfViewerActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        showPDF();
     }
 
     //	clear cache to ensure we have good reload
     @Override
     protected void onPause() {
         super.onPause();
-
+        clearAppCash();
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if(newConfig.orientation != oldOrientation)
-            downloadAndShowPDF();
+            showPDF();
 
     }
 
@@ -183,6 +166,7 @@ public class PdfViewerActivity extends BaseActivity {
                     connection.disconnect();
             }
 
+            runOnUiThread(()->showPdfUsing(localPdfFile));
             return null;
         }
     }
@@ -190,16 +174,9 @@ public class PdfViewerActivity extends BaseActivity {
 
     private void showPdfUsing(File localPdfFile) {
         Log.i(TAG, "+++++++Файл " + localPdfFile);
-//        if (localPdfFile.exists()) tvTest.setText(localPdfFile.getPath());
         if (localPdfFile.canRead()) {
-//            pdfView.fromFile(localPdfFile).defaultPage(1).onLoad(
-//                    nbPages ->
-//                            Toast.makeText(PdfViewerActivity.this, "Страниц: " + nbPages,
-//                                    Toast.LENGTH_LONG).show())
-//                    .load();
 
-            Uri uri = Uri.fromFile(localPdfFile);
-            pdfView.fromUri(uri)
+            pdfView.fromFile(localPdfFile)
                     .defaultPage(0)
                     .pageFitPolicy(FitPolicy.WIDTH)
                     .fitEachPage(true)
