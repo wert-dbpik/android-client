@@ -1,20 +1,19 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
-import android.app.Application;
-
 import retrofit2.Call;
 import ru.wert.bazapik_mobile.data.models.Prefix;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.service_interfaces.IPassportService;
 import ru.wert.bazapik_mobile.data.util.BLlinks;
 import ru.wert.bazapik_mobile.data.api_interfaces.PassportApiInterface;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
 import ru.wert.bazapik_mobile.data.models.Passport;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+
 
 import java.io.IOException;
 import java.util.List;
 
-public class PassportService extends Application implements IPassportService, ItemService<Passport> {
+public class PassportService implements IPassportService, ItemService<Passport> {
 
     private static PassportService instance;
     private PassportApiInterface api;
