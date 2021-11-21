@@ -23,7 +23,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
         editor = settings.edit();
-        setProp("PORT", "2020");
     }
 
 
