@@ -23,6 +23,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
         editor = settings.edit();
+        setProp("PORT", "2020");
     }
 
 
@@ -33,9 +34,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected String getProp(String name){
 
         switch(name){
-            case "BASE_IP":
+            case "IP":
                 return settings.getString(name, "10.0.2.2");
-            case "LAST_USER_NAME":
+            case "PORT":
+                return settings.getString(name, "8080");
+            case "USER_NAME":
                 return settings.getString(name, "");
             default:
                 return "NotFoundProperty";

@@ -31,6 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/BazaDannyh"
+            android:textColor="#FFFFFF"
             android:layout_marginTop="10dp"
             android:textAlignment="center"
             android:textSize="36sp" />
@@ -40,22 +41,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/company_name"
+            android:textColor="#FFFFFF"
             android:textAlignment="center"
             android:textSize="36sp" />
-
-        <EditText
-            android:id="@+id/editTextIp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:width="200dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="40dp"
-            android:digits=".0123456789\n"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
-            />
 
 
     </LinearLayout>

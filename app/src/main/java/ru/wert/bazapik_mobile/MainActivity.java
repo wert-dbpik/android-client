@@ -18,35 +18,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListView listView = findViewById(R.id.userList);
+    }
 
-        GetAllUsers getAllUsers = new GetAllUsers(getApplication(), listView);
-        getAllUsers.start();
-
+    public static Context getAppContext(){
+        return getAppContext();
     }
 }
 
-class GetAllUsers extends Thread{
-    private ListView listView;
-    private Context context;
-
-    public GetAllUsers(Context context, ListView listView) {
-        this.listView = listView;
-        this.context = context;
-    }
-
-    @Override
-    public void run(){
-
-        List<User> usersInDB = UserService.getInstance().findAll();
-        List<String> userNames = new ArrayList<>();
-        for(User user: usersInDB)
-            userNames.add(user.getName());
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(context ,android.R.layout.simple_list_item_1, userNames);
-
-        listView.post(() -> listView.setAdapter(adapter));
-    }
-
-}
 

@@ -35,11 +35,11 @@ import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.servicesREST.UserService;
+import ru.wert.bazapik_mobile.warnings.Warning1;
 
 public class StartActivity extends BaseActivity {
 
     private static final String TAG = "StartActivity";
-    EditText editTextIp;
     private String ip;
     private String baseUrl;
 
@@ -50,41 +50,30 @@ public class StartActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_start);
 
-        editTextIp = findViewById(R.id.editTextIp);
-        editTextIp.setText(getProp("BASE_IP"));
-        Log.i(TAG, "onCreate: BASE_IP = " + getProp("BASE_IP"));
+        Log.i(TAG, "onCreate: IP = " + getProp("IP"));
+        Log.i(TAG, "onCreate: PORT = " + getProp("PORT"));
 
         ImageView logo = findViewById(R.id.imageViewLogo);
         logo.setOnClickListener(v -> startRetrofit());
-
-        editTextIp.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                startRetrofit();
-                return true;
-            }
-            return false;
-        });
-
 
     }
 
 
     private void startRetrofit() {
-        ip = String.valueOf(editTextIp.getText());
-        Consts.DATA_BASE_URL = "http://" + ip + ":8080/";
-
+        checkForPermissions();
+        //Константа принимает первоначальное значение
+        Consts.DATA_BASE_URL = "http://" + getProp("IP") + ":" + getProp("PORT") + "/";
         Thread t = new Thread(() -> {
             RetrofitClient.setBASE_URL(Consts.DATA_BASE_URL);
-            Log.d(TAG, "startRetrofit: " + String.format("base url = %s", baseUrl));
+            Log.d(TAG, "startRetrofit: " + String.format("base url = %s", Consts.DATA_BASE_URL));
+            //Проверка соединения по доступности пользователя с id = 1
             UserService.getInstance().getApi().getById(1L).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     if (response.isSuccessful()) {
-                        setProp("BASE_IP", ip);
-                        checkForPermissions();
+                        //Если соединение с сервером удалось, то IP сохраняется в файл свойств
+
                         runOnUiThread(() -> {
-//                            Intent loginIntent = new Intent(StartActivity.this, Login.class);
-//                            startActivity(loginIntent);
                             Intent searchIntent = new Intent(StartActivity.this, DataLoadingActivity.class);
                             startActivity(searchIntent);
                         });
@@ -93,7 +82,9 @@ public class StartActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    editTextIp.post(() -> editTextIp.setText(getProp("BASE_IP")));
+                    Intent intent = new Intent(StartActivity.this, ConnectionToServer.class);
+                    startActivity(intent);
+
                 }
             });
 

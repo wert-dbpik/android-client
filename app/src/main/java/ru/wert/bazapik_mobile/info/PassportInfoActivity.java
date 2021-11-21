@@ -17,14 +17,21 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.wert.bazapik_mobile.MainActivity;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.viewer.PdfViewerActivity;
+import ru.wert.bazapik_mobile.warnings.Warning1;
 
 /**
  * Окно отображает свойства выбранного элемента (Passport)
@@ -91,15 +98,37 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
         rvDrafts.setLayoutManager(new LinearLayoutManager(this));
 
-        new Thread(() -> {
-            foundDrafts = DraftService.getInstance().findByPassportId(passId);
-            filterList(foundDrafts);
-            runOnUiThread(() -> {
-                mAdapter = new PassportRecViewAdapter(this, foundDrafts);
-                mAdapter.setClickListener(this);
-                rvDrafts.setAdapter(mAdapter);
-            });
-        }).start();
+//        new Thread(() -> {
+//            foundDrafts = DraftService.getInstance().findByPassportId(passId);
+//            filterList(foundDrafts);
+//            runOnUiThread(() -> {
+//                mAdapter = new PassportRecViewAdapter(this, foundDrafts);
+//                mAdapter.setClickListener(this);
+//                rvDrafts.setAdapter(mAdapter);
+//            });
+//        }).start();
+
+        DraftApiInterface api = RetrofitClient.getInstance().getRetrofit().create(DraftApiInterface.class);
+        Call<List<Draft>> call =  api.getByPassportId(passId);
+        call.enqueue(new Callback<List<Draft>>() {
+            @Override
+            public void onResponse(Call<List<Draft>> call, Response<List<Draft>> response) {
+                if(response.isSuccessful()){
+                    mAdapter = new PassportRecViewAdapter(PassportInfoActivity.this, response.body());
+                    mAdapter.setClickListener(PassportInfoActivity.this);
+                    rvDrafts.setAdapter(mAdapter);
+                } else {
+                    Warning1.show(MainActivity.getAppContext(), "Внимание!","Проблемы на линии!");
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Draft>> call, Throwable t) {
+                Warning1.show(MainActivity.getAppContext(), "Внимание!","Проблемы на линии!");
+            }
+            
+        });
 
         //Для красоты используем разделитель между элементами списка
         rvDrafts.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
