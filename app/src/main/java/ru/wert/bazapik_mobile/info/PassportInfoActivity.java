@@ -113,14 +113,11 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
         call.enqueue(new Callback<List<Draft>>() {
             @Override
             public void onResponse(Call<List<Draft>> call, Response<List<Draft>> response) {
-                if(response.isSuccessful()){
+                if(response.isSuccessful()) {
                     mAdapter = new PassportRecViewAdapter(PassportInfoActivity.this, response.body());
                     mAdapter.setClickListener(PassportInfoActivity.this);
                     rvDrafts.setAdapter(mAdapter);
-                } else {
-                    Warning1.show(MainActivity.getAppContext(), "Внимание!","Проблемы на линии!");
                 }
-
             }
 
             @Override
