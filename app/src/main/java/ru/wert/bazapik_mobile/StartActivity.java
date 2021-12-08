@@ -57,8 +57,7 @@ public class StartActivity extends BaseActivity {
         logo.setOnClickListener(v -> startRetrofit());
 
         //TEST
-//        setProp("IP", "192.168.2.55");
-//        setProp("PORT", "8080");
+//гзвфеуМшуц
 
     }
 
