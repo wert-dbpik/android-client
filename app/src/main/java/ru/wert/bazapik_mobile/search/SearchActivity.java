@@ -28,6 +28,7 @@ import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
+import ru.wert.bazapik_mobile.settings.SettingsActivity;
 
 /**
  * Окно поиска чертежа.
@@ -236,9 +237,11 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
 
         // Операции для выбранного пункта меню
         switch (id) {
-            case R.id.action_catalog:
-                //Открываем интент с каталогом
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(SearchActivity.this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 return true;
+
             case R.id.action_update:
                 Intent updateView = new Intent(SearchActivity.this, DataLoadingActivity.class);
                 startActivity(updateView);

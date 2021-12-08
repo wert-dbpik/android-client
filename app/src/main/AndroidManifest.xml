@@ -16,6 +16,9 @@
         android:theme="@style/AppTheme.AppCompat"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".settings.SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity

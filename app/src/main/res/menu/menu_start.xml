@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_catalog"
+        android:id="@+id/action_settings"
         android:orderInCategory="1"
-        android:title="Каталог"
+        android:title="Настройки"
         app:showAsAction="never" />
     <item
         android:title="Обновить"
