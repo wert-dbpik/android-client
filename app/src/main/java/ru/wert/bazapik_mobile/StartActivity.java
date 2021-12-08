@@ -56,6 +56,10 @@ public class StartActivity extends BaseActivity {
         ImageView logo = findViewById(R.id.imageViewLogo);
         logo.setOnClickListener(v -> startRetrofit());
 
+        //TEST
+//        setProp("IP", "192.168.2.55");
+//        setProp("PORT", "8080");
+
     }
 
 
@@ -92,7 +96,6 @@ public class StartActivity extends BaseActivity {
         t.start();
 
     }
-
 
 
     private void checkForPermissions() {

@@ -66,9 +66,6 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
         if(!SEARCH_TEXT.equals(""))
             mEditTextSearch.setText(SEARCH_TEXT);
 
-//        Intent intent = new Intent(getAppContext(), PdfViewerActivity.class);
-//        getAppContext().startActivity(intent);
-
     }
 
 
@@ -247,9 +244,7 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
                 startActivity(updateView);
                 return true;
             case R.id.action_exit:
-                StaticMethods.clearAppCash();
-                System.exit(0);
-                return true;
+                exitApplication();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -257,6 +252,9 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
 
     @Override
     public void onBackPressed() {
+        if(keyboardView.getVisibility() == View.VISIBLE)
+            keyboardView.setVisibility(View.GONE);
+        else
         new AlertDialog.Builder(this)
                 .setTitle("Выход тут!")
                 .setMessage("Хотите выйти?")
@@ -264,12 +262,23 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         SearchActivity.super.onBackPressed();
-                        StaticMethods.clearAppCash();
-                        System.exit(0);
+                        exitApplication();
                     }
                 }).create().show();
 
     }
+
+    private void exitApplication(){
+        StaticMethods.clearAppCash();
+
+        Intent sweetHome = new Intent(Intent.ACTION_MAIN);
+        sweetHome.addCategory(Intent.CATEGORY_HOME);
+        startActivity(sweetHome);
+        finishAndRemoveTask();
+        System.exit(0);
+    }
+
+
 
     /**
      * Здесь происходит высев подходящих под ПОИСК элементов

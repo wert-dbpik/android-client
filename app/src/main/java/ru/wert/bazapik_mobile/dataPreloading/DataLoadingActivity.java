@@ -24,6 +24,5 @@ public class DataLoadingActivity extends BaseActivity {
                 startActivity(intent);
             });
         }).start();
-
     }
 }
