@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.wert.bazapik_mobile.constants.StaticMethods;
+import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
 import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
@@ -231,8 +232,9 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
             case R.id.action_catalog:
                 //Открываем интент с каталогом
                 return true;
-            case R.id.action_settings:
-                //открываем интент с настройками
+            case R.id.action_update:
+                Intent updateView = new Intent(SearchActivity.this, DataLoadingActivity.class);
+                startActivity(updateView);
                 return true;
             case R.id.action_exit:
                 StaticMethods.clearAppCash();
