@@ -40,6 +40,7 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
  */
 public class SearchActivity<P extends Item> extends BaseActivity implements ItemRecViewAdapter.ItemClickListener{
     private static final String TAG = "SearchActivity";
+    private static String SEARCH_TEXT = "";
 
     private ItemRecViewAdapter mAdapter;
     private RecyclerView mRecViewItems;
@@ -61,9 +62,10 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
         createKeyboards();
         createSearchEditText();
         createRecycleViewOfFoundItems();
-/*
 
- */
+        if(!SEARCH_TEXT.equals(""))
+            mEditTextSearch.setText(SEARCH_TEXT);
+
 //        Intent intent = new Intent(getAppContext(), PdfViewerActivity.class);
 //        getAppContext().startActivity(intent);
 
@@ -78,6 +80,14 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
         super.onRestart();
         //Позволяет избежать появления стандартной клавиатуры при рестарте активити
         mEditTextSearch.clearFocus();
+        mEditTextSearch.setText(SEARCH_TEXT);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SEARCH_TEXT = mEditTextSearch.getText().toString();
     }
 
     /**
