@@ -107,7 +107,6 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
         mRecViewItems.setLayoutManager(new LinearLayoutManager(this));
 
         new Thread(() -> {
-//            allItems = (List<P>) PassportService.getInstance().findAll();
             allItems = (List<P>) PASSPORT_SERVICE.findAll();
             List<P> items = new ArrayList<>();
             items.addAll(allItems);

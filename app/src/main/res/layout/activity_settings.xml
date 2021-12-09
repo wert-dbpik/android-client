@@ -17,6 +17,7 @@
         android:textSize="32sp"/>
 
     <CheckBox
+        android:id="@+id/cbShowFolders"
         android:text="Указывать исходную папку"
         android:textSize="18sp"
         android:layout_width="match_parent"
@@ -24,6 +25,7 @@
         android:layout_marginStart="20dp"/>
 
     <CheckBox
+        android:id="@+id/cbHidePrefixes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Скрывать перфиксы"
@@ -45,6 +47,7 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tvVersion"
             android:text="Версия:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

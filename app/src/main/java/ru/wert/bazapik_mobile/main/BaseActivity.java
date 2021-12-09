@@ -12,9 +12,12 @@ import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
 
+import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
+import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
+
 public abstract class BaseActivity extends AppCompatActivity {
-    SharedPreferences settings;
-    SharedPreferences.Editor editor;
+    static SharedPreferences settings;
+    static SharedPreferences.Editor editor;
     public static DraftQuickService DRAFT_SERVICE;
     public static PassportQuickService PASSPORT_SERVICE;
 
@@ -30,7 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return this;
     }
 
-    protected String getProp(String name){
+    public static String getProp(String name){
 
         switch(name){
             case "IP":
@@ -39,13 +42,17 @@ public abstract class BaseActivity extends AppCompatActivity {
                 return settings.getString(name, "8080");
             case "USER_NAME":
                 return settings.getString(name, "");
+            case "SHOW_FOLDERS":
+                return settings.getString(name, "false");
+            case "HIDE_PREFIXES":
+                return settings.getString(name, "false");
             default:
                 return "NotFoundProperty";
         }
     }
 
     @SuppressLint("CommitPrefEdits")
-    protected void setProp(String name, String val){
+    public static void setProp(String name, String val){
         editor.putString(name, val);
         editor.apply();
     }
@@ -68,5 +75,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void reloadDataFromDB(){
         DataLoader.LoadDataTask task = new DataLoader.LoadDataTask(BaseActivity.this);
         task.execute();
+    }
+
+    protected void loadSettings() {
+
+        SHOW_FOLDERS = Boolean.parseBoolean(getProp("SHOW_FOLDERS"));
+        HIDE_PREFIXES = Boolean.parseBoolean(getProp("HIDE_PREFIXES"));
+
     }
 }

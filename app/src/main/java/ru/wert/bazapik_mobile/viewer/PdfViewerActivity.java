@@ -56,7 +56,7 @@ public class PdfViewerActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf_viewer);
-//        tvTest = findViewById(R.id.tvTest);
+
         pdfView = findViewById(R.id.pdfView);
 
         //Из интента получаем id чертежа
@@ -180,10 +180,10 @@ public class PdfViewerActivity extends BaseActivity {
                     .defaultPage(0)
                     .pageFitPolicy(FitPolicy.WIDTH)
                     .fitEachPage(true)
-                    .onLoad(
-                            nbPages ->
-                                    Toast.makeText(PdfViewerActivity.this, "Страниц: " + nbPages,
-                                            Toast.LENGTH_LONG).show())
+//                    .onLoad(
+//                            nbPages ->
+//                                    Toast.makeText(PdfViewerActivity.this, "Страниц: " + nbPages,
+//                                            Toast.LENGTH_LONG).show())
                     .defaultPage(0)
                     .load();
         }

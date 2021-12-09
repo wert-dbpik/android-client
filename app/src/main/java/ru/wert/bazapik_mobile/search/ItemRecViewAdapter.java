@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Passport;
@@ -60,7 +61,15 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         P item = mData.get(position);
-        holder.mNumber.setText(item.toUsefulString());
+        String text;
+        if(item instanceof Passport){
+            if(Consts.HIDE_PREFIXES)
+                text = ((Passport) item).getNumber();
+            else
+                text = ((Passport) item).getPrefix().getName() + "." + ((Passport) item).getNumber();
+        } else
+            text = item.toUsefulString();
+        holder.mNumber.setText(text);
         holder.mName.setText(item.getName());
 
         if(item instanceof Passport){

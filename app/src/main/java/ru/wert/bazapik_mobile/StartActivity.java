@@ -3,6 +3,8 @@ package ru.wert.bazapik_mobile;
 import static android.Manifest.permission.INTERNET;
 
 import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
+import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
+import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
 import static ru.wert.bazapik_mobile.constants.Consts.STORAGE_PERMISSION_CODE;
 
 import android.Manifest;
@@ -52,14 +54,20 @@ public class StartActivity extends BaseActivity {
 
         Log.i(TAG, "onCreate: IP = " + getProp("IP"));
         Log.i(TAG, "onCreate: PORT = " + getProp("PORT"));
+        Log.i(TAG, "onCreate: SHOW_FOLDERS = " + getProp("SHOW_FOLDERS"));
+        Log.i(TAG, "onCreate: HIDE_PREFIXES = " + getProp("HIDE_PREFIXES"));
 
         ImageView logo = findViewById(R.id.imageViewLogo);
         logo.setOnClickListener(v -> startRetrofit());
 
+        loadSettings();
+
         //TEST
-//гзвфеуМшуц
+
 
     }
+
+
 
 
     private void startRetrofit() {
