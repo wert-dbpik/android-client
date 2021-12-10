@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
+import android.content.Context;
+
 import retrofit2.Call;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.MainActivity;
@@ -10,6 +12,7 @@ import ru.wert.bazapik_mobile.data.util.BLlinks;
 import ru.wert.bazapik_mobile.data.api_interfaces.PassportApiInterface;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
 import ru.wert.bazapik_mobile.warnings.Warning1;
 
 
@@ -22,6 +25,7 @@ public class PassportService implements IPassportService, ItemService<Passport> 
     private PassportApiInterface api;
 
     private PassportService() {
+
         BLlinks.passportService = this;
         api = RetrofitClient.getInstance().getRetrofit().create(PassportApiInterface.class);
     }
@@ -55,10 +59,10 @@ public class PassportService implements IPassportService, ItemService<Passport> 
             if(response.isSuccessful())
                 return (response.body());
             else {
-                Warning1.show(MainActivity.getAppContext(), "Внимание!","Проблемы на линии!");
+                Warning1.show(DataLoader.getAppContext(), "Внимание!","Проблемы на линии!");
             }
         } catch (IOException e) {
-            Warning1.show(MainActivity.getAppContext(), "Внимание!","Проблемы на линии!");
+            Warning1.show(DataLoader.getAppContext(), "Внимание!","Проблемы на линии!");
         }
         return null;
     }

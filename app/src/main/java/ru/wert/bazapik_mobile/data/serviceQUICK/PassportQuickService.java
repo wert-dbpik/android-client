@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile.data.serviceQUICK;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +15,11 @@ public class PassportQuickService implements IPassportService {
 
     private static PassportQuickService instance;
     private static List<Passport> passports;
-    private static PassportService service = PassportService.getInstance();
+    private static PassportService service;
 //    public static Passport DEFAULT_FOLDER = "Разложено";
 
     private PassportQuickService() {
+        service = PassportService.getInstance();
         reload();
     }
 

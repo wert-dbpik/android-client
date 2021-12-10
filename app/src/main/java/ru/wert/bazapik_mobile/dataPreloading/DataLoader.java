@@ -15,9 +15,17 @@ import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 
 public class DataLoader extends Application {
 
+    private static Context appContext;
+
+    public static Context getAppContext(){
+        return DataLoader.appContext;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        DataLoader.appContext = getApplicationContext();
 
         //Создается PassportService, и затем PassportQuickService
         PassportService.getInstance();

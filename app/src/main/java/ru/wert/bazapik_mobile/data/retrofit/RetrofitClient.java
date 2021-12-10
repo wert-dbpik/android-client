@@ -18,7 +18,7 @@ import static ru.wert.bazapik_mobile.constants.Consts.DATA_BASE_URL;
 @Log
 public class RetrofitClient extends Application {
     private static final String TAG = "RetrofitClient";
-//    static String BASE_URL = "";
+    static String BASE_URL = "";
     private static RetrofitClient mInstance;
     private static Retrofit mRetrofit;
     private Gson gson;
@@ -41,14 +41,14 @@ public class RetrofitClient extends Application {
 
 
         //На всякий случай
-//        if(DATA_BASE_URL.equals("")){
-//            String ip = BaseActivity.getProp("IP");
-//            String port = BaseActivity.getProp("PORT");
-//            DATA_BASE_URL = "http://" + ip + ":" + port + "/";
-//        }
+        if(BASE_URL.equals("")){
+            String ip = BaseActivity.getProp("IP");
+            String port = BaseActivity.getProp("PORT");
+            BASE_URL = "http://" + ip + ":" + port + "/";
+        }
 
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(DATA_BASE_URL)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(client.build()) // логгирование ответа
                 .build();
@@ -64,8 +64,8 @@ public class RetrofitClient extends Application {
 
 
     public static void setBASE_URL(String baseUrl) {
-        if (!baseUrl.equals(DATA_BASE_URL)) {
-            DATA_BASE_URL = baseUrl;
+        if (!baseUrl.equals(BASE_URL)) {
+            BASE_URL = baseUrl;
             new RetrofitClient();
         }
 

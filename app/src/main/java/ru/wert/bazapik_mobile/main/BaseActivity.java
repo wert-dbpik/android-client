@@ -29,9 +29,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    protected Context getAppContext(){
-        return this;
-    }
+//    protected Context getAppContext(){
+//        return this;
+//    }
 
     public static String getProp(String name){
 

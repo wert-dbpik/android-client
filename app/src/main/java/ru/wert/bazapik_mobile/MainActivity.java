@@ -20,9 +20,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static Context getAppContext(){
-        return getAppContext();
-    }
+//    public static Context getAppContext(){
+//        return getAppContext();
+//    }
 }
 
 

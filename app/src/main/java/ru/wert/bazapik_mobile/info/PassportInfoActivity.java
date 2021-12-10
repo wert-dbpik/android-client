@@ -29,6 +29,7 @@ import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
+import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.viewer.PdfViewerActivity;
 import ru.wert.bazapik_mobile.warnings.Warning1;
@@ -122,7 +123,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
             @Override
             public void onFailure(Call<List<Draft>> call, Throwable t) {
-                Warning1.show(MainActivity.getAppContext(), "Внимание!","Проблемы на линии!");
+                Warning1.show(PassportInfoActivity.this, "Внимание!","Проблемы на линии!");
             }
             
         });
