@@ -16,21 +16,18 @@ import ru.wert.bazapik_mobile.data.models.Product;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.service_interfaces.IDraftService;
 
+import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
+import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_SERVICE;
+
 public class DraftQuickService extends Application implements IDraftService {
 
-    private static DraftQuickService instance;
     private static List<Draft> drafts;
-    private static final DraftService service = DraftService.getInstance();
+    private static final DraftService service = DRAFT_SERVICE;
 
-    private DraftQuickService() {
+    public DraftQuickService() {
+        DRAFT_QUICK_SERVICE = this;
         new Thread(DraftQuickService::reload).start();
 
-    }
-
-    public static DraftQuickService getInstance() {
-        if (instance == null)
-            return new DraftQuickService();
-        return instance;
     }
 
     public static void reload(){

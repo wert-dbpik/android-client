@@ -22,6 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.MainActivity;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.models.Draft;
@@ -75,7 +76,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
 
         new Thread(()->{
-            Passport passport = PassportService.getInstance().findById(passId);
+            Passport passport = ThisApplication.PASSPORT_SERVICE.findById(passId);
             String decNum = passport.getPrefix() == null ?
                     passport.getNumber() :
                     passport.getPrefix().getName() + "." + passport.getNumber();

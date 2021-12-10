@@ -7,33 +7,26 @@ import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 
-public class DataLoader extends Application {
+public class DataLoader {
 
-    private static Context appContext;
 
-    public static Context getAppContext(){
-        return DataLoader.appContext;
-    }
+    public void load() {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        DataLoader.appContext = getApplicationContext();
 
         //Создается PassportService, и затем PassportQuickService
-        PassportService.getInstance();
-        BaseActivity.PASSPORT_SERVICE = PassportQuickService.getInstance();
+        new PassportService();
+        new PassportQuickService();
 
         //Создается DraftService, и затем DraftQuickService
-        DraftService.getInstance();
-        BaseActivity.DRAFT_SERVICE = DraftQuickService.getInstance();
+        new DraftService();
+        new DraftQuickService();
 
 
     }

@@ -1,6 +1,5 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
-
 import android.app.Application;
 
 import org.apache.pdfbox.io.IOUtils;
@@ -21,6 +20,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.models.Draft;
@@ -29,27 +29,17 @@ import ru.wert.bazapik_mobile.data.models.Product;
 import ru.wert.bazapik_mobile.data.util.BLlinks;
 import ru.wert.bazapik_mobile.data.service_interfaces.IDraftService;
 
-//
-
-
 public class DraftService extends Application implements IDraftService {
 
-    private static DraftService instance;
     private DraftApiInterface api;
 
-    private DraftService() {
-        BLlinks.draftService = this;
+    public DraftService() {
+        ThisApplication.DRAFT_SERVICE = this;
         api = RetrofitClient.getInstance().getRetrofit().create(DraftApiInterface.class);
     }
 
     public DraftApiInterface getApi() {
         return api;
-    }
-
-    public static DraftService getInstance() {
-        if (instance == null)
-            return new DraftService();
-        return instance;
     }
 
     //=====================================================================================

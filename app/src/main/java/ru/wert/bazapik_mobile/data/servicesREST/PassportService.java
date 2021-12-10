@@ -5,6 +5,7 @@ import android.content.Context;
 import retrofit2.Call;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.MainActivity;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Prefix;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.service_interfaces.IPassportService;
@@ -21,23 +22,16 @@ import java.util.List;
 
 public class PassportService implements IPassportService, ItemService<Passport> {
 
-    private static PassportService instance;
     private PassportApiInterface api;
 
-    private PassportService() {
+    public PassportService() {
 
-        BLlinks.passportService = this;
+        ThisApplication.PASSPORT_SERVICE = this;
         api = RetrofitClient.getInstance().getRetrofit().create(PassportApiInterface.class);
     }
 
     public PassportApiInterface getApi() {
         return api;
-    }
-
-    public static PassportService getInstance() {
-        if (instance == null)
-            return new PassportService();
-        return instance;
     }
 
     @Override
@@ -59,10 +53,10 @@ public class PassportService implements IPassportService, ItemService<Passport> 
             if(response.isSuccessful())
                 return (response.body());
             else {
-                Warning1.show(DataLoader.getAppContext(), "Внимание!","Проблемы на линии!");
+                Warning1.show(ThisApplication.getAppContext(), "Внимание!","Проблемы на линии!");
             }
         } catch (IOException e) {
-            Warning1.show(DataLoader.getAppContext(), "Внимание!","Проблемы на линии!");
+            Warning1.show(ThisApplication.getAppContext(), "Внимание!","Проблемы на линии!");
         }
         return null;
     }

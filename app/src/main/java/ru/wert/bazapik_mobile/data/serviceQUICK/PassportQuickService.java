@@ -5,28 +5,24 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Prefix;
 import ru.wert.bazapik_mobile.data.service_interfaces.IPassportService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 import ru.wert.bazapik_mobile.data.models.Passport;
 
+import static ru.wert.bazapik_mobile.ThisApplication.PASSPORT_SERVICE;
+
 
 public class PassportQuickService implements IPassportService {
 
-    private static PassportQuickService instance;
     private static List<Passport> passports;
-    private static PassportService service;
+    private static PassportService service = PASSPORT_SERVICE;
 //    public static Passport DEFAULT_FOLDER = "Разложено";
 
-    private PassportQuickService() {
-        service = PassportService.getInstance();
+    public PassportQuickService() {
+        ThisApplication.PASSPORT_QUICK_SERVICE = this;
         reload();
-    }
-
-    public static PassportQuickService getInstance() {
-        if (instance == null)
-            return new PassportQuickService();
-        return instance;
     }
 
     public static void reload(){

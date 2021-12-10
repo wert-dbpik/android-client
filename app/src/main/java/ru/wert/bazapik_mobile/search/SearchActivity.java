@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.constants.StaticMethods;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
@@ -107,7 +108,7 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
         mRecViewItems.setLayoutManager(new LinearLayoutManager(this));
 
         new Thread(() -> {
-            allItems = (List<P>) PASSPORT_SERVICE.findAll();
+            allItems = (List<P>) ThisApplication.PASSPORT_SERVICE.findAll();
             List<P> items = new ArrayList<>();
             items.addAll(allItems);
             runOnUiThread(() -> {

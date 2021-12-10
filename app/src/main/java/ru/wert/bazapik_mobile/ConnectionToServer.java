@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile;
 
+import static ru.wert.bazapik_mobile.ThisApplication.getProp;
+import static ru.wert.bazapik_mobile.ThisApplication.setProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 import android.content.Intent;

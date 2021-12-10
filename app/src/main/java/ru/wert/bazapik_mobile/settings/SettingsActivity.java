@@ -10,6 +10,10 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.StartActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 
+import static ru.wert.bazapik_mobile.ThisApplication.getProp;
+import static ru.wert.bazapik_mobile.ThisApplication.loadSettings;
+import static ru.wert.bazapik_mobile.ThisApplication.setProp;
+
 public class SettingsActivity extends BaseActivity {
 
     private CheckBox cbShowFolders;

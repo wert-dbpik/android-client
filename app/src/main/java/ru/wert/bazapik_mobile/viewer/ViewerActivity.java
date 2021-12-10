@@ -25,6 +25,7 @@ import ru.wert.bazapik_mobile.warnings.Warning1;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 
+import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
 
 /**
@@ -79,7 +80,7 @@ public class ViewerActivity extends BaseActivity {
 
         //Если файл отсутствует в папке temp, то файл туда загружается из БД
         if(!draftInTempDir(fileId, ext)) {
-            boolean res = DraftQuickService.getInstance().download("drafts", //Постоянная папка в каталоге для чертежей
+            boolean res = DRAFT_QUICK_SERVICE.download("drafts", //Постоянная папка в каталоге для чертежей
                     String.valueOf(fileId), //название скачиваемого файла
                     "." + ext, //расширение скачиваемого файла
                     TEMP_DIR.toString()); //временная папка, куда необходимо скачать файл

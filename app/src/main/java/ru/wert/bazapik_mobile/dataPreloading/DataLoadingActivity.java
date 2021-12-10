@@ -18,7 +18,7 @@ public class DataLoadingActivity extends BaseActivity {
         new Thread(()->{
             //Получаем временную папку
             Consts.TEMP_DIR = DataLoadingActivity.this.getCacheDir(); // context being the Activity pointer
-            new DataLoader().onCreate();
+            new DataLoader().load();
             runOnUiThread(()->{
                 Intent intent = new Intent(DataLoadingActivity.this, SearchActivity.class);
                 startActivity(intent);

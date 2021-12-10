@@ -13,6 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import ru.wert.bazapik_mobile.MainActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 
+import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.constants.Consts.DATA_BASE_URL;
 
 @Log
@@ -42,8 +43,8 @@ public class RetrofitClient extends Application {
 
         //На всякий случай
         if(BASE_URL.equals("")){
-            String ip = BaseActivity.getProp("IP");
-            String port = BaseActivity.getProp("PORT");
+            String ip = getProp("IP");
+            String port = getProp("PORT");
             BASE_URL = "http://" + ip + ":" + port + "/";
         }
 
