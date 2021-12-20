@@ -16,19 +16,20 @@ import static ru.wert.bazapik_mobile.ThisApplication.PASSPORT_SERVICE;
 
 public class PassportQuickService implements IPassportService {
 
+    private Context context;
     private static List<Passport> passports;
-    private static PassportService service = PASSPORT_SERVICE;
 //    public static Passport DEFAULT_FOLDER = "Разложено";
 
-    public PassportQuickService() {
+    public PassportQuickService(Context context) throws Exception{
+        this.context = context;
         ThisApplication.PASSPORT_QUICK_SERVICE = this;
         reload();
     }
 
-    public static void reload(){
+    public static void reload() throws Exception{
         while(true) {
-            if(service != null) {
-                passports = new ArrayList<>(service.findAll());
+            if(PASSPORT_SERVICE != null) {
+                passports = new ArrayList<>(PASSPORT_SERVICE.findAll());
                 break;
             }
         }
@@ -37,22 +38,22 @@ public class PassportQuickService implements IPassportService {
   //   ОСНОВНЫЕ
 
     @Override
-    public boolean save(Passport passport) {
-        boolean res = service.save(passport);
+    public boolean save(Passport passport) throws Exception{
+        boolean res = PASSPORT_SERVICE.save(passport);
         reload();
         return res;
     }
 
     @Override
-    public boolean update(Passport passport) {
-        boolean res = service.update(passport);
+    public boolean update(Passport passport) throws Exception {
+        boolean res = PASSPORT_SERVICE.update(passport);
         reload();
         return res;
     }
 
     @Override
-    public boolean delete(Passport passport){
-        boolean res = service.delete(passport);
+    public boolean delete(Passport passport) throws Exception{
+        boolean res = PASSPORT_SERVICE.delete(passport);
         reload();
         return res;
     }

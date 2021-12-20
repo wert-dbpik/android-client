@@ -2,12 +2,14 @@ package ru.wert.bazapik_mobile.main;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import ru.wert.bazapik_mobile.constants.StaticMethods;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
@@ -43,5 +45,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         task.execute();
     }
 
+    protected void exitApplication(){
+        StaticMethods.clearAppCash();
+
+        Intent sweetHome = new Intent(Intent.ACTION_MAIN);
+        sweetHome.addCategory(Intent.CATEGORY_HOME);
+        startActivity(sweetHome);
+        finishAndRemoveTask();
+        System.exit(0);
+    }
 
 }

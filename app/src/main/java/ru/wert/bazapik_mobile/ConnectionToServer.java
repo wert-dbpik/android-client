@@ -90,7 +90,7 @@ public class ConnectionToServer extends BaseActivity {
                                 public void onFailure(Call<User> call, Throwable t) {
                                     if(t.getMessage().contains("Failed to connect")) {
                                         Log.d(TAG, "Проблемы с доступом к серверу: " + t.getMessage());
-                                        Warning1.show(ConnectionToServer.this, "Внимание", "Сервер не доступен, поробуйте позднее");
+                                        new Warning1().show(ConnectionToServer.this, "Внимание", "Сервер не доступен, поробуйте позднее");
                                     } else {
                                         Log.d(TAG, "Пользователь " + userName + " в базе не найден, переходим в LoginActivity");
                                         goLoginActivity();
@@ -106,7 +106,7 @@ public class ConnectionToServer extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    Warning1.show(ConnectionToServer.this, "Внимание! ",
+                    new Warning1().show(ConnectionToServer.this, "Внимание! ",
                             "Не удалось подключиться к серверу по указанному IP адресу\n" +
                                     "Укажите верный адрес или попробуйте позже. " +
                                     "Возможно, сервер сейчас не доступен.");

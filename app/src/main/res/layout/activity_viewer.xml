@@ -7,29 +7,14 @@
     tools:context=".viewer.ViewerActivity"
     >
 
-    <ScrollView
+    <fragment
+        android:id="@+id/draft_fragment_container"
+        android:name="ru.wert.bazapik_mobile.viewer.PdfViewer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        >
+        />
 
-        <HorizontalScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            >
-
-            <ImageView
-                android:id="@+id/imgView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/white"
-                android:contentDescription="@null"
-                />
-
-        </HorizontalScrollView>
-
-    </ScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"

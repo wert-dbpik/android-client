@@ -17,12 +17,12 @@ import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 public class DataLoader {
 
 
-    public void load() {
+    public void load(Context context) throws Exception{
 
 
         //Создается PassportService, и затем PassportQuickService
-        new PassportService();
-        new PassportQuickService();
+        new PassportService(context);
+        new PassportQuickService(context);
 
         //Создается DraftService, и затем DraftQuickService
         new DraftService();

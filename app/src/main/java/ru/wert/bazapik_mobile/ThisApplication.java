@@ -35,6 +35,7 @@ public class ThisApplication extends Application {
         super.onCreate();
         settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
         editor = settings.edit();
+        ThisApplication.appContext = this.getApplicationContext();
     }
 
     public static String getProp(String name){

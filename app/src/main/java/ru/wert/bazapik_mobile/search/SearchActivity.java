@@ -30,6 +30,7 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
+import ru.wert.bazapik_mobile.warnings.Warning1;
 
 /**
  * Окно поиска чертежа.
@@ -108,14 +109,23 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
         mRecViewItems.setLayoutManager(new LinearLayoutManager(this));
 
         new Thread(() -> {
-            allItems = (List<P>) ThisApplication.PASSPORT_SERVICE.findAll();
-            List<P> items = new ArrayList<>();
-            items.addAll(allItems);
-            runOnUiThread(() -> {
-                mAdapter = new ItemRecViewAdapter<>(this, items);
-                mAdapter.setClickListener(this);
-                mRecViewItems.setAdapter(mAdapter);
-            });
+            try {
+                allItems = (List<P>) ThisApplication.PASSPORT_SERVICE.findAll();
+                List<P> items = new ArrayList<>();
+                items.addAll(allItems);
+                runOnUiThread(() -> {
+                    mAdapter = new ItemRecViewAdapter<>(this, items);
+                    mAdapter.setClickListener(this);
+                    mRecViewItems.setAdapter(mAdapter);
+                });
+            } catch (Exception e) {
+                runOnUiThread(()->{
+                    new Warning1().show(SearchActivity.this, "Внимание!",
+                            "Не удалось загрузить данные, возможно сервер не доступен. Приложение будет закрыто!");
+
+                });
+            }
+
         }).start();
 
         //При касании списка, поле ввода должно потерять фокус
@@ -270,17 +280,6 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
                 }).create().show();
 
     }
-
-    private void exitApplication(){
-        StaticMethods.clearAppCash();
-
-        Intent sweetHome = new Intent(Intent.ACTION_MAIN);
-        sweetHome.addCategory(Intent.CATEGORY_HOME);
-        startActivity(sweetHome);
-        finishAndRemoveTask();
-        System.exit(0);
-    }
-
 
 
     /**

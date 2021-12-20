@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
+import android.app.Activity;
 import android.content.Context;
 
 import retrofit2.Call;
@@ -23,9 +24,10 @@ import java.util.List;
 public class PassportService implements IPassportService, ItemService<Passport> {
 
     private PassportApiInterface api;
+    private Context context;
 
-    public PassportService() {
-
+    public PassportService(Context context) {
+        this.context = context;
         ThisApplication.PASSPORT_SERVICE = this;
         api = RetrofitClient.getInstance().getRetrofit().create(PassportApiInterface.class);
     }
@@ -46,18 +48,20 @@ public class PassportService implements IPassportService, ItemService<Passport> 
     }
 
     @Override
-    public List<Passport> findAll() {
-        try {
+    public List<Passport> findAll() throws Exception{
+//        try {
             Call<List<Passport>> call = api.getAll();
             Response<List<Passport>> response = call.execute();
             if(response.isSuccessful())
                 return (response.body());
             else {
-                Warning1.show(ThisApplication.getAppContext(), "Внимание!","Проблемы на линии!");
+                new Warning1().show(context, "Внимание!","Проблемы на линии!");
             }
-        } catch (IOException e) {
-            Warning1.show(ThisApplication.getAppContext(), "Внимание!","Проблемы на линии!");
-        }
+//        } catch (IOException e) {
+//            throw new Exception();
+//
+//            new Warning1().show(context, "Внимание!","Проблемы на линии!");
+//        }
         return null;
     }
 

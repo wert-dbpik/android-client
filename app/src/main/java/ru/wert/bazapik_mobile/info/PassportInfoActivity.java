@@ -2,10 +2,7 @@ package ru.wert.bazapik_mobile.info;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -20,7 +17,6 @@ import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.wert.bazapik_mobile.MainActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
@@ -28,11 +24,8 @@ import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
-import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
-import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
 import ru.wert.bazapik_mobile.main.BaseActivity;
-import ru.wert.bazapik_mobile.viewer.PdfViewerActivity;
+import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.Warning1;
 
 /**
@@ -124,7 +117,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
             @Override
             public void onFailure(Call<List<Draft>> call, Throwable t) {
-                Warning1.show(PassportInfoActivity.this, "Внимание!","Проблемы на линии!");
+                new Warning1().show(PassportInfoActivity.this, "Внимание!","Проблемы на линии!");
             }
             
         });
@@ -157,7 +150,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
     @Override
     public void onItemClick(View view, int position) {
-        Intent intent = new Intent(PassportInfoActivity.this, PdfViewerActivity.class);
+        Intent intent = new Intent(PassportInfoActivity.this, ViewerActivity.class);
         intent.putExtra("DRAFT_ID", String.valueOf(mAdapter.getItem(position).getId()));
         startActivity(intent);
     }

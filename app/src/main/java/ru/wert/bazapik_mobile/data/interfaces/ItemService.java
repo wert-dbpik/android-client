@@ -12,13 +12,13 @@ public interface ItemService<T extends Item> {
 
     T findById(Long id);
 
-    boolean save(T t);
+    boolean save(T t) throws Exception;
 
-    boolean update(T t);
+    boolean update(T t) throws Exception;
 
-    boolean delete(T t) throws ItemIsBusyException;
+    boolean delete(T t) throws ItemIsBusyException, Exception;
 
-    List<T> findAll();
+    List<T> findAll() throws Exception;
 
     List<T> findAllByText(String text);
 

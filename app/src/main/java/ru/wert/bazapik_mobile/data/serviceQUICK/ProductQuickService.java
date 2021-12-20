@@ -130,7 +130,7 @@ public class ProductQuickService implements IProductService {
     }
 
     @Override
-    public boolean delete(Product product) throws ItemIsBusyException {
+    public boolean delete(Product product) throws Exception {
         boolean res = service.delete(product);
         reload();
         AnyPartQuickService.reload();

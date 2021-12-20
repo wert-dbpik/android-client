@@ -58,10 +58,10 @@ public class LoginActivity extends BaseActivity {
                 public void onFailure(Call<User> call, Throwable t) {
                     if(t.getMessage().contains("Failed to connect")) {
                         Log.d(TAG, "Проблемы с доступом к серверу: " + t.getMessage());
-                        Warning1.show(LoginActivity.this, "Внимание", "Сервер не доступен, поробуйте позднее");
+                        new Warning1().show(LoginActivity.this, "Внимание", "Сервер не доступен, поробуйте позднее");
                     } else {
                         Log.d(TAG, "Пользователь по введенному паролю не найден, сообщаем о проблеме и повторяем запрос");
-                        Warning1.show(LoginActivity.this, "Внимание!", "Пользователь с таким паролем не найден, введите пароль еще раз.");
+                        new Warning1().show(LoginActivity.this, "Внимание!", "Пользователь с таким паролем не найден, введите пароль еще раз.");
                     }
                 }
             });
