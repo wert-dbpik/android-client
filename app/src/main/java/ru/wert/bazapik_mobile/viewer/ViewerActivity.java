@@ -1,6 +1,8 @@
 package ru.wert.bazapik_mobile.viewer;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -92,38 +94,30 @@ public class ViewerActivity extends BaseActivity {
         Log.i(TAG, "Current file: " + localFileString);
         File localFile = new File(localFileString);
 
-        //Определяем формат чертежа
-        if(currentDraft.getExtension().equals("pdf")){ //Если PDF
-            //Переключаем фрагмент на PdfViewer
-            Fragment fragment = new PdfViewer();
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.draft_fragment_container, fragment);
-            ft.commit();
+        Bundle bundle = new Bundle();
+        bundle.putString("LOCAL_FILE", localFileString);
 
-            if (localFile.canRead()) {
-                PDFView pdfView = findViewById(R.id.pdfView);
-                Log.d(TAG, String.format("localFile is %s", localFile));
-                Log.d(TAG, String.format("Showing file'%s' in a view #%s of a fragment #%s",
-                        currentDraft.toUsefulString(), pdfView.getId(), fragment.getId()));
+        if(localFile.canRead()) {
+            //Определяем формат чертежа
+            if (currentDraft.getExtension().equals("pdf")) { //Если PDF
+                //Переключаем фрагмент на PdfViewer
+                Fragment pdfViewerFrag = new PdfViewer();
+                pdfViewerFrag.setArguments(bundle);
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.draft_fragment_container, pdfViewerFrag);
+                ft.commit();
 
-                pdfView.fromFile(localFile)
-                        .defaultPage(0)
-                        .pageFitPolicy(FitPolicy.WIDTH)
-                        .fitEachPage(true)
-                        .defaultPage(0)
-                        .load();
+            } else { //Если все остальное
+                //Переключаем фрагмент на ImageView
+                Fragment imageViewerFrag = new ImageViewer();
+                imageViewerFrag.setArguments(bundle);
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.draft_fragment_container, imageViewerFrag);
+                ft.commit();
+
             }
-
-        } else { //Если все остальное
-            //Переключаем фрагмент на ImageView
-            Fragment fragment = new ImageViewer();
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.draft_fragment_container, fragment);
-            ft.commit();
-
-
         }
 
     }

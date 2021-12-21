@@ -7,7 +7,8 @@
     tools:context=".viewer.ViewerActivity"
     >
 
-    <fragment
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/draft_fragment_container"
         android:name="ru.wert.bazapik_mobile.viewer.PdfViewer"
         android:layout_width="match_parent"

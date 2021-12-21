@@ -8,6 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.util.FitPolicy;
+
+import java.io.File;
+
 import ru.wert.bazapik_mobile.R;
 
 
@@ -17,6 +22,22 @@ public class PdfViewer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_pdf_viewer, container, false);
+        View v = inflater.inflate(R.layout.fragment_pdf_viewer, container, false);
+
+        File localFile = null;
+        Bundle bundle = this.getArguments();
+        if(bundle != null)
+            localFile = new File(bundle.getString("LOCAL_FILE"));
+
+        PDFView pdfView = v.findViewById(R.id.pdfView);
+
+        pdfView.fromFile(localFile)
+                .defaultPage(0)
+                .pageFitPolicy(FitPolicy.WIDTH)
+                .fitEachPage(true)
+                .defaultPage(0)
+                .load();
+
+        return v;
     }
 }
