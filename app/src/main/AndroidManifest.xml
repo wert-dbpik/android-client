@@ -29,9 +29,6 @@
             android:name=".info.PassportInfoActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".viewer.PdfViewerActivity"
-            android:exported="true" />
         <activity android:name=".dataPreloading.DataLoadingActivity" />
         <activity android:name=".viewer.ViewerActivity" />
         <activity

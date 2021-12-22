@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.info;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,7 +36,7 @@ import ru.wert.bazapik_mobile.warnings.Warning1;
  * для каждого чертежа представлен его тип, стр, статус
  */
 public class PassportInfoActivity extends BaseActivity  implements PassportRecViewAdapter.PassportClickListener{
-
+    private static final String TAG = "+++++ PassportInfoActivity +++++" ;
     private TextView tvDecNumber, tvName;
     private RecyclerView rvDrafts;
     private TextView tvDrafts;
@@ -70,16 +71,27 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
         new Thread(()->{
             Passport passport = ThisApplication.PASSPORT_SERVICE.findById(passId);
-            String decNum = passport.getPrefix() == null ?
-                    passport.getNumber() :
-                    passport.getPrefix().getName() + "." + passport.getNumber();
+            String decNum;
+            if(passport != null) {
+                decNum = passport.getPrefix() == null ?
+                        passport.getNumber() :
+                        passport.getPrefix().getName() + "." + passport.getNumber();
 
-            runOnUiThread(()->{
-                tvDecNumber.setText(decNum);
-                tvName.setText(passport.getName());
-                tvDrafts.setText("Доступные чертежи");
+                runOnUiThread(() -> {
+                    tvDecNumber.setText(decNum);
+                    tvName.setText(passport.getName());
+                    tvDrafts.setText("Доступные чертежи");
 
-            });
+                });
+            } else {
+                Log.e(TAG, String.format("An error occur while trying to get Passport of id = %s, PASSPORT_SERVICE = %s"
+                        ,passId, ThisApplication.PASSPORT_SERVICE));
+                runOnUiThread(()->{
+                    new Warning1().show(PassportInfoActivity.this,
+                            "Ошибка!", "Что-то пошло не так, вероятно потреяна связь с сервером.");
+                });
+
+            }
         }).start();
         createRecycleViewOfFoundItems();
 
