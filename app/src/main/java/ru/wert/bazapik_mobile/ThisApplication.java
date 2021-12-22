@@ -5,6 +5,11 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.List;
+
+import ru.wert.bazapik_mobile.constants.Consts;
+import ru.wert.bazapik_mobile.data.interfaces.Item;
+import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
@@ -21,6 +26,10 @@ public class ThisApplication extends Application {
 
     public static DraftService DRAFT_SERVICE;
     public static DraftQuickService DRAFT_QUICK_SERVICE;
+
+    public static String SEARCH_TEXT = "";
+    public static List<Passport> FOUND_ITEMS;
+    public static String DATA_BASE_URL;
 
     static SharedPreferences settings;
     static SharedPreferences.Editor editor;

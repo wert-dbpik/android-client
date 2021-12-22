@@ -22,6 +22,7 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.warnings.Warning1;
 
+import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
 import static ru.wert.bazapik_mobile.constants.StaticMethods.clearAppCash;
@@ -42,7 +43,7 @@ public class ViewerActivity extends BaseActivity {
     private static final String TAG = "+++ ViewerActivity +++";
 
     //Формируем путь типа "http://192.168.1.84:8080/drafts/download/drafts/"
-    private final String dbdir = Consts.DATA_BASE_URL + "drafts/download/drafts/";
+    private final String dbdir = DATA_BASE_URL + "drafts/download/drafts/";
     private String remoteFileString, localFileString;
     private Long draftId;
     private Draft currentDraft;
@@ -84,7 +85,8 @@ public class ViewerActivity extends BaseActivity {
                         Log.d(TAG, String.format("File '%s' was downloaded with OK message", currentDraft.toUsefulString()));
                         runOnUiThread(this::showDraftInViewer);
                     } else {
-                        Log.e(TAG, "message from server: " + res);
+                        Log.e(TAG, String.format("remoteFileString = '%s', localFileString = '%s', message from server: %s",
+                                remoteFileString, localFileString, res));
                         runOnUiThread(()->{
                             new Warning1().show(ViewerActivity.this, "Внимание!",
                                     "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");

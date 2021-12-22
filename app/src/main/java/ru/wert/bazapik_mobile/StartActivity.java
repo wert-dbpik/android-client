@@ -3,6 +3,7 @@ package ru.wert.bazapik_mobile;
 import static android.Manifest.permission.INTERNET;
 
 import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
+import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
 import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
@@ -74,10 +75,10 @@ public class StartActivity extends BaseActivity {
     private void startRetrofit() {
         checkForPermissions();
         //Константа принимает первоначальное значение
-        Consts.DATA_BASE_URL = "http://" + getProp("IP") + ":" + getProp("PORT") + "/";
+        DATA_BASE_URL = "http://" + getProp("IP") + ":" + getProp("PORT") + "/";
         Thread t = new Thread(() -> {
-            RetrofitClient.setBASE_URL(Consts.DATA_BASE_URL);
-            Log.d(TAG, "startRetrofit: " + String.format("base url = %s", Consts.DATA_BASE_URL));
+            RetrofitClient.setBASE_URL(DATA_BASE_URL);
+            Log.d(TAG, "startRetrofit: " + String.format("base url = %s", DATA_BASE_URL));
             //Проверка соединения по доступности пользователя с id = 1
             UserService.getInstance().getApi().getById(1L).enqueue(new Callback<User>() {
                 @Override

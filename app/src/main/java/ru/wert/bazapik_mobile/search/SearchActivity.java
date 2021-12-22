@@ -3,7 +3,9 @@ package ru.wert.bazapik_mobile.search;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -19,10 +22,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.constants.StaticMethods;
+import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
 import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
@@ -32,6 +37,9 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.Warning1;
 
+import static ru.wert.bazapik_mobile.ThisApplication.FOUND_ITEMS;
+import static ru.wert.bazapik_mobile.ThisApplication.SEARCH_TEXT;
+
 /**
  * Окно поиска чертежа.
  * Состоит из
@@ -39,24 +47,31 @@ import ru.wert.bazapik_mobile.warnings.Warning1;
  * 2) Списка найденных элементов (Passport) - mRecViewItems
  * 3) Всплывающей клавиатуры - keyboardView
  *
- * @param <P>
  */
-public class SearchActivity<P extends Item> extends BaseActivity implements ItemRecViewAdapter.ItemClickListener{
-    private static final String TAG = "SearchActivity";
-    private static String SEARCH_TEXT = "";
+public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.ItemClickListener{
+    private static final String TAG = "+++ SearchActivity +++";
 
-    private ItemRecViewAdapter mAdapter;
+    private ItemRecViewAdapter<Passport> mAdapter;
     private RecyclerView mRecViewItems;
-    private List<P> allItems;
-    private List<P> foundItems;
+    private List<Passport> allItems;
+    private List<Passport> foundItems;
     private EditText mEditTextSearch;
     private FragmentContainerView keyboardView;
+    private int oldOrientation;
 
     @SuppressLint("FindViewByIdCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        if (savedInstanceState != null) {
+            String searchedText = savedInstanceState.getString("searchedText");
+            if(searchedText != null) mEditTextSearch.setText(searchedText);
+
+            foundItems.clear();
+            foundItems.addAll(FOUND_ITEMS);
+        }
 
         keyboardView = findViewById(R.id.keyboard_fragment);
         mEditTextSearch = findViewById(R.id.edit_text_search);
@@ -69,6 +84,24 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
         if(!SEARCH_TEXT.equals(""))
             mEditTextSearch.setText(SEARCH_TEXT);
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putString("searchedText", mEditTextSearch.getText().toString());
+            FOUND_ITEMS = (List<Passport>) foundItems;
+
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation != oldOrientation){
+            foundItems.clear();
+            foundItems.addAll(FOUND_ITEMS);
+        }
     }
 
 
@@ -88,6 +121,7 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
     protected void onPause() {
         super.onPause();
         SEARCH_TEXT = mEditTextSearch.getText().toString();
+
     }
 
     /**
@@ -110,8 +144,8 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
 
         new Thread(() -> {
             try {
-                allItems = (List<P>) ThisApplication.PASSPORT_SERVICE.findAll();
-                List<P> items = new ArrayList<>();
+                allItems = (List<Passport>) ThisApplication.PASSPORT_SERVICE.findAll();
+                List<Passport> items = new ArrayList<>();
                 items.addAll(allItems);
                 runOnUiThread(() -> {
                     mAdapter = new ItemRecViewAdapter<>(this, items);
@@ -287,9 +321,9 @@ public class SearchActivity<P extends Item> extends BaseActivity implements Item
      * @param searchText набранный в ПОИСКе текст
      * @return List<P> список подходящих элементов
      */
-    private List<P> getFoundItems(String searchText){
-        List<P> foundItems = new ArrayList<>();
-        for(P item : allItems){
+    private List<Passport> getFoundItems(String searchText){
+        List<Passport> foundItems = new ArrayList<>();
+        for(Passport item : allItems){
             if(item.toUsefulString().contains(searchText))
                 foundItems.add(item);
         }

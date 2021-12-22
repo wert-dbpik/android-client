@@ -14,7 +14,6 @@ import ru.wert.bazapik_mobile.MainActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
-import static ru.wert.bazapik_mobile.constants.Consts.DATA_BASE_URL;
 
 @Log
 public class RetrofitClient extends Application {

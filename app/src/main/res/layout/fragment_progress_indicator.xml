@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="3pt"
             android:layout_marginRight="3pt"
-            android:textSize="32sp"
+            android:textSize="24sp"
             android:text="Загрузка..."/>
 
     </LinearLayout>

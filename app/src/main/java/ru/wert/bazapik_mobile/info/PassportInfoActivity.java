@@ -36,7 +36,7 @@ import ru.wert.bazapik_mobile.warnings.Warning1;
  * для каждого чертежа представлен его тип, стр, статус
  */
 public class PassportInfoActivity extends BaseActivity  implements PassportRecViewAdapter.PassportClickListener{
-    private static final String TAG = "+++++ PassportInfoActivity +++++" ;
+    private static final String TAG = "+++ PassportInfoActivity +++" ;
     private TextView tvDecNumber, tvName;
     private RecyclerView rvDrafts;
     private TextView tvDrafts;
@@ -88,7 +88,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
                         ,passId, ThisApplication.PASSPORT_SERVICE));
                 runOnUiThread(()->{
                     new Warning1().show(PassportInfoActivity.this,
-                            "Ошибка!", "Что-то пошло не так, вероятно потреяна связь с сервером.");
+                            "Ошибка!", "Что-то пошло не так, вероятно потереяна связь с сервером.");
                 });
 
             }

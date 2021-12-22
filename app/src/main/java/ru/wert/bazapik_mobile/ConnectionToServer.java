@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile;
 
+import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.ThisApplication.setProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
@@ -56,10 +57,10 @@ public class ConnectionToServer extends BaseActivity {
         ip = String.valueOf(mIpAddress.getText());
         port = String.valueOf(mPort.getText());
         //Меняем константу на новое значение
-        Consts.DATA_BASE_URL = "http://" + ip + ":" + port + "/";
+        DATA_BASE_URL = "http://" + ip + ":" + port + "/";
 
         Thread t = new Thread(() -> {
-            RetrofitClient.setBASE_URL(Consts.DATA_BASE_URL);
+            RetrofitClient.setBASE_URL(DATA_BASE_URL);
             Log.i(TAG, "startRetrofit: " + String.format("base url = %s", baseUrl));
             //Проверка соединения по доступности пользователя с id = 1
             UserService.getInstance().getApi().getById(1L).enqueue(new Callback<User>() {
