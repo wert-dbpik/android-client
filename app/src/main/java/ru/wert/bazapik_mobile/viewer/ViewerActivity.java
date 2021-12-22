@@ -1,17 +1,21 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.app.ProgressDialog;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
+import androidx.fragment.app.FragmentContainerView;
 import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.R;
@@ -35,59 +39,98 @@ import com.github.barteksc.pdfviewer.util.FitPolicy;
  * принимает ArrayList<String>, состоящий из id чертежей
  */
 public class ViewerActivity extends BaseActivity {
-
     private static final String TAG = "+++ ViewerActivity +++";
 
     //Формируем путь типа "http://192.168.1.84:8080/drafts/download/drafts/"
     private final String dbdir = Consts.DATA_BASE_URL + "drafts/download/drafts/";
     private String remoteFileString, localFileString;
-    private Button mBtnPrevious, mBtnNext;
     private Long draftId;
-    private int oldOrientation;
     private Draft currentDraft;
+    private int oldOrientation;
+    FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewer);
-
-        mBtnPrevious = findViewById(R.id.btnPrevious);
-        mBtnNext = findViewById(R.id.btnNext);
-
+        fm = getSupportFragmentManager();
         //Из интента получаем id чертежа
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
-        //Достаем запись чертежа из БД
-        currentDraft = DRAFT_QUICK_SERVICE.findById(draftId);
-        if(currentDraft == null) return;
-        //Формируем конечный путь до удаленного файла
-        remoteFileString = dbdir + draftId + "." + currentDraft.getExtension();
-        //Формируем локальный до файла временного хранения
-        localFileString = TEMP_DIR + "/" + draftId + "." + currentDraft.getExtension();
 
-        File localDraftFile = new File(localFileString);
-        if (localDraftFile.exists() && localDraftFile.getTotalSpace() > 10L) {
-            Log.d(TAG, String.format("File '%s' was found in cash directory", currentDraft.toUsefulString()));
-            showDraftInViewer();
-        } else {
-            try {
-                //Запускаем асинхронную задачу по загрузке файла чертежа
-                String res = new DownloadDraftTask(ViewerActivity.this).execute(remoteFileString, localFileString).get();
-                if(res.equals("OK")) {
-                    Log.d(TAG, String.format("File '%s' was downloaded with OK message", currentDraft.toUsefulString()));
-                    showDraftInViewer();
-                } else {
-                    Log.e(TAG, "message from server: " + res);
-                    new Warning1().show(ViewerActivity.this, "Внимание!",
-                            "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
-                }
-
-            } catch (ExecutionException | InterruptedException e) {
-                Log.e(TAG, "could not download file from server by error: " + e.toString());
-                new Warning1().show(ViewerActivity.this, "Внимание!",
-                        "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
-            }
+        if (savedInstanceState == null) {
+            showProgressIndicator();
         }
+        //Этот поток позволяет показать ProgressIndicator
+        new Thread(()->{
+            //Достаем запись чертежа из БД
+            currentDraft = DRAFT_QUICK_SERVICE.findById(draftId);
+            if (currentDraft == null) return;
+            //Формируем конечный путь до удаленного файла
+            remoteFileString = dbdir + draftId + "." + currentDraft.getExtension();
+            //Формируем локальный до файла временного хранения
+            localFileString = TEMP_DIR + "/" + draftId + "." + currentDraft.getExtension();
 
+            //Проверяем файл в кэше
+            File localDraftFile = new File(localFileString);
+            if (localDraftFile.exists() && localDraftFile.getTotalSpace() > 10L) {
+                Log.d(TAG, String.format("File '%s' was found in cash directory", currentDraft.toUsefulString()));
+                runOnUiThread(this::showDraftInViewer);
+            //Если файла в кэше нет
+            } else {
+                try {
+                    //Запускаем асинхронную задачу по загрузке файла чертежа
+                    String res = new DownloadDraftTask().execute(remoteFileString, localFileString).get();
+                    if (res.equals("OK")) {
+                        Log.d(TAG, String.format("File '%s' was downloaded with OK message", currentDraft.toUsefulString()));
+                        runOnUiThread(this::showDraftInViewer);
+                    } else {
+                        Log.e(TAG, "message from server: " + res);
+                        runOnUiThread(()->{
+                            new Warning1().show(ViewerActivity.this, "Внимание!",
+                                    "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
+                        });
+                    }
+
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.e(TAG, "could not download file from server by error: " + e.toString());
+                    runOnUiThread(()->{
+                        new Warning1().show(ViewerActivity.this, "Внимание!",
+                                "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
+                    });
+                }
+            }
+        }).start();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showProgressIndicator();
+        runOnUiThread(this::showDraftInViewer);
+
+    }
+
+    //	clear cache to ensure we have good reload
+    @Override
+    protected void onPause() {
+        super.onPause();
+        clearAppCash();
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        showProgressIndicator();
+        if (newConfig.orientation != oldOrientation)
+            runOnUiThread(this::showDraftInViewer);
+    }
+
+    private void showProgressIndicator() {
+        Fragment progressIndicatorFragment = new ProgressIndicatorFragment();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.draft_fragment_container, progressIndicatorFragment);
+        ft.commit();
     }
 
     private void showDraftInViewer() {
@@ -103,7 +146,6 @@ public class ViewerActivity extends BaseActivity {
                 //Переключаем фрагмент на PdfViewer
                 Fragment pdfViewerFrag = new PdfViewer();
                 pdfViewerFrag.setArguments(bundle);
-                FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.draft_fragment_container, pdfViewerFrag);
                 ft.commit();
@@ -112,36 +154,12 @@ public class ViewerActivity extends BaseActivity {
                 //Переключаем фрагмент на ImageView
                 Fragment imageViewerFrag = new ImageViewer();
                 imageViewerFrag.setArguments(bundle);
-                FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.draft_fragment_container, imageViewerFrag);
                 ft.commit();
 
             }
         }
-
-    }
-
-
-    //	reload on resume
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showDraftInViewer();
-    }
-
-    //	clear cache to ensure we have good reload
-    @Override
-    protected void onPause() {
-        super.onPause();
-        clearAppCash();
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if(newConfig.orientation != oldOrientation)
-            showDraftInViewer();
 
     }
 

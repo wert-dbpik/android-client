@@ -1,12 +1,19 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import ru.wert.bazapik_mobile.R;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,12 +25,6 @@ import java.net.URL;
 public class DownloadDraftTask extends AsyncTask<String, Integer, String> {
     private static final String TAG = "Загрузка файла в фоне";
 
-    private Context context;
-    private PowerManager.WakeLock mWakeLock;
-
-    public DownloadDraftTask(Context context) {
-        this.context = context;
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -80,8 +81,6 @@ public class DownloadDraftTask extends AsyncTask<String, Integer, String> {
                 connection.disconnect();
         }
 
-
         return "OK";
     }
-
 }

@@ -4,47 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".viewer.ViewerActivity"
-    >
-
+    tools:context=".viewer.ViewerActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/draft_fragment_container"
-        android:name="ru.wert.bazapik_mobile.viewer.PdfViewer"
+        android:name="ru.wert.bazapik_mobile.viewer.ProgressIndicatorFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        />
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        >
-
-        <Button
-            android:id="@+id/btnPrevious"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:background="@android:color/background_dark"
-            android:text="Назад"
-            style="?android:attr/buttonBarButtonStyle"
-            />
-
-        <Button
-            android:id="@+id/btnNext"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:background="@android:color/background_dark"
-            android:text="Вперёд"
-            style="?android:attr/buttonBarButtonStyle"
-            />
-
-    </LinearLayout>
+        android:layout_weight="1" />
 
 </LinearLayout>
