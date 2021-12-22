@@ -54,4 +54,6 @@ public class Product extends _BaseEntity implements CatalogableItem, Comparable<
     }
 
 
+
+
 }

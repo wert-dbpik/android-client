@@ -48,4 +48,6 @@ public class Material extends _BaseEntity implements Item, CatalogableItem, Seri
     public String toUsefulString() {
         return name;
     }
+
+
 }

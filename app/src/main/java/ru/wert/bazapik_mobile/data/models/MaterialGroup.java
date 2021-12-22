@@ -34,4 +34,6 @@ public class MaterialGroup extends _BaseEntity implements Item, TreeBuildingItem
         super.setId(id);
         this.name = name;
     }
+
+
 }

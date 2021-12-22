@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,8 +70,12 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
             String searchedText = savedInstanceState.getString("searchedText");
             if(searchedText != null) mEditTextSearch.setText(searchedText);
 
+
+
             foundItems.clear();
             foundItems.addAll(FOUND_ITEMS);
+            mAdapter = new ItemRecViewAdapter<>(this, foundItems);
+
         }
 
         keyboardView = findViewById(R.id.keyboard_fragment);

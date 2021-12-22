@@ -24,4 +24,6 @@ public class UserGroup extends _BaseEntity implements Item {
     public String toUsefulString() {
         return name;
     }
+
+
 }

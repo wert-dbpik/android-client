@@ -20,4 +20,6 @@ public class AppSettings extends _BaseEntity implements Item {
     public String toUsefulString() {
         return null; //Пока нет применения
     }
+
+
 }

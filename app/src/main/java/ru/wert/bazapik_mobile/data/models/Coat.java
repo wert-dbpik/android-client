@@ -23,4 +23,6 @@ public class Coat extends _BaseEntity implements Item {
     public String toUsefulString() {
         return name;
     }
+
+
 }

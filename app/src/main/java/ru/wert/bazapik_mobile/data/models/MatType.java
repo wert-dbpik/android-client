@@ -24,4 +24,6 @@ public class MatType extends _BaseEntity implements Item, Serializable {
     public String toUsefulString() {
         return name;
     }
+
+
 }

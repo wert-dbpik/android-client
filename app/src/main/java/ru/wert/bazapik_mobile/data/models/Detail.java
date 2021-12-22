@@ -43,4 +43,6 @@ public class Detail extends _BaseEntity implements Item, ItemWithDraft, Comparab
     public String toUsefulString() {
         return passport.toUsefulString();
     }
+
+
 }

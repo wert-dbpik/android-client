@@ -18,21 +18,27 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".settings.SettingsActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".ConnectionToServer"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".info.PassportInfoActivity"
+            android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/AppTheme" />
-        <activity android:name=".dataPreloading.DataLoadingActivity" />
+        <activity android:name=".dataPreloading.DataLoadingActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".viewer.ViewerActivity" />
         <activity
             android:name=".search.SearchActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity android:name=".MainActivity" />
         <activity android:name=".main.BaseActivity" />

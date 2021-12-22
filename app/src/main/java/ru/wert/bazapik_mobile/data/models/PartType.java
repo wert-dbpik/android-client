@@ -26,4 +26,6 @@ public class PartType extends _BaseEntity implements Item, Serializable {
     public String toUsefulString() {
         return name;
     }
+
+
 }

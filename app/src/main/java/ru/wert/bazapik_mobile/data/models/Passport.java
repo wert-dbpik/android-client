@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile.data.models;
 
+import android.os.Parcel;
+
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -29,5 +31,6 @@ public class Passport extends _BaseEntity implements Item {
         else
             return prefix.getName() + "." + body;
     }
+
 
 }

@@ -37,4 +37,6 @@ public class ProductGroup extends _BaseEntity implements TreeBuildingItem, Seria
         super.setId(id);
         this.name = name;
     }
+
+
 }

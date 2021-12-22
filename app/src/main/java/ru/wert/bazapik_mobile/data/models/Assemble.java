@@ -42,4 +42,6 @@ public class Assemble extends _BaseEntity implements Item, ItemWithDraft, Compar
     public String toUsefulString() {
         return passport.toUsefulString();
     }
+
+
 }
