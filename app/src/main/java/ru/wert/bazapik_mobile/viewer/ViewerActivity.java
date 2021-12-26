@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.warnings.Warning1;
 
+import static ru.wert.bazapik_mobile.ThisApplication.ADAPTER;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
@@ -43,7 +45,7 @@ public class ViewerActivity extends BaseActivity {
     private static final String TAG = "+++ ViewerActivity +++";
 
     //Формируем путь типа "http://192.168.1.84:8080/drafts/download/drafts/"
-    private final String dbdir = DATA_BASE_URL + "drafts/download/drafts/";
+    private String dbdir = DATA_BASE_URL + "drafts/download/drafts/";
     private String remoteFileString, localFileString;
     private Long draftId;
     private Draft currentDraft;
@@ -58,9 +60,12 @@ public class ViewerActivity extends BaseActivity {
         //Из интента получаем id чертежа
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
 
-        if (savedInstanceState == null) {
-            showProgressIndicator();
-        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        showProgressIndicator();
         //Этот поток позволяет показать ProgressIndicator
         new Thread(()->{
             //Достаем запись чертежа из БД
@@ -76,7 +81,7 @@ public class ViewerActivity extends BaseActivity {
             if (localDraftFile.exists() && localDraftFile.getTotalSpace() > 10L) {
                 Log.d(TAG, String.format("File '%s' was found in cash directory", currentDraft.toUsefulString()));
                 runOnUiThread(this::showDraftInViewer);
-            //Если файла в кэше нет
+                //Если файла в кэше нет
             } else {
                 try {
                     //Запускаем асинхронную задачу по загрузке файла чертежа
@@ -106,27 +111,24 @@ public class ViewerActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        showProgressIndicator();
-        runOnUiThread(this::showDraftInViewer);
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("remoteFile", remoteFileString);
+        savedInstanceState.putString("localFile", localFileString);
+        savedInstanceState.putString("bdDir", dbdir);
 
-    }
-
-    //	clear cache to ensure we have good reload
-    @Override
-    protected void onPause() {
-        super.onPause();
-        clearAppCash();
     }
 
     @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        showProgressIndicator();
-        if (newConfig.orientation != oldOrientation)
-            runOnUiThread(this::showDraftInViewer);
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        remoteFileString = savedInstanceState.getString("remoteFile");
+        localFileString = savedInstanceState.getString("localFile");
+        dbdir = savedInstanceState.getString("bdDir");
+
     }
+
 
     private void showProgressIndicator() {
         Fragment progressIndicatorFragment = new ProgressIndicatorFragment();

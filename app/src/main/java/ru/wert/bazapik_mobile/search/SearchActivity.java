@@ -1,15 +1,16 @@
 package ru.wert.bazapik_mobile.search;
 
+import static ru.wert.bazapik_mobile.ThisApplication.ADAPTER;
+import static ru.wert.bazapik_mobile.ThisApplication.SEARCH_TEXT;
+
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,23 +24,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.constants.StaticMethods;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
 import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
-import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.Warning1;
-
-import static ru.wert.bazapik_mobile.ThisApplication.FOUND_ITEMS;
-import static ru.wert.bazapik_mobile.ThisApplication.SEARCH_TEXT;
 
 /**
  * Окно поиска чертежа.
@@ -60,23 +55,15 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     private FragmentContainerView keyboardView;
     private int oldOrientation;
 
+    private final String KEY_RECYCLER_STATE = "recycler_state";
+    private final String SEARCH_TEXT = "search_text";
+    private static Bundle mBundleRecyclerViewState;
+
     @SuppressLint("FindViewByIdCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        if (savedInstanceState != null) {
-            String searchedText = savedInstanceState.getString("searchedText");
-            if(searchedText != null) mEditTextSearch.setText(searchedText);
-
-
-
-            foundItems.clear();
-            foundItems.addAll(FOUND_ITEMS);
-            mAdapter = new ItemRecViewAdapter<>(this, foundItems);
-
-        }
 
         keyboardView = findViewById(R.id.keyboard_fragment);
         mEditTextSearch = findViewById(R.id.edit_text_search);
@@ -86,46 +73,30 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
         createSearchEditText();
         createRecycleViewOfFoundItems();
 
-        if(!SEARCH_TEXT.equals(""))
-            mEditTextSearch.setText(SEARCH_TEXT);
-
     }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-
-        savedInstanceState.putString("searchedText", mEditTextSearch.getText().toString());
-            FOUND_ITEMS = (List<Passport>) foundItems;
-
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation != oldOrientation){
-            foundItems.clear();
-            foundItems.addAll(FOUND_ITEMS);
-        }
-    }
-
 
     /**
      * При рестарте боремся с поялением стандартной клавиатурой
      */
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        //Позволяет избежать появления стандартной клавиатуры при рестарте активити
+    protected void onResume() {
+        super.onResume();
         mEditTextSearch.clearFocus();
-        mEditTextSearch.setText(SEARCH_TEXT);
-
+        if (mBundleRecyclerViewState != null) {
+            mEditTextSearch.setText(mBundleRecyclerViewState.getString(SEARCH_TEXT));
+            Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+            mRecViewItems.getLayoutManager().onRestoreInstanceState(listState);
+        }
     }
+
 
     @Override
     protected void onPause() {
         super.onPause();
-        SEARCH_TEXT = mEditTextSearch.getText().toString();
+        mBundleRecyclerViewState = new Bundle();
+        mBundleRecyclerViewState.putString(SEARCH_TEXT, mEditTextSearch.getText().toString());
+        Parcelable listState = mRecViewItems.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
 
     }
 

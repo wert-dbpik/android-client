@@ -3,6 +3,8 @@ package ru.wert.bazapik_mobile.search;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -153,5 +155,6 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
+
 }
 

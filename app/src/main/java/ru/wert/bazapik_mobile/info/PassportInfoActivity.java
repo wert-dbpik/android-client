@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.info;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -43,6 +44,9 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
     private PassportRecViewAdapter mAdapter;
     private Long passId;
 
+    private final String KEY_RECYCLER_STATE = "recycler_state";
+    private static Bundle mBundleRecyclerViewState;
+
     //Меню
     @Getter @Setter private boolean showValid = true;
     @Getter @Setter private boolean showChanged = true;
@@ -67,7 +71,6 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
         tvDrafts = findViewById(R.id.tvDrafts);//Строка Доступные чертежи
 
         rvDrafts = findViewById(R.id.rvDrafts); //RecycleView
-
 
         new Thread(()->{
             Passport passport = ThisApplication.PASSPORT_SERVICE.findById(passId);
@@ -95,6 +98,24 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
         }).start();
         createRecycleViewOfFoundItems();
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mBundleRecyclerViewState != null) {
+            Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+            rvDrafts.getLayoutManager().onRestoreInstanceState(listState);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mBundleRecyclerViewState = new Bundle();
+        Parcelable listState = rvDrafts.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
 
     }
 
@@ -104,16 +125,6 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
     private void createRecycleViewOfFoundItems() {
 
         rvDrafts.setLayoutManager(new LinearLayoutManager(this));
-
-//        new Thread(() -> {
-//            foundDrafts = DraftService.getInstance().findByPassportId(passId);
-//            filterList(foundDrafts);
-//            runOnUiThread(() -> {
-//                mAdapter = new PassportRecViewAdapter(this, foundDrafts);
-//                mAdapter.setClickListener(this);
-//                rvDrafts.setAdapter(mAdapter);
-//            });
-//        }).start();
 
         DraftApiInterface api = RetrofitClient.getInstance().getRetrofit().create(DraftApiInterface.class);
         Call<List<Draft>> call =  api.getByPassportId(passId);
