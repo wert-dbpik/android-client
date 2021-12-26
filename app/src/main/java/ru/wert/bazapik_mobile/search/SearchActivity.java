@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -52,6 +53,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     private List<Passport> allItems;
     private List<Passport> foundItems;
     private EditText mEditTextSearch;
+    private LinearLayout mSelectedPosition;
     private FragmentContainerView keyboardView;
     private int oldOrientation;
 
@@ -68,6 +70,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
         keyboardView = findViewById(R.id.keyboard_fragment);
         mEditTextSearch = findViewById(R.id.edit_text_search);
         mRecViewItems = findViewById(R.id.recycle_view_items);
+        mSelectedPosition = findViewById(R.id.selected_position);
 
         createKeyboards();
         createSearchEditText();
@@ -156,6 +159,8 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
      */
     @Override
     public void onItemClick(View view, int position) {
+
+
 
         openInfoView(position);
 

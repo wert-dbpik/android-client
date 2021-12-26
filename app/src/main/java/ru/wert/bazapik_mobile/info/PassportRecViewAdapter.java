@@ -31,6 +31,7 @@ public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecView
     private final LayoutInflater mInflater;
     private PassportClickListener mClickListener;
     private final Context context;
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
     /**
      * Конструктор получает на входе список элементов List<P>
@@ -63,6 +64,13 @@ public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecView
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        if (selectedPosition != RecyclerView.NO_POSITION) //Если ничего не выделенно
+            holder.itemView.findViewById(R.id.selected_position)
+                    .setBackgroundColor((position == selectedPosition) ?
+                            context.getColor(R.color.colorPrimary) : //Цвет выделения
+                            context.getColor(R.color.colorPrimaryDark)); //Цвет фона
+
+
         Draft item = mData.get(position);
         String draftType = EDraftType.getDraftTypeById(item.getDraftType()).getTypeName() + " - " + item.getPageNumber();
         holder.tvDraft.setText(draftType);
@@ -106,7 +114,13 @@ public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecView
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
+            selectedPosition = getAdapterPosition();
+            view.findViewById(R.id.selected_position)
+                    .setBackgroundColor(context.getColor(R.color.colorPrimary));
+            if (mClickListener != null)
+                mClickListener.onItemClick(view, getAdapterPosition());
+            notifyDataSetChanged();
         }
     }
 

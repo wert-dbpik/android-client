@@ -3,26 +3,25 @@ package ru.wert.bazapik_mobile.search;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.constants.Consts;
-import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<ItemRecViewAdapter<P>.ViewHolder>{
 
@@ -30,6 +29,7 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
     private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private final Context context;
+    private int selectedPosition = RecyclerView.NO_POSITION;
 
     /**
      * Конструктор получает на входе список элементов List<P>
@@ -62,6 +62,13 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+
+        if (selectedPosition != RecyclerView.NO_POSITION) //Если ничего не выделенно
+            holder.itemView.findViewById(R.id.selected_position)
+                    .setBackgroundColor((position == selectedPosition) ?
+                            context.getColor(R.color.colorPrimary) : //Цвет выделения
+                            context.getColor(R.color.colorPrimaryDark)); //Цвет фона
+
         P item = mData.get(position);
         String text;
         if(item instanceof Passport){
@@ -123,6 +130,7 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
         TextView mName;
         ImageButton mShowDraft; //кнопка в виде чертежика
 
+
         ViewHolder(View itemView) {
             super(itemView);
             mNumber = itemView.findViewById(R.id.number);
@@ -133,7 +141,17 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
+
+            selectedPosition = getAdapterPosition();
+            view.findViewById(R.id.selected_position)
+                    .setBackgroundColor(context.getColor(R.color.colorPrimary));
+
+            if (mClickListener != null)
+                mClickListener.onItemClick(view, getAdapterPosition());
+
+            notifyDataSetChanged();
+
         }
     }
 
