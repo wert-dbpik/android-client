@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".keyboards.RuKeyboard">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/mBtnQ"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="q"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnW"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="w"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnE"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="e"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnR"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="r"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnT"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="t"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnY"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="y"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnU"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="u"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnI"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="i"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnO"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="o"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnP"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="p"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/mBtnA"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="a"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnS"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="s"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnD"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="d"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnF"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="f"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnG"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="g"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnH"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="h"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnJ"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="j"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnK"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="k"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnL"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="l"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/mBtnShift"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="120"
+                android:text="\u2302"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnZ"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="z"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnX"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:text="x"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnC"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:paddingHorizontal="0pt"
+                android:text="c"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnV"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:paddingHorizontal="0pt"
+                android:text="v"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnB"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:paddingHorizontal="0pt"
+                android:text="b"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnN"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:paddingHorizontal="0pt"
+                android:text="n"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnM"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:paddingHorizontal="0pt"
+                android:text="m"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+
+            <Button
+                android:id="@+id/mBtnBacksp"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="120"
+                android:paddingHorizontal="0pt"
+                android:text="\u27F8"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/mBtnEnglish"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="40"
+                android:text="Ru"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnSpace"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="90"
+                android:paddingHorizontal="0pt"
+                android:text="П Р О Б Е Л"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnDot"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="20"
+                android:paddingHorizontal="0pt"
+                android:text="."
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnSwitchToNumbers"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="20"
+                android:paddingHorizontal="0pt"
+                android:text="123"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnClearAll"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="40"
+                android:paddingHorizontal="0pt"
+                android:textAlignment="textEnd"
+                android:paddingEnd="20dp"
+                android:text="C"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</FrameLayout>

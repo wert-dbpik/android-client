@@ -11,12 +11,12 @@
     <EditText
         android:id="@+id/edit_text_search"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Что искать?"
         android:inputType="textPersonName"
         android:textAlignment="textStart"
-        android:textSize="36sp" />
+        android:textSize="30sp" />
 
     <FrameLayout
 
