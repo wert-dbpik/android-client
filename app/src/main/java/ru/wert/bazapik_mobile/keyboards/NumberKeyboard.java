@@ -33,6 +33,12 @@ public class NumberKeyboard extends Fragment {
         return view;
     }
 
+    /**
+     * В методе создается HashMap, в котором добавляются пары кнопка - отображаемый символ
+     * (он же будет выводиться на экран при нажатии на кнопку)
+     * Отдельно создаются специальные служебные кнопки
+     * @param view
+     */
     private void init(View view)  {
 
         Map<Button, String> buttons = new HashMap<>();
@@ -47,8 +53,10 @@ public class NumberKeyboard extends Fragment {
         buttons.put(view.findViewById(R.id.mBtn8), "8");
         buttons.put(view.findViewById(R.id.mBtn9), "9");
         buttons.put(view.findViewById(R.id.mBtnDash), "-");
-        buttons.put(view.findViewById(R.id.mBtnDot), ".");
+        buttons.put(view.findViewById(R.id.mBtnEngDot), ".");
 
+        //Каждой кнопке из HashMap buttons назначается слушатель OnClickListener
+        //При нажатии на кнопку выводится символ который соответствует кнопке в HashMap buttons
         for(Button b: buttons.keySet()){
             b.setOnClickListener(v -> {
                 StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
@@ -58,7 +66,8 @@ public class NumberKeyboard extends Fragment {
             });
         }
 
-        final Button mBtnBackspace = view.findViewById(R.id.mBtnBackspace);
+        //Специальная кнопка Backspace <=
+        final Button mBtnBackspace = view.findViewById(R.id.mBtnEngBackspace);
         mBtnBackspace.setOnClickListener(v->{
             StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
             if(mEditTextSearch.getSelectionStart() !=0) {
@@ -68,15 +77,22 @@ public class NumberKeyboard extends Fragment {
             }
         });
 
-        final Button mBtnCLear = view.findViewById(R.id.mBtnClear);
+        //Специальная кнопка Clear
+        final Button mBtnCLear = view.findViewById(R.id.mBtnEngClear);
         mBtnCLear.setOnClickListener(v->{
             mEditTextSearch.setText("");
         });
 
+        //Специальная кнопка PIK - выводт префикс по умолчанию
         final Button mBtnPIK = view.findViewById(R.id.mBtnPIK);
         mBtnPIK.setOnClickListener(v->{
             mEditTextSearch.setText(DEFAULT_PREFIX);
             mEditTextSearch.setSelection(DEFAULT_PREFIX.length());
+        });
+
+        final Button mBtnText = view.findViewById(R.id.mBtnText);
+        mBtnText.setOnClickListener(v->{
+
         });
     }
 

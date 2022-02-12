@@ -51,7 +51,7 @@
                 android:textSize="@dimen/btn_text_size" />
 
             <Button
-                android:id="@+id/mBtnBackspace"
+                android:id="@+id/mBtnEngBackspace"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                 android:textSize="@dimen/btn_text_size" />
 
             <Button
-                android:id="@+id/mBtnClear"
+                android:id="@+id/mBtnEngClear"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -178,7 +178,7 @@
                 android:textSize="@dimen/btn_text_size" />
 
             <Button
-                android:id="@+id/mBtnDot"
+                android:id="@+id/mBtnEngDot"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -188,13 +188,13 @@
                 android:textSize="@dimen/btn_text_size" />
 
             <Button
-                android:id="@+id/btnDot2"
+                android:id="@+id/mBtnText"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
-                android:text="Txt"
+                android:text="TXT"
                 android:textSize="@dimen/btn_text_size" />
         </TableRow>
     </TableLayout>

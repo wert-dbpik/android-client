@@ -9,17 +9,33 @@ import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ru.wert.bazapik_mobile.R;
 
 public class RuKeyboard extends Fragment {
 
-    private final String TAG = getClass().getSimpleName();
-    static final String DEFAULT_PREFIX = "ПИК"; //использовать дефолтное
     private EditText mEditTextSearch;//Связь с EditText
 
+    private List<Button> letterButtons; //Буквенные кнопки
+    private Map<Button, String> values; //Пары кнопка-значение
+
+    private Button btnSpace, btnShift, btnClear, btnBackspace, btnLanguage, btn123;
+
+    final private List<String> capitalLetters = Arrays.asList("А", "Б", "В", "Г", "Д", "Е", "Ж",
+            "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч",
+            "Ш", "Щ", "Ъ", "Ы", "Ь", "Э", "Ю", "Я");
+
+    final private List<String> smallLetters = Arrays.asList("а", "б", "в", "г", "д", "е", "ж",
+            "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч",
+            "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я");
+
+
+
+    private boolean shiftOn; //false - строчные, true - заглавные
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,38 +43,107 @@ public class RuKeyboard extends Fragment {
         container.setVisibility(View.GONE);
         View view = inflater.inflate(R.layout.fr_number_keyboard, container, false);
 
+        Button btnA = view.findViewById(R.id.mBtnRuA);
+        Button btnB = view.findViewById(R.id.mBtnRuB);
+        Button btnV = view.findViewById(R.id.mBtnRuV);
+        Button btnG = view.findViewById(R.id.mBtnRuG);
+        Button btnD = view.findViewById(R.id.mBtnRuD);
+        Button btnE = view.findViewById(R.id.mBtnRuE);
+        Button btnZsh = view.findViewById(R.id.mBtnRuZsh);
+        Button btnZ = view.findViewById(R.id.mBtnRuZ);
+        Button btnI = view.findViewById(R.id.mBtnRuI);
+        Button btnJ = view.findViewById(R.id.mBtnRuJ);
+        Button btnK = view.findViewById(R.id.mBtnRuK);
+        Button btnL = view.findViewById(R.id.mBtnRuL);
+        Button btnM = view.findViewById(R.id.mBtnRuM);
+        Button btnN = view.findViewById(R.id.mBtnRuN);
+        Button btnO = view.findViewById(R.id.mBtnRuO);
+        Button btnP = view.findViewById(R.id.mBtnRuP);
+        Button btnR = view.findViewById(R.id.mBtnRuR);
+        Button btnS = view.findViewById(R.id.mBtnRuS);
+        Button btnT = view.findViewById(R.id.mBtnRuT);
+        Button btnU = view.findViewById(R.id.mBtnRuU);
+        Button btnF = view.findViewById(R.id.mBtnRuF);
+        Button btnH = view.findViewById(R.id.mBtnRuH);
+        Button btnTs = view.findViewById(R.id.mBtnRuTs);
+        Button btnCh = view.findViewById(R.id.mBtnRuCh);
+        Button btnSh = view.findViewById(R.id.mBtnRuSh);
+        Button btnTsh = view.findViewById(R.id.mBtnRuTsh);
+        Button btnHardSign = view.findViewById(R.id.mBtnRuHardSign);
+        Button btnYi = view.findViewById(R.id.mBtnRuYi);
+        Button btnSoftSign = view.findViewById(R.id.mBtnRuSoftSign);
+        Button btnYe = view.findViewById(R.id.mBtnRuYe);
+        Button btnYu = view.findViewById(R.id.mBtnRuYu);
+        Button btnYa = view.findViewById(R.id.mBtnRuYa);
+
+        btnShift = view.findViewById(R.id.mBtnRuShift);
+        btnSpace = view.findViewById(R.id.mBtnRuSpace);
+        btnClear = view.findViewById(R.id.mBtnRuClear);
+        btnBackspace = view.findViewById(R.id.mBtnRuBackspace);
+        btnLanguage = view.findViewById(R.id.mBtnRuLanguage);
+        btn123 = view.findViewById(R.id.mBtnRu123);
+
+        letterButtons = Arrays.asList(btnA, btnB, btnV, btnG, btnD, btnE, btnZsh, btnZ, btnI, btnJ, btnK, btnL,
+                btnM, btnN, btnO, btnP, btnR, btnS, btnT, btnU, btnF, btnH, btnTs, btnCh, btnSh,
+                btnTsh, btnHardSign, btnYi, btnSoftSign, btnYe, btnYu, btnYa);
+
         init(view);
 
         return view;
     }
 
+    /**
+     * Метод устанавливает заглавные символы
+     */
+    private void setCapitalLetters(){
+
+        for(int i = 0; i < letterButtons.size(); i++){
+            letterButtons.get(i).setText(capitalLetters.get(i));
+            values.replace(letterButtons.get(i), capitalLetters.get(i));
+        }
+    }
+
+    /**
+     * Метод устанавливает строчные символы
+     */
+    private void setSmallLetters(){
+
+        for(int i = 0; i < letterButtons.size(); i++){
+            letterButtons.get(i).setText(smallLetters.get(i));
+            values.replace(letterButtons.get(i), smallLetters.get(i));
+        }
+
+    }
+
+    /**
+     * В методе создается HashMap, в котором добавляются пары кнопка - отображаемый символ
+     * (он же будет выводиться на экран при нажатии на кнопку)
+     * Отдельно создаются специальные служебные кнопки
+     */
     private void init(View view)  {
 
-        Map<Button, String> buttons = new HashMap<>();
-        buttons.put(view.findViewById(R.id.mBtn0), "0");
-        buttons.put(view.findViewById(R.id.mBtn1), "1");
-        buttons.put(view.findViewById(R.id.mBtn2), "2");
-        buttons.put(view.findViewById(R.id.mBtn3), "3");
-        buttons.put(view.findViewById(R.id.mBtn4), "4");
-        buttons.put(view.findViewById(R.id.mBtn5), "5");
-        buttons.put(view.findViewById(R.id.mBtn6), "6");
-        buttons.put(view.findViewById(R.id.mBtn7), "7");
-        buttons.put(view.findViewById(R.id.mBtn8), "8");
-        buttons.put(view.findViewById(R.id.mBtn9), "9");
-        buttons.put(view.findViewById(R.id.mBtnDash), "-");
-        buttons.put(view.findViewById(R.id.mBtnDot), ".");
+        values = new HashMap<>();
 
-        for(Button b: buttons.keySet()){
+        //А ... Я
+        for(int i = 0; i < letterButtons.size(); i++){
+            values.put(letterButtons.get(i), smallLetters.get(i));
+        }
+
+        //ПРОБЕЛ
+        values.put(btnSpace, " ");
+
+        //А ... Я и ПРОБЕЛ
+        for(Button b: values.keySet()){
             b.setOnClickListener(v -> {
                 StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
                 int pos = mEditTextSearch.getSelectionStart();
-                mEditTextSearch.setText(text.insert(pos,buttons.get(b)));
+                mEditTextSearch.setText(text.insert(pos, values.get(b)));
                 mEditTextSearch.setSelection(pos+1);
             });
         }
 
-        final Button mBtnBackspace = view.findViewById(R.id.mBtnBackspace);
-        mBtnBackspace.setOnClickListener(v->{
+        //BACKSPACE
+        btnBackspace.setOnClickListener(v->{
             StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
             if(mEditTextSearch.getSelectionStart() !=0) {
                 int pos = mEditTextSearch.getSelectionStart() - 1;
@@ -67,18 +152,31 @@ public class RuKeyboard extends Fragment {
             }
         });
 
-        final Button mBtnCLear = view.findViewById(R.id.mBtnClear);
-        mBtnCLear.setOnClickListener(v->{
+        //SHIFT
+        btnShift.setOnClickListener(v->{
+            shiftOn = !shiftOn;
+            if(shiftOn) setSmallLetters();
+            else setCapitalLetters();
+
+        });
+
+        //CLEAR ALL
+        btnClear.setOnClickListener(v->{
             mEditTextSearch.setText("");
         });
 
-        final Button mBtnPIK = view.findViewById(R.id.mBtnPIK);
-        mBtnPIK.setOnClickListener(v->{
-            mEditTextSearch.setText(DEFAULT_PREFIX);
-            mEditTextSearch.setSelection(DEFAULT_PREFIX.length());
-        });
-    }
+        //RU - ENG
+        btnLanguage.setOnClickListener(v->{
 
+        });
+
+        //1 2 3
+        btn123.setOnClickListener(v->{
+
+        });
+
+
+    }
     public void setEditTextSearch(EditText editText){
         this.mEditTextSearch = editText;
     }

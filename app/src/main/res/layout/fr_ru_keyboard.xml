@@ -17,7 +17,7 @@
 
 
             <Button
-                android:id="@+id/mBtnY"
+                android:id="@+id/mBtnRuJ"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnTs"
+                android:id="@+id/mBtnRuTs"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnU"
+                android:id="@+id/mBtnRuU"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnK"
+                android:id="@+id/mBtnRuK"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnE"
+                android:id="@+id/mBtnRuE"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnN"
+                android:id="@+id/mBtnRuN"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnG"
+                android:id="@+id/mBtnRuG"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnSh"
+                android:id="@+id/mBtnRuSh"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -106,7 +106,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnTsh"
+                android:id="@+id/mBtnRuTsh"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnZ"
+                android:id="@+id/mBtnRuZ"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnH"
+                android:id="@+id/mBtnRuH"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/mBtnF"
+                android:id="@+id/mBtnRuF"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -157,7 +157,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnYi"
+                android:id="@+id/mBtnRuYi"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -168,7 +168,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnV"
+                android:id="@+id/mBtnRuV"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -179,7 +179,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnA"
+                android:id="@+id/mBtnRuA"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -190,7 +190,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnP"
+                android:id="@+id/mBtnRuP"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -201,7 +201,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnR"
+                android:id="@+id/mBtnRuR"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -212,7 +212,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnO"
+                android:id="@+id/mBtnRuO"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -223,7 +223,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnL"
+                android:id="@+id/mBtnRuL"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -234,7 +234,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnD"
+                android:id="@+id/mBtnRuD"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -245,7 +245,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnZsh"
+                android:id="@+id/mBtnRuZsh"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -256,7 +256,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnYe"
+                android:id="@+id/mBtnRuYe"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -274,7 +274,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/mBtnShift"
+                android:id="@+id/mBtnRuShift"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -286,7 +286,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnYa"
+                android:id="@+id/mBtnRuYa"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -297,7 +297,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnCh"
+                android:id="@+id/mBtnRuCh"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -308,7 +308,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnS"
+                android:id="@+id/mBtnRuS"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -320,7 +320,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnM"
+                android:id="@+id/mBtnRuM"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -332,7 +332,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnI"
+                android:id="@+id/mBtnRuI"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -344,7 +344,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnT"
+                android:id="@+id/mBtnRuT"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -356,7 +356,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnSoftSign"
+                android:id="@+id/mBtnRuSoftSign"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -367,7 +367,7 @@
                 android:textAllCaps="false"
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
             <Button
-                android:id="@+id/mBtnHardSign"
+                android:id="@+id/mBtnRuHardSign"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -379,7 +379,7 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnB"
+                android:id="@+id/mBtnRuB"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -391,7 +391,19 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnBacksp"
+                android:id="@+id/mBtnRuYu"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0px"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/btn_letter_margin"
+                android:layout_weight="100"
+                android:paddingHorizontal="0pt"
+                android:text="ю"
+                android:textAllCaps="false"
+                android:textSize="@dimen/my_keyboard_letter_font_size" />
+
+            <Button
+                android:id="@+id/mBtnRuBackspace"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -410,7 +422,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/mBtnEnglish"
+                android:id="@+id/mBtnRuLanguage"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -422,29 +434,19 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnSpace"
+                android:id="@+id/mBtnRuSpace"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="90"
                 android:paddingHorizontal="0pt"
-                android:text="П Р О Б Е Л"
+                android:text="[       П Р О Б Е Л       ]"
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
-            <Button
-                android:id="@+id/mBtnDot"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/btn_letter_margin"
-                android:layout_weight="20"
-                android:paddingHorizontal="0pt"
-                android:text="."
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnSwitchToNumbers"
+                android:id="@+id/mBtnRu123"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -455,12 +457,12 @@
                 android:textSize="@dimen/my_keyboard_letter_font_size" />
 
             <Button
-                android:id="@+id/mBtnClearAll"
+                android:id="@+id/mBtnRuClear"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
-                android:layout_weight="40"
+                android:layout_weight="30"
                 android:paddingHorizontal="0pt"
                 android:textAlignment="textEnd"
                 android:paddingEnd="20dp"

@@ -79,7 +79,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     }
 
     /**
-     * При рестарте боремся с поялением стандартной клавиатурой
+     * При рестарте боремся с появлением стандартной клавиатурой
      */
     @Override
     protected void onResume() {
