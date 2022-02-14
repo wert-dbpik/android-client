@@ -2,13 +2,17 @@ package ru.wert.bazapik_mobile.keyboards;
 
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
+
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -92,6 +96,17 @@ public class NumberKeyboard extends Fragment {
 
         final Button mBtnText = view.findViewById(R.id.mBtnText);
         mBtnText.setOnClickListener(v->{
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+
+            Fragment fragment = fm.findFragmentById(R.id.keyboard_fragment);
+            Fragment fragmentReplace;
+            fragmentReplace = new RuKeyboard();
+            fm.beginTransaction()
+                    .replace(R.id.keyboard_fragment, fragmentReplace)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+
+                    .commit();
+
 
         });
     }
