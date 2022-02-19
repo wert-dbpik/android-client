@@ -24,9 +24,10 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="й"
+                android:padding="0pt"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuTs"
@@ -36,8 +37,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="ц"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuU"
@@ -47,8 +49,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="у"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuK"
@@ -58,8 +61,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="к"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuE"
@@ -69,8 +73,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="е"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuN"
@@ -80,8 +85,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="н"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuG"
@@ -91,8 +97,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="г"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuSh"
@@ -102,8 +109,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="ш"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuTsh"
@@ -113,8 +121,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="щ"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuZ"
@@ -124,8 +133,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="з"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuH"
@@ -135,8 +145,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="х"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
         </LinearLayout>
 
@@ -153,8 +164,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="ф"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuYi"
@@ -164,8 +176,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="ы"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuV"
@@ -175,8 +188,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="в"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuA"
@@ -186,8 +200,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="а"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuP"
@@ -197,8 +212,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="п"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuR"
@@ -208,8 +224,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="р"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuO"
@@ -219,8 +236,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="о"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuL"
@@ -230,8 +248,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="л"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuD"
@@ -241,8 +260,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="д"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuZsh"
@@ -252,8 +272,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="ж"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuYe"
@@ -263,8 +284,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="э"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
         </LinearLayout>
 
@@ -279,11 +301,11 @@
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
-                android:layout_weight="120
-"
+                android:layout_weight="120"
                 android:text="\u2302"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuYa"
@@ -293,8 +315,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="я"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuCh"
@@ -304,8 +327,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="ч"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuS"
@@ -316,8 +340,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="с"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuM"
@@ -328,8 +353,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="м"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuI"
@@ -340,8 +366,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="и"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuT"
@@ -352,8 +379,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="т"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuSoftSign"
@@ -364,8 +392,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="ь"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
             <Button
                 android:id="@+id/mBtnRuHardSign"
                 style="?android:attr/buttonBarButtonStyle"
@@ -375,8 +404,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="ъ"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuB"
@@ -387,8 +417,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="б"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuYu"
@@ -399,8 +430,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="ю"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuBackspace"
@@ -411,8 +443,9 @@
                 android:layout_weight="120"
                 android:paddingHorizontal="0pt"
                 android:text="\u27F8"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
         </LinearLayout>
 
@@ -429,9 +462,10 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="40"
                 android:text="Eng"
+                android:padding="0pt"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuSpace"
@@ -441,8 +475,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="90"
                 android:paddingHorizontal="0pt"
-                android:text="[       П Р О Б Е Л       ]"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:text="П Р О Б Е Л"
+                android:padding="0pt"
+                android:textSize="@dimen/letters_btn_font_size" />
 
 
             <Button
@@ -454,7 +489,8 @@
                 android:layout_weight="20"
                 android:paddingHorizontal="0pt"
                 android:text="123"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:padding="0pt"
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnRuClear"
@@ -467,7 +503,8 @@
                 android:textAlignment="textEnd"
                 android:paddingEnd="20dp"
                 android:text="C"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:padding="0pt"
+                android:textSize="@dimen/letters_btn_font_size" />
 
         </LinearLayout>
 

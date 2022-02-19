@@ -1,5 +1,8 @@
 package ru.wert.bazapik_mobile.keyboards;
 
+import static ru.wert.bazapik_mobile.search.SearchActivity.ENG_KEYBOARD;
+import static ru.wert.bazapik_mobile.search.SearchActivity.NUM_KEYBOARD;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +18,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Setter;
 import ru.wert.bazapik_mobile.R;
 
 public class RuKeyboard extends Fragment {
 
-    private EditText mEditTextSearch;//Связь с EditText
+    @Setter private EditText mEditTextSearch;//Связь с EditText
+
+    @Setter private KeyboardSwitcher keyboardSwitcher;
 
     private List<Button> letterButtons; //Буквенные кнопки
     private Map<Button, String> values; //Пары кнопка-значение
@@ -42,7 +48,7 @@ public class RuKeyboard extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         container.setVisibility(View.GONE);
-        View view = inflater.inflate(R.layout.fr_number_keyboard, container, false);
+        View view = inflater.inflate(R.layout.fr_ru_keyboard, container, false);
 
         Button btnA = view.findViewById(R.id.mBtnRuA);
         Button btnB = view.findViewById(R.id.mBtnRuB);
@@ -90,6 +96,7 @@ public class RuKeyboard extends Fragment {
 
         init(view);
 
+
         return view;
     }
 
@@ -122,6 +129,8 @@ public class RuKeyboard extends Fragment {
      * Отдельно создаются специальные служебные кнопки
      */
     private void init(View view)  {
+
+//        editTextSearch.requestFocus();
 
         values = new HashMap<>();
 
@@ -168,17 +177,15 @@ public class RuKeyboard extends Fragment {
 
         //RU - ENG
         btnLanguage.setOnClickListener(v->{
-
+            keyboardSwitcher.switchKeyboardTo(ENG_KEYBOARD);
         });
 
         //1 2 3
         btn123.setOnClickListener(v->{
-
+            keyboardSwitcher.switchKeyboardTo(NUM_KEYBOARD);
         });
 
 
     }
-    public void setEditTextSearch(EditText editText){
-        this.mEditTextSearch = editText;
-    }
+
 }

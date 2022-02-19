@@ -1,6 +1,9 @@
 package ru.wert.bazapik_mobile.keyboards;
 
 
+import static ru.wert.bazapik_mobile.search.SearchActivity.NUM_KEYBOARD;
+import static ru.wert.bazapik_mobile.search.SearchActivity.RU_KEYBOARD;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Setter;
 import ru.wert.bazapik_mobile.R;
 
 public class EngKeyboard extends Fragment {
 
 
-    private EditText mEditTextSearch;//Связь с EditText
+    @Setter private EditText editTextSearch;//Связь с EditText
+    @Setter private KeyboardSwitcher keyboardSwitcher;
 
     private boolean shiftOn; //false - строчные, true - заглавные
 
@@ -40,7 +45,7 @@ public class EngKeyboard extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         container.setVisibility(View.GONE);
-        View view = inflater.inflate(R.layout.fr_number_keyboard, container, false);
+        View view = inflater.inflate(R.layout.fr_eng_keyboard, container, false);
 
         Button btnA = view.findViewById(R.id.mBtnEngA);
         Button btnB = view.findViewById(R.id.mBtnEngB);
@@ -128,21 +133,21 @@ public class EngKeyboard extends Fragment {
         //A ... Z и ПРОБЕЛ
         for(Button b: values.keySet()){
             b.setOnClickListener(v -> {
-                StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
-                int pos = mEditTextSearch.getSelectionStart();
-                mEditTextSearch.setText(text.insert(pos, values.get(b)));
-                mEditTextSearch.setSelection(pos+1);
+                StringBuilder text = new StringBuilder(String.valueOf(editTextSearch.getText()));
+                int pos = editTextSearch.getSelectionStart();
+                editTextSearch.setText(text.insert(pos, values.get(b)));
+                editTextSearch.setSelection(pos+1);
             });
         }
 
 
         //BACKSPACE
         btnBackspace.setOnClickListener(v->{
-            StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
-            if(mEditTextSearch.getSelectionStart() !=0) {
-                int pos = mEditTextSearch.getSelectionStart() - 1;
-                mEditTextSearch.setText(text.deleteCharAt(pos));
-                mEditTextSearch.setSelection(pos);
+            StringBuilder text = new StringBuilder(String.valueOf(editTextSearch.getText()));
+            if(editTextSearch.getSelectionStart() !=0) {
+                int pos = editTextSearch.getSelectionStart() - 1;
+                editTextSearch.setText(text.deleteCharAt(pos));
+                editTextSearch.setSelection(pos);
             }
         });
 
@@ -156,23 +161,20 @@ public class EngKeyboard extends Fragment {
 
         //CLEAR ALL
         btnClear.setOnClickListener(v->{
-            mEditTextSearch.setText("");
+            editTextSearch.setText("");
         });
 
         //RU - ENG
         btnLanguage.setOnClickListener(v->{
-
+            keyboardSwitcher.switchKeyboardTo(RU_KEYBOARD);
         });
 
         //1 2 3
         btn123.setOnClickListener(v->{
-
+            keyboardSwitcher.switchKeyboardTo(NUM_KEYBOARD);
         });
 
 
     }
 
-    public void setEditTextSearch(EditText editText){
-        this.mEditTextSearch = editText;
-    }
 }

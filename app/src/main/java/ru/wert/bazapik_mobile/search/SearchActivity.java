@@ -1,8 +1,5 @@
 package ru.wert.bazapik_mobile.search;
 
-import static ru.wert.bazapik_mobile.ThisApplication.ADAPTER;
-import static ru.wert.bazapik_mobile.ThisApplication.SEARCH_TEXT;
-
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,12 +14,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,10 @@ import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
+import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
+import ru.wert.bazapik_mobile.keyboards.KeyboardSwitcher;
 import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
+import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.Warning1;
@@ -45,7 +48,7 @@ import ru.wert.bazapik_mobile.warnings.Warning1;
  * 3) Всплывающей клавиатуры - keyboardView
  *
  */
-public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.ItemClickListener{
+public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.ItemClickListener, KeyboardSwitcher {
     private static final String TAG = "+++ SearchActivity +++";
 
     private ItemRecViewAdapter<Passport> mAdapter;
@@ -54,12 +57,19 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     private List<Passport> foundItems;
     private EditText mEditTextSearch;
     private LinearLayout mSelectedPosition;
-    private FragmentContainerView keyboardView;
+    private FragmentContainerView keyboardContainer;
     private int oldOrientation;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
     private static Bundle mBundleRecyclerViewState;
+
+    public static final int NUM_KEYBOARD = 0;
+    public static final int RU_KEYBOARD = 1;
+    public static final int ENG_KEYBOARD = 2;
+
+    private final List<Fragment> keyboards = new ArrayList<>();
+    private final FragmentManager fragmentManager = getSupportFragmentManager();
 
     @SuppressLint("FindViewByIdCast")
     @Override
@@ -67,7 +77,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        keyboardView = findViewById(R.id.keyboard_fragment);
+        keyboardContainer = findViewById(R.id.keyboard_container);
         mEditTextSearch = findViewById(R.id.edit_text_search);
         mRecViewItems = findViewById(R.id.recycle_view_items);
         mSelectedPosition = findViewById(R.id.selected_position);
@@ -108,10 +118,28 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
      * состояющую из ЦИФРОВОЙ и ТЕКСТОВОЙ клавиатур
      */
     private void createKeyboards() {
-        NumberKeyboard numberKeyboard = (NumberKeyboard)
-                getSupportFragmentManager().findFragmentById(R.id.keyboard_fragment);
-        //Связываем поле поиска с клавиатурой
+//        NumberKeyboard numberKeyboard = (NumberKeyboard)
+//                getSupportFragmentManager().findFragmentById(R.id.keyboard_container);
+//        //Связываем поле поиска с клавиатурой
+//        numberKeyboard.setEditTextSearch(mEditTextSearch);
+
+        NumberKeyboard numberKeyboard = new NumberKeyboard();
+        numberKeyboard.setKeyboardSwitcher(this);
         numberKeyboard.setEditTextSearch(mEditTextSearch);
+        keyboards.add(NUM_KEYBOARD, numberKeyboard);
+
+        RuKeyboard ruKeyboard = new RuKeyboard();
+        ruKeyboard.setKeyboardSwitcher(this);
+        ruKeyboard.setEditTextSearch(mEditTextSearch);
+        keyboards.add(RU_KEYBOARD, ruKeyboard);
+
+        EngKeyboard engKeyboard = new EngKeyboard();
+        engKeyboard.setKeyboardSwitcher(this);
+        engKeyboard.setEditTextSearch(mEditTextSearch);
+        keyboards.add(ENG_KEYBOARD, engKeyboard);
+
+        switchKeyboardTo(1);
+
     }
 
     /**
@@ -160,8 +188,6 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     @Override
     public void onItemClick(View view, int position) {
 
-
-
         openInfoView(position);
 
     }
@@ -195,9 +221,9 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
         //при нажатии на список или рестарте активити - клавиатура исчезает
         mEditTextSearch.setOnFocusChangeListener((view, b) -> {
             if(b){
-                keyboardView.setVisibility(View.VISIBLE);
+                keyboardContainer.setVisibility(View.VISIBLE);
             } else {
-                keyboardView.setVisibility(View.GONE);
+                keyboardContainer.setVisibility(View.GONE);
             }
 
         });
@@ -280,8 +306,8 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
 
     @Override
     public void onBackPressed() {
-        if(keyboardView.getVisibility() == View.VISIBLE)
-            keyboardView.setVisibility(View.GONE);
+        if(keyboardContainer.getVisibility() == View.VISIBLE)
+            keyboardContainer.setVisibility(View.GONE);
         else
         new AlertDialog.Builder(this)
                 .setTitle("Выход тут!")
@@ -312,4 +338,10 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     }
 
 
+    @Override
+    public void switchKeyboardTo(int keyboard) {
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.keyboard_container, keyboards.get(keyboard));
+        ft.commit();
+    }
 }

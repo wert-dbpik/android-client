@@ -7,6 +7,6 @@
     <dimen name="bt_height">25pt</dimen>
     <dimen name="btn_text_size">25sp</dimen>
     <dimen name="btn_margin">2pt</dimen>
-    <dimen name="my_keyboard_letter_font_size">20sp</dimen>
-    <dimen name="btn_letter_margin">0</dimen>
+    <dimen name="letters_btn_font_size">20sp</dimen>
+    <dimen name="btn_letter_margin">0pt</dimen>
 </resources>

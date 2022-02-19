@@ -24,9 +24,10 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="q"
+                android:padding="0pt"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngW"
@@ -36,8 +37,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="w"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngE"
@@ -47,8 +49,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="e"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngR"
@@ -58,8 +61,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="r"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngT"
@@ -69,8 +73,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="t"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngY"
@@ -80,8 +85,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="y"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngU"
@@ -91,8 +97,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="u"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngI"
@@ -102,8 +109,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="i"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngO"
@@ -113,8 +121,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="o"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngP"
@@ -124,8 +133,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="p"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
         </LinearLayout>
 
@@ -144,8 +154,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="a"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngS"
@@ -155,8 +166,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="s"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngD"
@@ -166,8 +178,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="d"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngF"
@@ -177,8 +190,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="f"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngG"
@@ -188,8 +202,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="g"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngH"
@@ -199,8 +214,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="h"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngJ"
@@ -210,8 +226,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="j"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngK"
@@ -221,8 +238,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="k"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngL"
@@ -232,8 +250,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="l"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
         </LinearLayout>
 
@@ -250,8 +269,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="120"
                 android:text="\u2302"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngZ"
@@ -261,8 +281,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="z"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngX"
@@ -272,8 +293,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="100"
                 android:text="x"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngC"
@@ -284,8 +306,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="c"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngV"
@@ -296,8 +319,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="v"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngB"
@@ -308,8 +332,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="b"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngN"
@@ -320,8 +345,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="n"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngM"
@@ -332,8 +358,9 @@
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
                 android:text="m"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
 
             <Button
@@ -345,8 +372,9 @@
                 android:layout_weight="120"
                 android:paddingHorizontal="0pt"
                 android:text="\u27F8"
+                android:padding="0pt"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
         </LinearLayout>
 
@@ -363,9 +391,10 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="40"
                 android:text="Ru"
+                android:padding="0pt"
                 android:textAlignment="center"
                 android:textAllCaps="false"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngSpace"
@@ -375,8 +404,9 @@
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
                 android:layout_weight="90"
                 android:paddingHorizontal="0pt"
-                android:text="[       П Р О Б Е Л       ]"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:text="П Р О Б Е Л"
+                android:padding="0pt"
+                android:textSize="@dimen/letters_btn_font_size" />
 
 
             <Button
@@ -388,7 +418,8 @@
                 android:layout_weight="20"
                 android:paddingHorizontal="0pt"
                 android:text="123"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:padding="0pt"
+                android:textSize="@dimen/letters_btn_font_size" />
 
             <Button
                 android:id="@+id/mBtnEngClear"
@@ -401,7 +432,8 @@
                 android:textAlignment="textEnd"
                 android:paddingEnd="20dp"
                 android:text="C"
-                android:textSize="@dimen/my_keyboard_letter_font_size" />
+                android:padding="0pt"
+                android:textSize="@dimen/letters_btn_font_size" />
 
         </LinearLayout>
 

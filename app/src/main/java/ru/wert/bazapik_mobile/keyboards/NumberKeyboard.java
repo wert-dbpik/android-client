@@ -11,20 +11,20 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Setter;
 import ru.wert.bazapik_mobile.R;
 
 public class NumberKeyboard extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
     static final String DEFAULT_PREFIX = "ПИК"; //использовать дефолтное
-    private EditText mEditTextSearch;//Связь с EditText
 
+    @Setter private EditText editTextSearch;//Связь с EditText
+    @Setter private KeyboardSwitcher keyboardSwitcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,55 +63,41 @@ public class NumberKeyboard extends Fragment {
         //При нажатии на кнопку выводится символ который соответствует кнопке в HashMap buttons
         for(Button b: buttons.keySet()){
             b.setOnClickListener(v -> {
-                StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
-                int pos = mEditTextSearch.getSelectionStart();
-                mEditTextSearch.setText(text.insert(pos,buttons.get(b)));
-                mEditTextSearch.setSelection(pos+1);
+                StringBuilder text = new StringBuilder(String.valueOf(editTextSearch.getText()));
+                int pos = editTextSearch.getSelectionStart();
+                editTextSearch.setText(text.insert(pos,buttons.get(b)));
+                editTextSearch.setSelection(pos+1);
             });
         }
 
         //Специальная кнопка Backspace <=
         final Button mBtnBackspace = view.findViewById(R.id.mBtnEngBackspace);
         mBtnBackspace.setOnClickListener(v->{
-            StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
-            if(mEditTextSearch.getSelectionStart() !=0) {
-                int pos = mEditTextSearch.getSelectionStart() - 1;
-                mEditTextSearch.setText(text.deleteCharAt(pos));
-                mEditTextSearch.setSelection(pos);
+            StringBuilder text = new StringBuilder(String.valueOf(editTextSearch.getText()));
+            if(editTextSearch.getSelectionStart() !=0) {
+                int pos = editTextSearch.getSelectionStart() - 1;
+                editTextSearch.setText(text.deleteCharAt(pos));
+                editTextSearch.setSelection(pos);
             }
         });
 
         //Специальная кнопка Clear
         final Button mBtnCLear = view.findViewById(R.id.mBtnEngClear);
         mBtnCLear.setOnClickListener(v->{
-            mEditTextSearch.setText("");
+            editTextSearch.setText("");
         });
 
         //Специальная кнопка PIK - выводт префикс по умолчанию
         final Button mBtnPIK = view.findViewById(R.id.mBtnPIK);
         mBtnPIK.setOnClickListener(v->{
-            mEditTextSearch.setText(DEFAULT_PREFIX);
-            mEditTextSearch.setSelection(DEFAULT_PREFIX.length());
+            editTextSearch.setText(DEFAULT_PREFIX);
+            editTextSearch.setSelection(DEFAULT_PREFIX.length());
         });
 
         final Button mBtnText = view.findViewById(R.id.mBtnText);
         mBtnText.setOnClickListener(v->{
-            FragmentManager fm = getActivity().getSupportFragmentManager();
-
-            Fragment fragment = fm.findFragmentById(R.id.keyboard_fragment);
-            Fragment fragmentReplace;
-            fragmentReplace = new RuKeyboard();
-            fm.beginTransaction()
-                    .replace(R.id.keyboard_fragment, fragmentReplace)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-
-                    .commit();
-
-
+            keyboardSwitcher.switchKeyboardTo(1);
         });
     }
 
-    public void setEditTextSearch(EditText editText){
-        this.mEditTextSearch = editText;
-    }
 }

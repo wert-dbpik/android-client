@@ -34,8 +34,8 @@
     </FrameLayout>
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/keyboard_fragment"
-        android:name="ru.wert.bazapik_mobile.keyboards.NumberKeyboard"
+        android:id="@+id/keyboard_container"
+        android:name="ru.wert.bazapik_mobile.keyboards.RuKeyboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
