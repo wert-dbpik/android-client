@@ -29,9 +29,9 @@ public class Passport extends _BaseEntity implements Item, Parcelable {
     public String toUsefulString() {
         String body = number;
         if(prefix.getName().equals("-"))
-            return body;
+            return body + ", " + name;
         else
-            return prefix.getName() + "." + body;
+            return prefix.getName() + "." + body + ", " + name;
     }
 
     //==========  Parcelable =======================

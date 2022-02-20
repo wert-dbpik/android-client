@@ -100,6 +100,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
             mEditTextSearch.setText(mBundleRecyclerViewState.getString(SEARCH_TEXT));
             Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(mRecViewItems.getLayoutManager()).onRestoreInstanceState(listState);
+
         }
     }
 
@@ -156,6 +157,22 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
 
         mRecViewItems.setLayoutManager(new LinearLayoutManager(this));
 
+        fillRecViewWithItems();
+
+        //При касании списка, поле ввода должно потерять фокус
+        //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
+        mRecViewItems.setOnTouchListener((v, event) -> {
+            mEditTextSearch.clearFocus();
+            return false; //если возвращать true, то список ограничится видимой частью
+        });
+
+        //Для красоты используем разделитель между элементами списка
+        mRecViewItems.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
+                DividerItemDecoration.VERTICAL));
+
+    }
+
+    private void fillRecViewWithItems() {
         new Thread(() -> {
             try {
                 allItems = (List<Passport>) ThisApplication.PASSPORT_SERVICE.findAll();
@@ -175,18 +192,6 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
             }
 
         }).start();
-
-        //При касании списка, поле ввода должно потерять фокус
-        //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
-        mRecViewItems.setOnTouchListener((v, event) -> {
-            mEditTextSearch.clearFocus();
-            return false; //если возвращать true, то список ограничится видимой частью
-        });
-
-        //Для красоты используем разделитель между элементами списка
-        mRecViewItems.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
-                DividerItemDecoration.VERTICAL));
-
     }
 
     /**
@@ -253,7 +258,8 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
                     else
                         foundItems = getFoundItems(text);
                     runOnUiThread(() -> {
-                        mAdapter.changeListOfItems(foundItems);
+                        if (foundItems != null)
+                            mAdapter.changeListOfItems(foundItems);
                     });
 
                 }).start();
@@ -285,8 +291,6 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
 
     /**
      * Обработка выбора меню
-     * @param item
-     * @return
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -301,6 +305,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
                 return true;
 
             case R.id.action_update:
+                mEditTextSearch.setText("");
                 Intent updateView = new Intent(SearchActivity.this, DataLoadingActivity.class);
                 startActivity(updateView);
                 return true;
@@ -338,7 +343,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     private List<Passport> getFoundItems(String searchText){
         List<Passport> foundItems = new ArrayList<>();
         for(Passport item : allItems){
-            if(item.toUsefulString().contains(searchText))
+            if(item.toUsefulString().toLowerCase().contains(searchText.toLowerCase()))
                 foundItems.add(item);
         }
         return foundItems;
