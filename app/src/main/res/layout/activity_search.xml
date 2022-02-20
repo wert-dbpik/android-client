@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Что искать?"
-        android:inputType="textPersonName"
+        android:hint="поиск"
+        android:inputType="textNoSuggestions"
         android:textAlignment="textStart"
         android:textSize="30sp" />
 
@@ -35,9 +35,10 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/keyboard_container"
-        android:name="ru.wert.bazapik_mobile.keyboards.RuKeyboard"
+        android:name="ru.wert.bazapik_mobile.keyboards.NumKeyboard"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        />
 
 </LinearLayout>
 

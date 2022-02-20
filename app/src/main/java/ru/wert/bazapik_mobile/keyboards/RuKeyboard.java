@@ -3,15 +3,21 @@ package ru.wert.bazapik_mobile.keyboards;
 import static ru.wert.bazapik_mobile.search.SearchActivity.ENG_KEYBOARD;
 import static ru.wert.bazapik_mobile.search.SearchActivity.NUM_KEYBOARD;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentContainerView;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,9 +27,9 @@ import java.util.Map;
 import lombok.Setter;
 import ru.wert.bazapik_mobile.R;
 
-public class RuKeyboard extends Fragment {
+public class RuKeyboard extends Fragment implements MyKeyboard{
 
-    @Setter private EditText mEditTextSearch;//Связь с EditText
+    @Setter private EditText editTextSearch;//Связь с EditText
 
     @Setter private KeyboardSwitcher keyboardSwitcher;
 
@@ -39,7 +45,6 @@ public class RuKeyboard extends Fragment {
     final private List<String> smallLetters = Arrays.asList("а", "б", "в", "г", "д", "е", "ж",
             "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т", "у", "ф", "х", "ц", "ч",
             "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я");
-
 
 
     private boolean shiftOn; //false - строчные, true - заглавные
@@ -100,6 +105,17 @@ public class RuKeyboard extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(editTextSearch.isFocused()) {
+            //Исправляем косяк с исчеающим фрагментом
+            FragmentActivity activity = getActivity();
+            FragmentContainerView keyboardContainer = activity.findViewById(R.id.keyboard_container);
+            keyboardContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
     /**
      * Метод устанавливает заглавные символы
      */
@@ -145,34 +161,43 @@ public class RuKeyboard extends Fragment {
         //А ... Я и ПРОБЕЛ
         for(Button b: values.keySet()){
             b.setOnClickListener(v -> {
-                StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
-                int pos = mEditTextSearch.getSelectionStart();
-                mEditTextSearch.setText(text.insert(pos, values.get(b)));
-                mEditTextSearch.setSelection(pos+1);
+                StringBuilder text = new StringBuilder(String.valueOf(editTextSearch.getText()));
+                int pos = editTextSearch.getSelectionStart();
+                editTextSearch.setText(text.insert(pos, values.get(b)));
+                editTextSearch.setSelection(pos+1);
             });
         }
 
         //BACKSPACE
         btnBackspace.setOnClickListener(v->{
-            StringBuilder text = new StringBuilder(String.valueOf(mEditTextSearch.getText()));
-            if(mEditTextSearch.getSelectionStart() !=0) {
-                int pos = mEditTextSearch.getSelectionStart() - 1;
-                mEditTextSearch.setText(text.deleteCharAt(pos));
-                mEditTextSearch.setSelection(pos);
+            StringBuilder text = new StringBuilder(String.valueOf(editTextSearch.getText()));
+            if(editTextSearch.getSelectionStart() !=0) {
+                int pos = editTextSearch.getSelectionStart() - 1;
+                editTextSearch.setText(text.deleteCharAt(pos));
+                editTextSearch.setSelection(pos);
             }
         });
 
-        //SHIFT
+        //SHIFT с подчерком
         btnShift.setOnClickListener(v->{
             shiftOn = !shiftOn;
-            if(shiftOn) setSmallLetters();
-            else setCapitalLetters();
+            if(!shiftOn) {
+                btnShift.setText("\u2302");
+                setSmallLetters();
+            }
+            else {
+                String s = "\u2302";
+                SpannableString ss=new SpannableString(s);
+                ss.setSpan(new UnderlineSpan(), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                btnShift.setText(ss);
+                setCapitalLetters();
+            }
 
         });
 
         //CLEAR ALL
         btnClear.setOnClickListener(v->{
-            mEditTextSearch.setText("");
+            editTextSearch.setText("");
         });
 
         //RU - ENG

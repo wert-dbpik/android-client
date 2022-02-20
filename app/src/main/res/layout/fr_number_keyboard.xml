@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".keyboards.NumberKeyboard">
+    tools:context=".keyboards.NumKeyboard">
 
     <TableLayout
         android:id="@+id/num_pane"
@@ -27,6 +27,7 @@
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
                 android:text="7"
+                android:padding="0pt"
                 android:textAlignment="center"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -38,6 +39,7 @@
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
                 android:text="8"
+                android:padding="0pt"
                 android:textSize="@dimen/btn_text_size" />
 
             <Button
@@ -47,6 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="9"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -57,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="\u27F8"
                 android:textSize="@dimen/btn_text_size" />
         </TableRow>
@@ -72,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="4"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -82,6 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="5"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -92,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="6"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -102,6 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="C"
                 android:textSize="@dimen/btn_text_size" />
         </TableRow>
@@ -117,6 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="1"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -127,6 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="2"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -137,6 +147,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="3"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -148,6 +159,7 @@
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
                 android:paddingHorizontal="0pt"
+                android:padding="0pt"
                 android:text="@string/textOnBtnPIK"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -164,6 +176,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="-"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -174,6 +187,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="0"
                 android:textSize="@dimen/btn_text_size" />
 
@@ -184,6 +198,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="."
                 android:textSize="@dimen/btn_text_size" />
 
@@ -194,6 +209,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
+                android:padding="0pt"
                 android:text="TXT"
                 android:textSize="@dimen/btn_text_size" />
         </TableRow>

@@ -5,7 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="bt_width">44pt</dimen>
     <dimen name="bt_height">25pt</dimen>
-    <dimen name="btn_text_size">25sp</dimen>
+    <dimen name="btn_text_size">20sp</dimen>
     <dimen name="btn_margin">2pt</dimen>
     <dimen name="letters_btn_font_size">20sp</dimen>
     <dimen name="btn_letter_margin">0pt</dimen>

@@ -4,7 +4,11 @@ package ru.wert.bazapik_mobile.keyboards;
 import static ru.wert.bazapik_mobile.search.SearchActivity.NUM_KEYBOARD;
 import static ru.wert.bazapik_mobile.search.SearchActivity.RU_KEYBOARD;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +17,8 @@ import android.widget.EditText;
 
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentContainerView;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,7 +28,7 @@ import java.util.Map;
 import lombok.Setter;
 import ru.wert.bazapik_mobile.R;
 
-public class EngKeyboard extends Fragment {
+public class EngKeyboard extends Fragment implements MyKeyboard{
 
 
     @Setter private EditText editTextSearch;//Связь с EditText
@@ -89,6 +95,17 @@ public class EngKeyboard extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(editTextSearch.isFocused()) {
+            //Исправляем косяк с исчеающим фрагментом
+            FragmentActivity activity = getActivity();
+            FragmentContainerView keyboardContainer = activity.findViewById(R.id.keyboard_container);
+            keyboardContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
     /**
      * Метод устанавливает заглавные символы
      */
@@ -151,11 +168,20 @@ public class EngKeyboard extends Fragment {
             }
         });
 
-        //SHIFT
+        //SHIFT с подчерком
         btnShift.setOnClickListener(v->{
             shiftOn = !shiftOn;
-            if(shiftOn) setSmallLetters();
-            else setCapitalLetters();
+            if(!shiftOn) {
+                btnShift.setText("\u2302");
+                setSmallLetters();
+            }
+            else {
+                String s = "\u2302";
+                SpannableString ss=new SpannableString(s);
+                ss.setSpan(new UnderlineSpan(), 0, s.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                btnShift.setText(ss);
+                setCapitalLetters();
+            }
 
         });
 

@@ -22,10 +22,10 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
@@ -34,7 +34,8 @@ import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
 import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
 import ru.wert.bazapik_mobile.keyboards.KeyboardSwitcher;
-import ru.wert.bazapik_mobile.keyboards.NumberKeyboard;
+import ru.wert.bazapik_mobile.keyboards.MyKeyboard;
+import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
@@ -98,7 +99,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
         if (mBundleRecyclerViewState != null) {
             mEditTextSearch.setText(mBundleRecyclerViewState.getString(SEARCH_TEXT));
             Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
-            mRecViewItems.getLayoutManager().onRestoreInstanceState(listState);
+            Objects.requireNonNull(mRecViewItems.getLayoutManager()).onRestoreInstanceState(listState);
         }
     }
 
@@ -108,7 +109,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
         super.onPause();
         mBundleRecyclerViewState = new Bundle();
         mBundleRecyclerViewState.putString(SEARCH_TEXT, mEditTextSearch.getText().toString());
-        Parcelable listState = mRecViewItems.getLayoutManager().onSaveInstanceState();
+        Parcelable listState = Objects.requireNonNull(mRecViewItems.getLayoutManager()).onSaveInstanceState();
         mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
 
     }
@@ -118,12 +119,8 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
      * состояющую из ЦИФРОВОЙ и ТЕКСТОВОЙ клавиатур
      */
     private void createKeyboards() {
-//        NumberKeyboard numberKeyboard = (NumberKeyboard)
-//                getSupportFragmentManager().findFragmentById(R.id.keyboard_container);
-//        //Связываем поле поиска с клавиатурой
-//        numberKeyboard.setEditTextSearch(mEditTextSearch);
 
-        NumberKeyboard numberKeyboard = new NumberKeyboard();
+        NumKeyboard numberKeyboard = new NumKeyboard();
         numberKeyboard.setKeyboardSwitcher(this);
         numberKeyboard.setEditTextSearch(mEditTextSearch);
         keyboards.add(NUM_KEYBOARD, numberKeyboard);
@@ -138,7 +135,17 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
         engKeyboard.setEditTextSearch(mEditTextSearch);
         keyboards.add(ENG_KEYBOARD, engKeyboard);
 
-        switchKeyboardTo(1);
+        switchKeyboardTo(NUM_KEYBOARD);
+
+    }
+
+    @Override
+    public void switchKeyboardTo(int keyboard) {
+        MyKeyboard myKeyboard = (MyKeyboard) keyboards.get(keyboard);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.keyboard_container, (Fragment) myKeyboard);
+        ft.commit();
 
     }
 
@@ -338,10 +345,5 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     }
 
 
-    @Override
-    public void switchKeyboardTo(int keyboard) {
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.keyboard_container, keyboards.get(keyboard));
-        ft.commit();
-    }
+
 }

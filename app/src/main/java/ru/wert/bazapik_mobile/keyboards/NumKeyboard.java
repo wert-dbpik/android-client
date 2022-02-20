@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile.keyboards;
 
+import static ru.wert.bazapik_mobile.search.SearchActivity.RU_KEYBOARD;
+
 import android.os.Bundle;
 
 
@@ -11,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentContainerView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +22,7 @@ import java.util.Map;
 import lombok.Setter;
 import ru.wert.bazapik_mobile.R;
 
-public class NumberKeyboard extends Fragment {
+public class NumKeyboard extends Fragment implements MyKeyboard{
 
     private final String TAG = getClass().getSimpleName();
     static final String DEFAULT_PREFIX = "ПИК"; //использовать дефолтное
@@ -35,6 +39,17 @@ public class NumberKeyboard extends Fragment {
         init(view);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(editTextSearch.isFocused()) {
+            //Исправляем косяк с исчеающим фрагментом
+            FragmentActivity activity = getActivity();
+            FragmentContainerView keyboardContainer = activity.findViewById(R.id.keyboard_container);
+            keyboardContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -96,7 +111,7 @@ public class NumberKeyboard extends Fragment {
 
         final Button mBtnText = view.findViewById(R.id.mBtnText);
         mBtnText.setOnClickListener(v->{
-            keyboardSwitcher.switchKeyboardTo(1);
+            keyboardSwitcher.switchKeyboardTo(RU_KEYBOARD);
         });
     }
 
