@@ -22,6 +22,8 @@ import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
 
 public class ThisApplication extends Application {
 
+    public static final String APPLICATION_VERSION = "1.0 beta";
+
     public static PassportService PASSPORT_SERVICE;
     public static PassportQuickService PASSPORT_QUICK_SERVICE;
 

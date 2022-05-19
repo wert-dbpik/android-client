@@ -77,13 +77,13 @@ public class UserGroupService implements IUserGroupService, ItemService<UserGrou
     }
 
     @Override
-    public boolean save(UserGroup entity) {
+    public UserGroup save(UserGroup entity) {
         try {
             Call<UserGroup> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

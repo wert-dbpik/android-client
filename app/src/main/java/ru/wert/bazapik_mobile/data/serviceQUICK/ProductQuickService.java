@@ -116,8 +116,8 @@ public class ProductQuickService implements IProductService {
     }
 
     @Override
-    public boolean save(Product product) {
-        boolean res = service.save(product);
+    public Product save(Product product) {
+        Product res = service.save(product);
         reload();
         return res;
     }

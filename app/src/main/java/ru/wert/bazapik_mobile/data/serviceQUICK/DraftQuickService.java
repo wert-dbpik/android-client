@@ -112,8 +112,8 @@ public class DraftQuickService extends Application implements IDraftService {
     }
 
     @Override
-    public boolean save(Draft draft) {
-        boolean res = service.save(draft);
+    public Draft save(Draft draft) {
+        Draft res = service.save(draft);
         reload();
         return res;
     }

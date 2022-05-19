@@ -77,13 +77,13 @@ public class AnyPartService implements IAnyPartService, ItemService<AnyPart> {
     }
 
     @Override
-    public boolean save(AnyPart entity) {
+    public AnyPart save(AnyPart entity) {
         try {
             Call<AnyPart> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

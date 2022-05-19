@@ -76,13 +76,13 @@ public class PrefixService implements IPrefixService, ItemService<Prefix> {
     }
 
     @Override
-    public boolean save(Prefix entity) {
+    public Prefix save(Prefix entity) {
         try {
             Call<Prefix> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

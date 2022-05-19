@@ -13,6 +13,11 @@
         android:orderInCategory="2"
         app:showAsAction="never"/>
     <item
+        android:title="Сменить пользователя"
+        android:id="@+id/action_changeUser"
+        android:orderInCategory="2"
+        app:showAsAction="never"/>
+    <item
         android:title="@string/menuExit"
         android:id="@+id/action_exit"
         android:orderInCategory="3"

@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.data.util;
 
 import ru.wert.bazapik_mobile.data.servicesREST.AnyPartService;
 import ru.wert.bazapik_mobile.data.servicesREST.AnyPartTypeService;
+import ru.wert.bazapik_mobile.data.servicesREST.AppLogService;
 import ru.wert.bazapik_mobile.data.servicesREST.AppSettingsService;
 import ru.wert.bazapik_mobile.data.servicesREST.AsmItemService;
 import ru.wert.bazapik_mobile.data.servicesREST.AssembleService;
@@ -20,6 +21,9 @@ import ru.wert.bazapik_mobile.data.servicesREST.ProductGroupService;
 import ru.wert.bazapik_mobile.data.servicesREST.ProductService;
 import ru.wert.bazapik_mobile.data.servicesREST.UserGroupService;
 import ru.wert.bazapik_mobile.data.servicesREST.UserService;
+import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
+import ru.wert.bazapik_mobile.data.servicesREST.VersionDesktopService;
+import ru.wert.bazapik_mobile.data.servicesREST.VersionServerService;
 
 
 public class BLlinks {
@@ -44,6 +48,11 @@ public class BLlinks {
     public static AsmItemService asmItemService;
     public static DraftService draftService;
     public static PassportService passportService;
+
+    public static VersionAndroidService versionAndroidService;
+    public static VersionDesktopService versionDesktopService;
+    public static VersionServerService versionServerService;
+    public static AppLogService appLogService;
 
 
 }

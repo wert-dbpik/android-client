@@ -78,8 +78,8 @@ public class AnyPartQuickService implements IAnyPartService {
     }
 
     @Override
-    public boolean save(AnyPart part) {
-        boolean savedPart = service.save(part);
+    public AnyPart save(AnyPart part) {
+        AnyPart savedPart = service.save(part);
         reload();
         return savedPart;
     }

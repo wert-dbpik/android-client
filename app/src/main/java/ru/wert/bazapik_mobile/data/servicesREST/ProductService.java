@@ -142,13 +142,13 @@ public class ProductService implements IProductService, PartItem {
     }
 
     @Override
-    public boolean save(Product entity) {
+    public Product save(Product entity) {
         try {
             Call<Product> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

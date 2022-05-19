@@ -1,40 +1,41 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
 import retrofit2.Call;
-import ru.wert.bazapik_mobile.data.api_interfaces.CoatApiInterface;
-import ru.wert.bazapik_mobile.data.service_interfaces.ICoatService;
+import ru.wert.bazapik_mobile.data.api_interfaces.VersionServerApiInterface;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
-import ru.wert.bazapik_mobile.data.models.Coat;
+import ru.wert.bazapik_mobile.data.models.VersionServer;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.data.service_interfaces.IVersionServerService;
 import ru.wert.bazapik_mobile.data.util.BLlinks;
+
 
 import java.io.IOException;
 import java.util.List;
 
-public class CoatService implements ICoatService, ItemService<Coat> {
+public class VersionServerService implements IVersionServerService, ItemService<VersionServer> {
 
-    private static CoatService instance;
-    private CoatApiInterface api;
+    private static VersionServerService instance;
+    private VersionServerApiInterface api;
 
-    private CoatService() {
-        BLlinks.coatService = this;
-        api = RetrofitClient.getInstance().getRetrofit().create(CoatApiInterface.class);
+    private VersionServerService() {
+        BLlinks.versionServerService = this;
+        api = RetrofitClient.getInstance().getRetrofit().create(VersionServerApiInterface.class);
     }
 
-    public CoatApiInterface getApi() {
+    public VersionServerApiInterface getApi() {
         return api;
     }
 
-    public static CoatService getInstance() {
+    public static VersionServerService getInstance() {
         if (instance == null)
-            return new CoatService();
+            return new VersionServerService();
         return instance;
     }
 
     @Override
-    public Coat findById(Long id) {
+    public VersionServer findById(Long id) {
         try {
-            Call<Coat> call = api.getById(id);
+            Call<VersionServer> call = api.getById(id);
             return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,9 +44,20 @@ public class CoatService implements ICoatService, ItemService<Coat> {
     }
 
 
-    public Coat findByName(String name) {
+    public VersionServer findByName(String name) {
         try {
-            Call<Coat> call = api.getByName(name);
+            Call<VersionServer> call = api.getByName(name);
+            return call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @Override
+    public List<VersionServer> findAll() {
+        try {
+            Call<List<VersionServer>> call = api.getAll();
             return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,31 +66,15 @@ public class CoatService implements ICoatService, ItemService<Coat> {
     }
 
     @Override
-    public List<Coat> findAll() {
-        try {
-            Call<List<Coat>> call = api.getAll();
-            return (call.execute().body());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public List<VersionServer> findAllByText(String text) {
+        //не используется
         return null;
     }
 
     @Override
-    public List<Coat> findAllByText(String text) {
+    public VersionServer save(VersionServer entity) {
         try {
-            Call<List<Coat>> call = api.getAllByText(text);
-            return (call.execute().body());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public Coat save(Coat entity) {
-        try {
-            Call<Coat> call = api.create(entity);
+            Call<VersionServer> call = api.create(entity);
             return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,7 +83,7 @@ public class CoatService implements ICoatService, ItemService<Coat> {
     }
 
     @Override
-    public boolean update(Coat entity) {
+    public boolean update(VersionServer entity) {
         try {
             Call<Void> call = api.update(entity);
             return call.execute().isSuccessful();
@@ -98,7 +94,7 @@ public class CoatService implements ICoatService, ItemService<Coat> {
     }
 
     @Override
-    public boolean delete(Coat entity) {
+    public boolean delete(VersionServer entity) {
         Long id = entity.getId();
         try {
             Call<Void> call = api.deleteById(id);
@@ -108,6 +104,5 @@ public class CoatService implements ICoatService, ItemService<Coat> {
             return false;
         }
     }
-
 
 }

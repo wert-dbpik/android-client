@@ -194,13 +194,13 @@ public class DraftService extends Application implements IDraftService {
     }
 
     @Override
-    public boolean save(Draft entity) {
+    public Draft save(Draft entity) {
         try {
             Call<Draft> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

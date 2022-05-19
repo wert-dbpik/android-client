@@ -72,8 +72,8 @@ public class FolderQuickService implements IFolderService {
     }
 
     @Override
-    public boolean save(Folder folder) {
-        boolean res = service.save(folder);
+    public Folder save(Folder folder) {
+        Folder res = service.save(folder);
         reload();
         return res;
     }

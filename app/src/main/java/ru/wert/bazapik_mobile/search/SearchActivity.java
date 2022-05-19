@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Passport;
@@ -309,6 +310,13 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
                 Intent updateView = new Intent(SearchActivity.this, DataLoadingActivity.class);
                 startActivity(updateView);
                 return true;
+
+            case R.id.action_changeUser:
+                mEditTextSearch.setText("");
+                Intent loginView = new Intent(SearchActivity.this, LoginActivity.class);
+                startActivity(loginView);
+                return true;
+
             case R.id.action_exit:
                 exitApplication();
             default:

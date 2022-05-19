@@ -78,13 +78,13 @@ public class MaterialService implements IMaterialService, ItemService<Material>,
     }
 
     @Override
-    public boolean save(Material entity) {
+    public Material save(Material entity) {
         try {
             Call<Material> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

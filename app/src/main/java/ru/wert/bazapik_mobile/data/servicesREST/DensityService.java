@@ -87,13 +87,13 @@ public class DensityService implements IDensityService, ItemService<Density> {
     }
 
     @Override
-    public boolean save(Density entity) {
+    public Density save(Density entity) {
         try {
             Call<Density> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

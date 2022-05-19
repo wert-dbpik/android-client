@@ -77,13 +77,13 @@ public class ProcessService implements IProcessService, ItemService<TechProcess>
     }
 
     @Override
-    public boolean save(TechProcess entity) {
+    public TechProcess save(TechProcess entity) {
         try {
             Call<TechProcess> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

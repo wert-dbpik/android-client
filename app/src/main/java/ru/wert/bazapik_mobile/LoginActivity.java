@@ -1,13 +1,20 @@
 package ru.wert.bazapik_mobile;
 
+import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.ThisApplication.setProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,13 +30,20 @@ public class LoginActivity extends BaseActivity {
 
     private static String TAG = "LoginActivity";
     private TextView mPincode;
+    private AutoCompleteTextView mUserName;
     private Button mEnter;
     private static int countOfNumbers;
+    private List<String> names;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mUserName = findViewById(R.id.autoCompleteUserNameTextView);
+        mUserName.setText(getProp("USER_NAME"));
+        mUserName.setThreshold(1);//Начинаем подсказывать с 3 символа
+        fillWithUsers(mUserName);
 
         mPincode = findViewById(R.id.tvPincode);
         mEnter = findViewById(R.id.btnEnter);
@@ -38,33 +52,76 @@ public class LoginActivity extends BaseActivity {
 
             UserApiInterface api = RetrofitClient.getInstance().getRetrofit().create(UserApiInterface.class);
             Log.d(TAG, "Ищем пользователя по введенному паролю");
-            Call<User> call = api.getByPassword(String.valueOf(mPincode.getText()));
+            Call<User> call = api.getByName(String.valueOf(mUserName.getText()));
             call.enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     if(response.isSuccessful()){
                         User currentUser = response.body();
 
-                        Log.d(TAG, "Пользователь найден: " + currentUser.getName() + "Он становится CURRENT_USER");
-                        CURRENT_USER = currentUser;
-                        setProp("USER_NAME", currentUser.getName());
-                        Log.d(TAG, "Переходим в DataLoadingActivity");
-                        Intent searchIntent = new Intent(LoginActivity.this, DataLoadingActivity.class);
-                        startActivity(searchIntent);
+                        if(currentUser.getPassword().equals(mPincode.getText().toString())) {
+                            Log.d(TAG, String.format("Пользователь '%s' становится CURRENT_USER", currentUser.getName()));
+                            CURRENT_USER = currentUser;
+                            createLog(true, "Подключился к серверу");
+                            setProp("USER_NAME", currentUser.getName());
+                            Log.d(TAG, "Переходим в DataLoadingActivity");
+                            Intent searchIntent = new Intent(LoginActivity.this, DataLoadingActivity.class);
+                            startActivity(searchIntent);
+                        } else {
+                            Log.d(TAG, "Пароль не подходит");
+                            new Warning1().show(LoginActivity.this, "Внимание!", "Пароль не подходит.");
+                        }
+                    } else {
+                        Log.d(TAG, String.format("Пользователя с именем '%s' не найдено", mUserName.getText()));
+                        new Warning1().show(LoginActivity.this, "Внимание!", "Пользователь не найден.");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    if(t.getMessage().contains("Failed to connect")) {
-                        Log.d(TAG, "Проблемы с доступом к серверу: " + t.getMessage());
-                        new Warning1().show(LoginActivity.this, "Внимание", "Сервер не доступен, поробуйте позднее");
-                    } else {
-                        Log.d(TAG, "Пользователь по введенному паролю не найден, сообщаем о проблеме и повторяем запрос");
-                        new Warning1().show(LoginActivity.this, "Внимание!", "Пользователь с таким паролем не найден, введите пароль еще раз.");
-                    }
+                    Log.d(TAG, String.format("Пользователя с именем '%s' не найдено", mUserName.getText()));
+                    new Warning1().show(LoginActivity.this, "Внимание!", "Пользователь не найден.");
                 }
             });
+        });
+
+    }
+
+    private void fillWithUsers(AutoCompleteTextView view) {
+        UserApiInterface api = RetrofitClient.getInstance().getRetrofit().create(UserApiInterface.class);
+        Call<List<User>> call = api.getAll();
+        call.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response.isSuccessful()) {
+                    List<User> allUsers = response.body();
+
+                    names = new AbstractList<String>() {
+                        @Override
+                        public int size() {
+                            return allUsers.size();
+                        }
+
+                        @Override
+                        public String get(int location) {
+                            return allUsers.get(location).getName();
+                        }
+                    };
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(LoginActivity.this,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            names);
+                    view.setAdapter(adapter);
+
+                } else {
+                    handleBadRequest(response, TAG);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                handleOnFailure(t, TAG);
+            }
         });
 
     }

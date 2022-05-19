@@ -101,13 +101,13 @@ public class AssembleService implements IAssembleService, ItemService<Assemble> 
         return null;
     }
 
-    public boolean save(Assemble entity) {
+    public Assemble save(Assemble entity) {
         try {
             Call<Assemble> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

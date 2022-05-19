@@ -57,8 +57,8 @@ public class PrefixQuickService implements IPrefixService {
     }
 
     @Override
-    public boolean save(Prefix prefix) {
-        boolean res = service.save(prefix);
+    public Prefix save(Prefix prefix) {
+        Prefix res = service.save(prefix);
         reload();
         return res;
     }

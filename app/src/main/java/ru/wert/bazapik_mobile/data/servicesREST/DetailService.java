@@ -103,14 +103,14 @@ public class DetailService implements IDetailService, ItemService<Detail>, PartI
     }
 
     @Override
-    public boolean save(Detail entity) {
+    public Detail save(Detail entity) {
         System.out.println("сохраняем" );
         try {
             Call<Detail> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

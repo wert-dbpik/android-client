@@ -38,8 +38,8 @@ public class PassportQuickService implements IPassportService {
   //   ОСНОВНЫЕ
 
     @Override
-    public boolean save(Passport passport) throws Exception{
-        boolean res = PASSPORT_SERVICE.save(passport);
+    public Passport save(Passport passport) throws Exception{
+        Passport res = PASSPORT_SERVICE.save(passport);
         reload();
         return res;
     }

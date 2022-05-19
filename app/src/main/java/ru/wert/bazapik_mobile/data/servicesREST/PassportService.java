@@ -99,13 +99,13 @@ public class PassportService implements IPassportService, ItemService<Passport> 
     }
 
     @Override
-    public boolean save(Passport entity) {
+    public Passport save(Passport entity) {
         try {
             Call<Passport> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

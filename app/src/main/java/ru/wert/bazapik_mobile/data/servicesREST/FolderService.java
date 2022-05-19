@@ -87,12 +87,12 @@ public class FolderService implements IFolderService, ItemService<Folder> {
     }
 
     @Override
-    public boolean save(Folder entity) {
+    public Folder save(Folder entity) {
         try {
             Call<Folder> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
-            return false;
+            return null;
         }
     }
 

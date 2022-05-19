@@ -12,7 +12,7 @@ public interface ItemService<T extends Item> {
 
     T findById(Long id);
 
-    boolean save(T t) throws Exception;
+    T save(T t) throws Exception;
 
     boolean update(T t) throws Exception;
 

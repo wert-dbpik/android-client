@@ -76,13 +76,13 @@ public class AppSettingsService implements IAppSettingsService, ItemService<AppS
     }
 
     @Override
-    public boolean save(AppSettings entity) {
+    public AppSettings save(AppSettings entity) {
         try {
             Call<AppSettings> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

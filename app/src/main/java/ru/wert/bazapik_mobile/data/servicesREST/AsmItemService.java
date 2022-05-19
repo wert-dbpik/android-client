@@ -79,13 +79,13 @@ public class AsmItemService implements IAsmItemService, ItemService<AsmItem> {
     }
 
     @Override
-    public boolean save(AsmItem entity) {
+    public AsmItem save(AsmItem entity) {
         try {
             Call<AsmItem> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

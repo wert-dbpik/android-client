@@ -76,13 +76,13 @@ public class MaterialGroupService implements IMaterialGroupService, ItemService<
     }
 
     @Override
-    public boolean save(MaterialGroup entity) {
+    public MaterialGroup save(MaterialGroup entity) {
         try {
             Call<MaterialGroup> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

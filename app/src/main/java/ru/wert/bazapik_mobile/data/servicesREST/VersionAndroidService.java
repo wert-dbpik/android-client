@@ -1,40 +1,41 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
 import retrofit2.Call;
-import ru.wert.bazapik_mobile.data.api_interfaces.CoatApiInterface;
-import ru.wert.bazapik_mobile.data.service_interfaces.ICoatService;
+import ru.wert.bazapik_mobile.data.api_interfaces.VersionAndroidApiInterface;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
-import ru.wert.bazapik_mobile.data.models.Coat;
+import ru.wert.bazapik_mobile.data.models.VersionAndroid;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.data.service_interfaces.IVersionAndroidService;
 import ru.wert.bazapik_mobile.data.util.BLlinks;
+
 
 import java.io.IOException;
 import java.util.List;
 
-public class CoatService implements ICoatService, ItemService<Coat> {
+public class VersionAndroidService implements IVersionAndroidService, ItemService<VersionAndroid> {
 
-    private static CoatService instance;
-    private CoatApiInterface api;
+    private static VersionAndroidService instance;
+    private VersionAndroidApiInterface api;
 
-    private CoatService() {
-        BLlinks.coatService = this;
-        api = RetrofitClient.getInstance().getRetrofit().create(CoatApiInterface.class);
+    private VersionAndroidService() {
+        BLlinks.versionAndroidService = this;
+        api = RetrofitClient.getInstance().getRetrofit().create(VersionAndroidApiInterface.class);
     }
 
-    public CoatApiInterface getApi() {
+    public VersionAndroidApiInterface getApi() {
         return api;
     }
 
-    public static CoatService getInstance() {
+    public static VersionAndroidService getInstance() {
         if (instance == null)
-            return new CoatService();
+            return new VersionAndroidService();
         return instance;
     }
 
     @Override
-    public Coat findById(Long id) {
+    public VersionAndroid findById(Long id) {
         try {
-            Call<Coat> call = api.getById(id);
+            Call<VersionAndroid> call = api.getById(id);
             return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,9 +44,20 @@ public class CoatService implements ICoatService, ItemService<Coat> {
     }
 
 
-    public Coat findByName(String name) {
+    public VersionAndroid findByName(String name) {
         try {
-            Call<Coat> call = api.getByName(name);
+            Call<VersionAndroid> call = api.getByName(name);
+            return call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @Override
+    public List<VersionAndroid> findAll() {
+        try {
+            Call<List<VersionAndroid>> call = api.getAll();
             return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -54,31 +66,15 @@ public class CoatService implements ICoatService, ItemService<Coat> {
     }
 
     @Override
-    public List<Coat> findAll() {
-        try {
-            Call<List<Coat>> call = api.getAll();
-            return (call.execute().body());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public List<VersionAndroid> findAllByText(String text) {
+        //не используется
         return null;
     }
 
     @Override
-    public List<Coat> findAllByText(String text) {
+    public VersionAndroid save(VersionAndroid entity) {
         try {
-            Call<List<Coat>> call = api.getAllByText(text);
-            return (call.execute().body());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
-    public Coat save(Coat entity) {
-        try {
-            Call<Coat> call = api.create(entity);
+            Call<VersionAndroid> call = api.create(entity);
             return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -87,7 +83,7 @@ public class CoatService implements ICoatService, ItemService<Coat> {
     }
 
     @Override
-    public boolean update(Coat entity) {
+    public boolean update(VersionAndroid entity) {
         try {
             Call<Void> call = api.update(entity);
             return call.execute().isSuccessful();
@@ -98,7 +94,7 @@ public class CoatService implements ICoatService, ItemService<Coat> {
     }
 
     @Override
-    public boolean delete(Coat entity) {
+    public boolean delete(VersionAndroid entity) {
         Long id = entity.getId();
         try {
             Call<Void> call = api.deleteById(id);
@@ -108,6 +104,5 @@ public class CoatService implements ICoatService, ItemService<Coat> {
             return false;
         }
     }
-
 
 }

@@ -17,6 +17,7 @@ public class User extends _BaseEntity implements Item {
     private String name;
     private String password;
     private UserGroup userGroup;
+    private boolean logging; //следует ли пользователя логировать
 
     @Override
     public String toUsefulString() {

@@ -86,13 +86,13 @@ public class UserService implements IUserService, ItemService<User> {
     }
 
     @Override
-    public boolean save(User entity) {
+    public User save(User entity) {
         try {
             Call<User> call = api.create(entity);
-            return call.execute().isSuccessful();
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

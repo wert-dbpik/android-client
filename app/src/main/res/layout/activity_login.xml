@@ -19,6 +19,39 @@
         android:textColor="#FFFFFF"
         android:textSize="20sp" />
 
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="5dp"
+        android:text="Пользователь" />
+
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteUserNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:paddingStart="10dp"
+        android:background="#d7d7d7"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:inputType="textNoSuggestions"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:hint="Фамилия Имя"
+        />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="5dp"
+        android:text="Пароль" />
+
     <EditText
         android:id="@+id/tvPincode"
         android:inputType="numberPassword"
@@ -29,21 +62,12 @@
         android:layout_marginHorizontal="20dp"
         android:background="#d7d7d7"
         android:digits=".0123456789\n"
-        android:imeOptions="actionDone"
         android:paddingStart="10dp"
         android:singleLine="true"
         android:textColor="#000000"
-        android:textAlignment="center"
-
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="5dp"
-        android:text="Введите пинкод" />
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/btnEnter"
