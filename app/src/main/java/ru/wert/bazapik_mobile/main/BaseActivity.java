@@ -8,12 +8,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.constants.StaticMethods;
@@ -33,7 +39,7 @@ import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
 import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
 
 public abstract class BaseActivity extends AppCompatActivity {
-
+    private static final String TAG = "BaseActivity";
 
 
     @Override
@@ -67,10 +73,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void handleBadRequest(Response response, String TAG) {
         switch (response.code()) {
             case 404:
-                Log.d(TAG, "Проблемы с доступом к серверу");
+                Log.e(TAG, "Проблемы с доступом к серверу");
                 new Warning1().show(this, "Внимание", "Сервер не доступен, поробуйте позднее");
                 break;
             case 500:
+                Log.e(TAG, "Проблемы на серверу");
                 new Warning1().show(this, "Внимание", "Ошибка на сервере " + response.code());
                 break;
         }
@@ -81,18 +88,41 @@ public abstract class BaseActivity extends AppCompatActivity {
      * CURRENT_PROJECT_VERSION не определяется при запуске приложения из-под IDE
      */
     protected void createLog(boolean forAdminOnly, String text) {
-//        Time time = new Time();   time.setToNow();
+
         if (forAdminOnly && !CURRENT_USER.isLogging()) return;
         AppLogApiInterface api = RetrofitClient.getInstance().getRetrofit().create(AppLogApiInterface.class);
-        api.create(new AppLog(
-//                LocalDateTime.now().toString(),
-                Calendar.getInstance().getTime().toString(),
+        //LocalDateTime.now() не работает, поэтому используем Date
+        Date date = Calendar.getInstance().getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        AppLog log = new AppLog(
+                df.format(date),
                 forAdminOnly,
                 CURRENT_USER,
                 1,
                 APPLICATION_VERSION,
                 text
-        ));
+        );
+
+
+        Call<AppLog> call = api.create(log);
+//        try {
+//            call.execute();
+//        } catch (IOException e) {
+//            Log.e(TAG, e.getMessage());
+//        }
+        call.enqueue(new Callback<AppLog>() {
+            @Override
+            public void onResponse(Call<AppLog> call, Response<AppLog> response) {
+                if(!response.isSuccessful())
+                    handleBadRequest(response, TAG);
+            }
+
+            @Override
+            public void onFailure(Call<AppLog> call, Throwable t) {
+                handleOnFailure(t, TAG);
+            }
+        });
 
     }
 

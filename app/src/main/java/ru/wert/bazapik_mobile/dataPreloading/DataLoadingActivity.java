@@ -10,6 +10,11 @@ import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.search.SearchActivity;
 
+/**
+ * В классе происходит подгрузка базы данных
+ * При успешной загрузке приложение открывает окно Поиска, при неудачной - закрывается
+ * Так же загрузка данных вызывается из меню окна Поиска для обновления данных
+ */
 public class DataLoadingActivity extends BaseActivity {
 
     @Override

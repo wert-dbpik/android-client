@@ -5,6 +5,7 @@ import static android.Manifest.permission.INTERNET;
 import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
+import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
 import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
 import static ru.wert.bazapik_mobile.constants.Consts.STORAGE_PERMISSION_CODE;
@@ -29,11 +30,17 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.security.Permission;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.constants.Consts;
+import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
@@ -41,6 +48,15 @@ import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.servicesREST.UserService;
 import ru.wert.bazapik_mobile.warnings.Warning1;
 
+/**
+ * Отправная точка работы приложения
+ * 1) Запускается Ретрофит
+ * 2) Осуществляется проверка доступности базы данных через загрузку пользователя с id = 1
+ * 3) Если база доступна, то в таблице логов производится запись о поключении к серверу пользователя,
+ *    указанного в файле Properties приложения и открывается Окно загрузки данных,
+ *    иначе - открывается Окно подключения к серверу
+ * 4) Загружаются настройки приложения
+ */
 public class StartActivity extends BaseActivity {
 
     private static final String TAG = "StartActivity";
@@ -70,8 +86,6 @@ public class StartActivity extends BaseActivity {
     }
 
 
-
-
     private void startRetrofit() {
         checkForPermissions();
         //Константа принимает первоначальное значение
@@ -80,12 +94,24 @@ public class StartActivity extends BaseActivity {
             RetrofitClient.setBASE_URL(DATA_BASE_URL);
             Log.d(TAG, "startRetrofit: " + String.format("base url = %s", DATA_BASE_URL));
             //Проверка соединения по доступности пользователя с id = 1
-            UserService.getInstance().getApi().getById(1L).enqueue(new Callback<User>() {
+            UserApiInterface api = UserService.getInstance().getApi();
+            api.getAll().enqueue(new Callback<List<User>>() {
                 @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.isSuccessful()) {
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
                         //Если соединение с сервером удалось, то IP сохраняется в файл свойств
+                        String userNameInProps = getProp("USER_NAME");
+                        if (!userNameInProps.equals("")) {
+                            for (User u : response.body()) {
+                                if (u.getName().equals(userNameInProps)) {
+                                    CURRENT_USER = u;
 
+                                    createLog(true, "Подключился к серверу");
+
+
+                                }
+                            }
+                        }
                         runOnUiThread(() -> {
                             Intent searchIntent = new Intent(StartActivity.this, DataLoadingActivity.class);
                             startActivity(searchIntent);
@@ -94,7 +120,7 @@ public class StartActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onFailure(Call<User> call, Throwable t) {
+                public void onFailure(Call<List<User>> call, Throwable t) {
                     Intent intent = new Intent(StartActivity.this, ConnectionToServer.class);
                     startActivity(intent);
 

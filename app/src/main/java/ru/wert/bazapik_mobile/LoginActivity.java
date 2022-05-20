@@ -26,6 +26,15 @@ import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.warnings.Warning1;
 
+/**
+ * В классе открывается окно Login, после ввода данных происходит сверка
+ * Сначала проверяется наличие в базе пользователя с введенным именем, если пользователь
+ * с таким именем существует, то проверяется введенный пароль, иначе пользователю сообщается, что
+ * пользователя с таким именем не найдено. Если не верен пароль, то выводится соответтвующее
+ * оповещение.
+ * При успешном входе на сервер, пользователю открывается окно загрузки данных
+ * Класс вызывается также при смене пользователя через меню
+ */
 public class LoginActivity extends BaseActivity {
 
     private static String TAG = "LoginActivity";

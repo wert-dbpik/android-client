@@ -50,7 +50,7 @@ public class RetrofitClient extends Application {
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .client(client.build()) // логгирование ответа
+//                .client(client.build()) // логгирование ответа
                 .build();
 
     }
