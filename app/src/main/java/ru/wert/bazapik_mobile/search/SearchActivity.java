@@ -31,6 +31,8 @@ import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.data.models.VersionAndroid;
+import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
 import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
@@ -41,6 +43,9 @@ import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.Warning1;
+
+import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
+import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
 
 /**
  * Окно поиска чертежа.
@@ -87,6 +92,21 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
         createKeyboards();
         createSearchEditText();
         createRecycleViewOfFoundItems();
+
+        new Thread(()->{
+            List<VersionAndroid> alVersions = VersionAndroidService.getInstance().findAll();
+            APPLICATION_VERSION_AVAILABLE = alVersions.get(alVersions.size()-1).getName();
+            if(APPLICATION_VERSION_AVAILABLE.compareTo(ThisApplication.APPLICATION_VERSION) > 0 &&
+                    !APP_VERSION_NOTIFICATION_SHOWN) {
+
+                APP_VERSION_NOTIFICATION_SHOWN = true;
+                runOnUiThread(() -> {
+                    new Warning1().show(SearchActivity.this,
+                            "Внимание!",
+                            "Доступна новая версия " + APPLICATION_VERSION_AVAILABLE);
+                });
+            }
+        }).start();
 
     }
 
