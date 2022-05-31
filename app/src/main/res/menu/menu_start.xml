@@ -18,8 +18,13 @@
         android:orderInCategory="2"
         app:showAsAction="never"/>
     <item
+        android:title="Сменить пароль"
+        android:id="@+id/action_changePass"
+        android:orderInCategory="3"
+        app:showAsAction="never"/>
+    <item
         android:title="@string/menuExit"
         android:id="@+id/action_exit"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         app:showAsAction="never"/>
 </menu>

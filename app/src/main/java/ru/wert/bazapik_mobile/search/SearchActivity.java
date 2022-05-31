@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import ru.wert.bazapik_mobile.ChangePassActivity;
 import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
@@ -335,6 +336,12 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
                 mEditTextSearch.setText("");
                 Intent loginView = new Intent(SearchActivity.this, LoginActivity.class);
                 startActivity(loginView);
+                return true;
+
+            case R.id.action_changePass:
+                mEditTextSearch.setText("");
+                Intent changePassView = new Intent(SearchActivity.this, ChangePassActivity.class);
+                startActivity(changePassView);
                 return true;
 
             case R.id.action_exit:

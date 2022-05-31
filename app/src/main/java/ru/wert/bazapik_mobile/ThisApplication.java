@@ -22,7 +22,7 @@ import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
 
 public class ThisApplication extends Application {
 
-    public static final String APPLICATION_VERSION = "1.0";
+    public static final String APPLICATION_VERSION = "1.1";
     public static boolean APP_VERSION_NOTIFICATION_SHOWN = false;
     public static String APPLICATION_VERSION_AVAILABLE;
 

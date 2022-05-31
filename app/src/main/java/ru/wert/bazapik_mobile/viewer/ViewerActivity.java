@@ -18,6 +18,8 @@ import java.util.concurrent.ExecutionException;
 
 import androidx.fragment.app.FragmentContainerView;
 import ru.wert.bazapik_mobile.constants.Consts;
+import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
+import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.models.Draft;
@@ -59,6 +61,28 @@ public class ViewerActivity extends BaseActivity {
         fm = getSupportFragmentManager();
         //Из интента получаем id чертежа
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
+
+        Button btnShowInfo = findViewById(R.id.btnShowInfo);
+        btnShowInfo.setOnClickListener(e->{
+            String decNumber = currentDraft.getPassport().getNumberWithPrefix();
+            String name = currentDraft.getPassport().getName();
+            String notes = currentDraft.getNote() == null || currentDraft.getNote().equals("")? "-отсутствует-": currentDraft.getNote();
+            String annul = currentDraft.getStatus().equals(EDraftStatus.ANNULLED.getStatusId())?
+                    "c " + parseLDTtoDate(currentDraft.getWithdrawalTime())  + "\n" +  currentDraft.getWithdrawalUser().getName() + "\n\n" :
+                    "\n";
+
+            new Warning1().show(ViewerActivity.this,
+                    decNumber + "\n" + name,
+                    "Добавил:  " + parseLDTtoDate(currentDraft.getCreationTime()) + "\n" +
+                     currentDraft.getCreationUser().getName() + "\n\n" +
+                            "Тип-стр:  " + EDraftType.getDraftTypeById(currentDraft.getDraftType()).getShortName() + "-" + currentDraft.getPageNumber() + "\n"  +
+                            "Статус:   " + EDraftStatus.getStatusById(currentDraft.getStatus()).getStatusName() + "\n" + annul +
+                            "Источник: \n" + currentDraft.getFolder().toUsefulString() + "\n\n" +
+                            "Примечание: \n" + notes
+
+
+            );
+        });
 
     }
 

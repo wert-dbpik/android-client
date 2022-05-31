@@ -11,8 +11,10 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.sql.Time;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -142,6 +144,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         startActivity(sweetHome);
         finishAndRemoveTask();
         System.exit(0);
+    }
+
+    protected String parseLDTtoDate(String localDateTime) {
+       String time = null;
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date d = df.parse(localDateTime);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(d);
+
+            DateFormat newFD = new SimpleDateFormat("dd MMM yyyy");
+            time = newFD.format(d);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return time;
     }
 
 }

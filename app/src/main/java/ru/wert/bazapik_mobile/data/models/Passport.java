@@ -34,6 +34,14 @@ public class Passport extends _BaseEntity implements Item, Parcelable {
             return prefix.getName() + "." + body + ", " + name;
     }
 
+    public String getNumberWithPrefix(){
+        String body = number;
+        if(prefix.getName().equals("-"))
+            return body;
+        else
+            return prefix.getName() + "." + body ;
+    }
+
     //==========  Parcelable =======================
 
     @Override
