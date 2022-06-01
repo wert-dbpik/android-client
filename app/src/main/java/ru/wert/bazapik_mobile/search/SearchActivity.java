@@ -344,6 +344,12 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
                 startActivity(changePassView);
                 return true;
 
+            case R.id.action_showFilterDialog:
+
+                FilterDialog filterDialog = new FilterDialog(SearchActivity.this);
+                filterDialog.show();
+                return true;
+
             case R.id.action_exit:
                 exitApplication();
             default:

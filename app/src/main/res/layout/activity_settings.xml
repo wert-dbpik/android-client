@@ -18,22 +18,29 @@
 
     <CheckBox
         android:id="@+id/cbShowFolders"
-        android:text="Указывать исходную папку"
+        android:text="Просмотр файлов EASM"
         android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"/>
+    <TextView
+        android:text="(Нужная установленная программа просмотра)"
+        android:layout_marginStart="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"/>
+
 
     <CheckBox
         android:id="@+id/cbHidePrefixes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Скрывать перфиксы"
+        android:text="Скрывать префиксы"
         android:textSize="18sp"
         android:layout_marginStart="20dp"/>
 
     <TextView
-        android:text="О приложении:"
+        android:text="О программе:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -50,7 +57,7 @@
             android:text="Версия:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/tvVersion"
@@ -58,7 +65,7 @@
             android:layout_marginStart="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -72,9 +79,8 @@
             android:id="@+id/tvVersionAvalable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
             android:text="Доступна новая версия: 1.1 "
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 

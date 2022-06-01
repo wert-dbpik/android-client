@@ -3,25 +3,40 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="1"
-        android:title="Настройки"
-        app:showAsAction="never" />
-    <item
         android:title="Обновить"
         android:id="@+id/action_update"
+        android:orderInCategory="1"
+        app:showAsAction="never"/>
+
+    <item android:title="Фильтр"
+        android:id="@+id/action_showFilterDialog"
         android:orderInCategory="2"
         app:showAsAction="never"/>
+
     <item
-        android:title="Сменить пользователя"
-        android:id="@+id/action_changeUser"
-        android:orderInCategory="2"
-        app:showAsAction="never"/>
-    <item
-        android:title="Сменить пароль"
-        android:id="@+id/action_changePass"
         android:orderInCategory="3"
-        app:showAsAction="never"/>
+        android:title="Сервис">
+        <menu>
+
+            <item
+                android:id="@+id/action_settings"
+                android:orderInCategory="1"
+                android:title="Настройки"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_changeUser"
+                android:orderInCategory="2"
+                android:title="Сменить пользователя"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_changePass"
+                android:orderInCategory="3"
+                android:title="Сменить пароль"
+                app:showAsAction="never" />
+
+        </menu>
+    </item>
+
     <item
         android:title="@string/menuExit"
         android:id="@+id/action_exit"

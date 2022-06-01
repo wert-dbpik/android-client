@@ -11,11 +11,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,13 +43,11 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
     private PassportRecViewAdapter mAdapter;
     private Long passId;
 
+    private Passport passport;
+    private String decNum;
+
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private static Bundle mBundleRecyclerViewState;
-
-    //Меню
-    @Getter @Setter private boolean showValid = true;
-    @Getter @Setter private boolean showChanged = true;
-    @Getter @Setter private boolean showAnnulled = true;
 
     //Все найденные элементы
     private List<Draft> foundDrafts;
@@ -65,16 +62,12 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
 
         tvDecNumber = findViewById(R.id.tvDecNumber);//Децимальный номер пасспорта
-
         tvName = findViewById(R.id.tvName); //Наименование пасспорта
-
         tvDrafts = findViewById(R.id.tvDrafts);//Строка Доступные чертежи
-
         rvDrafts = findViewById(R.id.rvDrafts); //RecycleView
-
+        createRecycleViewOfFoundItems();
         new Thread(()->{
-            Passport passport = ThisApplication.PASSPORT_SERVICE.findById(passId);
-            String decNum;
+            passport = ThisApplication.PASSPORT_SERVICE.findById(passId);
             if(passport != null) {
                 decNum = passport.getPrefix() == null ?
                         passport.getNumber() :
@@ -96,9 +89,11 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
             }
         }).start();
-        createRecycleViewOfFoundItems();
+
 
     }
+
+
 
 
     @Override
@@ -131,8 +126,10 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
         call.enqueue(new Callback<List<Draft>>() {
             @Override
             public void onResponse(Call<List<Draft>> call, Response<List<Draft>> response) {
-                if(response.isSuccessful()) {
-                    mAdapter = new PassportRecViewAdapter(PassportInfoActivity.this, response.body());
+                if(response.isSuccessful() && response.body() != null) {
+                    List<Draft> foundDrafts = new ArrayList<>(response.body());
+                    filterList(foundDrafts); //Фильтруем
+                    mAdapter = new PassportRecViewAdapter(PassportInfoActivity.this, foundDrafts);
                     mAdapter.setClickListener(PassportInfoActivity.this);
                     rvDrafts.setAdapter(mAdapter);
                 }
@@ -162,9 +159,9 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
             Draft d = i.next();
             EDraftStatus status = EDraftStatus.getStatusById(d.getStatus());
             if (status != null) {
-                if ((status.equals(EDraftStatus.LEGAL) && !isShowValid()) ||
-                        (status.equals(EDraftStatus.CHANGED) && !isShowChanged()) ||
-                        (status.equals(EDraftStatus.ANNULLED) && !isShowAnnulled()))
+                if ((status.equals(EDraftStatus.LEGAL) && !ThisApplication.showValid) ||
+                        (status.equals(EDraftStatus.CHANGED) && !ThisApplication.showChanged) ||
+                        (status.equals(EDraftStatus.ANNULLED) && !ThisApplication.showAnnulled))
                     i.remove();
             }
 

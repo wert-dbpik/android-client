@@ -26,6 +26,11 @@ public class ThisApplication extends Application {
     public static boolean APP_VERSION_NOTIFICATION_SHOWN = false;
     public static String APPLICATION_VERSION_AVAILABLE;
 
+    //Фильтр
+    public static boolean showValid = true;
+    public static boolean showChanged;
+    public static boolean showAnnulled;
+
     public static PassportService PASSPORT_SERVICE;
     public static PassportQuickService PASSPORT_QUICK_SERVICE;
 
