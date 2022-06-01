@@ -62,6 +62,7 @@ public class StartActivity extends BaseActivity {
     private static final String TAG = "StartActivity";
     private String ip;
     private String baseUrl;
+    private boolean logoTapped;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -76,12 +77,24 @@ public class StartActivity extends BaseActivity {
         Log.i(TAG, "onCreate: HIDE_PREFIXES = " + getProp("HIDE_PREFIXES"));
 
         ImageView logo = findViewById(R.id.imageViewLogo);
-        logo.setOnClickListener(v -> startRetrofit());
+        logo.setOnClickListener(v -> {
+            logoTapped = true;
+            startRetrofit();
+            ThisApplication.loadSettings();
+        });
 
-        ThisApplication.loadSettings();
+        new Thread(()->{  //Вход без нажатия на логотип
+            try {
+                Thread.sleep(2000);
+                if(!logoTapped) {
+                    startRetrofit();
+                    ThisApplication.loadSettings();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        //TEST
-
+        }).start();
 
     }
 
