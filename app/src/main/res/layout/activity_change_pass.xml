@@ -8,6 +8,18 @@
     tools:context=".ChangePassActivity">
 
     <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20sp"
+        android:layout_marginBottom="20sp"
+        android:text="Изменение пароля"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
@@ -55,8 +67,6 @@
         android:paddingBottom="5dp"
         android:textSize="20sp" />
 
-
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -84,8 +94,9 @@
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="end"
         android:layout_marginTop="40dp"
-        android:layout_gravity="end"
         android:paddingHorizontal="20dp"
         >
         <Button
@@ -94,7 +105,7 @@
             android:layout_height="wrap_content"
             android:background="#0066FF"
             android:layout_marginRight="20dp"
-            android:paddingHorizontal="10dp"
+            android:paddingHorizontal="15dp"
             android:text="ОТМЕНИТЬ" />
 
         <Button

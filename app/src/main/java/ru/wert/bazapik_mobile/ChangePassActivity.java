@@ -37,7 +37,7 @@ public class ChangePassActivity extends AppCompatActivity {
     private EditText etOldPass;
     private EditText etNewPass;
     private EditText etRepeatNewPass;
-    private Button btnSavePass;
+    private Button btnSavePass, btnCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,11 @@ public class ChangePassActivity extends AppCompatActivity {
         btnSavePass = findViewById(R.id.btnSaveNewPass);
         btnSavePass.setOnClickListener(e->saveNewPass());
 
+        btnCancel = findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(e-> {
+            Intent intent = new Intent(ChangePassActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void saveNewPass(){
