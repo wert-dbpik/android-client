@@ -13,6 +13,7 @@ import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
+import ru.wert.bazapik_mobile.data.servicesREST.FileService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
 import ru.wert.bazapik_mobile.search.ItemRecViewAdapter;
@@ -22,7 +23,7 @@ import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
 
 public class ThisApplication extends Application {
 
-    public static final String APPLICATION_VERSION = "1.1";
+    public static final String APPLICATION_VERSION = "1.0";
     public static boolean APP_VERSION_NOTIFICATION_SHOWN = false;
     public static String APPLICATION_VERSION_AVAILABLE;
 
@@ -30,6 +31,8 @@ public class ThisApplication extends Application {
     public static boolean showValid = true;
     public static boolean showChanged;
     public static boolean showAnnulled;
+
+    public static FileService FILE_SERVICE;
 
     public static PassportService PASSPORT_SERVICE;
     public static PassportQuickService PASSPORT_QUICK_SERVICE;

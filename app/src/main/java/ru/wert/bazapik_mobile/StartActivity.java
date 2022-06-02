@@ -85,7 +85,7 @@ public class StartActivity extends BaseActivity {
 
         new Thread(()->{  //Вход без нажатия на логотип
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
                 if(!logoTapped) {
                     startRetrofit();
                     ThisApplication.loadSettings();
@@ -118,10 +118,7 @@ public class StartActivity extends BaseActivity {
                             for (User u : response.body()) {
                                 if (u.getName().equals(userNameInProps)) {
                                     CURRENT_USER = u;
-
                                     createLog(true, "Подключился к серверу");
-
-
                                 }
                             }
                         }

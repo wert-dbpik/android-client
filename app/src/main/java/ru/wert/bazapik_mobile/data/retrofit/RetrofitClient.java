@@ -49,6 +49,8 @@ public class RetrofitClient extends Application {
 
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .addConverterFactory(new NullOnEmptyConverterFactory()) //Исправляет исключение на null, когда приходит пустое тело
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .addConverterFactory(GsonConverterFactory.create(gson))
 //                .client(client.build()) // логгирование ответа
                 .build();

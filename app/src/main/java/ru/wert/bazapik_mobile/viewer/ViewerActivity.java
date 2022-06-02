@@ -52,7 +52,7 @@ public class ViewerActivity extends BaseActivity {
     private Long draftId;
     private Draft currentDraft;
     private int oldOrientation;
-    FragmentManager fm;
+    private FragmentManager fm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

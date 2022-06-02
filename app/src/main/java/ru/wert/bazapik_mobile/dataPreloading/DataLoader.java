@@ -8,6 +8,7 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.data.servicesREST.FileService;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
@@ -19,6 +20,7 @@ public class DataLoader {
 
     public void load(Context context) throws Exception{
 
+        FileService.getInstance();
 
         //Создается PassportService, и затем PassportQuickService
         new PassportService(context);

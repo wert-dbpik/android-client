@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
+        android:textColor="@android:color/holo_orange_dark"
         android:textSize="26sp"/>
 
     <CheckBox
@@ -45,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="5dp"
+        android:textColor="@android:color/holo_orange_dark"
         android:textSize="26sp"/>
 
     <LinearLayout
@@ -84,9 +86,41 @@
 
     </LinearLayout>
 
+
     <TextView
         android:layout_marginStart="20dp"
-        android:text="Разработчик: Симонов Алексей, 2022г"
+        android:text="Видео руководство:"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/tvVideo"
+        android:layout_marginStart="20dp"
+        android:text="@string/videoYouTube"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_marginStart="20dp"
+        android:text="Разработчик: "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_marginStart="20dp"
+        android:text="Симонов Алексей, 2022г"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:layout_marginStart="20dp"
+        android:text="wert001@yandex.ru"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="14sp"/>
