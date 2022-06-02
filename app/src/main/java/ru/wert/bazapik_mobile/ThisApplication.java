@@ -2,8 +2,11 @@ package ru.wert.bazapik_mobile;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 
 import java.util.List;
 
@@ -89,5 +92,23 @@ public class ThisApplication extends Application {
         SHOW_FOLDERS = Boolean.parseBoolean(getProp("SHOW_FOLDERS"));
         HIDE_PREFIXES = Boolean.parseBoolean(getProp("HIDE_PREFIXES"));
 
+    }
+
+    public static Animation createBlinkAnimation(){
+        Animation animation = new AlphaAnimation(0.0f, 1.0f);
+        animation.setDuration(400); //You can manage the time of the blink with this parameter
+        animation.setStartOffset(20);
+        animation.setRepeatMode(Animation.REVERSE);
+        animation.setRepeatCount(Animation.INFINITE);
+        return animation;
+    }
+
+    public static ProgressDialog createProgressDialog(Context context, String fileName){
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("в процессе....");
+        progressDialog.setTitle("Загрузка файла " + fileName);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        return progressDialog;
     }
 }
