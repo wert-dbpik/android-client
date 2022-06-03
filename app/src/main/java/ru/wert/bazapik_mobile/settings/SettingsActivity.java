@@ -23,7 +23,7 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 
 public class SettingsActivity extends BaseActivity {
 
-    private CheckBox cbShowFolders;
+    private CheckBox cbShowSolidFiles;
     private CheckBox cbHidePrefixes;
     private TextView tvVersion;
     private TextView tvVersionAvailable;
@@ -34,7 +34,7 @@ public class SettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        cbShowFolders = findViewById(R.id.cbShowFolders);
+        cbShowSolidFiles = findViewById(R.id.cbShowSolidFiles);
         cbHidePrefixes = findViewById(R.id.cbHidePrefixes);
         tvVersion = findViewById(R.id.tvVersion);
         tvVersionAvailable = findViewById(R.id.tvVersionAvalable);
@@ -76,7 +76,7 @@ public class SettingsActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cbShowFolders.setChecked(Boolean.parseBoolean(getProp("SHOW_FOLDERS")));
+        cbShowSolidFiles.setChecked(Boolean.parseBoolean(getProp("SHOW_SOLID_FILES")));
         cbHidePrefixes.setChecked(Boolean.parseBoolean(getProp("HIDE_PREFIXES")));
     }
 
@@ -85,7 +85,7 @@ public class SettingsActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        setProp("SHOW_FOLDERS", String.valueOf(cbShowFolders.isChecked()));
+        setProp("SHOW_SOLID_FILES", String.valueOf(cbShowSolidFiles.isChecked()));
         setProp("HIDE_PREFIXES", String.valueOf(cbHidePrefixes.isChecked()));
 
         loadSettings();

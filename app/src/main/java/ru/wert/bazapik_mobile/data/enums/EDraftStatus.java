@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public enum EDraftStatus {
 
-    LEGAL(0, "ДЕЙСТВУЕТ"),
+    VALID(0, "ДЕЙСТВУЕТ"),
     CHANGED(1, "ЗАМЕНЕН"),
     ANNULLED(2, "АННУЛИРОВАН"),
     UNKNOWN(3, "НЕИЗВЕСТЕН");

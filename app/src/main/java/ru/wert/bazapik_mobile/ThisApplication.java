@@ -8,27 +8,32 @@ import android.content.SharedPreferences;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import ru.wert.bazapik_mobile.constants.Consts;
-import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.servicesREST.FileService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
-import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
 import ru.wert.bazapik_mobile.search.ItemRecViewAdapter;
 
 import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
-import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
+import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
 
 public class ThisApplication extends Application {
 
     public static final String APPLICATION_VERSION = "1.0";
     public static boolean APP_VERSION_NOTIFICATION_SHOWN = false;
     public static String APPLICATION_VERSION_AVAILABLE;
+
+    //Расширение
+    public static List<String> PDF_EXTENSIONS = Collections.singletonList("pdf");
+    public static List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png");
+    public static List<String> SOLID_EXTENSIONS = Arrays.asList("eprt", "easm");
+    public static List<String> DRAW_EXTENSIONS = Arrays.asList("prt", "sldprt", "asm", "sldasm", "drw", "sldrw", "dxf");
 
     //Фильтр
     public static boolean showValid = true;
@@ -72,7 +77,7 @@ public class ThisApplication extends Application {
                 return settings.getString(name, "8080");
             case "USER_NAME":
                 return settings.getString(name, "");
-            case "SHOW_FOLDERS":
+            case "SHOW_SOLID_FILES":
                 return settings.getString(name, "false");
             case "HIDE_PREFIXES":
                 return settings.getString(name, "false");
@@ -89,7 +94,7 @@ public class ThisApplication extends Application {
 
     public static void loadSettings() {
 
-        SHOW_FOLDERS = Boolean.parseBoolean(getProp("SHOW_FOLDERS"));
+        SHOW_SOLID_FILES = Boolean.parseBoolean(getProp("SHOW_SOLID_FILES"));
         HIDE_PREFIXES = Boolean.parseBoolean(getProp("HIDE_PREFIXES"));
 
     }

@@ -18,7 +18,7 @@
         android:textSize="26sp"/>
 
     <CheckBox
-        android:id="@+id/cbShowFolders"
+        android:id="@+id/cbShowSolidFiles"
         android:text="Просмотр файлов EASM"
         android:textSize="18sp"
         android:layout_width="match_parent"

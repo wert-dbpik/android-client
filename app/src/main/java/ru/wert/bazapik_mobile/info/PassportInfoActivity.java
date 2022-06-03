@@ -29,6 +29,9 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
+import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
+import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
+
 /**
  * Окно отображает свойства выбранного элемента (Passport)
  * В верхней части окна выводится наименование элемента: tvDecNumber и tvName
@@ -159,9 +162,11 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
             Draft d = i.next();
             EDraftStatus status = EDraftStatus.getStatusById(d.getStatus());
             if (status != null) {
-                if ((status.equals(EDraftStatus.LEGAL) && !ThisApplication.showValid) ||
+                if ((status.equals(EDraftStatus.VALID) && !ThisApplication.showValid) ||
                         (status.equals(EDraftStatus.CHANGED) && !ThisApplication.showChanged) ||
                         (status.equals(EDraftStatus.ANNULLED) && !ThisApplication.showAnnulled))
+                    i.remove();
+                if(SOLID_EXTENSIONS.contains(d.getExtension()) && !SHOW_SOLID_FILES)
                     i.remove();
             }
 

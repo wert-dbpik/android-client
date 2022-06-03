@@ -11,6 +11,6 @@ public class Consts {
     public static int STORAGE_PERMISSION_CODE;
 
     public static boolean HIDE_PREFIXES;
-    public static boolean SHOW_FOLDERS;
+    public static boolean SHOW_SOLID_FILES; //Показывать файлы EASM оступно при установленном ПО
 
 }

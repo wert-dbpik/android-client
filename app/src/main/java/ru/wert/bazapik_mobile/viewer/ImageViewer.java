@@ -2,6 +2,9 @@ package ru.wert.bazapik_mobile.viewer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ScaleGestureDetector;
@@ -33,9 +36,18 @@ public class ImageViewer extends Fragment {
         Bundle bundle = this.getArguments();
         File localFile;
         if(bundle != null) {
-            localFile = new File(this.getArguments().getString("LOCAL_FILE"));
-            Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-            mDraftImageView.setImageBitmap(bitmap);
+            String bundleString = this.getArguments().getString("LOCAL_FILE");
+            if(bundleString.equals("Solid")){
+
+                Bitmap bitmap = BitmapFactory.decodeResource(ImageViewer.this.getResources(),
+                        R.drawable.noimage);
+
+                mDraftImageView.setImageBitmap(bitmap);
+            }else {
+                localFile = new File(bundleString);
+                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                mDraftImageView.setImageBitmap(bitmap);
+            }
         }
 
         return v;

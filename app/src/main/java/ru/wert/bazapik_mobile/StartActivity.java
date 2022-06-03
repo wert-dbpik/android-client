@@ -58,7 +58,7 @@ public class StartActivity extends BaseActivity {
 
         Log.i(TAG, "onCreate: IP = " + getProp("IP"));
         Log.i(TAG, "onCreate: PORT = " + getProp("PORT"));
-        Log.i(TAG, "onCreate: SHOW_FOLDERS = " + getProp("SHOW_FOLDERS"));
+        Log.i(TAG, "onCreate: SHOW_SOLID_FILES = " + getProp("SHOW_SOLID_FILES"));
         Log.i(TAG, "onCreate: HIDE_PREFIXES = " + getProp("HIDE_PREFIXES"));
 
         ImageView logo = findViewById(R.id.imageViewLogo);

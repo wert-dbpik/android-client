@@ -16,6 +16,9 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
+import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
+import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
+import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
 import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
 
 import androidx.annotation.NonNull;
@@ -154,7 +157,7 @@ public class ViewerActivity extends BaseActivity {
 
         if(localFile.canRead()) {
             //Определяем формат чертежа
-            if (currentDraft.getExtension().equals("pdf")) { //Если PDF
+            if (PDF_EXTENSIONS.contains(currentDraft.getExtension())) { //Если PDF
                 //Переключаем фрагмент на PdfViewer
                 Fragment pdfViewerFrag = new PdfViewer();
                 pdfViewerFrag.setArguments(bundle);
@@ -162,14 +165,22 @@ public class ViewerActivity extends BaseActivity {
                 ft.replace(R.id.draft_fragment_container, pdfViewerFrag);
                 ft.commit();
 
-            } else { //Если все остальное
+            } else if(IMAGE_EXTENSIONS.contains(currentDraft.getExtension())){ //Если PNG, JPG  и т.д.
                 //Переключаем фрагмент на ImageView
                 Fragment imageViewerFrag = new ImageViewer();
                 imageViewerFrag.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.draft_fragment_container, imageViewerFrag);
                 ft.commit();
-
+            } else if (SOLID_EXTENSIONS.contains(currentDraft.getExtension())){//Если EASM
+                //Переключаем фрагмент на ImageView
+                Fragment imageViewerFrag = new ImageViewer();
+                Bundle bundle3d = new Bundle();
+                bundle3d.putString("LOCAL_FILE", "Solid");
+                imageViewerFrag.setArguments(bundle);
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.draft_fragment_container, imageViewerFrag);
+                ft.commit();
             }
         }
 

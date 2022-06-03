@@ -11,7 +11,13 @@ public enum EDraftType {
     DETAIL(0, "Деталь", "ДЕТ"),
     ASSEMBLE(1, "Сборка", "СБ"),
     SPECIFICATION(2, "Спецификация", "СП"),
-    PACKAGE(3, "Упаковка", "УП");
+    PACKAGE(3, "Упаковка", "УП"),
+    TOOL(4, "Кондуктор", "КОНД"),
+    MARKING(5, "Маркировка", "МРК"),
+    IMAGE_3D(6, "3D изображение", "3D"),
+    DRAW(7, "CAD документ", "CAD"),
+    MOUNT(8, "Монтажная схема", "ИМ"),
+    ELECTRIC(9, "Электрическая схема", "ЭЛ");
 
     private final Integer typeId;
     private final String typeName;
