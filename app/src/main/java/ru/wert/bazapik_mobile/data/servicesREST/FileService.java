@@ -1,6 +1,5 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
-import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
 import static ru.wert.bazapik_mobile.ThisApplication.createProgressDialog;
 import static ru.wert.bazapik_mobile.data.servicesREST.DraftService.getBytesFromFile;
 
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import androidx.appcompat.app.AlertDialog;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -28,8 +28,7 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.FileApiInterface;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.search.SearchActivity;
-import ru.wert.bazapik_mobile.warnings.Warning1;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class FileService extends Application {
 
@@ -60,6 +59,11 @@ public class FileService extends Application {
      * @param destFolder, String путь до папки, куда происходит скачивание (/storage/emulated/0/Download)
      */
     public void download(String dbFolder, String fileName, String destFolder, Context context) {
+        //Перед загрузкой проверяем наличие уже загруженного ранее файла
+        File destFile = new File(destFolder + "/" + fileName);
+        if (destFile.exists())
+            destFile.delete();
+
         progressDialog = createProgressDialog(context, fileName);
         progressDialog.show();
         Call<ResponseBody> call = api.download(dbFolder, fileName);
@@ -74,7 +78,7 @@ public class FileService extends Application {
                             progressDialog.dismiss();
 
                             new Handler(Looper.getMainLooper()).post(()->{
-                                                            new Warning1().show(context,
+                                new WarningDialog1().show(context,
                                     "Поздравляю!",
                                     String.format("Файл %s успешно загружен в папку Загрузки. Если вы не увидели файл в этой папке - " +
                                             "терпение! Файловой системе требуется время, чтобы обновиться!", fileName));
@@ -93,7 +97,7 @@ public class FileService extends Application {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 progressDialog.dismiss();
-                new Warning1().show(context,
+                new WarningDialog1().show(context,
                         "Ошибка!",
                         "Не удалось загрузить файл. Попробуйте позднее");
             }

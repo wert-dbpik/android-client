@@ -5,29 +5,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
-import ru.wert.bazapik_mobile.data.models.User;
-import ru.wert.bazapik_mobile.data.models.VersionAndroid;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.data.servicesREST.UserService;
-import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
-import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
-import ru.wert.bazapik_mobile.info.PassportInfoActivity;
 import ru.wert.bazapik_mobile.search.SearchActivity;
-import ru.wert.bazapik_mobile.warnings.Warning1;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.google.android.gms.tasks.Task;
-
-import java.util.List;
-
-import static ru.wert.bazapik_mobile.ThisApplication.setProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 public class ChangePassActivity extends AppCompatActivity {
@@ -64,22 +52,22 @@ public class ChangePassActivity extends AppCompatActivity {
         String repeatNewPass = etRepeatNewPass.getText().toString();
 
         if(oldPass.isEmpty() || newPass.isEmpty() || repeatNewPass.isEmpty()){
-            new Warning1().show(ChangePassActivity.this, "Внимание", "Необходимо заполнить все поля!");
+            new WarningDialog1().show(ChangePassActivity.this, "Внимание", "Необходимо заполнить все поля!");
             return;
         }
 
         int maxLength = 10;
         if(oldPass.length() > maxLength || newPass.length() > maxLength || repeatNewPass.length() > maxLength){
-            new Warning1().show(ChangePassActivity.this, "Внимание", "Длина проля превышает допустимые 10 символов!");
+            new WarningDialog1().show(ChangePassActivity.this, "Внимание", "Длина проля превышает допустимые 10 символов!");
             return;
         }
 
         if(!oldPass.equals(CURRENT_USER.getPassword())){
-            new Warning1().show(ChangePassActivity.this, "Внимание", "Старый пароль не подходит!");
+            new WarningDialog1().show(ChangePassActivity.this, "Внимание", "Старый пароль не подходит!");
             return;
         }
         if(!newPass.equals(repeatNewPass)){
-            new Warning1().show(ChangePassActivity.this, "Внимание", "Новые пароли не совпадают!");
+            new WarningDialog1().show(ChangePassActivity.this, "Внимание", "Новые пароли не совпадают!");
             return;
         }
 
@@ -90,7 +78,7 @@ public class ChangePassActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    new Warning1().show(ChangePassActivity.this, "Внимание!", "Новый пароль успешно сохранен!");
+                    new WarningDialog1().show(ChangePassActivity.this, "Внимание!", "Новый пароль успешно сохранен!");
                     AlertDialog alertDialog = new AlertDialog.Builder(ChangePassActivity.this).create();
                     alertDialog.setTitle("Внимание");
                     alertDialog.setMessage("Новый пароль успешно сохранен!");
@@ -109,7 +97,7 @@ public class ChangePassActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.d(TAG, String.format("Ошибка сохранения нового пароля для пользователя %s", CURRENT_USER.getName()));
-                new Warning1().show(ChangePassActivity.this, "Внимание!", "Не удалось сохранить новый пароль.");
+                new WarningDialog1().show(ChangePassActivity.this, "Внимание!", "Не удалось сохранить новый пароль.");
             }
         });
 

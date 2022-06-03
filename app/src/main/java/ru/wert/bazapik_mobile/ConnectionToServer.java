@@ -14,14 +14,13 @@ import android.widget.TextView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.servicesREST.UserService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
-import ru.wert.bazapik_mobile.warnings.Warning1;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class ConnectionToServer extends BaseActivity {
 
@@ -91,7 +90,7 @@ public class ConnectionToServer extends BaseActivity {
                                 public void onFailure(Call<User> call, Throwable t) {
                                     if(t.getMessage().contains("Failed to connect")) {
                                         Log.d(TAG, "Проблемы с доступом к серверу: " + t.getMessage());
-                                        new Warning1().show(ConnectionToServer.this, "Внимание", "Сервер не доступен, поробуйте позднее");
+                                        new WarningDialog1().show(ConnectionToServer.this, "Внимание", "Сервер не доступен, поробуйте позднее");
                                     } else {
                                         Log.d(TAG, "Пользователь " + userName + " в базе не найден, переходим в LoginActivity");
                                         goLoginActivity();
@@ -107,7 +106,7 @@ public class ConnectionToServer extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    new Warning1().show(ConnectionToServer.this, "Внимание! ",
+                    new WarningDialog1().show(ConnectionToServer.this, "Внимание! ",
                             "Не удалось подключиться к серверу по указанному IP адресу\n" +
                                     "Укажите верный адрес или попробуйте позже. " +
                                     "Возможно, сервер сейчас не доступен.");

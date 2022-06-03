@@ -1,43 +1,27 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import android.app.ProgressDialog;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
-import androidx.fragment.app.FragmentContainerView;
-import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.models.Draft;
-import ru.wert.bazapik_mobile.warnings.Warning1;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
-import static ru.wert.bazapik_mobile.ThisApplication.ADAPTER;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
-import static ru.wert.bazapik_mobile.constants.StaticMethods.clearAppCash;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.util.FitPolicy;
 
 /**
  * Активность запускается из класса ItemRecViewAdapter
@@ -71,7 +55,7 @@ public class ViewerActivity extends BaseActivity {
                     "c " + parseLDTtoDate(currentDraft.getWithdrawalTime())  + "\n" +  currentDraft.getWithdrawalUser().getName() + "\n\n" :
                     "\n";
 
-            new Warning1().show(ViewerActivity.this,
+            new WarningDialog1().show(ViewerActivity.this,
                     decNumber + "\n" + name,
                     "Добавил:  " + parseLDTtoDate(currentDraft.getCreationTime()) + "\n" +
                      currentDraft.getCreationUser().getName() + "\n\n" +
@@ -117,7 +101,7 @@ public class ViewerActivity extends BaseActivity {
                         Log.e(TAG, String.format("remoteFileString = '%s', localFileString = '%s', message from server: %s",
                                 remoteFileString, localFileString, res));
                         runOnUiThread(()->{
-                            new Warning1().show(ViewerActivity.this, "Внимание!",
+                            new WarningDialog1().show(ViewerActivity.this, "Внимание!",
                                     "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
                         });
                     }
@@ -125,7 +109,7 @@ public class ViewerActivity extends BaseActivity {
                 } catch (ExecutionException | InterruptedException e) {
                     Log.e(TAG, "could not download file from server by error: " + e.toString());
                     runOnUiThread(()->{
-                        new Warning1().show(ViewerActivity.this, "Внимание!",
+                        new WarningDialog1().show(ViewerActivity.this, "Внимание!",
                                 "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
                     });
                 }

@@ -43,7 +43,7 @@ import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
-import ru.wert.bazapik_mobile.warnings.Warning1;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
 import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
@@ -102,9 +102,11 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
 
                 APP_VERSION_NOTIFICATION_SHOWN = true;
                 runOnUiThread(() -> {
-                    new Warning1().show(SearchActivity.this,
+                    new WarningDialog1().show(SearchActivity.this,
                             "Внимание!",
-                            "Доступна новая версия " + APPLICATION_VERSION_AVAILABLE);
+                            String.format("Доступна новая версия %s. Чтобы скачать и обновить программу " +
+                                    "зайдите в настройки и кликните по мигающей надписи. Далее: " +
+                                    "установите программу из скачанного файла apk", APPLICATION_VERSION_AVAILABLE));
                 });
             }
         }).start();
@@ -207,7 +209,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
                 });
             } catch (Exception e) {
                 runOnUiThread(()->{
-                    new Warning1().show(SearchActivity.this, "Внимание!",
+                    new WarningDialog1().show(SearchActivity.this, "Внимание!",
                             "Не удалось загрузить данные, возможно сервер не доступен. Приложение будет закрыто!");
 
                 });

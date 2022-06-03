@@ -7,7 +7,7 @@ import android.view.WindowManager;
 
 import ru.wert.bazapik_mobile.search.SearchActivity;
 
-public class Warning1 {
+public class WarningDialog1 {
 
     public void show(Context context, String title, String problem){
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();

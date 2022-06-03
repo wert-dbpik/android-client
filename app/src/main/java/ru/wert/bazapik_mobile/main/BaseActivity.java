@@ -1,20 +1,13 @@
 package ru.wert.bazapik_mobile.main;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,22 +16,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.constants.StaticMethods;
 import ru.wert.bazapik_mobile.data.api_interfaces.AppLogApiInterface;
-import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
 import ru.wert.bazapik_mobile.data.models.AppLog;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.data.servicesREST.AppLogService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
-import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
-import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
-import ru.wert.bazapik_mobile.warnings.Warning1;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
-import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
-import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
@@ -65,10 +51,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void handleOnFailure(Throwable t, String TAG){
         if(t.getMessage().contains("Failed to connect")) {
             Log.d(TAG, "Проблемы с доступом к серверу: " + t.getMessage());
-            new Warning1().show(this, "Внимание", "Сервер не доступен, поробуйте позднее");
+            new WarningDialog1().show(this, "Внимание", "Сервер не доступен, поробуйте позднее");
         } else {
             Log.d(TAG, "Проблемы на сервере");
-            new Warning1().show(this, "Внимание!", "Проблемы на сервере");
+            new WarningDialog1().show(this, "Внимание!", "Проблемы на сервере");
         }
     }
 
@@ -76,11 +62,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         switch (response.code()) {
             case 404:
                 Log.e(TAG, "Проблемы с доступом к серверу");
-                new Warning1().show(this, "Внимание", "Сервер не доступен, поробуйте позднее");
+                new WarningDialog1().show(this, "Внимание", "Сервер не доступен, поробуйте позднее");
                 break;
             case 500:
                 Log.e(TAG, "Проблемы на серверу");
-                new Warning1().show(this, "Внимание", "Ошибка на сервере " + response.code());
+                new WarningDialog1().show(this, "Внимание", "Ошибка на сервере " + response.code());
                 break;
         }
     }

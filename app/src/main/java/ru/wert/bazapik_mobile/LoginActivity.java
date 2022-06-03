@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -24,7 +23,7 @@ import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
-import ru.wert.bazapik_mobile.warnings.Warning1;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 /**
  * В классе открывается окно Login, после ввода данных происходит сверка
@@ -78,18 +77,18 @@ public class LoginActivity extends BaseActivity {
                             startActivity(searchIntent);
                         } else {
                             Log.d(TAG, "Пароль не подходит");
-                            new Warning1().show(LoginActivity.this, "Внимание!", "Пароль не подходит.");
+                            new WarningDialog1().show(LoginActivity.this, "Внимание!", "Пароль не подходит.");
                         }
                     } else {
                         Log.d(TAG, String.format("Пользователя с именем '%s' не найдено", mUserName.getText()));
-                        new Warning1().show(LoginActivity.this, "Внимание!", "Пользователь не найден.");
+                        new WarningDialog1().show(LoginActivity.this, "Внимание!", "Пользователь не найден.");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
                     Log.d(TAG, String.format("Пользователя с именем '%s' не найдено", mUserName.getText()));
-                    new Warning1().show(LoginActivity.this, "Внимание!", "Пользователь не найден.");
+                    new WarningDialog1().show(LoginActivity.this, "Внимание!", "Пользователь не найден.");
                 }
             });
         });

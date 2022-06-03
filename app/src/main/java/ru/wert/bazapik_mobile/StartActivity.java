@@ -1,13 +1,8 @@
 package ru.wert.bazapik_mobile;
 
-import static android.Manifest.permission.INTERNET;
-
-import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
-import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
-import static ru.wert.bazapik_mobile.constants.Consts.SHOW_FOLDERS;
 import static ru.wert.bazapik_mobile.constants.Consts.STORAGE_PERMISSION_CODE;
 
 import android.Manifest;
@@ -19,34 +14,24 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import java.security.Permission;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.servicesREST.UserService;
-import ru.wert.bazapik_mobile.warnings.Warning1;
 
 /**
  * Отправная точка работы приложения

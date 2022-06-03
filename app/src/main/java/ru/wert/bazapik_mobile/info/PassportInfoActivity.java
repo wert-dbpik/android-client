@@ -27,7 +27,7 @@ import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
-import ru.wert.bazapik_mobile.warnings.Warning1;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 /**
  * Окно отображает свойства выбранного элемента (Passport)
@@ -83,7 +83,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
                 Log.e(TAG, String.format("An error occur while trying to get Passport of id = %s, PASSPORT_SERVICE = %s"
                         ,passId, ThisApplication.PASSPORT_SERVICE));
                 runOnUiThread(()->{
-                    new Warning1().show(PassportInfoActivity.this,
+                    new WarningDialog1().show(PassportInfoActivity.this,
                             "Ошибка!", "Что-то пошло не так, вероятно потереяна связь с сервером.");
                 });
 
@@ -137,7 +137,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
             @Override
             public void onFailure(Call<List<Draft>> call, Throwable t) {
-                new Warning1().show(PassportInfoActivity.this, "Внимание!","Проблемы на линии!");
+                new WarningDialog1().show(PassportInfoActivity.this, "Внимание!","Проблемы на линии!");
             }
             
         });

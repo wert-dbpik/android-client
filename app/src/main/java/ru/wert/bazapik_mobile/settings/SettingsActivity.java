@@ -17,10 +17,12 @@ import android.widget.TextView;
 
 import java.io.File;
 
+import androidx.appcompat.app.AlertDialog;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.warnings.Warning2;
+import ru.wert.bazapik_mobile.warnings.WarningDialog2;
 
 public class SettingsActivity extends BaseActivity {
 
@@ -45,34 +47,31 @@ public class SettingsActivity extends BaseActivity {
         if (APPLICATION_VERSION_AVAILABLE.compareTo(APPLICATION_VERSION) == 0)
             tvVersionAvailable.setText("Это последняя версия");
         else if (APPLICATION_VERSION_AVAILABLE.compareTo(APPLICATION_VERSION) > 0) {
-            tvVersionAvailable.setText(String.format("Доступна новая версия: %s", APPLICATION_VERSION_AVAILABLE));
+            tvVersionAvailable.setText(String.format("Загрузить новую версию %s", APPLICATION_VERSION_AVAILABLE));
             tvVersionAvailable.setTextColor(Color.YELLOW);
 
             tvVersionAvailable.startAnimation(ThisApplication.createBlinkAnimation());
 
             tvVersionAvailable.setOnClickListener(e->{
                 tvVersionAvailable.clearAnimation();
-                Warning2 warningDialog = new Warning2(SettingsActivity.this,
-                        "ВНИМАНИЕ!",
-                        String.format("Файл с новой версией приложения %s будет сохранен в папку Загрузки",
-                                "BazaPIK-" + APPLICATION_VERSION_AVAILABLE));
 
-                warningDialog.setOnDismissListener(dialogInterface -> {
-                    String fileName = "BazaPIK-" + APPLICATION_VERSION_AVAILABLE + ".apk";
-                    File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                    Log.i("DownloadingFile", "destinationFolder = " + destinationFolder);
-                    FILE_SERVICE.download("apk", fileName, destinationFolder.toString(), SettingsActivity.this);
-
-                });
-
-                warningDialog.show();
+                new AlertDialog.Builder(SettingsActivity.this)
+                        .setTitle("ВНИМАНИЕ!")
+                        .setMessage( String.format("Файл с новой версией приложения %s будет сохранен в папку Загрузки",
+                                "BazaPIK-" + APPLICATION_VERSION_AVAILABLE))
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
+                            String fileName = "BazaPIK-" + APPLICATION_VERSION_AVAILABLE + ".apk";
+                            File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                            FILE_SERVICE.download("apk", fileName, destinationFolder.toString(), SettingsActivity.this);
+                        }).create().show();
 
             });
         }else
             tvVersionAvailable.setText("Это beta версия");
 
         //Кликабельная ссылка
-        TextView textView = (TextView)findViewById(R.id.tvVideo);
+        TextView textView = findViewById(R.id.tvVideo);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
 
     }
