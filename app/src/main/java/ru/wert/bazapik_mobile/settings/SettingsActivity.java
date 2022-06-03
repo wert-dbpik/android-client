@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -21,8 +20,6 @@ import androidx.appcompat.app.AlertDialog;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.main.BaseActivity;
-import ru.wert.bazapik_mobile.warnings.Warning2;
-import ru.wert.bazapik_mobile.warnings.WarningDialog2;
 
 public class SettingsActivity extends BaseActivity {
 
