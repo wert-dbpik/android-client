@@ -1,5 +1,9 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -40,11 +44,14 @@ public class ViewerActivity extends BaseActivity {
     private Draft currentDraft;
     private int oldOrientation;
     private FragmentManager fm;
+    private Button btnGo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewer);
+
+        btnGo = findViewById(R.id.btnGo);
         fm = getSupportFragmentManager();
         //Из интента получаем id чертежа
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
@@ -70,6 +77,8 @@ public class ViewerActivity extends BaseActivity {
 
             );
         });
+
+
 
     }
 
@@ -155,7 +164,7 @@ public class ViewerActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putString("LOCAL_FILE", localFileString);
 
-        if(localFile.canRead()) {
+        if (localFile.canRead()) {
             //Определяем формат чертежа
             if (PDF_EXTENSIONS.contains(currentDraft.getExtension())) { //Если PDF
                 //Переключаем фрагмент на PdfViewer
@@ -165,30 +174,41 @@ public class ViewerActivity extends BaseActivity {
                 ft.replace(R.id.draft_fragment_container, pdfViewerFrag);
                 ft.commit();
 
-            } else if(IMAGE_EXTENSIONS.contains(currentDraft.getExtension())){ //Если PNG, JPG  и т.д.
+            } else { //Если PNG, JPG, а также показываемое в стороннем приложении
                 //Переключаем фрагмент на ImageView
                 Fragment imageViewerFrag = new ImageViewer();
                 imageViewerFrag.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
                 ft.replace(R.id.draft_fragment_container, imageViewerFrag);
                 ft.commit();
-            } else if (SOLID_EXTENSIONS.contains(currentDraft.getExtension())){//Если EASM
-                //Переключаем фрагмент на ImageView
-                Fragment imageViewerFrag = new ImageViewer();
-                Bundle bundle3d = new Bundle();
-                bundle3d.putString("LOCAL_FILE", "Solid");
-                imageViewerFrag.setArguments(bundle);
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(R.id.draft_fragment_container, imageViewerFrag);
-                ft.commit();
+
             }
         }
 
     }
 
+    public void createButtonGo(String bundleString, String type) {
+        btnGo.setOnClickListener(e->{
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse(bundleString), type);
+            startActivity(intent);
+        });
+    }
+
+    public void createButtonGo2(String bundleString) {
+        btnGo.setOnClickListener(e->{
+            PackageManager pm = getPackageManager();
+            Intent intent = pm.getLaunchIntentForPackage("com.solidworks.eDrawingsProAndroid");
+
+            intent.setAction(Intent.ACTION_VIEW);
+
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            startActivity(intent);
 
 
-
-
+        });
+    }
 
 }

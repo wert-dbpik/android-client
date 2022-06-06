@@ -70,7 +70,7 @@ public class StartActivity extends BaseActivity {
 
         new Thread(()->{  //Вход без нажатия на логотип
             try {
-                Thread.sleep(10000);
+                Thread.sleep(1000);
                 if(!logoTapped) {
                     startRetrofit();
                     ThisApplication.loadSettings();

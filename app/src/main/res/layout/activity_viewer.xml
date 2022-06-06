@@ -5,19 +5,37 @@
     android:layout_height="match_parent"
     tools:context=".viewer.ViewerActivity">
 
-    <Button
-        android:id="@+id/btnShowInfo"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/draft_fragment_container"
+        android:name="ru.wert.bazapik_mobile.viewer.ProgressIndicatorFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:background="@android:color/transparent"
-        android:text="ИНФО"
-        android:textColor="#9E9D24" />
+        android:orientation="vertical">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/draft_fragment_container"
-            android:name="ru.wert.bazapik_mobile.viewer.ProgressIndicatorFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+        <Button
+            android:id="@+id/btnShowInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="ИНФО"
+            android:textColor="#9E9D24" />
+
+        <Button
+            android:id="@+id/btnGo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:text="GO"
+            android:textColor="#9E9D24" />
+
+    </LinearLayout>
+
+
+
+</FrameLayout>
 
