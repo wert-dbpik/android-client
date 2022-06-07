@@ -1,7 +1,9 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.widget.Button;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
@@ -18,6 +21,7 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
+import static android.content.Intent.ACTION_VIEW;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
@@ -190,7 +194,7 @@ public class ViewerActivity extends BaseActivity {
     public void createButtonGo(String bundleString, String type) {
         btnGo.setOnClickListener(e->{
             Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_VIEW);
+            intent.setAction(ACTION_VIEW);
             intent.setDataAndType(Uri.parse(bundleString), type);
             startActivity(intent);
         });
@@ -198,15 +202,44 @@ public class ViewerActivity extends BaseActivity {
 
     public void createButtonGo2(String bundleString) {
         btnGo.setOnClickListener(e->{
-            PackageManager pm = getPackageManager();
-            Intent intent = pm.getLaunchIntentForPackage("com.solidworks.eDrawingsProAndroid");
+//            Intent intent = new Intent();
+//            intent.setAction(Intent.ACTION_VIEW);
+//            intent.setPackage(getPackageManager().getLaunchIntentForPackage("com.solidworks.eDrawingsProAndroid"));
+//            PackageManager pm = getPackageManager();
+//
+//            Intent intent = pm.;
+//
+//            intent.setAction(ACTION_VIEW);
+//
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//
+//            startActivity(intent);
 
-            intent.setAction(Intent.ACTION_VIEW);
+//            int id = 0;
+//            List<PackageInfo> apps = getPackageManager().getInstalledPackages(0);
+//            for(int i = 0; i < apps.size(); i++){
+//                if(apps.get(i).packageName.contains("solid")) {
+//                    id = i;
+//                    break;
+//                }
+//            }
 
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
+//            Intent launchApp = getPackageManager().getLaunchIntentForPackage("com.solidworks.eDrawingsProAndroid");
+//            startActivity(launchApp);
+//
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.setComponent(new ComponentName("com.solidworks.eDrawingsAndroid","com.solidworks.eDrawingsAndroid.eDrawingsApp"));
             startActivity(intent);
 
+//            String packageName = apps.get(id).packageName;
+//            String className = apps.get(id).applicationInfo.className;
+//
+//            Intent intent = new Intent(ACTION_VIEW);
+////            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//            intent.setPackage(packageName);
+////            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            intent.setClassName(packageName, className);
+//            startActivity(intent);
 
         });
     }
