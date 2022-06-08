@@ -38,8 +38,7 @@ public class ImageViewer extends Fragment {
         View v = inflater.inflate(R.layout.fragment_image_viewer, container, false);
         mDraftImageView = v.findViewById(R.id.draftImageView);
         btnGo = container.findViewById(R.id.btnGo);
-
-
+        
         Bundle bundle = this.getArguments();
         File localFile;
         if(bundle != null) {
@@ -47,8 +46,8 @@ public class ImageViewer extends Fragment {
             if(SOLID_EXTENSIONS.contains(FileUtils.getExtension(bundleString))){
                 String mimeType = getMimeType(Uri.parse(bundleString));
                 if(mimeType == null)
-                    mimeType = "application/sldworks";
-                ((ViewerActivity)getActivity()).createButtonGo2(bundleString);
+                    mimeType = "application/solidworks-file";
+                ((ViewerActivity)getActivity()).createButtonGo(bundleString, mimeType);
                 Bitmap bitmap = BitmapFactory.decodeResource(ImageViewer.this.getResources(),
                         R.drawable.image3dpng);
                 mDraftImageView.setImageBitmap(bitmap);
@@ -77,7 +76,5 @@ public class ImageViewer extends Fragment {
         }
         return mimeType;
     }
-
-
 
 }

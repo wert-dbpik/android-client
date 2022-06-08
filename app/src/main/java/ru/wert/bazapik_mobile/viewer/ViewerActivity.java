@@ -3,17 +3,25 @@ package ru.wert.bazapik_mobile.viewer;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import androidx.core.content.FileProvider;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.main.BaseActivity;
@@ -22,6 +30,11 @@ import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static android.content.Intent.ACTION_VIEW;
+import static android.content.Intent.CATEGORY_BROWSABLE;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_REQUIRE_DEFAULT;
+import static android.content.Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER;
+import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
@@ -77,13 +90,8 @@ public class ViewerActivity extends BaseActivity {
                             "Статус:   " + EDraftStatus.getStatusById(currentDraft.getStatus()).getStatusName() + "\n" + annul +
                             "Источник: \n" + currentDraft.getFolder().toUsefulString() + "\n\n" +
                             "Примечание: \n" + notes
-
-
             );
         });
-
-
-
     }
 
     @Override
@@ -192,55 +200,18 @@ public class ViewerActivity extends BaseActivity {
     }
 
     public void createButtonGo(String bundleString, String type) {
-        btnGo.setOnClickListener(e->{
-            Intent intent = new Intent();
-            intent.setAction(ACTION_VIEW);
-            intent.setDataAndType(Uri.parse(bundleString), type);
-            startActivity(intent);
-        });
-    }
+        btnGo.setOnClickListener(e -> {
+            File f = new File(bundleString);
+            if(f.exists()) {
+                Intent intent = new Intent();
+                intent.setAction(ACTION_VIEW);
 
-    public void createButtonGo2(String bundleString) {
-        btnGo.setOnClickListener(e->{
-//            Intent intent = new Intent();
-//            intent.setAction(Intent.ACTION_VIEW);
-//            intent.setPackage(getPackageManager().getLaunchIntentForPackage("com.solidworks.eDrawingsProAndroid"));
-//            PackageManager pm = getPackageManager();
-//
-//            Intent intent = pm.;
-//
-//            intent.setAction(ACTION_VIEW);
-//
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//
-//            startActivity(intent);
+                Uri contentUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", f);
+                intent.setDataAndType(contentUri, type);
+                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-//            int id = 0;
-//            List<PackageInfo> apps = getPackageManager().getInstalledPackages(0);
-//            for(int i = 0; i < apps.size(); i++){
-//                if(apps.get(i).packageName.contains("solid")) {
-//                    id = i;
-//                    break;
-//                }
-//            }
-
-//            Intent launchApp = getPackageManager().getLaunchIntentForPackage("com.solidworks.eDrawingsProAndroid");
-//            startActivity(launchApp);
-//
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.setComponent(new ComponentName("com.solidworks.eDrawingsAndroid","com.solidworks.eDrawingsAndroid.eDrawingsApp"));
-            startActivity(intent);
-
-//            String packageName = apps.get(id).packageName;
-//            String className = apps.get(id).applicationInfo.className;
-//
-//            Intent intent = new Intent(ACTION_VIEW);
-////            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//            intent.setPackage(packageName);
-////            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            intent.setClassName(packageName, className);
-//            startActivity(intent);
-
+                startActivity(intent);
+            }
         });
     }
 

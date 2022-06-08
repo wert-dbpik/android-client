@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.io.File;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.main.BaseActivity;
@@ -26,8 +27,7 @@ public class SettingsActivity extends BaseActivity {
     private CheckBox cbShowSolidFiles;
     private CheckBox cbHidePrefixes;
     private TextView tvVersion;
-    private TextView tvVersionAvailable;
-
+    private TextView tvVersionAvailable, tvLoadEDeawings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,21 @@ public class SettingsActivity extends BaseActivity {
         cbHidePrefixes = findViewById(R.id.cbHidePrefixes);
         tvVersion = findViewById(R.id.tvVersion);
         tvVersionAvailable = findViewById(R.id.tvVersionAvalable);
+        tvLoadEDeawings = findViewById(R.id.tvLoadEDrawings);
+
+        tvLoadEDeawings.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+        tvLoadEDeawings.setOnClickListener(e->{
+            new AlertDialog.Builder(SettingsActivity.this)
+                    .setTitle("ВНИМАНИЕ!")
+                    .setMessage( "Файл 'eDrawings.apk' будет сохранен в папку Загрузки")
+                    .setNegativeButton(android.R.string.no, null)
+                    .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
+                        String fileName = "eDrawings.apk";
+                        File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                        FILE_SERVICE.download("apk", fileName, destinationFolder.toString(), SettingsActivity.this);
+                    }).create().show();
+
+        });
 
         tvVersion.setText(ThisApplication.APPLICATION_VERSION);
 
@@ -68,8 +83,8 @@ public class SettingsActivity extends BaseActivity {
             tvVersionAvailable.setText("Это beta версия");
 
         //Кликабельная ссылка
-        TextView textView = findViewById(R.id.tvVideo);
-        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        TextView tvVideo = findViewById(R.id.tvVideo);
+        tvVideo.setMovementMethod(LinkMovementMethod.getInstance());
 
     }
 

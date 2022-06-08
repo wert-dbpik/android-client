@@ -24,12 +24,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"/>
+
     <TextView
-        android:text="(Нужная установленная программа просмотра)"
+        android:id="@+id/tvLoadEDrawings"
         android:layout_marginStart="50dp"
-        android:layout_width="wrap_content"
+        android:text="загрузить для просмотра eDrawings"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"/>
+
+        android:textSize="14sp"/>
 
 
     <CheckBox
@@ -92,7 +95,7 @@
         android:text="Видео руководство:"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/tvVideo"
@@ -100,8 +103,7 @@
         android:text="@string/videoYouTube"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 
     <TextView
         android:layout_marginStart="20dp"
@@ -109,21 +111,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 
     <TextView
         android:layout_marginStart="20dp"
         android:text="Симонов Алексей, 2022г"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 
     <TextView
         android:layout_marginStart="20dp"
         android:text="wert001@yandex.ru"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"/>
+        android:textSize="16sp"/>
 
 
 </LinearLayout>
