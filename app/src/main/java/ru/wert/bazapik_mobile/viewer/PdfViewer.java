@@ -21,15 +21,11 @@ import ru.wert.bazapik_mobile.R;
 
 public class PdfViewer extends Fragment {
 
-    private Button btnGo; //Кнопка открывания в стороннем приложении
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_pdf_viewer, container, false);
-        btnGo = container.findViewById(R.id.btnGo);
-
 
         File localFile = null;
         Bundle bundle = this.getArguments();
@@ -45,19 +41,7 @@ public class PdfViewer extends Fragment {
                 .defaultPage(0)
                 .load();
 
-        ((ViewerActivity)getActivity()).createButtonGo(bundle.getString("LOCAL_FILE"), "application/pdf");
-
         return v;
     }
-
-//    private void createButtonGo(String bundleString, String type) {
-//        btnGo.setOnClickListener(e->{
-//            Intent intent = new Intent();
-//            intent.setAction(Intent.ACTION_VIEW);
-//            intent.setDataAndType(Uri.parse(bundleString), type);
-//            startActivity(intent);
-//        });
-//    }
-
 
 }

@@ -29,7 +29,6 @@ import static ru.wert.bazapik_mobile.ThisApplication.getAppContext;
 public class ImageViewer extends Fragment {
 
     private ZoomableImageView mDraftImageView;
-    private Button btnGo; //Кнопка открывания в стороннем приложении
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,22 +36,16 @@ public class ImageViewer extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_image_viewer, container, false);
         mDraftImageView = v.findViewById(R.id.draftImageView);
-        btnGo = container.findViewById(R.id.btnGo);
-        
+
         Bundle bundle = this.getArguments();
         File localFile;
         if(bundle != null) {
             String bundleString = this.getArguments().getString("LOCAL_FILE");
             if(SOLID_EXTENSIONS.contains(FileUtils.getExtension(bundleString))){
-                String mimeType = getMimeType(Uri.parse(bundleString));
-                if(mimeType == null)
-                    mimeType = "application/solidworks-file";
-                ((ViewerActivity)getActivity()).createButtonGo(bundleString, mimeType);
                 Bitmap bitmap = BitmapFactory.decodeResource(ImageViewer.this.getResources(),
                         R.drawable.image3dpng);
                 mDraftImageView.setImageBitmap(bitmap);
             }else {
-                ((ViewerActivity)getActivity()).createButtonGo(bundleString, "image/*");
                 localFile = new File(bundleString);
                 Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
                 mDraftImageView.setImageBitmap(bitmap);
@@ -63,18 +56,6 @@ public class ImageViewer extends Fragment {
         return v;
     }
 
-    public String getMimeType(Uri uri) {
-        String mimeType = null;
-        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
-            ContentResolver cr = getAppContext().getContentResolver();
-            mimeType = cr.getType(uri);
-        } else {
-            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
-                    .toString());
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    fileExtension.toLowerCase());
-        }
-        return mimeType;
-    }
+
 
 }

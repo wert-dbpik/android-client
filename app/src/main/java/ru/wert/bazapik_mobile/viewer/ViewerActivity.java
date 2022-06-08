@@ -1,24 +1,22 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import android.content.ComponentName;
-import android.content.Context;
+import android.content.ContentResolver;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import androidx.core.content.FileProvider;
@@ -30,16 +28,12 @@ import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static android.content.Intent.ACTION_VIEW;
-import static android.content.Intent.CATEGORY_BROWSABLE;
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static android.content.Intent.FLAG_ACTIVITY_REQUIRE_DEFAULT;
-import static android.content.Intent.FLAG_ACTIVITY_REQUIRE_NON_BROWSER;
-import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
 import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
 import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
+import static ru.wert.bazapik_mobile.ThisApplication.getAppContext;
 import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
 
 import androidx.annotation.NonNull;
@@ -57,41 +51,45 @@ public class ViewerActivity extends BaseActivity {
     //Формируем путь типа "http://192.168.1.84:8080/drafts/download/drafts/"
     private String dbdir = DATA_BASE_URL + "drafts/download/drafts/";
     private String remoteFileString, localFileString;
+    private File fileOnScreen;
     private Long draftId;
     private Draft currentDraft;
     private int oldOrientation;
     private FragmentManager fm;
-    private Button btnGo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewer);
 
-        btnGo = findViewById(R.id.btnGo);
         fm = getSupportFragmentManager();
         //Из интента получаем id чертежа
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
 
         Button btnShowInfo = findViewById(R.id.btnShowInfo);
-        btnShowInfo.setOnClickListener(e->{
-            String decNumber = currentDraft.getPassport().getNumberWithPrefix();
-            String name = currentDraft.getPassport().getName();
-            String notes = currentDraft.getNote() == null || currentDraft.getNote().equals("")? "-отсутствует-": currentDraft.getNote();
-            String annul = currentDraft.getStatus().equals(EDraftStatus.ANNULLED.getStatusId())?
-                    "c " + parseLDTtoDate(currentDraft.getWithdrawalTime())  + "\n" +  currentDraft.getWithdrawalUser().getName() + "\n\n" :
-                    "\n";
+        unregisterForContextMenu(btnShowInfo);
 
-            new WarningDialog1().show(ViewerActivity.this,
-                    decNumber + "\n" + name,
-                    "Добавил:  " + parseLDTtoDate(currentDraft.getCreationTime()) + "\n" +
-                     currentDraft.getCreationUser().getName() + "\n\n" +
-                            "Тип-стр:  " + EDraftType.getDraftTypeById(currentDraft.getDraftType()).getShortName() + "-" + currentDraft.getPageNumber() + "\n"  +
-                            "Статус:   " + EDraftStatus.getStatusById(currentDraft.getStatus()).getStatusName() + "\n" + annul +
-                            "Источник: \n" + currentDraft.getFolder().toUsefulString() + "\n\n" +
-                            "Примечание: \n" + notes
-            );
-        });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater viewerMenu = getMenuInflater();
+        viewerMenu.inflate(R.menu.viewer_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.btnShowInfo:
+                showInfo();
+                break;
+            case R.id.showInApplication:
+                showInOuterApp();
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -109,8 +107,8 @@ public class ViewerActivity extends BaseActivity {
             localFileString = TEMP_DIR + "/" + draftId + "." + currentDraft.getExtension();
 
             //Проверяем файл в кэше
-            File localDraftFile = new File(localFileString);
-            if (localDraftFile.exists() && localDraftFile.getTotalSpace() > 10L) {
+            fileOnScreen = new File(localFileString);
+            if (fileOnScreen.exists() && fileOnScreen.getTotalSpace() > 10L) {
                 Log.d(TAG, String.format("File '%s' was found in cash directory", currentDraft.toUsefulString()));
                 runOnUiThread(this::showDraftInViewer);
                 //Если файла в кэше нет
@@ -161,7 +159,6 @@ public class ViewerActivity extends BaseActivity {
 
     }
 
-
     private void showProgressIndicator() {
         Fragment progressIndicatorFragment = new ProgressIndicatorFragment();
         FragmentTransaction ft = fm.beginTransaction();
@@ -170,13 +167,10 @@ public class ViewerActivity extends BaseActivity {
     }
 
     private void showDraftInViewer() {
-        Log.i(TAG, "Current file: " + localFileString);
-        File localFile = new File(localFileString);
-
         Bundle bundle = new Bundle();
         bundle.putString("LOCAL_FILE", localFileString);
 
-        if (localFile.canRead()) {
+        if (fileOnScreen.canRead()) {
             //Определяем формат чертежа
             if (PDF_EXTENSIONS.contains(currentDraft.getExtension())) { //Если PDF
                 //Переключаем фрагмент на PdfViewer
@@ -199,20 +193,61 @@ public class ViewerActivity extends BaseActivity {
 
     }
 
-    public void createButtonGo(String bundleString, String type) {
-        btnGo.setOnClickListener(e -> {
-            File f = new File(bundleString);
-            if(f.exists()) {
-                Intent intent = new Intent();
-                intent.setAction(ACTION_VIEW);
+    private void showInfo() {
+        String decNumber = currentDraft.getPassport().getNumberWithPrefix();
+        String name = currentDraft.getPassport().getName();
+        String notes = currentDraft.getNote() == null || currentDraft.getNote().equals("")? "-отсутствует-": currentDraft.getNote();
+        String annul = currentDraft.getStatus().equals(EDraftStatus.ANNULLED.getStatusId())?
+                "c " + parseLDTtoDate(currentDraft.getWithdrawalTime())  + "\n" +  currentDraft.getWithdrawalUser().getName() + "\n\n" :
+                "\n";
 
-                Uri contentUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", f);
-                intent.setDataAndType(contentUri, type);
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        new WarningDialog1().show(ViewerActivity.this,
+                decNumber + "\n" + name,
+                "Добавил:  " + parseLDTtoDate(currentDraft.getCreationTime()) + "\n" +
+                        currentDraft.getCreationUser().getName() + "\n\n" +
+                        "Тип-стр:  " + EDraftType.getDraftTypeById(currentDraft.getDraftType()).getShortName() + "-" + currentDraft.getPageNumber() + "\n"  +
+                        "Статус:   " + EDraftStatus.getStatusById(currentDraft.getStatus()).getStatusName() + "\n" + annul +
+                        "Источник: \n" + currentDraft.getFolder().toUsefulString() + "\n\n" +
+                        "Примечание: \n" + notes
+        );
+    }
 
-                startActivity(intent);
-            }
-        });
+    public void showInOuterApp() {
+        String bundleString = fileOnScreen.toString();
+        String ext = FileUtils.getExtension(bundleString);
+        String mimeType = getMimeType(Uri.parse(bundleString));
+        if (SOLID_EXTENSIONS.contains(ext)) {
+            if (mimeType == null)
+                mimeType = "application/solidworks-file";
+            else if (IMAGE_EXTENSIONS.contains(ext))
+                mimeType = "image/*";
+            else
+                mimeType = "application/pdf";
+
+            Intent intent = new Intent();
+            intent.setAction(ACTION_VIEW);
+
+            Uri contentUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", fileOnScreen);
+            intent.setDataAndType(contentUri, mimeType);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            startActivity(intent);
+        }
+
+    }
+
+    private String getMimeType(Uri uri) {
+        String mimeType = null;
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+            ContentResolver cr = getAppContext().getContentResolver();
+            mimeType = cr.getType(uri);
+        } else {
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+                    .toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase());
+        }
+        return mimeType;
     }
 
 }

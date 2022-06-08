@@ -22,16 +22,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:text="ИНФО"
-            android:textColor="#9E9D24" />
+            android:text=". . ."
+            android:textColor="#9E9D24"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnGo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:text="GO"
-            android:textColor="#9E9D24" />
 
     </LinearLayout>
 
