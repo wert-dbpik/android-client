@@ -66,8 +66,8 @@ public class ViewerActivity extends BaseActivity {
         //Из интента получаем id чертежа
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
 
-        Button btnShowInfo = findViewById(R.id.btnShowInfo);
-        unregisterForContextMenu(btnShowInfo);
+        Button btnShowInfo = findViewById(R.id.btnShowMenu);
+        registerForContextMenu(btnShowInfo);
 
     }
 
@@ -82,7 +82,7 @@ public class ViewerActivity extends BaseActivity {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()){
-            case R.id.btnShowInfo:
+            case R.id.showInfo:
                 showInfo();
                 break;
             case R.id.showInApplication:
