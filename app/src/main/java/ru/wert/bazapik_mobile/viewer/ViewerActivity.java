@@ -52,10 +52,10 @@ public class ViewerActivity extends BaseActivity {
     private Integer iterator; //Текущая позиция
     private Long currentDraftId; //id текущего чертежа на экране
     private Draft currentDraft;
-    private int oldOrientation;
     private FragmentManager fm;
 
     private Button btnShowPrevious, btnShowNext;
+    private But but = But.NEXT;
 
 
     @Override
@@ -87,6 +87,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showNextDraft() {
         return v -> {
             currentDraftId = allDraftsIds.get(++iterator);
+            but = But.NEXT;
             openFragment();
         };
     }
@@ -94,6 +95,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showPreviousDraft() {
         return v -> {
             currentDraftId = (allDraftsIds.get(--iterator));
+            but = But.PREV;
             openFragment();
         };
     }
@@ -158,7 +160,7 @@ public class ViewerActivity extends BaseActivity {
         else
             switchOnButton(btnShowNext);
 
-        showProgressIndicator();
+//        showProgressIndicator();
         //Этот поток позволяет показать ProgressIndicator
         new Thread(()->{
             //Достаем запись чертежа из БД
@@ -239,6 +241,10 @@ public class ViewerActivity extends BaseActivity {
                 Fragment pdfViewerFrag = new PdfViewer();
                 pdfViewerFrag.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
+                if (but.equals(But.NEXT))
+                    ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+                else
+                    ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
                 ft.replace(R.id.draft_fragment_container, pdfViewerFrag);
                 ft.commit();
 
@@ -247,6 +253,10 @@ public class ViewerActivity extends BaseActivity {
                 Fragment imageViewerFrag = new ImageViewer();
                 imageViewerFrag.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
+                if (but.equals(But.NEXT))
+                    ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+                else
+                    ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
                 ft.replace(R.id.draft_fragment_container, imageViewerFrag);
                 ft.commit();
 
@@ -298,4 +308,9 @@ public class ViewerActivity extends BaseActivity {
     }
 
 
+}
+
+enum But {
+    NEXT,
+    PREV;
 }

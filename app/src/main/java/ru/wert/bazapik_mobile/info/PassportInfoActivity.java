@@ -146,15 +146,6 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
     }
 
-//    private void prepareStringArrayToPass(List<Draft> foundDrafts) {
-//        ArrayList<String> draftIds = new ArrayList<>();
-//        for(Draft d : foundDrafts){
-//            draftIds.add(String.valueOf(d.getId()));
-//        }
-//        foundDraftIdsForIntent = draftIds;
-//    }
-
-
 
     @Override
     public void onItemClick(View view, int position) {
