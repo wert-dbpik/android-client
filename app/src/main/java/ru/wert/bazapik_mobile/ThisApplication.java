@@ -8,10 +8,15 @@ import android.content.SharedPreferences;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
+import ru.wert.bazapik_mobile.data.interfaces.Item;
+import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
@@ -115,5 +120,41 @@ public class ThisApplication extends Application {
         progressDialog.setTitle("Загрузка файла " + fileName);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         return progressDialog;
+    }
+
+    /**
+     * Метод фильтрует переданный список чертежей по статусу
+     * @param items List<Draft>
+     */
+    public static void filterList(List<Draft> items) {
+        if(items.isEmpty()) return;
+        Iterator<Draft> i = items.iterator();
+        while (i.hasNext()) {
+            Draft d = i.next();
+            EDraftStatus status = EDraftStatus.getStatusById(d.getStatus());
+            if (status != null) {
+                if ((status.equals(EDraftStatus.VALID) && !ThisApplication.showValid) ||
+                        (status.equals(EDraftStatus.CHANGED) && !ThisApplication.showChanged) ||
+                        (status.equals(EDraftStatus.ANNULLED) && !ThisApplication.showAnnulled))
+                    i.remove();
+                if(SOLID_EXTENSIONS.contains(d.getExtension()) && !SHOW_SOLID_FILES)
+                    i.remove();
+            }
+
+        }
+    }
+
+    /**
+     * Универсальный метод преобразования списка ArrayList<Item>  лист ArrayList<String>
+     * @param itemList
+     * @param <T>
+     * @return
+     */
+    public static <T extends Item> ArrayList<String> convertToStringArray(ArrayList<T> itemList) {
+        ArrayList<String> stringList = new ArrayList<>();
+        for(T d : itemList){
+            stringList.add(String.valueOf(d.getId()));
+        }
+        return stringList;
     }
 }

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,16 +20,12 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
-import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
-
-import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
-import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
 
 /**
  * Окно отображает свойства выбранного элемента (Passport)
@@ -129,9 +124,9 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
             @Override
             public void onResponse(Call<List<Draft>> call, Response<List<Draft>> response) {
                 if(response.isSuccessful() && response.body() != null) {
-                    List<Draft> foundDrafts = new ArrayList<>(response.body());
-                    filterList(foundDrafts); //Фильтруем
-                    prepareStringArrayToPass(foundDrafts);
+                    ArrayList<Draft> foundDrafts = new ArrayList<>(response.body());
+                    ThisApplication.filterList(foundDrafts); //Фильтруем
+                    foundDraftIdsForIntent = ThisApplication.convertToStringArray(foundDrafts);
                     mAdapter = new PassportRecViewAdapter(PassportInfoActivity.this, foundDrafts);
                     mAdapter.setClickListener(PassportInfoActivity.this);
                     rvDrafts.setAdapter(mAdapter);
@@ -151,35 +146,15 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
     }
 
-    private void prepareStringArrayToPass(List<Draft> foundDrafts) {
-        ArrayList<String> draftIds = new ArrayList<>();
-        for(Draft d : foundDrafts){
-            draftIds.add(String.valueOf(d.getId()));
-        }
-        foundDraftIdsForIntent = draftIds;
-    }
+//    private void prepareStringArrayToPass(List<Draft> foundDrafts) {
+//        ArrayList<String> draftIds = new ArrayList<>();
+//        for(Draft d : foundDrafts){
+//            draftIds.add(String.valueOf(d.getId()));
+//        }
+//        foundDraftIdsForIntent = draftIds;
+//    }
 
-    /**
-     * Метод фильтрует переданный список чертежей по статусу
-     * @param items List<Draft>
-     */
-    public void filterList(List<Draft> items) {
-        if(items.isEmpty()) return;
-        Iterator<Draft> i = items.iterator();
-        while (i.hasNext()) {
-            Draft d = i.next();
-            EDraftStatus status = EDraftStatus.getStatusById(d.getStatus());
-            if (status != null) {
-                if ((status.equals(EDraftStatus.VALID) && !ThisApplication.showValid) ||
-                        (status.equals(EDraftStatus.CHANGED) && !ThisApplication.showChanged) ||
-                        (status.equals(EDraftStatus.ANNULLED) && !ThisApplication.showAnnulled))
-                    i.remove();
-                if(SOLID_EXTENSIONS.contains(d.getExtension()) && !SHOW_SOLID_FILES)
-                    i.remove();
-            }
 
-        }
-    }
 
     @Override
     public void onItemClick(View view, int position) {

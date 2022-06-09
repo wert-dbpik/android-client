@@ -17,11 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.constants.Consts;
+import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
+import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<ItemRecViewAdapter<P>.ViewHolder>{
 
@@ -90,15 +98,42 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
                 holder.mShowDraft.setBackgroundColor(Color.WHITE);
                 //При нажатии на кнопку создаем активити ViewerActivity, передаем ArrayList<String>, состоящий из id чертежей пасспорта
                 holder.mShowDraft.setOnClickListener(e->{
-                    Intent intent = new Intent(context, ViewerActivity.class);
-                    ArrayList<String> draftIds = (ArrayList<String>) ((Passport) item).getDraftIds().stream().map(Object::toString)
-                            .collect(Collectors.toList());
-                    intent.putStringArrayListExtra("draftIds", draftIds);
-                    context.startActivity(intent);
+                    openViewer((Passport) item);
                 });
             }
 
         }
+
+    }
+
+    /**
+     * Открываем окно с доступными чертежами
+
+     */
+    private void openViewer(Passport passport){
+        DraftApiInterface api = RetrofitClient.getInstance().getRetrofit().create(DraftApiInterface.class);
+        Call<List<Draft>> call =  api.getByPassportId(passport.getId());
+        call.enqueue(new Callback<List<Draft>>() {
+            @Override
+            public void onResponse(Call<List<Draft>> call, Response<List<Draft>> response) {
+                if(response.isSuccessful() && response.body() != null) {
+                    ArrayList<Draft> foundDrafts = new ArrayList<>(response.body());
+                    ThisApplication.filterList(foundDrafts); //Фильтруем
+                    ArrayList<String> stringList = ThisApplication.convertToStringArray(foundDrafts);
+
+                    Intent intent = new Intent(context, ViewerActivity.class);
+                    intent.putStringArrayListExtra("DRAFTS", stringList);
+                    intent.putExtra("DRAFT_ID", String.valueOf(foundDrafts.get(0).getId()));
+                    context.startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Draft>> call, Throwable t) {
+                new WarningDialog1().show(context, "Внимание!","Проблемы на линии!");
+            }
+
+        });
 
     }
 
@@ -135,7 +170,7 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
             super(itemView);
             mNumber = itemView.findViewById(R.id.number);
             mName = itemView.findViewById(R.id.name);
-            mShowDraft = itemView.findViewById(R.id.show_draft);
+            mShowDraft = itemView.findViewById(R.id.btnShowDraftsNow);
             itemView.setOnClickListener(this);
         }
 
