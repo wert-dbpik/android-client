@@ -54,6 +54,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
     //Все найденные элементы
     private List<Draft> foundDrafts;
+    private ArrayList<String> foundDraftIdsForIntent;
 
 
     @Override
@@ -97,8 +98,6 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
     }
 
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -132,6 +131,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
                 if(response.isSuccessful() && response.body() != null) {
                     List<Draft> foundDrafts = new ArrayList<>(response.body());
                     filterList(foundDrafts); //Фильтруем
+                    prepareStringArrayToPass(foundDrafts);
                     mAdapter = new PassportRecViewAdapter(PassportInfoActivity.this, foundDrafts);
                     mAdapter.setClickListener(PassportInfoActivity.this);
                     rvDrafts.setAdapter(mAdapter);
@@ -149,6 +149,14 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
         rvDrafts.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
                 DividerItemDecoration.VERTICAL));
 
+    }
+
+    private void prepareStringArrayToPass(List<Draft> foundDrafts) {
+        ArrayList<String> draftIds = new ArrayList<>();
+        for(Draft d : foundDrafts){
+            draftIds.add(String.valueOf(d.getId()));
+        }
+        foundDraftIdsForIntent = draftIds;
     }
 
     /**
@@ -176,6 +184,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
     @Override
     public void onItemClick(View view, int position) {
         Intent intent = new Intent(PassportInfoActivity.this, ViewerActivity.class);
+        intent.putStringArrayListExtra("DRAFTS", foundDraftIdsForIntent);
         intent.putExtra("DRAFT_ID", String.valueOf(mAdapter.getItem(position).getId()));
         startActivity(intent);
     }

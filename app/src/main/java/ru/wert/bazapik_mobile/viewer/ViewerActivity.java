@@ -1,9 +1,6 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,12 +8,12 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import androidx.core.content.FileProvider;
@@ -33,7 +30,6 @@ import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
 import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
 import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
-import static ru.wert.bazapik_mobile.ThisApplication.getAppContext;
 import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
 
 import androidx.annotation.NonNull;
@@ -52,10 +48,15 @@ public class ViewerActivity extends BaseActivity {
     private String dbdir = DATA_BASE_URL + "drafts/download/drafts/";
     private String remoteFileString, localFileString;
     private File fileOnScreen;
-    private Long draftId;
+    private ArrayList<Long> allDraftsIds = new ArrayList<>(); //Лист с id чертежей в PassportInfoActivity
+    private Integer iterator; //Текущая позиция
+    private Long currentDraftId; //id текущего чертежа на экране
     private Draft currentDraft;
     private int oldOrientation;
     private FragmentManager fm;
+
+    private Button btnShowPrevious, btnShowNext;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +65,9 @@ public class ViewerActivity extends BaseActivity {
 
         fm = getSupportFragmentManager();
         //Из интента получаем id чертежа
-        draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
+        currentDraftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
+        //Инициализируем список чертежей и итератор с текущей позицей
+        iterator = findInitPosition();
 
         Button btnShowInfo = findViewById(R.id.btnShowMenu);
         btnShowInfo.setOnClickListener(V->{
@@ -73,7 +76,38 @@ public class ViewerActivity extends BaseActivity {
             unregisterForContextMenu(btnShowInfo);
         });
 
+        btnShowPrevious = findViewById(R.id.btnShowPrevious);
+        btnShowPrevious.setOnClickListener(showPreviousDraft());
 
+        btnShowNext = findViewById(R.id.btnShowNext);
+        btnShowNext.setOnClickListener(showNextDraft());
+
+    }
+
+    private View.OnClickListener showNextDraft() {
+        return v -> {
+            currentDraftId = allDraftsIds.get(++iterator);
+            openFragment();
+        };
+    }
+
+    private View.OnClickListener showPreviousDraft() {
+        return v -> {
+            currentDraftId = (allDraftsIds.get(--iterator));
+            openFragment();
+        };
+    }
+
+    private Integer findInitPosition() {
+        ArrayList<String> foundDrafts = (ArrayList<String>) getIntent().getStringArrayListExtra("DRAFTS");
+        for (String s : foundDrafts) {
+            allDraftsIds.add(Long.parseLong(s));
+        }
+        for(int iterator = 0; iterator < allDraftsIds.size(); iterator++){
+            if (allDraftsIds.get(iterator).equals(currentDraftId))
+                return iterator;
+        }
+        return null;
     }
 
     @Override
@@ -100,16 +134,40 @@ public class ViewerActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        openFragment();
+    }
+
+    private void switchOnButton(Button btn){
+        btn.setVisibility(View.VISIBLE);
+        btn.setClickable(true);
+    }
+
+    private void switchOffButton(Button btn){
+        btn.setVisibility(View.INVISIBLE);
+        btn.setClickable(false);
+    }
+
+    private void openFragment(){
+        if (iterator.equals(0))
+            switchOffButton(btnShowPrevious);
+        else
+            switchOnButton(btnShowPrevious);
+
+        if(iterator.equals(allDraftsIds.size()-1))
+            switchOffButton(btnShowNext);
+        else
+            switchOnButton(btnShowNext);
+
         showProgressIndicator();
         //Этот поток позволяет показать ProgressIndicator
         new Thread(()->{
             //Достаем запись чертежа из БД
-            currentDraft = DRAFT_QUICK_SERVICE.findById(draftId);
+            currentDraft = DRAFT_QUICK_SERVICE.findById(currentDraftId);
             if (currentDraft == null) return;
             //Формируем конечный путь до удаленного файла
-            remoteFileString = dbdir + draftId + "." + currentDraft.getExtension();
+            remoteFileString = dbdir + currentDraftId + "." + currentDraft.getExtension();
             //Формируем локальный до файла временного хранения
-            localFileString = TEMP_DIR + "/" + draftId + "." + currentDraft.getExtension();
+            localFileString = TEMP_DIR + "/" + currentDraftId + "." + currentDraft.getExtension();
 
             //Проверяем файл в кэше
             fileOnScreen = new File(localFileString);
@@ -142,7 +200,6 @@ public class ViewerActivity extends BaseActivity {
                 }
             }
         }).start();
-
     }
 
     @Override
