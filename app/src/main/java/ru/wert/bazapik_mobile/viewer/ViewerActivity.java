@@ -67,7 +67,12 @@ public class ViewerActivity extends BaseActivity {
         draftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
 
         Button btnShowInfo = findViewById(R.id.btnShowMenu);
-        registerForContextMenu(btnShowInfo);
+        btnShowInfo.setOnClickListener(V->{
+            registerForContextMenu(btnShowInfo);
+            this.openContextMenu(btnShowInfo);
+            unregisterForContextMenu(btnShowInfo);
+        });
+
 
     }
 
@@ -215,39 +220,25 @@ public class ViewerActivity extends BaseActivity {
     public void showInOuterApp() {
         String bundleString = fileOnScreen.toString();
         String ext = FileUtils.getExtension(bundleString);
-        String mimeType = getMimeType(Uri.parse(bundleString));
-        if (SOLID_EXTENSIONS.contains(ext)) {
-            if (mimeType == null)
-                mimeType = "application/solidworks-file";
-            else if (IMAGE_EXTENSIONS.contains(ext))
-                mimeType = "image/*";
-            else
-                mimeType = "application/pdf";
+        String mimeType;
+        if (PDF_EXTENSIONS.contains(ext))
+            mimeType = "application/pdf";
+        else if (IMAGE_EXTENSIONS.contains(ext))
+            mimeType = "image/*";
+        else if (SOLID_EXTENSIONS.contains(ext))
+            mimeType = "application/solidworks-file";
+        else return;
 
-            Intent intent = new Intent();
-            intent.setAction(ACTION_VIEW);
+        Intent intent = new Intent();
+        intent.setAction(ACTION_VIEW);
 
-            Uri contentUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", fileOnScreen);
-            intent.setDataAndType(contentUri, mimeType);
-            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        Uri contentUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", fileOnScreen);
+        intent.setDataAndType(contentUri, mimeType);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-            startActivity(intent);
-        }
+        startActivity(intent);
 
     }
 
-    private String getMimeType(Uri uri) {
-        String mimeType = null;
-        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
-            ContentResolver cr = getAppContext().getContentResolver();
-            mimeType = cr.getType(uri);
-        } else {
-            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
-                    .toString());
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    fileExtension.toLowerCase());
-        }
-        return mimeType;
-    }
 
 }
