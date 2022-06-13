@@ -27,18 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.wert.bazapik_mobile.ChangePassActivity;
 import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
-import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.VersionAndroid;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
@@ -48,8 +42,8 @@ import ru.wert.bazapik_mobile.keyboards.MyKeyboard;
 import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
+import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
-import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
@@ -63,10 +57,10 @@ import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SH
  * 3) Всплывающей клавиатуры - keyboardView
  *
  */
-public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.ItemClickListener, KeyboardSwitcher {
+public class SearchActivity extends BaseActivity implements DraftsRecViewAdapter.ItemDraftsClickListener, KeyboardSwitcher {
     private static final String TAG = "+++ SearchActivity +++";
 
-    private ItemRecViewAdapter<Passport> mAdapter;
+    private DraftsRecViewAdapter<Passport> mAdapter;
     private RecyclerView mRecViewItems;
     private List<Passport> allItems;
     private List<Passport> foundItems;
@@ -210,7 +204,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
                 List<Passport> items = new ArrayList<>();
                 items.addAll(allItems);
                 runOnUiThread(() -> {
-                    mAdapter = new ItemRecViewAdapter<>(this, items);
+                    mAdapter = new DraftsRecViewAdapter<>(this, items);
                     mAdapter.setClickListener(this);
                     mRecViewItems.setAdapter(mAdapter);
                 });
@@ -232,7 +226,6 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
     public void onItemClick(View view, int position) {
             openInfoView(position);
     }
-
 
 
     /**
@@ -287,7 +280,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
                     if (text == null || text.equals(""))
                         foundItems = allItems;
                     else
-                        foundItems = getFoundItems(text);
+                        foundItems = findProperItems(text);
                     runOnUiThread(() -> {
                         if (foundItems != null)
                             mAdapter.changeListOfItems(foundItems);
@@ -330,6 +323,12 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
 
         // Операции для выбранного пункта меню
         switch (id) {
+
+            case R.id.action_organizer:
+                Intent foldersIntent = new Intent(SearchActivity.this, OrganizerActivity.class);
+                startActivity(foldersIntent);
+                return true;
+
             case R.id.action_settings:
                 Intent settingsIntent = new Intent(SearchActivity.this, SettingsActivity.class);
                 startActivity(settingsIntent);
@@ -390,7 +389,7 @@ public class SearchActivity extends BaseActivity implements ItemRecViewAdapter.I
      * @param searchText набранный в ПОИСКе текст
      * @return List<P> список подходящих элементов
      */
-    private List<Passport> getFoundItems(String searchText){
+    private List<Passport> findProperItems(String searchText){
         List<Passport> foundItems = new ArrayList<>();
         for(Passport item : allItems){
             if(item.toUsefulString().toLowerCase().contains(searchText.toLowerCase()))

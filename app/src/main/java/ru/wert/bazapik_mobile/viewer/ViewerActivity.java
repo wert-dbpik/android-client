@@ -1,5 +1,13 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import static android.content.Intent.ACTION_VIEW;
+import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
+import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
+import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
+import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
+import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
+import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,32 +18,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import androidx.core.content.FileProvider;
+import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
-import ru.wert.bazapik_mobile.main.BaseActivity;
-import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.models.Draft;
+import ru.wert.bazapik_mobile.main.BaseActivity;
+import ru.wert.bazapik_mobile.utils.Direction;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
-
-import static android.content.Intent.ACTION_VIEW;
-import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
-import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
-import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
-import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
-import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
-import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 /**
  * Активность запускается из класса ItemRecViewAdapter
@@ -55,7 +56,7 @@ public class ViewerActivity extends BaseActivity {
     private FragmentManager fm;
 
     private Button btnShowPrevious, btnShowNext;
-    private But but = But.NEXT;
+    private Direction direction = Direction.NEXT;
 
 
     @Override
@@ -87,7 +88,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showNextDraft() {
         return v -> {
             currentDraftId = allDraftsIds.get(++iterator);
-            but = But.NEXT;
+            direction = Direction.NEXT;
             openFragment();
         };
     }
@@ -95,7 +96,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showPreviousDraft() {
         return v -> {
             currentDraftId = (allDraftsIds.get(--iterator));
-            but = But.PREV;
+            direction = Direction.PREV;
             openFragment();
         };
     }
@@ -241,7 +242,7 @@ public class ViewerActivity extends BaseActivity {
                 Fragment pdfViewerFrag = new PdfViewer();
                 pdfViewerFrag.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
-                if (but.equals(But.NEXT))
+                if (direction.equals(Direction.NEXT))
                     ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
                 else
                     ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
@@ -253,7 +254,7 @@ public class ViewerActivity extends BaseActivity {
                 Fragment imageViewerFrag = new ImageViewer();
                 imageViewerFrag.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
-                if (but.equals(But.NEXT))
+                if (direction.equals(Direction.NEXT))
                     ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
                 else
                     ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
@@ -308,9 +309,4 @@ public class ViewerActivity extends BaseActivity {
     }
 
 
-}
-
-enum But {
-    NEXT,
-    PREV;
 }

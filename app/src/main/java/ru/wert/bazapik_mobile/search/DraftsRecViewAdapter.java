@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,14 +27,15 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
-public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<ItemRecViewAdapter<P>.ViewHolder>{
+public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<DraftsRecViewAdapter<P>.ViewHolder> implements OrganizerRecViewAdapter {
 
     private final List<P> mData;
     private final LayoutInflater mInflater;
-    private ItemClickListener mClickListener;
+    private ItemDraftsClickListener mClickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
@@ -44,7 +44,7 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public ItemRecViewAdapter(Context context, List<P> items) {
+    public DraftsRecViewAdapter(Context context, List<P> items) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = items;
@@ -59,7 +59,7 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recyclerview_row, parent, false);
+        View view = mInflater.inflate(R.layout.recview_draft_row, parent, false);
         return new ViewHolder(view);
     }
 
@@ -150,7 +150,7 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
      * Обновляет отображаемые данные
      * @param items List<P>
      */
-    public void changeListOfItems(List<P> items){
+    public void changeListOfItems(List items){
         mData.clear();
         mData.addAll(items);
         notifyDataSetChanged();
@@ -200,12 +200,12 @@ public class ItemRecViewAdapter<P extends Item> extends RecyclerView.Adapter<Ite
     }
 
     // allows clicks events to be caught
-    public void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
+    public void setClickListener(ItemDraftsClickListener itemDraftsClickListener) {
+        this.mClickListener = itemDraftsClickListener;
     }
 
     // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
+    public interface ItemDraftsClickListener {
         void onItemClick(View view, int position);
     }
 

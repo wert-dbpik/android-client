@@ -3,36 +3,35 @@ package ru.wert.bazapik_mobile.data.serviceQUICK;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.service_interfaces.IFolderService;
 import ru.wert.bazapik_mobile.data.servicesREST.FolderService;
 import ru.wert.bazapik_mobile.data.models.Folder;
 
+import static ru.wert.bazapik_mobile.ThisApplication.FOLDER_SERVICE;
+import static ru.wert.bazapik_mobile.ThisApplication.PASSPORT_SERVICE;
 import static ru.wert.bazapik_mobile.data.util.BLConst.RAZLOZHENO;
+
+import android.content.Context;
 
 public class FolderQuickService implements IFolderService {
 
+    private Context context;
     private static FolderQuickService instance;
     private static List<Folder> folders;
-    private static FolderService service = FolderService.getInstance();
-    public static Folder DEFAULT_FOLDER;
 
-    private FolderQuickService() {
+    private FolderQuickService(Context context)  throws Exception{
+        this.context = context;
+        ThisApplication.FOLDER_QUICK_SERVICE = this;
         reload();
 
-        DEFAULT_FOLDER = service.findByName(RAZLOZHENO);
-
     }
 
-    public static FolderQuickService getInstance() {
-        if (instance == null)
-            return new FolderQuickService();
-        return instance;
-    }
 
-    public static void reload(){
+    public static void reload() throws Exception{
         while(true) {
-            if(service != null) {
-                folders = new ArrayList<>(service.findAll());
+            if(PASSPORT_SERVICE != null) {
+                folders = new ArrayList<>(FOLDER_SERVICE.findAll());
                 break;
             }
         }
@@ -72,22 +71,22 @@ public class FolderQuickService implements IFolderService {
     }
 
     @Override
-    public Folder save(Folder folder) {
-        Folder res = service.save(folder);
+    public Folder save(Folder folder)  throws Exception{
+        Folder res = FOLDER_SERVICE.save(folder);
         reload();
         return res;
     }
 
     @Override
-    public boolean update(Folder folder) {
-        boolean res = service.update(folder);
+    public boolean update(Folder folder) throws Exception {
+        boolean res = FOLDER_SERVICE.update(folder);
         reload();
         return res;
     }
 
     @Override
-    public boolean delete(Folder folder){
-        boolean res = service.delete(folder);
+    public boolean delete(Folder folder) throws Exception{
+        boolean res = FOLDER_SERVICE.delete(folder);
         reload();
         return res;
     }

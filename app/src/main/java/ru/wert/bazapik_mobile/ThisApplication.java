@@ -19,11 +19,13 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
+import ru.wert.bazapik_mobile.data.serviceQUICK.FolderQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.servicesREST.FileService;
+import ru.wert.bazapik_mobile.data.servicesREST.FolderService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
-import ru.wert.bazapik_mobile.search.ItemRecViewAdapter;
+import ru.wert.bazapik_mobile.search.DraftsRecViewAdapter;
 
 import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
 import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
@@ -47,6 +49,9 @@ public class ThisApplication extends Application {
 
     public static FileService FILE_SERVICE;
 
+    public static FolderService FOLDER_SERVICE;
+    public static FolderQuickService FOLDER_QUICK_SERVICE;
+
     public static PassportService PASSPORT_SERVICE;
     public static PassportQuickService PASSPORT_QUICK_SERVICE;
 
@@ -54,7 +59,7 @@ public class ThisApplication extends Application {
     public static DraftQuickService DRAFT_QUICK_SERVICE;
 
     public static String SEARCH_TEXT = "";
-    public static ItemRecViewAdapter<Passport> ADAPTER;
+    public static DraftsRecViewAdapter<Passport> ADAPTER;
     public static String DATA_BASE_URL;
 
     static SharedPreferences settings;

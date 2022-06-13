@@ -3,16 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:title="Обновить"
-        android:id="@+id/action_update"
+        android:title="Комплекты"
+        android:id="@+id/action_organizer"
         android:orderInCategory="1"
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="2"
-        android:title="Настройки"
-        app:showAsAction="never" />
+        android:title="Обновить"
+        android:id="@+id/action_update"
+        android:orderInCategory="1"
+        app:showAsAction="never"/>
 
     <item android:title="Фильтр"
         android:id="@+id/action_showFilterDialog"
@@ -24,6 +24,11 @@
         android:title="Сервис">
         <menu>
 
+            <item
+                android:id="@+id/action_settings"
+                android:orderInCategory="2"
+                android:title="Настройки"
+                app:showAsAction="never" />
             <item
                 android:id="@+id/action_changeUser"
                 android:orderInCategory="1"

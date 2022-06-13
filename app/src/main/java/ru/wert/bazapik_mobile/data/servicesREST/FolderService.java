@@ -1,6 +1,9 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
+import android.content.Context;
+
 import retrofit2.Call;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
 import ru.wert.bazapik_mobile.data.service_interfaces.IFolderService;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
@@ -15,9 +18,11 @@ public class FolderService implements IFolderService, ItemService<Folder> {
 
     private static FolderService instance;
     private FolderApiInterface api;
+    private Context context;
 
-    private FolderService() {
-        BLlinks.folderService = this;
+    public FolderService(Context context) {
+        this.context = context;
+        ThisApplication.FOLDER_SERVICE = this;
         api = RetrofitClient.getInstance().getRetrofit().create(FolderApiInterface.class);
     }
 
@@ -25,11 +30,6 @@ public class FolderService implements IFolderService, ItemService<Folder> {
         return api;
     }
 
-    public static FolderService getInstance() {
-        if (instance == null)
-            return new FolderService();
-        return instance;
-    }
 
     @Override
     public Folder findById(Long id) {

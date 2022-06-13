@@ -18,7 +18,6 @@ public class PassportQuickService implements IPassportService {
 
     private Context context;
     private static List<Passport> passports;
-//    public static Passport DEFAULT_FOLDER = "Разложено";
 
     public PassportQuickService(Context context) throws Exception{
         this.context = context;

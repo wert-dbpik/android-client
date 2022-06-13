@@ -2,6 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.wert.bazapik_mobile">
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <!-- If you don't know the MIME type in advance, set "mimeType" to "*/*". -->
+            <data android:mimeType="application/solidworks-file" />
+        </intent>
+
+        <package android:name="com.solidworks.eDrawingsProAndroid" />
+    </queries>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".ThisApplication"
         android:allowBackup="true"
@@ -12,6 +26,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.AppCompat"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".organizer.OrganizerActivity"
+            android:exported="false" />
         <activity
             android:name=".ChangePassActivity"
             android:exported="false" />
@@ -55,29 +72,13 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:grantUriPermissions="true"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false"
-            android:authorities="${applicationId}.fileprovider">
-
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths"/>
+                android:resource="@xml/file_provider_paths" />
         </provider>
-
     </application>
-
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <!-- If you don't know the MIME type in advance, set "mimeType" to "*/*". -->
-            <data android:mimeType="application/solidworks-file" />
-        </intent>
-        <package android:name="com.solidworks.eDrawingsProAndroid" />
-    </queries>
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>
