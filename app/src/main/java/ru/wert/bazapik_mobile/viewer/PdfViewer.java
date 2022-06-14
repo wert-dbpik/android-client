@@ -41,6 +41,13 @@ public class PdfViewer extends Fragment {
                 .defaultPage(0)
                 .load();
 
+        pdfView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+
+            }
+        });
+
         return v;
     }
 

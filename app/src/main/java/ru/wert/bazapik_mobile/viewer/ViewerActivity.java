@@ -35,6 +35,7 @@ import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.main.BaseActivity;
+import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
 import ru.wert.bazapik_mobile.utils.Direction;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -56,7 +57,9 @@ public class ViewerActivity extends BaseActivity {
     private FragmentManager fm;
 
     private Button btnShowPrevious, btnShowNext;
-    private Direction direction = Direction.NEXT;
+    private But but = But.NEXT;
+    private Fragment draftFragment;
+    private Button btnTapLeft, btnTapRight;
 
 
     @Override
@@ -82,13 +85,34 @@ public class ViewerActivity extends BaseActivity {
 
         btnShowNext = findViewById(R.id.btnShowNext);
         btnShowNext.setOnClickListener(showNextDraft());
+        btnTapLeft = findViewById(R.id.btnTapLeft);
+        btnTapLeft.setOnTouchListener(createOnSwipeTouchListener());
+        btnTapRight = findViewById(R.id.btnTapRight);
+        btnTapRight.setOnTouchListener(createOnSwipeTouchListener());
 
+    }
+
+    public AppOnSwipeTouchListener createOnSwipeTouchListener(){
+        return new AppOnSwipeTouchListener(ViewerActivity.this){
+            public void onSwipeRight() {
+                if(iterator - 1 < 0) return;
+                currentDraftId = (allDraftsIds.get(--iterator));
+                but = But.PREV;
+                openFragment();
+            }
+            public void onSwipeLeft() {
+                if(iterator + 1 > allDraftsIds.size()-1) return;
+                currentDraftId = allDraftsIds.get(++iterator);
+                but = But.NEXT;
+                openFragment();
+            }
+        };
     }
 
     private View.OnClickListener showNextDraft() {
         return v -> {
             currentDraftId = allDraftsIds.get(++iterator);
-            direction = Direction.NEXT;
+            but = But.NEXT;
             openFragment();
         };
     }
@@ -96,7 +120,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showPreviousDraft() {
         return v -> {
             currentDraftId = (allDraftsIds.get(--iterator));
-            direction = Direction.PREV;
+            but = But.PREV;
             openFragment();
         };
     }
@@ -239,26 +263,26 @@ public class ViewerActivity extends BaseActivity {
             //Определяем формат чертежа
             if (PDF_EXTENSIONS.contains(currentDraft.getExtension())) { //Если PDF
                 //Переключаем фрагмент на PdfViewer
-                Fragment pdfViewerFrag = new PdfViewer();
-                pdfViewerFrag.setArguments(bundle);
+                draftFragment = new PdfViewer();
+                draftFragment.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
-                if (direction.equals(Direction.NEXT))
+                if (but.equals(But.NEXT))
                     ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
                 else
                     ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-                ft.replace(R.id.draft_fragment_container, pdfViewerFrag);
+                ft.replace(R.id.draft_fragment_container, draftFragment);
                 ft.commit();
 
             } else { //Если PNG, JPG, а также показываемое в стороннем приложении
                 //Переключаем фрагмент на ImageView
-                Fragment imageViewerFrag = new ImageViewer();
-                imageViewerFrag.setArguments(bundle);
+                Fragment draftFragment = new ImageViewer();
+                draftFragment.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
-                if (direction.equals(Direction.NEXT))
+                if (but.equals(But.NEXT))
                     ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
                 else
                     ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-                ft.replace(R.id.draft_fragment_container, imageViewerFrag);
+                ft.replace(R.id.draft_fragment_container, draftFragment);
                 ft.commit();
 
             }
@@ -307,6 +331,9 @@ public class ViewerActivity extends BaseActivity {
         startActivity(intent);
 
     }
+}
 
-
+enum But {
+    NEXT,
+    PREV;
 }

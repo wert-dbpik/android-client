@@ -11,21 +11,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-        <Button
-            android:id="@+id/btnShowMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:background="@android:color/transparent"
-            android:text=". . ."
-            android:textColor="#9E9D24"
-            android:textStyle="bold" />
+    <Button
+        android:id="@+id/btnShowMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="@android:color/transparent"
+        android:text=". . ."
+        android:textColor="#9E9D24"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnTapLeft"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:layout_marginVertical="60dp"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:id="@+id/btnTapRight"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"
+        android:layout_marginVertical="60dp"
+        android:background="@android:color/transparent"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
-
 
         <Button
             android:id="@+id/btnShowPrevious"
@@ -35,7 +50,7 @@
             android:paddingStart="20dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:text="PREV"
+            android:text=":"
             android:textColor="#9E9D24"
             android:textStyle="bold" />
 
@@ -48,7 +63,7 @@
             android:paddingEnd="20dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:text="NEXT"
+            android:text=":"
             android:textColor="#9E9D24"
             android:textStyle="bold" />
 
