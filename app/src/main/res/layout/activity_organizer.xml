@@ -19,7 +19,9 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/organizer_fragment_container"
@@ -27,14 +29,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/keyboard_container"
-            android:name="ru.wert.bazapik_mobile.keyboards.NumKeyboard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom" />
-
     </FrameLayout>
 
-
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/keyboard_container"
+        android:name="ru.wert.bazapik_mobile.keyboards.NumKeyboard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 </LinearLayout>

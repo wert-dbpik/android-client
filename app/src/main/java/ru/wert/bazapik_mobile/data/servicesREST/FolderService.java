@@ -54,17 +54,6 @@ public class FolderService implements IFolderService, ItemService<Folder> {
     }
 
     @Override
-    public Folder findByDecNumber(String number) {
-        try {
-            Call<Folder> call = api.getByDecNumber(number);
-            return call.execute().body();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
     public List<Folder> findAll() {
         try {
             Call<List<Folder>> call = api.getAll();
@@ -80,6 +69,17 @@ public class FolderService implements IFolderService, ItemService<Folder> {
         try {
             Call<List<Folder>> call = api.getAllByText(text);;
             return (call.execute().body());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Folder> findAllByGroupId(Long id) {
+        try {
+            Call<List<Folder>> call = api.getAllByProductGroupId(id);
+            return call.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
         }

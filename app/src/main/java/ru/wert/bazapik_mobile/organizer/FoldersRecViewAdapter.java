@@ -24,13 +24,15 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
     private ItemFolderClickListener mClickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
+    private FoldersFragment fragment;
 
     /**
      * Конструктор получает на входе список элементов List<P>
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public FoldersRecViewAdapter(Context context, List<Item> items) {
+    public FoldersRecViewAdapter(FoldersFragment fragment, Context context, List<Item> items) {
+        this.fragment = fragment;
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = items;
@@ -67,9 +69,17 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         Item item = mData.get(position);
 
         if(item instanceof ProductGroup){
-            String str = ((ProductGroup)item).getName();
-            holder.numberAndName.setText(str);
-            holder.folder.setImageDrawable(context.getDrawable(R.drawable.folder256));
+            if(!fragment.getCurrentProductGroupId().equals(1L) && position == 0){
+                String str = "< . . . . .>";
+                holder.numberAndName.setText(str);
+                holder.folder.setImageDrawable(context.getDrawable(R.drawable.backward256));
+
+            } else {
+                String str = ((ProductGroup)item).getName();
+                holder.numberAndName.setText(str);
+                holder.folder.setImageDrawable(context.getDrawable(R.drawable.folder256));
+            }
+
             holder.folder.setOnClickListener(e->{
 
             });
@@ -78,7 +88,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         if(item instanceof Folder){
             String str = ((Folder)item).getName();
             holder.numberAndName.setText(str);
-            holder.folder.setImageDrawable(null);
+            holder.folder.setImageDrawable(context.getDrawable(R.drawable.folders256));
             holder.folder.setClickable(false);
         }
 

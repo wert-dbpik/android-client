@@ -21,6 +21,7 @@ import java.util.List;
 import lombok.Getter;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
+import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
 import ru.wert.bazapik_mobile.keyboards.KeyboardSwitcher;
 import ru.wert.bazapik_mobile.keyboards.MyKeyboard;
@@ -43,6 +44,8 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
     public static final int NUM_KEYBOARD = 0;
     public static final int RU_KEYBOARD = 1;
     public static final int ENG_KEYBOARD = 2;
+
+    public Folder selectedFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,10 +107,15 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
             public void afterTextChanged(Editable s) {
                 String text = s.toString();
                 new Thread(() -> {
-                    OrganizerFragment<T> fr = (OrganizerFragment<T>) fm.findFragmentById(R.id.organizer_fragment_container);;
-                    if (text == null || text.equals(""))
+                    OrganizerFragment<T> fr = (OrganizerFragment<T>) fm.findFragmentById(R.id.organizer_fragment_container);
+                    if (text == null || text.equals("")){
+                        if(fr instanceof FoldersFragment){
+                            List<Item> items = ((FoldersFragment)fr).currentListWithGlobalOff();
+                             ((FoldersFragment)fr).fillRecViewWithItems(items);
+                             return;
+                        } else
                         fr.setFoundItems(fr.getAllItems());
-                    else
+                }else
                         fr.setFoundItems(fr.findProperItems(text));
                     runOnUiThread(() -> {
                         if (fr.getFoundItems() != null)
@@ -158,7 +166,7 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
         MyKeyboard myKeyboard = (MyKeyboard) keyboards.get(keyboard);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.keyboard_container, (Fragment) myKeyboard);
+        ft.replace(R.id.keyboard_container, (Fragment) myKeyboard, "keyboard_tag");
         ft.commit();
     }
 
@@ -187,7 +195,7 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
             ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
         else
             ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-        ft.replace(R.id.organizer_fragment_container, (Fragment) passportsFragment);
+        ft.replace(R.id.organizer_fragment_container, (Fragment) passportsFragment, "passports_tag");
         ft.commit();
     }
 
@@ -197,7 +205,7 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
             ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
         else
             ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-        ft.replace(R.id.organizer_fragment_container, (Fragment) foldersFragment);
+        ft.replace(R.id.organizer_fragment_container, (Fragment) foldersFragment, "folders_tag");
         ft.commit();
     }
 

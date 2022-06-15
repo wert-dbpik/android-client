@@ -20,6 +20,9 @@ public interface FolderApiInterface {
     @GET("folders/all")
     Call<List<Folder>> getAll();
 
+    @GET("folders/all-by/product-group-id/{id}")
+    Call<List<Folder>> getAllByProductGroupId(@Path("id") Long id);
+
     @GET("folders/all-by-text/{text}")
     Call<List<Folder>> getAllByText(@Path("text") String text);
 

@@ -48,15 +48,16 @@ public class FolderQuickService implements IFolderService {
         return foundFolder;
     }
 
-    public Folder findByDecNumber(String number) {
-        Folder foundFolder = null;
+
+    @Override
+    public List<Folder> findAllByGroupId(Long id) {
+        List<Folder> foundFolders = new ArrayList<>();
         for(Folder folder : folders){
-            if(folder.getDecNumber() != null && folder.getDecNumber().equals(number)) {
-                foundFolder = folder;
-                break;
+            if(folder.getProductGroup().getId().equals(id)) {
+                foundFolders.add(folder);
             }
         }
-        return foundFolder;
+        return foundFolders;
     }
 
     public Folder findById(Long id) {
@@ -95,12 +96,13 @@ public class FolderQuickService implements IFolderService {
         return (folders);
     }
 
+
     public List<Folder> findAllByText(String text) {
         List<Folder> foundFolders = new ArrayList<>();
         for(Folder folder : folders){
             String name = folder.getName();
-            String decNumber = folder.getDecNumber();
-            if((name != null && name.contains(text)) || (decNumber != null && decNumber.contains(text))) {
+
+            if(name != null && name.contains(text)) {
                 foundFolders.add(folder);
             }
         }

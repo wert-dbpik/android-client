@@ -11,13 +11,16 @@ import android.view.animation.Animation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
+import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.data.models.ProductGroup;
 import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.FolderQuickService;
 import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
@@ -66,6 +69,10 @@ public class ThisApplication extends Application {
     static SharedPreferences.Editor editor;
     private static Context appContext;
 
+    public static List<ProductGroup> ALL_PRODUCT_GROUPS;
+    public static List<Folder> ALL_FOLDERS;
+
+
     public static Context getAppContext(){
         return ThisApplication.appContext;
     }
@@ -76,6 +83,7 @@ public class ThisApplication extends Application {
         settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
         editor = settings.edit();
         ThisApplication.appContext = this.getApplicationContext();
+
     }
 
     public static String getProp(String name){
@@ -161,5 +169,16 @@ public class ThisApplication extends Application {
             stringList.add(String.valueOf(d.getId()));
         }
         return stringList;
+    }
+
+    /**
+     * Компаратор сравнивает usefulString объекта
+     */
+    public static Comparator<Item> usefulStringComparator() {
+        return (o1, o2) -> {
+            String str1 = o1.toUsefulString();
+            String str2 = o2.toUsefulString();
+            return str1.compareTo(str2);
+        };
     }
 }

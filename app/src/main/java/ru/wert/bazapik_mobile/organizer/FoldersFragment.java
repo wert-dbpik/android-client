@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import lombok.Getter;
@@ -23,12 +24,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
+import ru.wert.bazapik_mobile.data.api_interfaces.ProductApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.ProductGroupApiInterface;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
+import ru.wert.bazapik_mobile.data.interfaces.TreeBuildingItem;
+import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.search.DraftsRecViewAdapter;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
+
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_FOLDERS;
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
 
 public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.ItemFolderClickListener, OrganizerFragment<Item>{
 
@@ -43,6 +52,8 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     private List<ProductGroup> allGroups;
 
     private LinearLayout selectedPosition;
+
+    @Getter private Long currentProductGroupId;
 
     @Override
     public OrganizerRecViewAdapter getAdapter() {
@@ -60,6 +71,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         recViewItems = v.findViewById(R.id.recycle_view_folders);
         selectedPosition = v.findViewById(R.id.selected_position);
 
+        currentProductGroupId = 1L;
         createRecycleViewOfFoundItems();
 
         return v;
@@ -70,7 +82,19 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
      */
     @Override
     public void onItemClick(View view, int position) {
-//        openInfoView(position);
+        Item clickedItem = adapter.getItem(position);
+        if(clickedItem instanceof ProductGroup){
+            if(position == 0 && currentProductGroupId != 1L) {
+                currentProductGroupId = ((ProductGroup) clickedItem).getParentId();
+                fillRecViewWithItems(currentListWithGlobalOff());
+            } else {
+                currentProductGroupId = clickedItem.getId();
+                fillRecViewWithItems(currentListWithGlobalOff());
+            }
+        }
+        if(clickedItem instanceof Folder){
+
+        }
     }
 
     /**
@@ -80,7 +104,8 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
         recViewItems.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fillRecViewWithItems();
+
+        fillRecViewWithItems(currentListWithGlobalOff());
 
         //При касании списка, поле ввода должно потерять фокус
         //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
@@ -95,35 +120,45 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
     }
 
-    private void fillRecViewWithItems() {
-
-        updateView();
-
-//        FolderApiInterface api = RetrofitClient.getInstance().getRetrofit().create(FolderApiInterface.class);
-//        Call<List<Folder>> call = api.getAll();
-//        call.enqueue(new Callback<List<Folder>>() {
-//            @Override
-//            public void onResponse(Call<List<Folder>> call, Response<List<Folder>> response) {
-//                if(response.isSuccessful()){
-//                    activity.runOnUiThread(() -> {
-//                        adapter = new ItemRecViewAdapter<>(context, response.body());
-//                        adapter.setClickListener(FoldersFragment.this);
-//                        recViewItems.setAdapter(adapter);
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Folder>> call, Throwable t) {
-//                activity.runOnUiThread(()->{
-//                    new WarningDialog1().show(getActivity(), "Внимание!",
-//                            "Не удалось загрузить данные, возможно сервер не доступен. Приложение будет закрыто!");
-//
-//                });
-//            }
-//        });
-
+    public void fillRecViewWithItems(List<Item> items){
+        activity.runOnUiThread(()->{
+            adapter = new FoldersRecViewAdapter(this, context, items);
+            adapter.setClickListener(FoldersFragment.this);
+            recViewItems.setAdapter(adapter);
+        });
     }
+
+    public List<Item> currentListWithGlobalOff(){
+        List<Item> foundItems = new ArrayList<>();
+        if(currentProductGroupId.equals(1L)) {
+            List<ProductGroup> foundPG = findProductGroupChildren(currentProductGroupId);
+            foundPG.sort(ThisApplication.usefulStringComparator());
+            foundItems.addAll(foundPG);
+        } else {
+            //Текущая группа
+            ProductGroup currentPG = findProductGroupById(currentProductGroupId);
+
+            List<ProductGroup> foundPG = null;
+            List<Folder> foundF = null;
+            if (currentPG != null) {
+                //Находим входящие группы
+                foundPG = findProductGroupChildren(currentProductGroupId);
+                foundPG.sort(ThisApplication.usefulStringComparator());
+
+                //Находим входящие папки
+                foundF = findFoldersInProductGroup(currentPG);
+                foundF.sort(ThisApplication.usefulStringComparator());
+            }
+
+            //Формируем окончательный список
+            foundItems.add(currentPG);
+            if(foundPG != null) foundItems.addAll(foundPG);
+            if(foundF != null)  foundItems.addAll(foundF);
+        }
+        return foundItems;
+    }
+
+
 
     /**
      * Здесь происходит высев подходящих под ПОИСК элементов
@@ -131,44 +166,41 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
      * @return List<P> список подходящих элементов
      */
     @Override //OrganizerFragment
-    public List<Item> findProperItems(String searchText){
+    public List<Item> findProperItems(String searchText) {
         List<Item> foundItems = new ArrayList<>();
-//        for(Folder item : allItems){
-//            if(item.toUsefulString().toLowerCase().contains(searchText.toLowerCase()))
-//                foundItems.add(item);
-//        }
+        for (Folder f : ALL_FOLDERS) {
+            if (f.toUsefulString().toLowerCase().contains(searchText.toLowerCase()))
+                foundItems.add(f);
+        }
         return foundItems;
     }
 
-    private void updateView(){
-        ProductGroupApiInterface pgApi = RetrofitClient.getInstance().getRetrofit().create(ProductGroupApiInterface.class);
-        Call<List<ProductGroup>> pgCall = pgApi.getAll();
-        pgCall.enqueue(new Callback<List<ProductGroup>>() {
-            @Override
-            public void onResponse(Call<List<ProductGroup>> call, Response<List<ProductGroup>> response) {
-                if(response.isSuccessful()){
-                    List<Item> items = new ArrayList<>();
-                    List<ProductGroup> allGroups = response.body();
-                    for(ProductGroup pg: allGroups){
-                        items.add((Item)pg);
-                    }
 
-                    activity.runOnUiThread(() -> {
-                        adapter = new FoldersRecViewAdapter(context, items);
-                        adapter.setClickListener(FoldersFragment.this);
-                        recViewItems.setAdapter(adapter);
-                    });
-                }
-            }
 
-            @Override
-            public void onFailure(Call<List<ProductGroup>> call, Throwable t) {
-                activity.runOnUiThread(()->{
-                    new WarningDialog1().show(getActivity(), "Внимание!",
-                            "Не удалось загрузить данные, возможно сервер не доступен. Приложение будет закрыто!");
+    private ProductGroup findProductGroupById(Long id){
+        for(ProductGroup pg: ALL_PRODUCT_GROUPS){
+            if(pg.getId().equals(id))
+                return pg;
+        }
+        return null;
+    }
 
-                });
-            }
-        });
+    private List<ProductGroup> findProductGroupChildren(Long productGroupId){
+        List<ProductGroup> foundGroups = new ArrayList<>();
+        for(ProductGroup pg: ALL_PRODUCT_GROUPS){
+            if(pg.getParentId().equals(productGroupId))
+            foundGroups.add(pg);
+        }
+        return foundGroups;
+    }
+
+    private List<Folder> findFoldersInProductGroup(ProductGroup productGroup){
+
+        List<Folder> foundFolders = new ArrayList<>();
+        for(Folder f: ALL_FOLDERS){
+            if(f.getProductGroup().equals(productGroup))
+                foundFolders.add(f);
+        }
+        return foundFolders;
     }
 }
