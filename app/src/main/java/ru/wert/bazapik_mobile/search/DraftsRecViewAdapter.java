@@ -78,6 +78,7 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
                             context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
         P item = mData.get(position);
+        //Децимальный номер
         String text;
         if(item instanceof Passport){
             if(Consts.HIDE_PREFIXES)
@@ -86,24 +87,24 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
                 text = ((Passport) item).getPrefix().getName() + "." + ((Passport) item).getNumber();
         } else
             text = item.toUsefulString();
+
         holder.mNumber.setText(text);
+
+        //Наименование
         holder.mName.setText(item.getName());
 
-        if(item instanceof Passport){
-            holder.mShowDraft.setImageDrawable(
-                    ContextCompat.getDrawable(this.mInflater.getContext(), R.drawable.draft));
-            if(((Passport) item).getDraftIds().isEmpty())
-                holder.mShowDraft.setBackgroundColor(Color.BLACK);
-            else {
-                holder.mShowDraft.setBackgroundColor(Color.WHITE);
-                //При нажатии на кнопку создаем активити ViewerActivity, передаем ArrayList<String>, состоящий из id чертежей пасспорта
-                holder.mShowDraft.setOnClickListener(e->{
-                    openViewer((Passport) item);
-                });
-            }
-
+        //Пиктограмма чертежа
+        holder.mShowDraft.setImageDrawable(
+                ContextCompat.getDrawable(this.mInflater.getContext(), R.drawable.draft));
+        if (((Passport) item).getDraftIds() == null || ((Passport) item).getDraftIds().isEmpty())
+            holder.mShowDraft.setBackgroundColor(Color.BLACK);
+        else {
+            holder.mShowDraft.setBackgroundColor(Color.WHITE);
+            //При нажатии на кнопку создаем активити ViewerActivity, передаем ArrayList<String>, состоящий из id чертежей пасспорта
+            holder.mShowDraft.setOnClickListener(e -> {
+                openViewer((Passport) item);
+            });
         }
-
     }
 
     /**

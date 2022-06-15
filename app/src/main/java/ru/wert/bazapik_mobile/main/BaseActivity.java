@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile.main;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import ru.wert.bazapik_mobile.data.api_interfaces.AppLogApiInterface;
 import ru.wert.bazapik_mobile.data.models.AppLog;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoader;
+import ru.wert.bazapik_mobile.dataPreloading.DataLoadingAsyncTask;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION;
@@ -118,7 +120,10 @@ public abstract class BaseActivity extends AppCompatActivity {
      * Загрузка в память обновленных данных из БД
      */
     protected void reloadDataFromDB(){
-        DataLoader.LoadDataTask task = new DataLoader.LoadDataTask(BaseActivity.this);
+//        DataLoader.LoadDataTask task = new DataLoader.LoadDataTask(BaseActivity.this);
+//        task.execute();
+
+        AsyncTask<Void, Void, Void> task = new DataLoadingAsyncTask(this);
         task.execute();
     }
 

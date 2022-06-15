@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Setter;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
@@ -30,10 +31,11 @@ import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.utils.Direction;
 
-public class OrganizerActivity<T extends Item> extends BaseActivity implements KeyboardSwitcher {
+public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher {
 
-    private FragmentManager fm;
-    private OrganizerFragment passportsFragment, foldersFragment;
+    @Getter private FragmentManager fm;
+    @Getter private PassportsFragment passportsFragment;
+    @Getter private FoldersFragment foldersFragment;
     private List<EFragments> fragments = Arrays.asList(FRAG_FOLDERS, FRAG_PASSPORTS);
     private Direction direction = Direction.NEXT;
     private int currentFragment = 0;
@@ -45,7 +47,8 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
     public static final int RU_KEYBOARD = 1;
     public static final int ENG_KEYBOARD = 2;
 
-    public Folder selectedFolder;
+    @Getter@Setter
+    private Folder selectedFolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +62,10 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
         keyboardContainer = findViewById(R.id.keyboard_container);
         editTextSearch = findViewById(R.id.edit_text_search);
 
-
         createKeyboards();
         createSearchEditText();
 
-
     }
-
-
 
     /**
      * Создается поле для набора искомого текста
@@ -107,7 +106,7 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
             public void afterTextChanged(Editable s) {
                 String text = s.toString();
                 new Thread(() -> {
-                    OrganizerFragment<T> fr = (OrganizerFragment<T>) fm.findFragmentById(R.id.organizer_fragment_container);
+                    OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
                     if (text == null || text.equals("")){
                         if(fr instanceof FoldersFragment){
                             List<Item> items = ((FoldersFragment)fr).currentListWithGlobalOff();
@@ -189,7 +188,7 @@ public class OrganizerActivity<T extends Item> extends BaseActivity implements K
         }
     }
 
-    private void openPassportFragment() {
+    public void openPassportFragment() {
         FragmentTransaction ft = fm.beginTransaction();
         if (direction.equals(Direction.NEXT))
             ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);

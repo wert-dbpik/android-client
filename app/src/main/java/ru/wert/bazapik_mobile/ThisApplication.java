@@ -71,6 +71,8 @@ public class ThisApplication extends Application {
 
     public static List<ProductGroup> ALL_PRODUCT_GROUPS;
     public static List<Folder> ALL_FOLDERS;
+    public static List<Draft> ALL_DRAFTS;
+    public static List<Passport> ALL_PASSPORTS;
 
 
     public static Context getAppContext(){

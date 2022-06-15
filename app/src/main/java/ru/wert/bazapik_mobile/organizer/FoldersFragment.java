@@ -10,39 +10,31 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
-import ru.wert.bazapik_mobile.data.api_interfaces.ProductApiInterface;
-import ru.wert.bazapik_mobile.data.api_interfaces.ProductGroupApiInterface;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
-import ru.wert.bazapik_mobile.data.interfaces.TreeBuildingItem;
 import ru.wert.bazapik_mobile.data.models.Folder;
+import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.search.DraftsRecViewAdapter;
-import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_FOLDERS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
 
 public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.ItemFolderClickListener, OrganizerFragment<Item>{
 
-    private Context context;
-    private Activity activity;
+    private Context orgContext;
+    private OrganizerActivity orgActivity;
     private Button btnSwipeFolders;
     @Setter private FoldersRecViewAdapter adapter;
     @Getter@Setter private RecyclerView recViewItems;
@@ -64,8 +56,8 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_folders, container, false);
-        this.activity = getActivity();
-        this.context = getContext();
+        this.orgActivity = (OrganizerActivity) getActivity();
+        this.orgContext = getContext();
         btnSwipeFolders = v.findViewById(R.id.btnSwipeFolders);
         btnSwipeFolders.setOnTouchListener(((OrganizerActivity)getContext()).createOnSwipeTouchListener());
         recViewItems = v.findViewById(R.id.recycle_view_folders);
@@ -93,7 +85,18 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             }
         }
         if(clickedItem instanceof Folder){
+            PassportsFragment passportsFragment = orgActivity.getPassportsFragment();
+            orgActivity.setSelectedFolder((Folder)clickedItem);
+            List<Passport> passports = orgActivity.getPassportsFragment().findPassportsInFolder((Folder)clickedItem);
+            passportsFragment.fillRecViewWithItems(passports);
 
+            FragmentTransaction ft = orgActivity.getFm().beginTransaction();
+            ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+
+            ft.replace(R.id.organizer_fragment_container, passportsFragment, "passports_tag");
+            ft.commit();
+
+            orgActivity.openPassportFragment();
         }
     }
 
@@ -121,8 +124,8 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     }
 
     public void fillRecViewWithItems(List<Item> items){
-        activity.runOnUiThread(()->{
-            adapter = new FoldersRecViewAdapter(this, context, items);
+        orgActivity.runOnUiThread(()->{
+            adapter = new FoldersRecViewAdapter(this, orgContext, items);
             adapter.setClickListener(FoldersFragment.this);
             recViewItems.setAdapter(adapter);
         });
