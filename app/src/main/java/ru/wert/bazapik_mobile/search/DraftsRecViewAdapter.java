@@ -96,7 +96,8 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
         //Пиктограмма чертежа
         holder.mShowDraft.setImageDrawable(
                 ContextCompat.getDrawable(this.mInflater.getContext(), R.drawable.draft));
-        if (((Passport) item).getDraftIds() == null || ((Passport) item).getDraftIds().isEmpty())
+        List<Long> draftsIds = ((Passport) item).getDraftIds();
+        if (draftsIds.isEmpty())
             holder.mShowDraft.setBackgroundColor(Color.BLACK);
         else {
             holder.mShowDraft.setBackgroundColor(Color.WHITE);
