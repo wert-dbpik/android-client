@@ -3,7 +3,6 @@ package ru.wert.bazapik_mobile.organizer;
 import java.util.List;
 
 import ru.wert.bazapik_mobile.data.interfaces.Item;
-import ru.wert.bazapik_mobile.search.DraftsRecViewAdapter;
 
 public interface OrganizerFragment<T extends Item> {
 

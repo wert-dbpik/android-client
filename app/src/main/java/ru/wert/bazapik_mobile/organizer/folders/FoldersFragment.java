@@ -1,6 +1,5 @@
-package ru.wert.bazapik_mobile.organizer;
+package ru.wert.bazapik_mobile.organizer.folders;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,11 +25,15 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
+import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
+import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
+import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
+import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_FOLDERS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
 
-public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.ItemFolderClickListener, OrganizerFragment<Item>{
+public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.ItemFolderClickListener, OrganizerFragment<Item> {
 
     private Context orgContext;
     private OrganizerActivity orgActivity;
@@ -88,6 +90,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             PassportsFragment passportsFragment = orgActivity.getPassportsFragment();
             orgActivity.setSelectedFolder((Folder)clickedItem);
             List<Passport> passports = orgActivity.getPassportsFragment().findPassportsInFolder((Folder)clickedItem);
+
             passportsFragment.fillRecViewWithItems(passports);
 
             FragmentTransaction ft = orgActivity.getFm().beginTransaction();

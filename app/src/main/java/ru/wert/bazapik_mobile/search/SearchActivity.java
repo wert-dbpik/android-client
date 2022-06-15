@@ -43,6 +43,7 @@ import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
+import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -57,10 +58,10 @@ import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SH
  * 3) Всплывающей клавиатуры - keyboardView
  *
  */
-public class SearchActivity extends BaseActivity implements DraftsRecViewAdapter.ItemDraftsClickListener, KeyboardSwitcher {
+public class SearchActivity extends BaseActivity implements PassportsRecViewAdapter.passportsClickListener, KeyboardSwitcher {
     private static final String TAG = "+++ SearchActivity +++";
 
-    private DraftsRecViewAdapter<Passport> mAdapter;
+    private PassportsRecViewAdapter mAdapter;
     private RecyclerView mRecViewItems;
     private List<Passport> allItems;
     private List<Passport> foundItems;
@@ -204,7 +205,7 @@ public class SearchActivity extends BaseActivity implements DraftsRecViewAdapter
                 List<Passport> items = new ArrayList<>();
                 items.addAll(allItems);
                 runOnUiThread(() -> {
-                    mAdapter = new DraftsRecViewAdapter<>(this, items);
+                    mAdapter = new PassportsRecViewAdapter(this, items);
                     mAdapter.setClickListener(this);
                     mRecViewItems.setAdapter(mAdapter);
                 });

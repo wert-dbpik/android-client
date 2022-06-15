@@ -1,4 +1,6 @@
-package ru.wert.bazapik_mobile.search;
+package ru.wert.bazapik_mobile.organizer.passports;
+
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,7 +25,6 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
-import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
@@ -31,11 +32,11 @@ import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
-public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<DraftsRecViewAdapter<P>.ViewHolder> implements OrganizerRecViewAdapter {
+public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
 
-    private final List<P> mData;
-    private final LayoutInflater mInflater;
-    private ItemDraftsClickListener mClickListener;
+    private final List<Passport> data;
+    private final LayoutInflater inflater;
+    private passportsClickListener clickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
@@ -44,10 +45,10 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public DraftsRecViewAdapter(Context context, List<P> items) {
+    public PassportsRecViewAdapter(Context context, List<Passport> items) {
         this.context = context;
-        this.mInflater = LayoutInflater.from(context);
-        this.mData = items;
+        this.inflater = LayoutInflater.from(context);
+        this.data = items;
     }
 
     /**
@@ -59,7 +60,7 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recview_draft_row, parent, false);
+        View view = inflater.inflate(R.layout.recview_draft_row, parent, false);
         return new ViewHolder(view);
     }
 
@@ -77,40 +78,38 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
                             context.getColor(R.color.colorPrimary) : //Цвет выделения
                             context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
-        P item = mData.get(position);
+        Passport passport = data.get(position);
         //Децимальный номер
         String text;
-        if(item instanceof Passport){
-            if(Consts.HIDE_PREFIXES)
-                text = ((Passport) item).getNumber();
-            else
-                text = ((Passport) item).getPrefix().getName() + "." + ((Passport) item).getNumber();
-        } else
-            text = item.toUsefulString();
+
+        if(Consts.HIDE_PREFIXES)
+            text = passport.getNumber();
+        else
+            text = passport.getPrefix().getName() + "." + ((Passport) passport).getNumber();
+
 
         holder.mNumber.setText(text);
 
         //Наименование
-        holder.mName.setText(item.getName());
+        holder.mName.setText(passport.getName());
 
         //Пиктограмма чертежа
         holder.mShowDraft.setImageDrawable(
-                ContextCompat.getDrawable(this.mInflater.getContext(), R.drawable.draft));
-        List<Long> draftsIds = ((Passport) item).getDraftIds();
-        if (draftsIds.isEmpty())
+                ContextCompat.getDrawable(this.inflater.getContext(), R.drawable.draft));
+        //Через жопу, потомучто draftIds не сереализуется вместе с Passport в списке Folder
+        if (ALL_PASSPORTS.get(ALL_PASSPORTS.indexOf(passport)).getDraftIds().isEmpty())
             holder.mShowDraft.setBackgroundColor(Color.BLACK);
         else {
             holder.mShowDraft.setBackgroundColor(Color.WHITE);
             //При нажатии на кнопку создаем активити ViewerActivity, передаем ArrayList<String>, состоящий из id чертежей пасспорта
             holder.mShowDraft.setOnClickListener(e -> {
-                openViewer((Passport) item);
+                openViewer(passport);
             });
         }
     }
 
     /**
      * Открываем окно с доступными чертежами
-
      */
     private void openViewer(Passport passport){
         DraftApiInterface api = RetrofitClient.getInstance().getRetrofit().create(DraftApiInterface.class);
@@ -145,7 +144,7 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
      */
     @Override
     public int getItemCount() {
-        return mData.size();
+        return data.size();
     }
 
     /**
@@ -153,8 +152,8 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
      * @param items List<P>
      */
     public void changeListOfItems(List items){
-        mData.clear();
-        mData.addAll(items);
+        data.clear();
+        data.addAll(items);
         notifyDataSetChanged();
     }
 
@@ -184,8 +183,8 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
             view.findViewById(R.id.selected_position)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
-            if (mClickListener != null)
-                mClickListener.onItemClick(view, getAdapterPosition());
+            if (clickListener != null)
+                clickListener.onItemClick(view, getAdapterPosition());
 
             notifyDataSetChanged();
 
@@ -197,17 +196,17 @@ public class DraftsRecViewAdapter<P extends Item> extends RecyclerView.Adapter<D
      * @param index int
      * @return P extends Item
      */
-    public P getItem(int index) {
-        return mData.get(index);
+    public Passport getItem(int index) {
+        return data.get(index);
     }
 
     // allows clicks events to be caught
-    public void setClickListener(ItemDraftsClickListener itemDraftsClickListener) {
-        this.mClickListener = itemDraftsClickListener;
+    public void setClickListener(passportsClickListener passportsClickListener) {
+        this.clickListener = passportsClickListener;
     }
 
     // parent activity will implement this method to respond to click events
-    public interface ItemDraftsClickListener {
+    public interface passportsClickListener {
         void onItemClick(View view, int position);
     }
 

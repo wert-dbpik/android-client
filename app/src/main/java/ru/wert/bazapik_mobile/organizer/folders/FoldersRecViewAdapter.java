@@ -1,4 +1,4 @@
-package ru.wert.bazapik_mobile.organizer;
+package ru.wert.bazapik_mobile.organizer.folders;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,8 +16,9 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
+import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 
-public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter{
+public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
 
     private final List<Item> mData;
     private final LayoutInflater mInflater;

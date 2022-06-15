@@ -1,15 +1,11 @@
-package ru.wert.bazapik_mobile.organizer;
+package ru.wert.bazapik_mobile.organizer.passports;
 
-import android.app.Activity;
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +13,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,25 +27,24 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
+import retrofit2.Call;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
-import ru.wert.bazapik_mobile.search.DraftsRecViewAdapter;
-import ru.wert.bazapik_mobile.search.SearchActivity;
-
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
-import static ru.wert.bazapik_mobile.ThisApplication.SEARCH_TEXT;
+import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
+import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 
 
-public class PassportsFragment extends Fragment implements DraftsRecViewAdapter.ItemDraftsClickListener, OrganizerFragment<Passport>{
+public class PassportsFragment extends Fragment implements PassportsRecViewAdapter.passportsClickListener, OrganizerFragment<Passport> {
 
     private Context context;
     private OrganizerActivity orgActivity;
     private Button btnSwipePassports;
-    @Setter private DraftsRecViewAdapter<Passport> adapter;
+    @Setter private PassportsRecViewAdapter adapter;
     @Getter@Setter private RecyclerView recViewItems;
     @Getter@Setter private List<Passport> allItems;
     @Getter@Setter private List<Passport> foundItems;
@@ -59,7 +59,7 @@ public class PassportsFragment extends Fragment implements DraftsRecViewAdapter.
     private LinearLayout selectedPosition;
 
     @Override
-    public DraftsRecViewAdapter<Passport> getAdapter() {
+    public PassportsRecViewAdapter getAdapter() {
         return adapter;
     }
 
@@ -173,7 +173,7 @@ public class PassportsFragment extends Fragment implements DraftsRecViewAdapter.
 
     public void fillRecViewWithItems(List<Passport> items) {
         orgActivity.runOnUiThread(() -> {
-            adapter = new DraftsRecViewAdapter<>(context, items);
+            adapter = new PassportsRecViewAdapter(context, items);
             adapter.setClickListener(PassportsFragment.this);
             recViewItems.setAdapter(adapter);
         });
@@ -186,9 +186,9 @@ public class PassportsFragment extends Fragment implements DraftsRecViewAdapter.
      */
     @Override
     public List<Passport> findProperItems(String text) {
-                List<Passport> foundItems = new ArrayList<>();
-        for(Passport item : allItems){
-            if(item.toUsefulString().toLowerCase().contains(text.toLowerCase()))
+        List<Passport> foundItems = new ArrayList<>();
+        for (Passport item : allItems) {
+            if (item.toUsefulString().toLowerCase().contains(text.toLowerCase()))
                 foundItems.add(item);
         }
         return foundItems;

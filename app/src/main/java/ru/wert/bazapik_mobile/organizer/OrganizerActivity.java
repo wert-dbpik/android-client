@@ -29,6 +29,8 @@ import ru.wert.bazapik_mobile.keyboards.MyKeyboard;
 import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
+import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
+import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 import ru.wert.bazapik_mobile.utils.Direction;
 
 public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher {

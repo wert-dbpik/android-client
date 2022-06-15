@@ -14,9 +14,6 @@ public interface FolderApiInterface {
     @GET("folders/name/{name}")
     Call<Folder> getByName(@Path("name") String name);
 
-    @GET("folders/dec-number/{number}")
-    Call<Folder> getByDecNumber(@Path("number") String number);
-
     @GET("folders/all")
     Call<List<Folder>> getAll();
 

@@ -25,7 +25,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/organizer_fragment_container"
-            android:name="ru.wert.bazapik_mobile.organizer.PassportsFragment"
+            android:name="ru.wert.bazapik_mobile.organizer.passports.PassportsFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
