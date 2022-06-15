@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.organizer;
 
 import static ru.wert.bazapik_mobile.organizer.EFragments.*;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -9,6 +10,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
@@ -31,6 +33,7 @@ import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
+import ru.wert.bazapik_mobile.search.SearchActivity;
 import ru.wert.bazapik_mobile.utils.Direction;
 
 public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher {
@@ -96,6 +99,38 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
+        if(keyboardContainer.getVisibility() == View.VISIBLE) {
+            keyboardContainer.setVisibility(View.GONE);
+        } else if(fr instanceof FoldersFragment) {
+            if(foldersFragment.getCurrentProductGroupId().equals(1L))
+                showAlertDialogAndExit();
+            else{
+                foldersFragment.onItemClick(foldersFragment.getView(), 0);
+            }
+        } else if(fr instanceof PassportsFragment){
+
+            showAlertDialogAndExit();
+        }
+
+    }
+
+    private void showAlertDialogAndExit(){
+        new AlertDialog.Builder(this)
+                .setTitle("Выход тут!")
+                .setMessage("Хотите выйти?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        OrganizerActivity.super.onBackPressed();
+                        exitApplication();
+                    }
+                }).create().show();
+    }
+
 
     /**
      * Создается обработчик изменений текста, происходящих в поле ПОИСК

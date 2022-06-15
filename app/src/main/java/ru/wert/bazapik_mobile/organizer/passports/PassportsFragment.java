@@ -30,6 +30,7 @@ import lombok.Setter;
 import retrofit2.Call;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
+import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
@@ -39,15 +40,15 @@ import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 
 
-public class PassportsFragment extends Fragment implements PassportsRecViewAdapter.passportsClickListener, OrganizerFragment<Passport> {
+public class PassportsFragment extends Fragment implements PassportsRecViewAdapter.passportsClickListener, OrganizerFragment<Item> {
 
     private Context context;
     private OrganizerActivity orgActivity;
     private Button btnSwipePassports;
     @Setter private PassportsRecViewAdapter adapter;
     @Getter@Setter private RecyclerView recViewItems;
-    @Getter@Setter private List<Passport> allItems;
-    @Getter@Setter private List<Passport> foundItems;
+    @Getter@Setter private List<Item> allItems;
+    @Getter@Setter private List<Item> foundItems;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
@@ -185,9 +186,9 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
      * @return List<P> список подходящих элементов
      */
     @Override
-    public List<Passport> findProperItems(String text) {
-        List<Passport> foundItems = new ArrayList<>();
-        for (Passport item : allItems) {
+    public List<Item> findProperItems(String text) {
+        List<Item> foundItems = new ArrayList<>();
+        for (Item item : allItems) {
             if (item.toUsefulString().toLowerCase().contains(text.toLowerCase()))
                 foundItems.add(item);
         }
