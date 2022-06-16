@@ -1,13 +1,5 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import static android.content.Intent.ACTION_VIEW;
-import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
-import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
-import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
-import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
-import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
-import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,26 +10,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.FileProvider;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
-import ru.wert.bazapik_mobile.utils.Direction;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
+
+import static android.content.Intent.ACTION_VIEW;
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
+import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
+import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
+import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
+import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
+import static ru.wert.bazapik_mobile.constants.Consts.TEMP_DIR;
 
 /**
  * Активность запускается из класса ItemRecViewAdapter
@@ -189,7 +187,10 @@ public class ViewerActivity extends BaseActivity {
         //Этот поток позволяет показать ProgressIndicator
         new Thread(()->{
             //Достаем запись чертежа из БД
-            currentDraft = DRAFT_QUICK_SERVICE.findById(currentDraftId);
+            for(Draft d : ALL_DRAFTS){
+                if(d.getId().equals(currentDraftId)){
+                    currentDraft = d; break;}
+            }
             if (currentDraft == null) return;
             //Формируем конечный путь до удаленного файла
             remoteFileString = dbdir + currentDraftId + "." + currentDraft.getExtension();

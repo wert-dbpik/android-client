@@ -13,10 +13,9 @@ import ru.wert.bazapik_mobile.data.exceptions.ItemIsBusyException;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Product;
-import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.service_interfaces.IDraftService;
+import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 
-import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_QUICK_SERVICE;
 import static ru.wert.bazapik_mobile.ThisApplication.DRAFT_SERVICE;
 
 public class DraftQuickService extends Application implements IDraftService {
@@ -25,7 +24,7 @@ public class DraftQuickService extends Application implements IDraftService {
     private static final DraftService service = DRAFT_SERVICE;
 
     public DraftQuickService() {
-        DRAFT_QUICK_SERVICE = this;
+//        DRAFT_QUICK_SERVICE = this;
         new Thread(DraftQuickService::reload).start();
 
     }

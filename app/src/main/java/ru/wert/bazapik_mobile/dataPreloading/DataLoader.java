@@ -18,11 +18,11 @@ public class DataLoader {
 
         //Создается PassportService, и затем PassportQuickService
         new PassportService(activity);
-        new PassportQuickService(activity);
+//        new PassportQuickService(activity);
 
         //Создается DraftService, и затем DraftQuickService
         new DraftService();
-        new DraftQuickService();
+//        new DraftQuickService();
 
         AsyncTask<Void, Void, Void> task = new DataLoadingAsyncTask(activity);
         task.execute();

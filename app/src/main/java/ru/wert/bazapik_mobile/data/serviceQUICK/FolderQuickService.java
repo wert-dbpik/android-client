@@ -1,18 +1,15 @@
 package ru.wert.bazapik_mobile.data.serviceQUICK;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.data.service_interfaces.IFolderService;
-import ru.wert.bazapik_mobile.data.servicesREST.FolderService;
 import ru.wert.bazapik_mobile.data.models.Folder;
+import ru.wert.bazapik_mobile.data.service_interfaces.IFolderService;
 
 import static ru.wert.bazapik_mobile.ThisApplication.FOLDER_SERVICE;
 import static ru.wert.bazapik_mobile.ThisApplication.PASSPORT_SERVICE;
-import static ru.wert.bazapik_mobile.data.util.BLConst.RAZLOZHENO;
-
-import android.content.Context;
 
 public class FolderQuickService implements IFolderService {
 
@@ -22,7 +19,7 @@ public class FolderQuickService implements IFolderService {
 
     private FolderQuickService(Context context)  throws Exception{
         this.context = context;
-        ThisApplication.FOLDER_QUICK_SERVICE = this;
+//        ThisApplication.FOLDER_QUICK_SERVICE = this;
         reload();
 
     }

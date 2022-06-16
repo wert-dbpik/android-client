@@ -4,9 +4,9 @@ package ru.wert.bazapik_mobile.data.serviceQUICK;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.wert.bazapik_mobile.data.models.AnyPart;
 import ru.wert.bazapik_mobile.data.service_interfaces.IAnyPartService;
 import ru.wert.bazapik_mobile.data.servicesREST.AnyPartService;
-import ru.wert.bazapik_mobile.data.models.AnyPart;
 
 public class AnyPartQuickService implements IAnyPartService {
 

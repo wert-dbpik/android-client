@@ -21,7 +21,7 @@ public class PassportQuickService implements IPassportService {
 
     public PassportQuickService(Context context) throws Exception{
         this.context = context;
-        ThisApplication.PASSPORT_QUICK_SERVICE = this;
+//        ThisApplication.PASSPORT_QUICK_SERVICE = this;
         reload();
     }
 

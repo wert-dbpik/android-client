@@ -3,10 +3,10 @@ package ru.wert.bazapik_mobile.data.serviceQUICK;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.wert.bazapik_mobile.data.service_interfaces.IPrefixService;
-import ru.wert.bazapik_mobile.data.servicesREST.PrefixService;
 import ru.wert.bazapik_mobile.data.exceptions.ItemIsBusyException;
 import ru.wert.bazapik_mobile.data.models.Prefix;
+import ru.wert.bazapik_mobile.data.service_interfaces.IPrefixService;
+import ru.wert.bazapik_mobile.data.servicesREST.PrefixService;
 
 public class PrefixQuickService implements IPrefixService {
 
