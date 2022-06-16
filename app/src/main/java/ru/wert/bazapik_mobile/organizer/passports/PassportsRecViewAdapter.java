@@ -98,6 +98,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
                 ContextCompat.getDrawable(this.inflater.getContext(), R.drawable.draft));
         //Через жопу, потомучто draftIds не сереализуется вместе с Passport в списке Folder
         if (ALL_PASSPORTS.get(ALL_PASSPORTS.indexOf(passport)).getDraftIds().isEmpty())
+//        if(passport.getDraftIds().isEmpty())
             holder.mShowDraft.setBackgroundColor(Color.BLACK);
         else {
             holder.mShowDraft.setBackgroundColor(Color.WHITE);

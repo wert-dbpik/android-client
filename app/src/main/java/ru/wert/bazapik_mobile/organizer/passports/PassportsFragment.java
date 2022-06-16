@@ -3,6 +3,7 @@ package ru.wert.bazapik_mobile.organizer.passports;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -27,24 +27,22 @@ import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
-import retrofit2.Call;
 import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.info.PassportInfoActivity;
+import ru.wert.bazapik_mobile.organizer.FragmentTag;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 
 
 public class PassportsFragment extends Fragment implements PassportsRecViewAdapter.passportsClickListener, OrganizerFragment<Item> {
 
-    private Context context;
+    private Context orgContext;
     private OrganizerActivity orgActivity;
-    private Button btnSwipePassports;
     @Setter private PassportsRecViewAdapter adapter;
     @Getter@Setter private RecyclerView recViewItems;
     @Getter@Setter private List<Item> allItems;
@@ -53,6 +51,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
     private static Bundle bundleRecyclerViewState;
+    @Getter@Setter private boolean global = true;
 
     private EditText editTextSearch;
 
@@ -65,13 +64,10 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_passports, container, false);
         this.orgActivity = (OrganizerActivity) getActivity();
-        this.context = getContext();
-        btnSwipePassports = v.findViewById(R.id.btnSwipePassports);
-        btnSwipePassports.setOnTouchListener(((OrganizerActivity)getContext()).createOnSwipeTouchListener());
+        this.orgContext = getContext();
 
         editTextSearch = orgActivity.getEditTextSearch();
 
@@ -79,6 +75,9 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         selectedPosition = v.findViewById(R.id.selected_position);
 
         createRecycleViewOfFoundItems();
+
+        orgActivity.fragmentChanged(this);
+        orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
 
         return v;
     }
@@ -109,6 +108,8 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     @Override
     public void onResume() {
         super.onResume();
+        orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
+        orgActivity.fragmentChanged(this);
         orgActivity.getEditTextSearch().clearFocus();
         if (bundleRecyclerViewState != null) {
             editTextSearch.setText(bundleRecyclerViewState.getString(SEARCH_TEXT));
@@ -128,8 +129,6 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         bundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
 
     }
-
-
 
     /**
      * Создаем список состоящий из найденных элементов
@@ -155,13 +154,16 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     private List<Passport> findPassports(Folder selectedFolder){
         List<Passport> foundPassports = null;
-        if(selectedFolder == null)
+        if(selectedFolder == null) {
             foundPassports = ALL_PASSPORTS;
-        else {
+            global = true;
+        } else {
             foundPassports = findPassportsInFolder(selectedFolder);
+            global = false;
         }
         return foundPassports;
     }
+
 
     public List<Passport>  findPassportsInFolder(Folder folder){
         Set<Passport> foundPassports = new HashSet<>();
@@ -169,12 +171,14 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
             if(d.getFolder().equals(folder))
                 foundPassports.add(d.getPassport());
         }
-        return new ArrayList<>(foundPassports);
+        List<Passport> sortedList = new ArrayList<>(foundPassports);
+        sortedList.sort(ThisApplication.usefulStringComparator());
+        return new ArrayList<>(sortedList);
     }
 
     public void fillRecViewWithItems(List<Passport> items) {
         orgActivity.runOnUiThread(() -> {
-            adapter = new PassportsRecViewAdapter(context, items);
+            adapter = new PassportsRecViewAdapter(orgContext, items);
             adapter.setClickListener(PassportsFragment.this);
             recViewItems.setAdapter(adapter);
         });
@@ -188,10 +192,11 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     @Override
     public List<Item> findProperItems(String text) {
         List<Item> foundItems = new ArrayList<>();
-        for (Item item : allItems) {
+        for (Item item : ALL_PASSPORTS) {
             if (item.toUsefulString().toLowerCase().contains(text.toLowerCase()))
                 foundItems.add(item);
         }
+        foundItems.sort(ThisApplication.usefulStringComparator());
         return foundItems;
     }
 

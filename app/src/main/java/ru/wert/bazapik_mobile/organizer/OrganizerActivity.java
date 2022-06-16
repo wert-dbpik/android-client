@@ -1,13 +1,19 @@
 package ru.wert.bazapik_mobile.organizer;
 
-import static ru.wert.bazapik_mobile.organizer.EFragments.*;
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
+import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
+import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
@@ -17,14 +23,20 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.wert.bazapik_mobile.ChangePassActivity;
+import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
+import ru.wert.bazapik_mobile.data.models.VersionAndroid;
+import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
+import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
 import ru.wert.bazapik_mobile.keyboards.KeyboardSwitcher;
 import ru.wert.bazapik_mobile.keyboards.MyKeyboard;
@@ -33,17 +45,19 @@ import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
-import ru.wert.bazapik_mobile.search.SearchActivity;
-import ru.wert.bazapik_mobile.utils.Direction;
+import ru.wert.bazapik_mobile.settings.SettingsActivity;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher {
 
     @Getter private FragmentManager fm;
     @Getter private PassportsFragment passportsFragment;
     @Getter private FoldersFragment foldersFragment;
-    private List<EFragments> fragments = Arrays.asList(FRAG_FOLDERS, FRAG_PASSPORTS);
-    private Direction direction = Direction.NEXT;
-    private int currentFragment = 0;
+    @Getter@Setter private FragmentTag currentFragment = FragmentTag.FOLDERS_TAG;
+
+    private final String FRAGMENT_TAG = "fragment_tag";
+    private final String POSITION = "position";
+    private static Bundle bundleRecyclerViewState;
 
     private FragmentContainerView keyboardContainer;
     @Getter private EditText editTextSearch;
@@ -51,6 +65,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     public static final int NUM_KEYBOARD = 0;
     public static final int RU_KEYBOARD = 1;
     public static final int ENG_KEYBOARD = 2;
+
+    @Getter private Button btnFoldersTab, btnPassportsTab;
 
     @Getter@Setter
     private Folder selectedFolder;
@@ -67,9 +83,78 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         keyboardContainer = findViewById(R.id.keyboard_container);
         editTextSearch = findViewById(R.id.edit_text_search);
 
+        btnFoldersTab = findViewById(R.id.btnFoldersTab);
+        btnFoldersTab.setOnClickListener(v->{
+            openFoldersFragment();
+        });
+        btnPassportsTab = findViewById(R.id.btnPassportsTab);
+        btnPassportsTab.setOnClickListener(v->{
+            openPassportFragment();
+        });
+        btnPassportsTab.setOnLongClickListener(v -> {
+            passportsFragment.getAdapter().changeListOfItems(new ArrayList<>(ALL_PASSPORTS));
+            return false;
+        });
+
         createKeyboards();
         createSearchEditText();
+        checkUpNewVersion();
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        bundleRecyclerViewState = new Bundle();
+        bundleRecyclerViewState.putString(FRAGMENT_TAG, String.valueOf(currentFragment));
+    }
+
+    /**
+     * При рестарте боремся с появлением стандартной клавиатурой
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (bundleRecyclerViewState != null) {
+            currentFragment = FragmentTag.valueOf(bundleRecyclerViewState.getString(FRAGMENT_TAG));
+            openCurrentFragment();
+        }
+    }
+
+    private void openCurrentFragment(){
+        if(currentFragment.equals(FragmentTag.FOLDERS_TAG)) openFoldersFragment();
+        else if(currentFragment.equals(FragmentTag.PASSPORT_TAG)) openPassportFragment();
+    }
+
+
+    public void fragmentChanged(OrganizerFragment newFragment){
+        btnFoldersTab.setTextColor(getResources().getColor(R.color.cardview_light_background, null));
+        btnPassportsTab.setTextColor(getResources().getColor(R.color.cardview_light_background, null));
+        if(newFragment instanceof PassportsFragment){
+            btnPassportsTab.setTextColor(getResources().getColor(R.color.colorAccent, null));
+        }
+        else if (newFragment instanceof FoldersFragment){
+            btnFoldersTab.setTextColor(getResources().getColor(R.color.colorAccent, null));
+        }
+    }
+
+    private void checkUpNewVersion(){
+        new Thread(()->{
+            List<VersionAndroid> alVersions = VersionAndroidService.getInstance().findAll();
+            APPLICATION_VERSION_AVAILABLE = alVersions.get(alVersions.size()-1).getName();
+            if(APPLICATION_VERSION_AVAILABLE.compareTo(ThisApplication.APPLICATION_VERSION) > 0 &&
+                    !APP_VERSION_NOTIFICATION_SHOWN) {
+
+                APP_VERSION_NOTIFICATION_SHOWN = true;
+                runOnUiThread(() -> {
+                    new WarningDialog1().show(OrganizerActivity.this,
+                            "Внимание!",
+                            String.format("Доступна новая версия %s. Чтобы скачать и обновить программу " +
+                                    "зайдите в настройки и кликните по мигающей надписи. Далее: " +
+                                    "установите программу из скачанного файла apk", APPLICATION_VERSION_AVAILABLE));
+                });
+            }
+        }).start();
     }
 
     /**
@@ -112,8 +197,10 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                 foldersFragment.onItemClick(foldersFragment.getView(), 0);
             }
         } else if(fr instanceof PassportsFragment){
-
-            showAlertDialogAndExit();
+            if(!passportsFragment.isGlobal())
+                openFoldersFragment();
+            else
+                showAlertDialogAndExit();
         }
 
     }
@@ -206,67 +293,80 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         ft.commit();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        currentFragment = 1;
-        openFragment();
-    }
-
-    private void openFragment() {
-        switch (fragments.get(currentFragment)) {
-            case FRAG_FOLDERS:
-                openFoldersFragment();
-                break;
-            case FRAG_PASSPORTS:
-                openPassportFragment();
-                break;
-        }
-    }
 
     public void openPassportFragment() {
         FragmentTransaction ft = fm.beginTransaction();
-        if (direction.equals(Direction.NEXT))
-            ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
-        else
-            ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-        ft.replace(R.id.organizer_fragment_container, (Fragment) passportsFragment, "passports_tag");
+        ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+        ft.replace(R.id.organizer_fragment_container, passportsFragment, "passports_tag");
         ft.commit();
     }
 
-    private void openFoldersFragment() {
+    public void openFoldersFragment() {
         FragmentTransaction ft = fm.beginTransaction();
-        if (direction.equals(Direction.NEXT))
-            ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
-        else
-            ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-        ft.replace(R.id.organizer_fragment_container, (Fragment) foldersFragment, "folders_tag");
+        ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+        ft.replace(R.id.organizer_fragment_container, foldersFragment, "folders_tag");
         ft.commit();
     }
 
-    public AppOnSwipeTouchListener createOnSwipeTouchListener() {
-        return new AppOnSwipeTouchListener(OrganizerActivity.this) {
-            public void onSwipeRight() {   //назад
-                if (currentFragment != 0) {
-                    currentFragment--;
-                    direction = Direction.PREV;
-                    openFragment();
-                }
-            }
+    //=======================  M E N U  ================================
 
-            public void onSwipeLeft() {  //вперед
-                if (currentFragment < fragments.size() - 1) {
-                    currentFragment++;
-                    direction = Direction.NEXT;
-                    openFragment();
-                }
-            }
-        };
+    /**
+     * Создаем меню для окна с поиском
+     * @param menu
+     * @return
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.menu_start, menu);
+        return true;
+    }
+
+    /**
+     * Обработка выбора меню
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // получим идентификатор выбранного пункта меню
+        int id = item.getItemId();
+
+        // Операции для выбранного пункта меню
+        switch (id) {
+
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(OrganizerActivity.this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                return true;
+
+            case R.id.action_update:
+                editTextSearch.setText("");
+                Intent updateView = new Intent(OrganizerActivity.this, DataLoadingActivity.class);
+                startActivity(updateView);
+                return true;
+
+            case R.id.action_changeUser:
+                editTextSearch.setText("");
+                Intent loginView = new Intent(OrganizerActivity.this, LoginActivity.class);
+                startActivity(loginView);
+                return true;
+
+            case R.id.action_changePass:
+                editTextSearch.setText("");
+                Intent changePassView = new Intent(OrganizerActivity.this, ChangePassActivity.class);
+                startActivity(changePassView);
+                return true;
+
+            case R.id.action_showFilterDialog:
+                FilterDialog filterDialog = new FilterDialog(OrganizerActivity.this);
+                filterDialog.show();
+                return true;
+
+            case R.id.action_exit:
+                exitApplication();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 
-enum EFragments {
-    FRAG_FOLDERS,
-    FRAG_PASSPORTS;
-}

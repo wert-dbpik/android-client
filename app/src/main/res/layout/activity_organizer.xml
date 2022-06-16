@@ -17,6 +17,34 @@
         android:textAlignment="textStart"
         android:textSize="30sp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        >
+
+        <Button
+            android:id="@+id/btnFoldersTab"
+            android:text="Комплекты"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:background="@color/cardview_dark_background"/>
+
+        <Button
+            android:id="@+id/btnPassportsTab"
+            android:text="Чертежи"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:background="@color/cardview_dark_background"/>
+
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -25,7 +53,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/organizer_fragment_container"
-            android:name="ru.wert.bazapik_mobile.organizer.passports.PassportsFragment"
+            android:name="ru.wert.bazapik_mobile.organizer.folders.FoldersFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

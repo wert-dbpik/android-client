@@ -1,4 +1,4 @@
-package ru.wert.bazapik_mobile.search;
+package ru.wert.bazapik_mobile.organizer;
 
 import android.app.Activity;
 import android.app.Dialog;

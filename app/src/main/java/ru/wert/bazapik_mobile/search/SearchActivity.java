@@ -42,6 +42,7 @@ import ru.wert.bazapik_mobile.keyboards.MyKeyboard;
 import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
+import ru.wert.bazapik_mobile.organizer.FilterDialog;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
@@ -324,11 +325,6 @@ public class SearchActivity extends BaseActivity implements PassportsRecViewAdap
 
         // Операции для выбранного пункта меню
         switch (id) {
-
-            case R.id.action_organizer:
-                Intent foldersIntent = new Intent(SearchActivity.this, OrganizerActivity.class);
-                startActivity(foldersIntent);
-                return true;
 
             case R.id.action_settings:
                 Intent settingsIntent = new Intent(SearchActivity.this, SettingsActivity.class);

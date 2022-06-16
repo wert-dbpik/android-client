@@ -5,26 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".organizer.folders.FoldersFragment">
 
-    <Button
-        android:id="@+id/btnSwipeFolders"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:background="@android:color/transparent"
-        android:layout_gravity="right"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingVertical="5dp"
-        android:gravity="center_horizontal"
-        android:text="Комплекты"
-        android:textSize="10pt" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycle_view_folders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="0dp"
         android:scrollbars="vertical" />
 
 </FrameLayout>

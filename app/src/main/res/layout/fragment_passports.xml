@@ -5,26 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".organizer.passports.PassportsFragment">
 
-    <Button
-        android:id="@+id/btnSwipePassports"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:background="@android:color/transparent"
-        android:layout_gravity="left"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingVertical="5dp"
-        android:gravity="center_horizontal"
-        android:text="Чертежи"
-        android:textSize="10pt" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycle_view_passports"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="0dp"
         android:scrollbars="vertical" />
 
 </FrameLayout>

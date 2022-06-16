@@ -3,12 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:title="Комплекты"
-        android:id="@+id/action_organizer"
-        android:orderInCategory="1"
-        app:showAsAction="never"/>
-
-    <item
         android:title="Обновить"
         android:id="@+id/action_update"
         android:orderInCategory="1"
