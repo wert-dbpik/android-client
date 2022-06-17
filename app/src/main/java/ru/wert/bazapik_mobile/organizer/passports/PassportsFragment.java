@@ -56,8 +56,6 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     private EditText editTextSearch;
 
 
-    private LinearLayout selectedPosition;
-
     @Override
     public PassportsRecViewAdapter getAdapter() {
         return adapter;
@@ -72,7 +70,6 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         editTextSearch = orgActivity.getEditTextSearch();
 
         recViewItems = v.findViewById(R.id.recycle_view_passports);
-        selectedPosition = v.findViewById(R.id.selected_position);
 
         createRecycleViewOfFoundItems();
 
@@ -155,7 +152,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     private List<Passport> findPassports(Folder selectedFolder){
         List<Passport> foundPassports = null;
         if(selectedFolder == null) {
-            foundPassports = ALL_PASSPORTS;
+            foundPassports = new ArrayList<>(ALL_PASSPORTS);
             global = true;
         } else {
             foundPassports = findPassportsInFolder(selectedFolder);

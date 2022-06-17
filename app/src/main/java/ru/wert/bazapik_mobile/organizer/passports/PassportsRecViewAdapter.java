@@ -72,23 +72,28 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
+        View itemView = holder.itemView.findViewById(R.id.selected_position);
+
         if (selectedPosition != RecyclerView.NO_POSITION) //Если ничего не выделенно
-            holder.itemView.findViewById(R.id.selected_position)
-                    .setBackgroundColor((position == selectedPosition) ?
+            itemView.setBackgroundColor((position == selectedPosition) ?
                             context.getColor(R.color.colorPrimary) : //Цвет выделения
                             context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
         Passport passport = data.get(position);
+
         //Децимальный номер
-        String text;
+        String numberText;
 
         if(Consts.HIDE_PREFIXES)
-            text = passport.getNumber();
-        else
-            text = passport.getPrefix().getName() + "." + ((Passport) passport).getNumber();
+            numberText = passport.getNumber();
+        else {
+            if(passport.getPrefix().getName().equals("-"))
+                numberText = passport.getNumber();
+            else
+                numberText = passport.getPrefix().getName() + "." + passport.getNumber();
+        }
 
-
-        holder.mNumber.setText(text);
+        holder.mNumber.setText(numberText);
 
         //Наименование
         holder.mName.setText(passport.getName());
@@ -104,6 +109,11 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
             holder.mShowDraft.setBackgroundColor(Color.WHITE);
             //При нажатии на кнопку создаем активити ViewerActivity, передаем ArrayList<String>, состоящий из id чертежей пасспорта
             holder.mShowDraft.setOnClickListener(e -> {
+                selectedPosition = holder.getBindingAdapterPosition();
+                if(selectedPosition == RecyclerView.NO_POSITION) return; //Если ткнули в путое место
+                itemView.setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
+                notifyDataSetChanged(); //Сбрасываем остальные выделения
+
                 openViewer(passport);
             });
         }
@@ -178,14 +188,14 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
 
         @Override
         public void onClick(View view) {
-            if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
+            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return;
 
-            selectedPosition = getAdapterPosition();
+            selectedPosition = getBindingAdapterPosition();
             view.findViewById(R.id.selected_position)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
             if (clickListener != null)
-                clickListener.onItemClick(view, getAdapterPosition());
+                clickListener.onItemClick(view, getBindingAdapterPosition());
 
             notifyDataSetChanged();
 

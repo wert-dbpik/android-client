@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import androidx.core.app.BundleCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -33,6 +34,8 @@ import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 
+import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.ALLOW;
+import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_FOLDERS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
 
@@ -48,9 +51,14 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
     private final String PRODUCT_GROUP_ID = "product_group_id";
+    private final String SELECTED_POSITION = "selected_pos";
     private static Bundle bundleRecyclerViewState;
 
+    Bundle bundle = new Bundle();
+
     @Getter private Long currentProductGroupId;
+    private Item upwardItem = null; //Используется при переходе по каталогу вверх
+
 
     @Override
     public OrganizerRecViewAdapter getAdapter() {
@@ -66,11 +74,14 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
         recViewItems = v.findViewById(R.id.recycle_view_folders);
 
+        upwardItem = null;
         currentProductGroupId = 1L;
         createRecycleViewOfFoundItems();
 
         orgActivity.fragmentChanged(this);
         orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
+
+        adapter.setStateRestorationPolicy(ALLOW);
 
         return v;
     }
@@ -81,6 +92,8 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         bundleRecyclerViewState = new Bundle();
         bundleRecyclerViewState.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
         bundleRecyclerViewState.putString(PRODUCT_GROUP_ID, String.valueOf(currentProductGroupId));
+        bundleRecyclerViewState.putString(SELECTED_POSITION, String.valueOf(adapter.getSelectedPosition()));
+
         Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
         bundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
     }
@@ -94,13 +107,25 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         if (bundleRecyclerViewState != null) {
             orgActivity.getEditTextSearch().setText(bundleRecyclerViewState.getString(SEARCH_TEXT));
             currentProductGroupId = Long.valueOf(bundleRecyclerViewState.getString(PRODUCT_GROUP_ID));
+
             Parcelable listState = bundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
+
+//
+//            int selectedPosition = Integer.parseInt(bundleRecyclerViewState.getString(SELECTED_POSITION));
+//            adapter.setSelectedPosition(selectedPosition);
+////            View itemView  = recViewItems.getLayoutManager().findViewByPosition(selectedPosition);
+//            View itemView   = recViewItems.findViewHolderForAdapterPosition(selectedPosition).itemView;
+//            itemView.setBackgroundColor(orgContext.getColor(R.color.colorPrimary));
+//
+
+
         }
 
         createRecycleViewOfFoundItems();
 
     }
+
 
     /**
      * При клике на элемент списка открывается информация об элементе
@@ -108,13 +133,24 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     @Override
     public void onItemClick(View view, int position) {
         Item clickedItem = adapter.getItem(position);
+//        View itemView = recViewItems.findViewHolderForAdapterPosition(position).itemView;
+//        itemView.setBackgroundColor(orgContext.getColor(R.color.colorPrimary));
+//        adapter.notifyDataSetChanged();
+
         if(clickedItem instanceof ProductGroup){
+            //Если кликнули по верхней строке подкаталога
             if(position == 0 && currentProductGroupId != 1L) {
+                upwardItem = clickedItem;
+
+                Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
+                bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+
                 currentProductGroupId = ((ProductGroup) clickedItem).getParentId();
-                fillRecViewWithItems(currentListWithGlobalOff());
+                fillRecViewWithItems(currentListWithGlobalOff(clickedItem));
             } else {
+                upwardItem = null;
                 currentProductGroupId = clickedItem.getId();
-                fillRecViewWithItems(currentListWithGlobalOff());
+                fillRecViewWithItems(currentListWithGlobalOff(null));
             }
         }
         if(clickedItem instanceof Folder){
@@ -139,7 +175,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         recViewItems.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        fillRecViewWithItems(currentListWithGlobalOff());
+        fillRecViewWithItems(currentListWithGlobalOff(null));
 
         //При касании списка, поле ввода должно потерять фокус
         //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
@@ -152,6 +188,11 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         recViewItems.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
 
+        if(upwardItem != null){
+            Parcelable listState = bundle.getParcelable(KEY_RECYCLER_STATE);
+            Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
+        }
+
     }
 
     public void fillRecViewWithItems(List<Item> items){
@@ -159,16 +200,20 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             adapter = new FoldersRecViewAdapter(this, orgContext, items);
             adapter.setClickListener(FoldersFragment.this);
             recViewItems.setAdapter(adapter);
+
+
         });
     }
 
-    public List<Item> currentListWithGlobalOff(){
+    public List<Item> currentListWithGlobalOff(Item item){
         List<Item> foundItems = new ArrayList<>();
+        //Нулевая точка - исходное состояние каталога
         if(currentProductGroupId.equals(1L)) {
             List<ProductGroup> foundPG = findProductGroupChildren(currentProductGroupId);
             foundPG.sort(ThisApplication.usefulStringComparator());
             foundItems.addAll(foundPG);
-        } else {
+
+        } else {//Где-то внутри каталога
             //Текущая группа
             ProductGroup currentPG = findProductGroupById(currentProductGroupId);
 

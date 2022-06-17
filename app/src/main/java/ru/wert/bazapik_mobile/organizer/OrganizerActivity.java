@@ -128,13 +128,19 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
 
 
     public void fragmentChanged(OrganizerFragment newFragment){
-        btnFoldersTab.setTextColor(getResources().getColor(R.color.cardview_light_background, null));
-        btnPassportsTab.setTextColor(getResources().getColor(R.color.cardview_light_background, null));
+        btnPassportsTab.setTextColor(getResources().getColor(R.color.cardview_dark_background, null));
+        btnPassportsTab.setBackgroundColor(getResources().getColor(R.color.colorPrimary, null));
+
+        btnFoldersTab.setTextColor(getResources().getColor(R.color.cardview_dark_background, null));
+        btnFoldersTab.setBackgroundColor(getResources().getColor(R.color.colorPrimary, null));
+        //============================================================================================================
         if(newFragment instanceof PassportsFragment){
             btnPassportsTab.setTextColor(getResources().getColor(R.color.colorAccent, null));
+            btnPassportsTab.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark, null));
         }
         else if (newFragment instanceof FoldersFragment){
             btnFoldersTab.setTextColor(getResources().getColor(R.color.colorAccent, null));
+            btnFoldersTab.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark, null));
         }
     }
 
@@ -233,7 +239,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                     OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
                     if (text == null || text.equals("")) {
                         if (fr instanceof FoldersFragment) {
-                            List<Item> items = ((FoldersFragment) fr).currentListWithGlobalOff();
+                            List<Item> items = ((FoldersFragment) fr).currentListWithGlobalOff(null);
                             ((FoldersFragment) fr).fillRecViewWithItems(items);
                             return;
                         } else

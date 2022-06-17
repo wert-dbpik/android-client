@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
@@ -24,7 +26,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
     private final LayoutInflater mInflater;
     private ItemFolderClickListener mClickListener;
     private final Context context;
-    private int selectedPosition = RecyclerView.NO_POSITION;
+    @Getter@Setter private int selectedPosition = RecyclerView.NO_POSITION;
     private FoldersFragment fragment;
 
     /**
@@ -60,16 +62,17 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        View itemView = holder.itemView.findViewById(R.id.selected_position);
 
         if (selectedPosition != RecyclerView.NO_POSITION) //Если ничего не выделенно
-            holder.itemView.findViewById(R.id.selected_position)
-                    .setBackgroundColor((position == selectedPosition) ?
+        itemView.setBackgroundColor((position == selectedPosition) ?
                             context.getColor(R.color.colorPrimary) : //Цвет выделения
                             context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
         Item item = mData.get(position);
 
         if(item instanceof ProductGroup){
+
             if(!fragment.getCurrentProductGroupId().equals(1L) && position == 0){
                 String str = "< . . . . .>";
                 holder.numberAndName.setText(str);
@@ -81,9 +84,9 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
                 holder.folder.setImageDrawable(context.getDrawable(R.drawable.folder256));
             }
 
-            holder.folder.setOnClickListener(e->{
-
-            });
+//            holder.folder.setOnClickListener(e->{
+//
+//            });
         }
 
         if(item instanceof Folder){
@@ -134,14 +137,14 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
         @Override
         public void onClick(View view) {
-            if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
+            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return;
 
-            selectedPosition = getAdapterPosition();
+            selectedPosition = getBindingAdapterPosition();
             view.findViewById(R.id.selected_position)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
             if (mClickListener != null)
-                mClickListener.onItemClick(view, getAdapterPosition());
+                mClickListener.onItemClick(view, getBindingAdapterPosition());
 
             notifyDataSetChanged();
 

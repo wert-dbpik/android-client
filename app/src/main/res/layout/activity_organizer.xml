@@ -20,7 +20,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+android:background="@color/cardview_dark_background"
         >
 
         <Button
@@ -28,20 +28,14 @@
             android:text="Комплекты"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:background="@color/cardview_dark_background"/>
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/btnPassportsTab"
             android:text="Чертежи"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="2dp"
-            android:layout_weight="1"
-            android:background="@color/cardview_dark_background"/>
+            android:layout_weight="1" />
 
     </LinearLayout>
 
