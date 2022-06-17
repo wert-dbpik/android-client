@@ -2,10 +2,6 @@ package ru.wert.bazapik_mobile.warnings;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.view.WindowManager;
-
-import ru.wert.bazapik_mobile.search.SearchActivity;
 
 public class WarningDialog1 {
 

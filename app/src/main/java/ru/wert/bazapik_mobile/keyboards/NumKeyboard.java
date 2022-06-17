@@ -1,6 +1,6 @@
 package ru.wert.bazapik_mobile.keyboards;
 
-import static ru.wert.bazapik_mobile.search.SearchActivity.RU_KEYBOARD;
+import static ru.wert.bazapik_mobile.organizer.OrganizerActivity.RU_KEYBOARD;
 
 import android.os.Bundle;
 

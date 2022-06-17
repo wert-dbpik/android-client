@@ -231,19 +231,20 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                 String text = s.toString();
                 new Thread(() -> {
                     OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
-                    if (text == null || text.equals("")){
-                        if(fr instanceof FoldersFragment){
-                            List<Item> items = ((FoldersFragment)fr).currentListWithGlobalOff();
-                             ((FoldersFragment)fr).fillRecViewWithItems(items);
-                             return;
+                    if (text == null || text.equals("")) {
+                        if (fr instanceof FoldersFragment) {
+                            List<Item> items = ((FoldersFragment) fr).currentListWithGlobalOff();
+                            ((FoldersFragment) fr).fillRecViewWithItems(items);
+                            return;
                         } else
-                        fr.setFoundItems(fr.getAllItems());
-                }else
+                            fr.setFoundItems(fr.getAllItems());
+                    } else
                         fr.setFoundItems(fr.findProperItems(text));
                     runOnUiThread(() -> {
                         if (fr.getFoundItems() != null)
                             fr.getAdapter().changeListOfItems(fr.getFoundItems());
                     });
+
 
                 }).start();
             }

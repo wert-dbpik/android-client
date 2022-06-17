@@ -193,8 +193,10 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     public List<Item> findProperItems(String text) {
         List<Item> foundItems = new ArrayList<>();
         for (Item item : ALL_PASSPORTS) {
-            if (item.toUsefulString().toLowerCase().contains(text.toLowerCase()))
+            if (item.toUsefulString().toLowerCase().contains(text.toLowerCase())){
                 foundItems.add(item);
+            }
+
         }
         foundItems.sort(ThisApplication.usefulStringComparator());
         return foundItems;

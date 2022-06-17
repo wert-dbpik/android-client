@@ -6,7 +6,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.search.SearchActivity;
+import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import android.app.AlertDialog;
@@ -41,7 +41,7 @@ public class ChangePassActivity extends AppCompatActivity {
 
         btnCancel = findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(e-> {
-            Intent intent = new Intent(ChangePassActivity.this, SearchActivity.class);
+            Intent intent = new Intent(ChangePassActivity.this, OrganizerActivity.class);
             startActivity(intent);
         });
     }

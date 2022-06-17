@@ -1,7 +1,7 @@
 package ru.wert.bazapik_mobile.keyboards;
 
-import static ru.wert.bazapik_mobile.search.SearchActivity.ENG_KEYBOARD;
-import static ru.wert.bazapik_mobile.search.SearchActivity.NUM_KEYBOARD;
+import static ru.wert.bazapik_mobile.organizer.OrganizerActivity.ENG_KEYBOARD;
+import static ru.wert.bazapik_mobile.organizer.OrganizerActivity.NUM_KEYBOARD;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
