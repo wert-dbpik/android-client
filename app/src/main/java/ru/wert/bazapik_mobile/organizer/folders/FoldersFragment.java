@@ -6,10 +6,9 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import androidx.core.app.BundleCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -26,7 +25,6 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
-import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
 import ru.wert.bazapik_mobile.organizer.FragmentTag;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
@@ -35,7 +33,6 @@ import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 
 import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.ALLOW;
-import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_FOLDERS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
 
@@ -51,13 +48,13 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
     private final String PRODUCT_GROUP_ID = "product_group_id";
-    private final String SELECTED_POSITION = "selected_pos";
-    private static Bundle bundleRecyclerViewState;
+    private static Bundle bundle;
 
-    Bundle bundle = new Bundle();
+//    @Getter private LinearLayout llFolder;
+//    @Getter private ImageButton showMenu;
+
 
     @Getter private Long currentProductGroupId;
-    private Item upwardItem = null; //Используется при переходе по каталогу вверх
 
 
     @Override
@@ -72,9 +69,11 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         this.orgActivity = (OrganizerActivity) getActivity();
         this.orgContext = getContext();
 
+//        llFolder = v.findViewById(R.id.llFolder);
+//        showMenu = v.findViewById(R.id.btnShowFoldersMenu);
+
         recViewItems = v.findViewById(R.id.recycle_view_folders);
 
-        upwardItem = null;
         currentProductGroupId = 1L;
         createRecycleViewOfFoundItems();
 
@@ -89,13 +88,12 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     @Override
     public void onPause() {
         super.onPause();
-        bundleRecyclerViewState = new Bundle();
-        bundleRecyclerViewState.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
-        bundleRecyclerViewState.putString(PRODUCT_GROUP_ID, String.valueOf(currentProductGroupId));
-        bundleRecyclerViewState.putString(SELECTED_POSITION, String.valueOf(adapter.getSelectedPosition()));
+        bundle = new Bundle();
+        bundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
+        bundle.putString(PRODUCT_GROUP_ID, String.valueOf(currentProductGroupId));
 
         Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
-        bundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
+        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
     }
 
     @Override
@@ -104,21 +102,12 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
         orgActivity.fragmentChanged(this);
         orgActivity.getEditTextSearch().clearFocus();
-        if (bundleRecyclerViewState != null) {
-            orgActivity.getEditTextSearch().setText(bundleRecyclerViewState.getString(SEARCH_TEXT));
-            currentProductGroupId = Long.valueOf(bundleRecyclerViewState.getString(PRODUCT_GROUP_ID));
+        if (bundle != null) {
+            orgActivity.getEditTextSearch().setText(bundle.getString(SEARCH_TEXT));
+            currentProductGroupId = Long.valueOf(bundle.getString(PRODUCT_GROUP_ID));
 
-            Parcelable listState = bundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+            Parcelable listState = bundle.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
-
-//
-//            int selectedPosition = Integer.parseInt(bundleRecyclerViewState.getString(SELECTED_POSITION));
-//            adapter.setSelectedPosition(selectedPosition);
-////            View itemView  = recViewItems.getLayoutManager().findViewByPosition(selectedPosition);
-//            View itemView   = recViewItems.findViewHolderForAdapterPosition(selectedPosition).itemView;
-//            itemView.setBackgroundColor(orgContext.getColor(R.color.colorPrimary));
-//
-
 
         }
 
@@ -133,22 +122,12 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     @Override
     public void onItemClick(View view, int position) {
         Item clickedItem = adapter.getItem(position);
-//        View itemView = recViewItems.findViewHolderForAdapterPosition(position).itemView;
-//        itemView.setBackgroundColor(orgContext.getColor(R.color.colorPrimary));
-//        adapter.notifyDataSetChanged();
-
         if(clickedItem instanceof ProductGroup){
             //Если кликнули по верхней строке подкаталога
             if(position == 0 && currentProductGroupId != 1L) {
-                upwardItem = clickedItem;
-
-                Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
-                bundle.putParcelable(KEY_RECYCLER_STATE, listState);
-
                 currentProductGroupId = ((ProductGroup) clickedItem).getParentId();
                 fillRecViewWithItems(currentListWithGlobalOff(clickedItem));
             } else {
-                upwardItem = null;
                 currentProductGroupId = clickedItem.getId();
                 fillRecViewWithItems(currentListWithGlobalOff(null));
             }
@@ -163,9 +142,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         }
     }
 
-    private void openPassportFragment(){
-
-    }
 
     /**
      * Создаем список состоящий из найденных элементов
@@ -173,7 +149,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     private void createRecycleViewOfFoundItems() {
 
         recViewItems.setLayoutManager(new LinearLayoutManager(getContext()));
-
 
         fillRecViewWithItems(currentListWithGlobalOff(null));
 
@@ -187,12 +162,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         //Для красоты используем разделитель между элементами списка
         recViewItems.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
-
-        if(upwardItem != null){
-            Parcelable listState = bundle.getParcelable(KEY_RECYCLER_STATE);
-            Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
-        }
-
     }
 
     public void fillRecViewWithItems(List<Item> items){
@@ -200,8 +169,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             adapter = new FoldersRecViewAdapter(this, orgContext, items);
             adapter.setClickListener(FoldersFragment.this);
             recViewItems.setAdapter(adapter);
-
-
         });
     }
 

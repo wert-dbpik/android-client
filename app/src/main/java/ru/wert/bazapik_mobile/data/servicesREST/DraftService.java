@@ -133,10 +133,10 @@ public class DraftService extends Application implements IDraftService {
     }
 
     @Override
-    public Set<Draft> findAllByFolder(Folder folder) {
+    public List<Draft> findAllByFolder(Folder folder) {
         try {
-            Call<Set<Draft>> call = api.findAllByFolder(folder.getId());
-            Set<Draft> res = call.execute().body();
+            Call<List<Draft>> call = api.findAllByFolder(folder.getId());
+            List<Draft> res = call.execute().body();
             if (res != null)
                 return (res);
         } catch (IOException e) {

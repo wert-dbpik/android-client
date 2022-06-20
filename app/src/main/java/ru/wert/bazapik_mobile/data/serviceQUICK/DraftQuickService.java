@@ -88,8 +88,8 @@ public class DraftQuickService extends Application implements IDraftService {
         return foundDrafts;
     }
 
-    public Set<Draft> findAllByFolder(Folder folder) {
-        Set<Draft> foundDrafts = new HashSet<>();
+    public List<Draft> findAllByFolder(Folder folder) {
+       List<Draft> foundDrafts = new ArrayList<>();
         Long folderId = folder.getId();
         for(Draft draft : drafts){
             if(draft.getFolder() != null && draft.getFolder().getId().equals(folderId)) {

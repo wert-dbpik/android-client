@@ -203,10 +203,9 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                 foldersFragment.onItemClick(foldersFragment.getView(), 0);
             }
         } else if(fr instanceof PassportsFragment){
-            if(!passportsFragment.isGlobal())
+
                 openFoldersFragment();
-            else
-                showAlertDialogAndExit();
+
         }
 
     }

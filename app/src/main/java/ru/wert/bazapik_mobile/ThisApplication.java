@@ -183,4 +183,45 @@ public class ThisApplication extends Application {
             return str1.compareTo(str2);
         };
     }
+
+    /**
+     * Компаратор сравнивает чертеж по НОМЕРУ -> ТИПУ -> СТРАНИЦЕ
+     */
+    public static Comparator<Draft> draftsComparator() {
+        return (o1, o2) -> {
+            //Сравниваем номер чертежа, причем 745 должен быть выше, чем 469
+            int result = o2.getPassport().getNumber()
+                    .compareTo(o1.getPassport().getNumber());
+            if (result == 0) {
+                //Сравниваем тип чертежа
+                result = o1.getDraftType() - o2.getDraftType();
+                if (result == 0) {
+                    //Сравниваем номер страницы
+                    result = o1.getPageNumber() - o2.getPageNumber();
+                }
+            }
+            return result;
+        };
+    }
+
+    /**
+     * Компаратор сравнивает чертеж по НОМЕРУ -> ТИПУ -> СТРАНИЦЕ
+     * Реверсивность относится только к НОМЕРУ
+     */
+    public static Comparator<Draft> draftsReversComparator() {
+        return (o1, o2) -> {
+            //Сравниваем номер чертежа, причем 745 должен быть выше, чем 469
+            int result = o1.getPassport().getNumber()
+                    .compareTo(o2.getPassport().getNumber());
+            if (result == 0) {
+                //Сравниваем тип чертежа
+                result = o1.getDraftType() - o2.getDraftType();
+                if (result == 0) {
+                    //Сравниваем номер страницы
+                    result = o1.getPageNumber() - o2.getPageNumber();
+                }
+            }
+            return result;
+        };
+    }
 }

@@ -34,7 +34,7 @@ public interface IDraftService extends ItemService<Draft> {
     /***
      * Искать все чертежи входящие в папку
      */
-    Set<Draft> findAllByFolder(Folder folder);
+    List<Draft> findAllByFolder(Folder folder);
 
 
     //==============================================

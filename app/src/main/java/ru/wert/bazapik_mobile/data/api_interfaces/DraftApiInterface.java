@@ -17,7 +17,7 @@ public interface DraftApiInterface {
     Call<List<String>> findDraftsByMask(@Path("folder") String folder, @Path("mask") String mask);
 
     @GET("drafts/find-by-folder/{folderId}")
-    Call<Set<Draft>> findAllByFolder(@Path("folderId") Long folderId);
+    Call<List<Draft>> findAllByFolder(@Path("folderId") Long folderId);
 
     @Streaming
     @GET("drafts/download/{path}/{fileName}")

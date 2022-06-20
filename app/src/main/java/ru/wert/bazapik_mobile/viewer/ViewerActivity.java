@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import org.apache.commons.io.FileUtils;
 
@@ -54,7 +55,7 @@ public class ViewerActivity extends BaseActivity {
     private Draft currentDraft;
     private FragmentManager fm;
 
-    private Button btnShowPrevious, btnShowNext;
+    private ImageButton btnShowPrevious, btnShowNext;
     private But but = But.NEXT;
     private Fragment draftFragment;
     private Button btnTapLeft, btnTapRight;
@@ -162,12 +163,12 @@ public class ViewerActivity extends BaseActivity {
         openFragment();
     }
 
-    private void switchOnButton(Button btn){
+    private void switchOnButton(ImageButton btn){
         btn.setVisibility(View.VISIBLE);
         btn.setClickable(true);
     }
 
-    private void switchOffButton(Button btn){
+    private void switchOffButton(ImageButton btn){
         btn.setVisibility(View.INVISIBLE);
         btn.setClickable(false);
     }
