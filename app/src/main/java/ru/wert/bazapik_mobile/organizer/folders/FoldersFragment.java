@@ -3,12 +3,15 @@ package ru.wert.bazapik_mobile.organizer.folders;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -246,4 +249,11 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         }
         return foundFolders;
     }
+
+    public void openFolderContextMenu(Button btn, List<Item> mData, int position){
+        registerForContextMenu(btn);
+        orgActivity.openContextMenu(btn);
+        unregisterForContextMenu(btn);
+    }
+
 }

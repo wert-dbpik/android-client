@@ -73,7 +73,7 @@ public class ViewerActivity extends BaseActivity {
         iterator = findInitPosition();
 
         Button btnShowInfo = findViewById(R.id.btnShowMenu);
-        btnShowInfo.setOnClickListener(V->{
+        btnShowInfo.setOnClickListener(v->{
             registerForContextMenu(btnShowInfo);
             this.openContextMenu(btnShowInfo);
             unregisterForContextMenu(btnShowInfo);
@@ -141,7 +141,7 @@ public class ViewerActivity extends BaseActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
 
         MenuInflater viewerMenu = getMenuInflater();
-        viewerMenu.inflate(R.menu.viewer_menu, menu);
+        viewerMenu.inflate(R.menu.viewer_context_menu, menu);
     }
 
     @Override

@@ -160,7 +160,7 @@ public class ThisApplication extends Application {
     }
 
     /**
-     * Универсальный метод преобразования списка ArrayList<Item>  лист ArrayList<String>
+     * Универсальный метод преобразования списка ArrayList<Item> в лист ArrayList<String> из id
      * @param itemList
      * @param <T>
      * @return
@@ -187,11 +187,11 @@ public class ThisApplication extends Application {
     /**
      * Компаратор сравнивает чертеж по НОМЕРУ -> ТИПУ -> СТРАНИЦЕ
      */
-    public static Comparator<Draft> draftsComparator() {
+    public static Comparator<Draft> draftsComparatorAssemblesFirst() {
         return (o1, o2) -> {
-            //Сравниваем номер чертежа, причем 745 должен быть выше, чем 469
-            int result = o2.getPassport().getNumber()
-                    .compareTo(o1.getPassport().getNumber());
+            //Сборки должны быть первыми
+            int result = o1.getPassport().getNumber()
+                    .compareTo(o2.getPassport().getNumber());
             if (result == 0) {
                 //Сравниваем тип чертежа
                 result = o1.getDraftType() - o2.getDraftType();
@@ -208,11 +208,14 @@ public class ThisApplication extends Application {
      * Компаратор сравнивает чертеж по НОМЕРУ -> ТИПУ -> СТРАНИЦЕ
      * Реверсивность относится только к НОМЕРУ
      */
-    public static Comparator<Draft> draftsReversComparator() {
+    public static Comparator<Draft> draftsComparatorDetailFirst() {
         return (o1, o2) -> {
             //Сравниваем номер чертежа, причем 745 должен быть выше, чем 469
+            if(o1.getPassport().getNumber().startsWith("4") ||
+                    o1.getPassport().getNumber().startsWith("9"))
+                return -1; //В самый низ списка
             int result = o1.getPassport().getNumber()
-                    .compareTo(o2.getPassport().getNumber());
+                    .compareTo(o2.getPassport().getNumber()) * (-1);
             if (result == 0) {
                 //Сравниваем тип чертежа
                 result = o1.getDraftType() - o2.getDraftType();
