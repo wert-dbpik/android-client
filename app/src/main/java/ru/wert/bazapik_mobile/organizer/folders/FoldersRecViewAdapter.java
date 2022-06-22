@@ -199,6 +199,8 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+//            setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
+
             PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.getMenuInflater().inflate(R.menu.folder_context_menu, popup.getMenu());
             popup.setOnMenuItemClickListener(this);

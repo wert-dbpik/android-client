@@ -3,7 +3,6 @@ package ru.wert.bazapik_mobile.organizer.passports;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -50,7 +48,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
-    private static Bundle bundleRecyclerViewState;
+    private static Bundle restorBundle;
     @Getter@Setter private boolean global = true;
 
     private EditText editTextSearch;
@@ -99,6 +97,17 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     }
 
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        restorBundle = new Bundle();
+        restorBundle.putString(SEARCH_TEXT, editTextSearch.getText().toString());
+
+        Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
+        restorBundle.putParcelable(KEY_RECYCLER_STATE, listState);
+
+    }
+
     /**
      * При рестарте боремся с появлением стандартной клавиатурой
      */
@@ -108,23 +117,13 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
         orgActivity.fragmentChanged(this);
         orgActivity.getEditTextSearch().clearFocus();
-        if (bundleRecyclerViewState != null) {
-            editTextSearch.setText(bundleRecyclerViewState.getString(SEARCH_TEXT));
-            Parcelable listState = bundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
+        if (restorBundle != null) {
+            editTextSearch.setText(restorBundle.getString(SEARCH_TEXT));
+
+            Parcelable listState = restorBundle.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
 
         }
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        bundleRecyclerViewState = new Bundle();
-        bundleRecyclerViewState.putString(SEARCH_TEXT, editTextSearch.getText().toString());
-        Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
-        bundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
-
     }
 
     /**

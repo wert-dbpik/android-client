@@ -28,6 +28,7 @@ import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
+import ru.wert.bazapik_mobile.utils.Dest;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static android.content.Intent.ACTION_VIEW;
@@ -56,7 +57,7 @@ public class ViewerActivity extends BaseActivity {
     private FragmentManager fm;
 
     private ImageButton btnShowPrevious, btnShowNext;
-    private But but = But.NEXT;
+    private Dest destination = Dest.NEXT;
     private Fragment draftFragment;
     private Button btnTapLeft, btnTapRight;
 
@@ -96,13 +97,13 @@ public class ViewerActivity extends BaseActivity {
             public void onSwipeRight() {
                 if(iterator - 1 < 0) return;
                 currentDraftId = (allDraftsIds.get(--iterator));
-                but = But.PREV;
+                destination = Dest.PREV;
                 openFragment();
             }
             public void onSwipeLeft() {
                 if(iterator + 1 > allDraftsIds.size()-1) return;
                 currentDraftId = allDraftsIds.get(++iterator);
-                but = But.NEXT;
+                destination = Dest.NEXT;
                 openFragment();
             }
         };
@@ -111,7 +112,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showNextDraft() {
         return v -> {
             currentDraftId = allDraftsIds.get(++iterator);
-            but = But.NEXT;
+            destination = Dest.NEXT;
             openFragment();
         };
     }
@@ -119,7 +120,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showPreviousDraft() {
         return v -> {
             currentDraftId = (allDraftsIds.get(--iterator));
-            but = But.PREV;
+            destination = Dest.PREV;
             openFragment();
         };
     }
@@ -268,7 +269,7 @@ public class ViewerActivity extends BaseActivity {
                 draftFragment = new PdfViewer();
                 draftFragment.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
-                if (but.equals(But.NEXT))
+                if (destination.equals(Dest.NEXT))
                     ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
                 else
                     ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
@@ -280,7 +281,7 @@ public class ViewerActivity extends BaseActivity {
                 Fragment draftFragment = new ImageViewer();
                 draftFragment.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
-                if (but.equals(But.NEXT))
+                if (destination.equals(Dest.NEXT))
                     ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
                 else
                     ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
@@ -334,8 +335,8 @@ public class ViewerActivity extends BaseActivity {
 
     }
 }
-
-enum But {
-    NEXT,
-    PREV;
-}
+//
+//enum But {
+//    NEXT,
+//    PREV;
+//}

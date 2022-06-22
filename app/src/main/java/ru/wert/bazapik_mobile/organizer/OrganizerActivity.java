@@ -24,7 +24,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -51,8 +50,8 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher {
 
     @Getter private FragmentManager fm;
-    @Getter private PassportsFragment passportsFragment;
-    @Getter private FoldersFragment foldersFragment;
+    @Getter private PassportsFragment currentPassportsFragment;
+    @Getter@Setter private FoldersFragment currentFoldersFragment;
     @Getter@Setter private FragmentTag currentFragment = FragmentTag.FOLDERS_TAG;
 
     private final String FRAGMENT_TAG = "fragment_tag";
@@ -77,8 +76,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         setContentView(R.layout.activity_organizer);
 
         fm = getSupportFragmentManager();
-        passportsFragment = new PassportsFragment();
-        foldersFragment = new FoldersFragment();
+        currentPassportsFragment = new PassportsFragment();
+        currentFoldersFragment = new FoldersFragment();
 
         keyboardContainer = findViewById(R.id.keyboard_container);
         editTextSearch = findViewById(R.id.edit_text_search);
@@ -92,7 +91,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
             openPassportFragment();
         });
         btnPassportsTab.setOnLongClickListener(v -> {
-            passportsFragment.getAdapter().changeListOfItems(new ArrayList<>(ALL_PASSPORTS));
+            currentPassportsFragment.getAdapter().changeListOfItems(new ArrayList<>(ALL_PASSPORTS));
             return false;
         });
 
@@ -197,10 +196,10 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         if(keyboardContainer.getVisibility() == View.VISIBLE) {
             keyboardContainer.setVisibility(View.GONE);
         } else if(fr instanceof FoldersFragment) {
-            if(foldersFragment.getCurrentProductGroupId().equals(1L))
+            if(currentFoldersFragment.getCurrentProductGroupId().equals(1L))
                 showAlertDialogAndExit();
             else{
-                foldersFragment.onItemClick(foldersFragment.getView(), 0);
+                currentFoldersFragment.onItemClick(currentFoldersFragment.getView(), 0);
             }
         } else if(fr instanceof PassportsFragment){
                 openFoldersFragment();
@@ -301,14 +300,16 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     public void openPassportFragment() {
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
-        ft.replace(R.id.organizer_fragment_container, passportsFragment, "passports_tag");
+        ft.replace(R.id.organizer_fragment_container, currentPassportsFragment);
+        ft.addToBackStack(null);
         ft.commit();
     }
 
     public void openFoldersFragment() {
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-        ft.replace(R.id.organizer_fragment_container, foldersFragment, "folders_tag");
+        ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
+        ft.addToBackStack(null);
         ft.commit();
     }
 

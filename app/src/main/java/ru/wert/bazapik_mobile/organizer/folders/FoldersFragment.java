@@ -1,18 +1,17 @@
 package ru.wert.bazapik_mobile.organizer.folders;
 
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,6 +35,7 @@ import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 
 import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.ALLOW;
+import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_FOLDERS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
 
@@ -50,12 +50,12 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
-    private final String PRODUCT_GROUP_ID = "product_group_id";
-    private static Bundle bundle;
-
-//    @Getter private LinearLayout llFolder;
-//    @Getter private ImageButton showMenu;
-
+    private final String UPPER_PRODUCT_GROUP_ID = "upper_product_group_id";
+    private final String FIRST_POS = "first_pos";
+    private final String SELECTED_POS = "selected_pos";
+    @Getter@Setter private Bundle initBundle;
+    @Getter@Setter private Bundle restoreBundle;
+    private FragmentManager fm;
 
     @Getter private Long currentProductGroupId;
 
@@ -66,55 +66,82 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        super.onPause();
+        restoreBundle = new Bundle();
+        restoreBundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
+        restoreBundle.putString(UPPER_PRODUCT_GROUP_ID, String.valueOf(currentProductGroupId));
+
+        Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
+        restoreBundle.putParcelable(KEY_RECYCLER_STATE, listState);
+        int pos = recViewItems.getScrollState();
+
+        restoreBundle.putInt(FIRST_POS, pos);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_folders, container, false);
         this.orgActivity = (OrganizerActivity) getActivity();
         this.orgContext = getContext();
+        this.fm = orgActivity.getFm();
 
-//        llFolder = v.findViewById(R.id.llFolder);
-//        showMenu = v.findViewById(R.id.btnShowFoldersMenu);
 
         recViewItems = v.findViewById(R.id.recycle_view_folders);
 
-        currentProductGroupId = 1L;
+        initBundle = getArguments();
+        if(initBundle == null && restoreBundle == null) {
+            currentProductGroupId = 1L;
+        } else if(initBundle != null) {
+            currentProductGroupId = initBundle.getLong(UPPER_PRODUCT_GROUP_ID);
+
+        }
         createRecycleViewOfFoundItems();
-
         orgActivity.fragmentChanged(this);
-        orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
+        orgActivity.setCurrentFragment(FragmentTag.FOLDERS_TAG);
 
-        adapter.setStateRestorationPolicy(ALLOW);
+        adapter.setStateRestorationPolicy(PREVENT_WHEN_EMPTY);
 
+        orgActivity.setCurrentFoldersFragment(this);
         return v;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        bundle = new Bundle();
-        bundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
-        bundle.putString(PRODUCT_GROUP_ID, String.valueOf(currentProductGroupId));
+        restoreBundle = new Bundle();
+        restoreBundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
+        restoreBundle.putString(UPPER_PRODUCT_GROUP_ID, String.valueOf(currentProductGroupId));
 
         Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
-        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+        restoreBundle.putParcelable(KEY_RECYCLER_STATE, listState);
+        int pos = recViewItems.getScrollState();
+
+        restoreBundle.putInt(FIRST_POS, pos);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
-        orgActivity.fragmentChanged(this);
-        orgActivity.getEditTextSearch().clearFocus();
-        if (bundle != null) {
-            orgActivity.getEditTextSearch().setText(bundle.getString(SEARCH_TEXT));
-            currentProductGroupId = Long.valueOf(bundle.getString(PRODUCT_GROUP_ID));
+        if (restoreBundle != null) {
+            orgActivity.setCurrentFoldersFragment(this);
+            orgActivity.fragmentChanged(this);
+            orgActivity.setCurrentFragment(FragmentTag.FOLDERS_TAG);
+            orgActivity.getEditTextSearch().setText(restoreBundle.getString(SEARCH_TEXT));
+            currentProductGroupId = Long.valueOf(restoreBundle.getString(UPPER_PRODUCT_GROUP_ID));
+            orgActivity.getEditTextSearch().clearFocus();
 
-            Parcelable listState = bundle.getParcelable(KEY_RECYCLER_STATE);
+            Parcelable listState = restoreBundle.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
 
-        }
+            int pos = restoreBundle.getInt(FIRST_POS);
 
-        createRecycleViewOfFoundItems();
+            recViewItems.smoothScrollToPosition(pos);
+
+        }
 
     }
 
@@ -127,20 +154,43 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         Item clickedItem = adapter.getItem(position);
         if(clickedItem instanceof ProductGroup){
             //Если кликнули по верхней строке подкаталога
-            if(position == 0 && currentProductGroupId != 1L) {
-                currentProductGroupId = ((ProductGroup) clickedItem).getParentId();
-                fillRecViewWithItems(currentListWithGlobalOff(clickedItem));
-            } else {
-                currentProductGroupId = clickedItem.getId();
-                fillRecViewWithItems(currentListWithGlobalOff(null));
+            if(position == 0 && currentProductGroupId != 1L) {//BACKWARD
+
+                Long upperProductGroupId = ((ProductGroup) clickedItem).getParentId();
+
+                List<Fragment> list = fm.getFragments();
+
+                String tag = "folders" + upperProductGroupId;
+                FoldersFragment backwardFoldersFragment = (FoldersFragment) fm.findFragmentByTag(tag);
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+                ft.replace(R.id.organizer_fragment_container, backwardFoldersFragment);
+                ft.commit();
+
+
+            } else { //FORWARD
+                Long upperProductGroupId = clickedItem.getId();
+
+                Bundle bundle = new Bundle();
+                bundle.putLong(UPPER_PRODUCT_GROUP_ID, upperProductGroupId);
+
+                FoldersFragment forwardFoldersFragment = new FoldersFragment();
+                forwardFoldersFragment.setArguments(bundle);
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+                String tag = "folders" + upperProductGroupId;
+                ft.replace(R.id.organizer_fragment_container, forwardFoldersFragment, tag);
+                ft.addToBackStack("folders" + upperProductGroupId);
+                ft.commit();
+
             }
         }
         if(clickedItem instanceof Folder){
             orgActivity.setSelectedFolder((Folder)clickedItem);
-            PassportsFragment passportsFragment = orgActivity.getPassportsFragment();
+            PassportsFragment passportsFragment = orgActivity.getCurrentPassportsFragment();
             FragmentTransaction ft = orgActivity.getFm().beginTransaction();
             ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
-            ft.replace(R.id.organizer_fragment_container, passportsFragment, "passports_tag");
+            ft.replace(R.id.organizer_fragment_container, passportsFragment);
             ft.commit();
         }
     }
@@ -250,10 +300,10 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         return foundFolders;
     }
 
-    public void openFolderContextMenu(Button btn, List<Item> mData, int position){
-        registerForContextMenu(btn);
-        orgActivity.openContextMenu(btn);
-        unregisterForContextMenu(btn);
-    }
+//    public void openFolderContextMenu(Button btn, List<Item> mData, int position){
+//        registerForContextMenu(btn);
+//        orgActivity.openContextMenu(btn);
+//        unregisterForContextMenu(btn);
+//    }
 
 }
