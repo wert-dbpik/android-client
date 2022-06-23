@@ -300,10 +300,4 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         return foundFolders;
     }
 
-//    public void openFolderContextMenu(Button btn, List<Item> mData, int position){
-//        registerForContextMenu(btn);
-//        orgActivity.openContextMenu(btn);
-//        unregisterForContextMenu(btn);
-//    }
-
 }

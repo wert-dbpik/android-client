@@ -90,7 +90,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         if (item instanceof ProductGroup) {
 
             holder.llFolder.removeView(holder.showFolderMenu);
-
+            holder.folder.setClickable(false); //Не обрабатывает нажатие на себя
             if (!fragment.getCurrentProductGroupId().equals(1L) && position == 0) {
                 String str = "< . . . . .>";
                 holder.numberAndName.setText(str);
@@ -102,16 +102,13 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
                 holder.folder.setImageDrawable(context.getDrawable(R.drawable.folder256));
             }
 
-//            holder.folder.setOnClickListener(e->{
-//
-//            });
         }
 
         if (item instanceof Folder) {
             String str = ((Folder) item).getName();
             holder.numberAndName.setText(str);
             holder.folder.setImageDrawable(context.getDrawable(R.drawable.folders256));
-            holder.folder.setClickable(false);
+            holder.folder.setClickable(false);//Не обрабатывает нажатие на себя
 
         }
 
@@ -177,7 +174,6 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
             showFolderMenu.setOnCreateContextMenuListener(this);
 
-
             itemView.setOnClickListener(this);
         }
 
@@ -233,12 +229,10 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         return mData.get(index);
     }
 
-    // allows clicks events to be caught
     public void setClickListener(ItemFolderClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
     public interface ItemFolderClickListener {
         void onItemClick(View view, int position);
     }

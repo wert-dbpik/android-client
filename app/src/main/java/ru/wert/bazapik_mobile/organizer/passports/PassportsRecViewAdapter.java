@@ -211,12 +211,10 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
         return data.get(index);
     }
 
-    // allows clicks events to be caught
     public void setClickListener(passportsClickListener passportsClickListener) {
         this.clickListener = passportsClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
     public interface passportsClickListener {
         void onItemClick(View view, int position);
     }
