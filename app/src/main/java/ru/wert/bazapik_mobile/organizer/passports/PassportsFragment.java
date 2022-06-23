@@ -48,7 +48,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
-    private static Bundle restorBundle;
+    private static Bundle restoreBundle;
     @Getter@Setter private boolean global = true;
 
     private EditText editTextSearch;
@@ -100,11 +100,11 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     @Override
     public void onPause() {
         super.onPause();
-        restorBundle = new Bundle();
-        restorBundle.putString(SEARCH_TEXT, editTextSearch.getText().toString());
+        restoreBundle = new Bundle();
+        restoreBundle.putString(SEARCH_TEXT, editTextSearch.getText().toString());
 
         Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
-        restorBundle.putParcelable(KEY_RECYCLER_STATE, listState);
+        restoreBundle.putParcelable(KEY_RECYCLER_STATE, listState);
 
     }
 
@@ -117,10 +117,10 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
         orgActivity.fragmentChanged(this);
         orgActivity.getEditTextSearch().clearFocus();
-        if (restorBundle != null) {
-            editTextSearch.setText(restorBundle.getString(SEARCH_TEXT));
+        if (restoreBundle != null) {
+            editTextSearch.setText(restoreBundle.getString(SEARCH_TEXT));
 
-            Parcelable listState = restorBundle.getParcelable(KEY_RECYCLER_STATE);
+            Parcelable listState = restoreBundle.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
 
         }
