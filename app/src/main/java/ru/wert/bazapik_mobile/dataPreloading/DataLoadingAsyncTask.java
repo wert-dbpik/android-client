@@ -46,22 +46,30 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, Void, Void> {
             //ЧЕРТЕЖИ
             DraftApiInterface draftApi = RetrofitClient.getInstance().getRetrofit().create(DraftApiInterface.class);
             Call<List<Draft>> draftCall = draftApi.getAll();
-            ThisApplication.ALL_DRAFTS = draftCall.execute().body();
+            List<Draft> allDrafts = draftCall.execute().body();
+            allDrafts.sort(ThisApplication.usefulStringComparator());
+            ThisApplication.ALL_DRAFTS = allDrafts;
 
             //ПАССПОРТА
             PassportApiInterface pasApi = RetrofitClient.getInstance().getRetrofit().create(PassportApiInterface.class);
             Call<List<Passport>> passCall = pasApi.getAll();
-            ThisApplication.ALL_PASSPORTS = passCall.execute().body();
+            List<Passport> allPassports = passCall.execute().body();
+            allPassports.sort(ThisApplication.usefulStringComparator());
+            ThisApplication.ALL_PASSPORTS = allPassports;
 
             //ГРУППЫ ИЗДЕЛИЙ
             ProductGroupApiInterface pgApi = RetrofitClient.getInstance().getRetrofit().create(ProductGroupApiInterface.class);
             Call<List<ProductGroup>> pgCall = pgApi.getAll();
-            ThisApplication.ALL_PRODUCT_GROUPS = pgCall.execute().body();
+            List<ProductGroup> allProductGroups = pgCall.execute().body();
+            allProductGroups.sort(ThisApplication.usefulStringComparator());
+            ThisApplication.ALL_PRODUCT_GROUPS = allProductGroups;
 
             //КОМПЛЕКТЫ
             FolderApiInterface folderApi = RetrofitClient.getInstance().getRetrofit().create(FolderApiInterface.class);
             Call<List<Folder>> folderCall = folderApi.getAll();
-            ThisApplication.ALL_FOLDERS = folderCall.execute().body();
+            List<Folder> allFolders = folderCall.execute().body();
+            allFolders.sort(ThisApplication.usefulStringComparator());
+            ThisApplication.ALL_FOLDERS = allFolders;
 
         } catch (Exception e) {
             e.printStackTrace();

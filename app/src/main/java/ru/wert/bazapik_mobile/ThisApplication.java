@@ -189,9 +189,26 @@ public class ThisApplication extends Application {
      */
     public static Comparator<Draft> draftsComparatorAssemblesFirst() {
         return (o1, o2) -> {
+
+            String number1 = o1.getPassport().getNumber();
+            String number2 = o2.getPassport().getNumber();
+
+            //Чем больше нулей в начале номера, тем выше в списке
+            if (number1.startsWith("4") ||
+                    number1.startsWith("9"))  number1 = "0000".concat(number1);
+            else if (number1.startsWith("3")) number1 = "000".concat(number1);
+            else if (number1.startsWith("6")) number1 = "00".concat(number1);
+            else if (number1.startsWith("7")) number1 = "0".concat(number1);
+
+            if (number2.startsWith("4") ||
+                    number2.startsWith("9"))  number2 = "0000".concat(number2);
+            else if (number2.startsWith("3")) number2 = "000".concat(number2);
+            else if (number2.startsWith("6")) number2 = "00".concat(number2);
+            else if (number2.startsWith("7")) number2 = "0".concat(number2);
+
             //Сборки должны быть первыми
-            int result = o1.getPassport().getNumber()
-                    .compareTo(o2.getPassport().getNumber());
+            int result = number1.compareTo(number2);
+
             if (result == 0) {
                 //Сравниваем тип чертежа
                 result = o1.getDraftType() - o2.getDraftType();
@@ -211,11 +228,24 @@ public class ThisApplication extends Application {
     public static Comparator<Draft> draftsComparatorDetailFirst() {
         return (o1, o2) -> {
             //Сравниваем номер чертежа, причем 745 должен быть выше, чем 469
-            if(o1.getPassport().getNumber().startsWith("4") ||
-                    o1.getPassport().getNumber().startsWith("9"))
-                return -1; //В самый низ списка
-            int result = o1.getPassport().getNumber()
-                    .compareTo(o2.getPassport().getNumber()) * (-1);
+            String number1 = o1.getPassport().getNumber();
+            String number2 = o2.getPassport().getNumber();
+
+            //Чем больше нулей в начале номера, тем выше в списке
+            if (number1.startsWith("4") ||
+                    number1.startsWith("9"))  number1 = "0".concat(number1);
+            else if (number1.startsWith("3")) number1 = "00".concat(number1);
+            else if (number1.startsWith("6")) number1 = "000".concat(number1);
+            else if (number1.startsWith("7")) number1 = "0000".concat(number1);
+
+            if (number2.startsWith("4") ||
+                    number2.startsWith("9"))  number2 = "0".concat(number2);
+            else if (number2.startsWith("3")) number2 = "00".concat(number2);
+            else if (number2.startsWith("6")) number2 = "000".concat(number2);
+            else if (number2.startsWith("7")) number2 = "0000".concat(number2);
+
+            int result = number1.compareTo(number2);
+
             if (result == 0) {
                 //Сравниваем тип чертежа
                 result = o1.getDraftType() - o2.getDraftType();
