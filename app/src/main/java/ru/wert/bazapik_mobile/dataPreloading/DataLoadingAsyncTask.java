@@ -54,7 +54,7 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, Void, Void> {
             PassportApiInterface pasApi = RetrofitClient.getInstance().getRetrofit().create(PassportApiInterface.class);
             Call<List<Passport>> passCall = pasApi.getAll();
             List<Passport> allPassports = passCall.execute().body();
-            allPassports.sort(ThisApplication.usefulStringComparator());
+            allPassports.sort(ThisApplication.passportsComparatorDetailFirst());
             ThisApplication.ALL_PASSPORTS = allPassports;
 
             //ГРУППЫ ИЗДЕЛИЙ
