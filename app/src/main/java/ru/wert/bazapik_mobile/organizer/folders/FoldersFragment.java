@@ -7,9 +7,7 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -34,7 +32,6 @@ import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 
-import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.ALLOW;
 import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_FOLDERS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
@@ -44,20 +41,21 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     private Context orgContext;
     private OrganizerActivity orgActivity;
     @Setter private FoldersRecViewAdapter adapter;
-    @Getter@Setter private RecyclerView recViewItems;
+    @Getter@Setter private RecyclerView rv;
     @Getter@Setter private List<Item> allItems;
     @Getter@Setter private List<Item> foundItems;
 
+    @Getter@Setter private Bundle initBundle;
+    @Getter@Setter private Bundle restoreBundle;
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
     private final String UPPER_PRODUCT_GROUP_ID = "upper_product_group_id";
-    private final String FIRST_POS = "first_pos";
+    private final String FIRST_SCROLL_POS = "first_scroll_pos";
     private final String SELECTED_POS = "selected_pos";
-    @Getter@Setter private Bundle initBundle;
-    @Getter@Setter private Bundle restoreBundle;
+
     private FragmentManager fm;
 
-    @Getter private Long currentProductGroupId;
+    @Getter private Long upperProductGroupId;
 
 
     @Override
@@ -65,21 +63,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         return adapter;
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        super.onPause();
-        restoreBundle = new Bundle();
-        restoreBundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
-        restoreBundle.putString(UPPER_PRODUCT_GROUP_ID, String.valueOf(currentProductGroupId));
-
-        Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
-        restoreBundle.putParcelable(KEY_RECYCLER_STATE, listState);
-        int pos = recViewItems.getScrollState();
-
-        restoreBundle.putInt(FIRST_POS, pos);
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,13 +73,14 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         this.fm = orgActivity.getFm();
 
 
-        recViewItems = v.findViewById(R.id.recycle_view_folders);
+        rv = v.findViewById(R.id.recycle_view_folders);
 
         initBundle = getArguments();
         if(initBundle == null && restoreBundle == null) {
-            currentProductGroupId = 1L;
+            upperProductGroupId = 1L;
+
         } else if(initBundle != null) {
-            currentProductGroupId = initBundle.getLong(UPPER_PRODUCT_GROUP_ID);
+            upperProductGroupId = initBundle.getLong(UPPER_PRODUCT_GROUP_ID);
 
         }
         createRecycleViewOfFoundItems();
@@ -109,18 +93,26 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         return v;
     }
 
+    private Bundle createSaveStateBundle(){
+        Bundle bundle = new Bundle();
+        bundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
+        bundle.putString(UPPER_PRODUCT_GROUP_ID, String.valueOf(upperProductGroupId));
+
+        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+        int pos = rv.getScrollState();
+
+        bundle.putInt(FIRST_SCROLL_POS, pos);
+
+        return bundle;
+    }
+
+
     @Override
     public void onPause() {
         super.onPause();
-        restoreBundle = new Bundle();
-        restoreBundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
-        restoreBundle.putString(UPPER_PRODUCT_GROUP_ID, String.valueOf(currentProductGroupId));
-
-        Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
-        restoreBundle.putParcelable(KEY_RECYCLER_STATE, listState);
-        int pos = recViewItems.getScrollState();
-
-        restoreBundle.putInt(FIRST_POS, pos);
+        if(restoreBundle != null)
+            restoreBundle = createSaveStateBundle();
     }
 
     @Override
@@ -131,15 +123,15 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             orgActivity.fragmentChanged(this);
             orgActivity.setCurrentFragment(FragmentTag.FOLDERS_TAG);
             orgActivity.getEditTextSearch().setText(restoreBundle.getString(SEARCH_TEXT));
-            currentProductGroupId = Long.valueOf(restoreBundle.getString(UPPER_PRODUCT_GROUP_ID));
+            upperProductGroupId = Long.valueOf(restoreBundle.getString(UPPER_PRODUCT_GROUP_ID));
             orgActivity.getEditTextSearch().clearFocus();
 
             Parcelable listState = restoreBundle.getParcelable(KEY_RECYCLER_STATE);
-            Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
+            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(listState);
 
-            int pos = restoreBundle.getInt(FIRST_POS);
+            int pos = restoreBundle.getInt(FIRST_SCROLL_POS);
 
-            recViewItems.smoothScrollToPosition(pos);
+            rv.smoothScrollToPosition(pos);
 
         }
 
@@ -154,7 +146,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         Item clickedItem = adapter.getItem(position);
         if(clickedItem instanceof ProductGroup){
             //Если кликнули по верхней строке подкаталога
-            if(position == 0 && currentProductGroupId != 1L) {//BACKWARD
+            if(position == 0 && upperProductGroupId != 1L) {//BACKWARD
 
                 Long upperProductGroupId = ((ProductGroup) clickedItem).getParentId();
 
@@ -201,19 +193,19 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
      */
     private void createRecycleViewOfFoundItems() {
 
-        recViewItems.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
         fillRecViewWithItems(currentListWithGlobalOff(null));
 
         //При касании списка, поле ввода должно потерять фокус
         //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
-        recViewItems.setOnTouchListener((v, event) -> {
+        rv.setOnTouchListener((v, event) -> {
             ((OrganizerActivity)getActivity()).getEditTextSearch().clearFocus();
             return false; //если возвращать true, то список ограничится видимой частью
         });
 
         //Для красоты используем разделитель между элементами списка
-        recViewItems.addItemDecoration(new DividerItemDecoration(getContext(),
+        rv.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
     }
 
@@ -221,27 +213,27 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         orgActivity.runOnUiThread(()->{
             adapter = new FoldersRecViewAdapter(this, orgContext, items);
             adapter.setClickListener(FoldersFragment.this);
-            recViewItems.setAdapter(adapter);
+            rv.setAdapter(adapter);
         });
     }
 
     public List<Item> currentListWithGlobalOff(Item item){
         List<Item> foundItems = new ArrayList<>();
         //Нулевая точка - исходное состояние каталога
-        if(currentProductGroupId.equals(1L)) {
-            List<ProductGroup> foundPG = findProductGroupChildren(currentProductGroupId);
+        if(upperProductGroupId.equals(1L)) {
+            List<ProductGroup> foundPG = findProductGroupChildren(upperProductGroupId);
             foundPG.sort(ThisApplication.usefulStringComparator());
             foundItems.addAll(foundPG);
 
         } else {//Где-то внутри каталога
             //Текущая группа
-            ProductGroup currentPG = findProductGroupById(currentProductGroupId);
+            ProductGroup currentPG = findProductGroupById(upperProductGroupId);
 
             List<ProductGroup> foundPG = null;
             List<Folder> foundF = null;
             if (currentPG != null) {
                 //Находим входящие группы
-                foundPG = findProductGroupChildren(currentProductGroupId);
+                foundPG = findProductGroupChildren(upperProductGroupId);
                 foundPG.sort(ThisApplication.usefulStringComparator());
 
                 //Находим входящие папки

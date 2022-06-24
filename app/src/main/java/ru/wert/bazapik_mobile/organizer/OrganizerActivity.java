@@ -196,7 +196,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         if(keyboardContainer.getVisibility() == View.VISIBLE) {
             keyboardContainer.setVisibility(View.GONE);
         } else if(fr instanceof FoldersFragment) {
-            if(currentFoldersFragment.getCurrentProductGroupId().equals(1L))
+            if(currentFoldersFragment.getUpperProductGroupId().equals(1L))
                 showAlertDialogAndExit();
             else{
                 currentFoldersFragment.onItemClick(currentFoldersFragment.getView(), 0);

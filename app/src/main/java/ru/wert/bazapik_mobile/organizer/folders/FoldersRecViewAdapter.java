@@ -91,7 +91,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
             holder.llFolder.removeView(holder.showFolderMenu);
             holder.folder.setClickable(false); //Не обрабатывает нажатие на себя
-            if (!fragment.getCurrentProductGroupId().equals(1L) && position == 0) {
+            if (!fragment.getUpperProductGroupId().equals(1L) && position == 0) {
                 String str = "< . . . . .>";
                 holder.numberAndName.setText(str);
                 holder.folder.setImageDrawable(context.getDrawable(R.drawable.backward256));
