@@ -7,4 +7,8 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 public interface OrganizerRecViewAdapter<T extends Item> {
 
     void changeListOfItems(List foundItems);
+
+    void clearAllSelection();
+
+
 }

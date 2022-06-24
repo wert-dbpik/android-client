@@ -2,9 +2,12 @@ package ru.wert.bazapik_mobile.organizer;
 
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 
 public interface OrganizerFragment<T extends Item> {
+
+    RecyclerView getRv();
 
     List<T> getFoundItems();
 
@@ -17,4 +20,6 @@ public interface OrganizerFragment<T extends Item> {
     List<T> findProperItems(String text);
 
     OrganizerRecViewAdapter<T> getAdapter();
+
+    Integer getLocalSelectedPosition();
 }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,14 +43,16 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     private Context orgContext;
     private OrganizerActivity orgActivity;
     @Setter private PassportsRecViewAdapter adapter;
-    @Getter@Setter private RecyclerView recViewItems;
+    @Getter@Setter private RecyclerView rv;
     @Getter@Setter private List<Item> allItems;
     @Getter@Setter private List<Item> foundItems;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
-    private static Bundle restoreBundle;
+    private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
+
     @Getter@Setter private boolean global = true;
+    @Setter@Getter private Integer localSelectedPosition;
 
     private EditText editTextSearch;
 
@@ -60,6 +63,41 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBundle(SAVED_STATE_BUNDLE, createSaveStateBundle());
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState != null){
+            Bundle b = savedInstanceState.getBundle(SAVED_STATE_BUNDLE);
+
+            Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
+            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
+
+            orgActivity.getEditTextSearch().setText(b.getString(SEARCH_TEXT));
+        }
+    }
+
+    private Bundle createSaveStateBundle(){
+        Bundle bundle = new Bundle();
+        bundle.putString(SEARCH_TEXT, editTextSearch.getText().toString());
+
+        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+
+        return bundle;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        onSaveInstanceState(createSaveStateBundle());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_passports, container, false);
         this.orgActivity = (OrganizerActivity) getActivity();
@@ -67,7 +105,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
         editTextSearch = orgActivity.getEditTextSearch();
 
-        recViewItems = v.findViewById(R.id.recycle_view_passports);
+        rv = v.findViewById(R.id.recycle_view_passports);
 
         createRecycleViewOfFoundItems();
 
@@ -82,6 +120,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
      */
     @Override
     public void onItemClick(View view, int position) {
+        localSelectedPosition = position;
         openInfoView(position);
     }
 
@@ -96,54 +135,24 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         startActivity(intent);
     }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        restoreBundle = new Bundle();
-        restoreBundle.putString(SEARCH_TEXT, editTextSearch.getText().toString());
-
-        Parcelable listState = Objects.requireNonNull(recViewItems.getLayoutManager()).onSaveInstanceState();
-        restoreBundle.putParcelable(KEY_RECYCLER_STATE, listState);
-
-    }
-
-    /**
-     * При рестарте боремся с появлением стандартной клавиатурой
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
-        orgActivity.fragmentChanged(this);
-        orgActivity.getEditTextSearch().clearFocus();
-        if (restoreBundle != null) {
-            editTextSearch.setText(restoreBundle.getString(SEARCH_TEXT));
-
-            Parcelable listState = restoreBundle.getParcelable(KEY_RECYCLER_STATE);
-            Objects.requireNonNull(recViewItems.getLayoutManager()).onRestoreInstanceState(listState);
-
-        }
-    }
-
     /**
      * Создаем список состоящий из найденных элементов
      */
     private void createRecycleViewOfFoundItems() {
 
-        recViewItems.setLayoutManager(new LinearLayoutManager(getContext()));
+        rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
         fillRecViewWithItems(findPassports(orgActivity.getSelectedFolder()));
 
         //При касании списка, поле ввода должно потерять фокус
         //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
-        recViewItems.setOnTouchListener((v, event) -> {
+        rv.setOnTouchListener((v, event) -> {
             orgActivity.getEditTextSearch().clearFocus();
             return false; //если возвращать true, то список ограничится видимой частью
         });
 
         //Для красоты используем разделитель между элементами списка
-        recViewItems.addItemDecoration(new DividerItemDecoration(getContext(),
+        rv.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
 
     }
@@ -176,7 +185,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         orgActivity.runOnUiThread(() -> {
             adapter = new PassportsRecViewAdapter(orgContext, items);
             adapter.setClickListener(PassportsFragment.this);
-            recViewItems.setAdapter(adapter);
+            rv.setAdapter(adapter);
         });
     }
 

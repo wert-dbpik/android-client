@@ -37,10 +37,14 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
     private final LayoutInflater mInflater;
     private ItemFolderClickListener mClickListener;
     private final Context context;
-    @Getter
-    @Setter
-    private int selectedPosition = RecyclerView.NO_POSITION;
+    @Getter@Setter private int selectedPosition = RecyclerView.NO_POSITION;
     private FoldersFragment fragment;
+
+    @Override
+    public void clearAllSelection(){
+        this.selectedPosition = RecyclerView.NO_POSITION;
+        notifyDataSetChanged();
+    }
 
     /**
      * Конструктор получает на входе список элементов List<P>

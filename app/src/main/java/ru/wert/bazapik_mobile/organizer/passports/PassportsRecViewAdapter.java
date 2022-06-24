@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,7 +40,15 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
     private final LayoutInflater inflater;
     private passportsClickListener clickListener;
     private final Context context;
+    @Getter
+    @Setter
     private int selectedPosition = RecyclerView.NO_POSITION;
+
+    @Override
+    public void clearAllSelection(){
+        this.selectedPosition = RecyclerView.NO_POSITION;
+        notifyDataSetChanged();
+    }
 
     /**
      * Конструктор получает на входе список элементов List<P>

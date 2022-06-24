@@ -114,12 +114,15 @@ public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecView
 
         @Override
         public void onClick(View view) {
-            if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
-            selectedPosition = getAdapterPosition();
+            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return;
+
+            selectedPosition = getBindingAdapterPosition();
             view.findViewById(R.id.selected_position)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
+
             if (mClickListener != null)
-                mClickListener.onItemClick(view, getAdapterPosition());
+                mClickListener.onItemClick(view, getBindingAdapterPosition());
+
             notifyDataSetChanged();
         }
     }

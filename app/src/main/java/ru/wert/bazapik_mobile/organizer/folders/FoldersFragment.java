@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -46,21 +47,56 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     @Getter@Setter private List<Item> foundItems;
 
     @Getter@Setter private Bundle initBundle;
-    @Getter@Setter private Bundle restoreBundle;
+
+    private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
     private final String UPPER_PRODUCT_GROUP_ID = "upper_product_group_id";
-    private final String FIRST_SCROLL_POS = "first_scroll_pos";
-    private final String SELECTED_POS = "selected_pos";
 
     private FragmentManager fm;
 
+    public void clearSelection(int pos) {
+        View v = rv.findViewHolderForAdapterPosition(pos).itemView;
+        v.setSelected(false);
+        adapter.notifyItemChanged(localSelectedPosition);
+    }
+
     @Getter private Long upperProductGroupId;
+    @Setter@Getter private Integer localSelectedPosition;
 
 
     @Override
     public OrganizerRecViewAdapter getAdapter() {
         return adapter;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBundle(SAVED_STATE_BUNDLE, createSaveStateBundle());
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState != null){
+            Bundle b = savedInstanceState.getBundle(SAVED_STATE_BUNDLE);
+
+            Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
+            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
+
+            orgActivity.getEditTextSearch().setText(b.getString(SEARCH_TEXT));
+
+        }
+    }
+
+    private Bundle createSaveStateBundle(){
+        Bundle bundle = new Bundle();
+        bundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
+        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+
+        return bundle;
     }
 
 
@@ -76,14 +112,16 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         rv = v.findViewById(R.id.recycle_view_folders);
 
         initBundle = getArguments();
-        if(initBundle == null && restoreBundle == null) {
+        if(initBundle == null) {
             upperProductGroupId = 1L;
-
-        } else if(initBundle != null) {
+        } else {
             upperProductGroupId = initBundle.getLong(UPPER_PRODUCT_GROUP_ID);
-
         }
         createRecycleViewOfFoundItems();
+
+        if(localSelectedPosition != null)
+            adapter.setSelectedPosition(localSelectedPosition);
+
         orgActivity.fragmentChanged(this);
         orgActivity.setCurrentFragment(FragmentTag.FOLDERS_TAG);
 
@@ -93,64 +131,25 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         return v;
     }
 
-    private Bundle createSaveStateBundle(){
-        Bundle bundle = new Bundle();
-        bundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
-        bundle.putString(UPPER_PRODUCT_GROUP_ID, String.valueOf(upperProductGroupId));
-
-        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
-        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
-        int pos = rv.getScrollState();
-
-        bundle.putInt(FIRST_SCROLL_POS, pos);
-
-        return bundle;
-    }
-
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if(restoreBundle != null)
-            restoreBundle = createSaveStateBundle();
+    public void onStop() {
+        super.onStop();
+        onSaveInstanceState(createSaveStateBundle());
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (restoreBundle != null) {
-            orgActivity.setCurrentFoldersFragment(this);
-            orgActivity.fragmentChanged(this);
-            orgActivity.setCurrentFragment(FragmentTag.FOLDERS_TAG);
-            orgActivity.getEditTextSearch().setText(restoreBundle.getString(SEARCH_TEXT));
-            upperProductGroupId = Long.valueOf(restoreBundle.getString(UPPER_PRODUCT_GROUP_ID));
-            orgActivity.getEditTextSearch().clearFocus();
-
-            Parcelable listState = restoreBundle.getParcelable(KEY_RECYCLER_STATE);
-            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(listState);
-
-            int pos = restoreBundle.getInt(FIRST_SCROLL_POS);
-
-            rv.smoothScrollToPosition(pos);
-
-        }
-
-    }
-
 
     /**
      * При клике на элемент списка открывается информация об элементе
      */
     @Override
     public void onItemClick(View view, int position) {
+        localSelectedPosition = position;
         Item clickedItem = adapter.getItem(position);
         if(clickedItem instanceof ProductGroup){
             //Если кликнули по верхней строке подкаталога
             if(position == 0 && upperProductGroupId != 1L) {//BACKWARD
 
                 Long upperProductGroupId = ((ProductGroup) clickedItem).getParentId();
-
-                List<Fragment> list = fm.getFragments();
 
                 String tag = "folders" + upperProductGroupId;
                 FoldersFragment backwardFoldersFragment = (FoldersFragment) fm.findFragmentByTag(tag);

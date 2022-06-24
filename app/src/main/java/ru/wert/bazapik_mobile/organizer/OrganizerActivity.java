@@ -25,6 +25,7 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import lombok.Getter;
 import lombok.Setter;
 import ru.wert.bazapik_mobile.ChangePassActivity;
@@ -36,6 +37,7 @@ import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.VersionAndroid;
 import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
+import ru.wert.bazapik_mobile.info.PassportRecViewAdapter;
 import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
 import ru.wert.bazapik_mobile.keyboards.KeyboardSwitcher;
 import ru.wert.bazapik_mobile.keyboards.MyKeyboard;
@@ -43,7 +45,9 @@ import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
+import ru.wert.bazapik_mobile.organizer.folders.FoldersRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
+import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -179,8 +183,16 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
 
         //При нажатии на поле ввода клавиатура появляется, при потере фокуса
         //при нажатии на список или рестарте активити - клавиатура исчезает
-        editTextSearch.setOnFocusChangeListener((view, b) -> {
-            if(b){
+        editTextSearch.setOnFocusChangeListener((view, hasFocus) -> {
+            OrganizerFragment<Item> fr = (OrganizerFragment<Item>) fm.findFragmentById(R.id.organizer_fragment_container);
+            if(hasFocus){
+
+                View v = fr.getRv().findViewHolderForAdapterPosition(fr.getLocalSelectedPosition()).itemView;
+                v.setSelected(false);
+                v.setBackgroundColor(OrganizerActivity.this.getColor(R.color.colorPrimaryDark));
+                (fr.getAdapter()).clearAllSelection();
+                ((RecyclerView.Adapter<RecyclerView.ViewHolder>)fr.getAdapter()).notifyItemChanged(fr.getLocalSelectedPosition());
+
                 keyboardContainer.setVisibility(View.VISIBLE);
             } else {
                 keyboardContainer.setVisibility(View.GONE);
