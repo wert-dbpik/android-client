@@ -186,14 +186,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         editTextSearch.setOnFocusChangeListener((view, hasFocus) -> {
             OrganizerFragment<Item> fr = (OrganizerFragment<Item>) fm.findFragmentById(R.id.organizer_fragment_container);
             if(hasFocus){
-
-                View v = fr.getRv().findViewHolderForAdapterPosition(fr.getLocalSelectedPosition()).itemView;
-                v.setSelected(false);
-                v.setBackgroundColor(OrganizerActivity.this.getColor(R.color.colorPrimaryDark));
-                (fr.getAdapter()).clearAllSelection();
-                ((RecyclerView.Adapter<RecyclerView.ViewHolder>)fr.getAdapter()).notifyItemChanged(fr.getLocalSelectedPosition());
-
                 keyboardContainer.setVisibility(View.VISIBLE);
+
             } else {
                 keyboardContainer.setVisibility(View.GONE);
             }
@@ -252,13 +246,13 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                             return;
                         } else
                             fr.setFoundItems(fr.getAllItems());
-                    } else
+                    } else {
                         fr.setFoundItems(fr.findProperItems(text));
-                    runOnUiThread(() -> {
-                        if (fr.getFoundItems() != null)
-                            fr.getAdapter().changeListOfItems(fr.getFoundItems());
-                    });
-
+                        runOnUiThread(() -> {
+                            if (fr.getFoundItems() != null)
+                                fr.getAdapter().changeListOfItems(fr.getFoundItems());
+                        });
+                    }
 
                 }).start();
             }

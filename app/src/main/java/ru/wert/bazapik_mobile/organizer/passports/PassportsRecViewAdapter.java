@@ -30,7 +30,9 @@ import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
+import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -40,22 +42,16 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
     private final LayoutInflater inflater;
     private passportsClickListener clickListener;
     private final Context context;
-    @Getter
-    @Setter
-    private int selectedPosition = RecyclerView.NO_POSITION;
-
-    @Override
-    public void clearAllSelection(){
-        this.selectedPosition = RecyclerView.NO_POSITION;
-        notifyDataSetChanged();
-    }
+    @Setter private int selectedPosition = RecyclerView.NO_POSITION;
+    private PassportsFragment fragment;
 
     /**
      * Конструктор получает на входе список элементов List<P>
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public PassportsRecViewAdapter(Context context, List<Passport> items) {
+    public PassportsRecViewAdapter(PassportsFragment fragment, Context context, List<Passport> items) {
+        this.fragment = fragment;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.data = items;
@@ -84,10 +80,9 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
 
         View itemView = holder.itemView.findViewById(R.id.selected_position);
 
-        if (selectedPosition != RecyclerView.NO_POSITION) //Если ничего не выделенно
-            itemView.setBackgroundColor((position == selectedPosition) ?
-                            context.getColor(R.color.colorPrimary) : //Цвет выделения
-                            context.getColor(R.color.colorPrimaryDark)); //Цвет фона
+        itemView.setBackgroundColor((position == selectedPosition) ?
+                context.getColor(R.color.colorPrimary) : //Цвет выделения
+                context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
         Passport passport = data.get(position);
 
@@ -173,6 +168,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
      * @param items List<P>
      */
     public void changeListOfItems(List items){
+        selectedPosition = RecyclerView.NO_POSITION;
         data.clear();
         data.addAll(items);
         notifyDataSetChanged();
@@ -198,6 +194,8 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
 
         @Override
         public void onClick(View view) {
+            ((OrganizerActivity)fragment.getActivity()).getEditTextSearch().clearFocus();
+
             if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return;
 
             selectedPosition = getBindingAdapterPosition();

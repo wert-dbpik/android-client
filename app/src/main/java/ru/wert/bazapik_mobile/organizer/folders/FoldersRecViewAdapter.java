@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile.organizer.folders;
 
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.ContextMenu;
@@ -26,10 +28,9 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
+import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
-
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
 
 public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
 
@@ -37,14 +38,8 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
     private final LayoutInflater mInflater;
     private ItemFolderClickListener mClickListener;
     private final Context context;
-    @Getter@Setter private int selectedPosition = RecyclerView.NO_POSITION;
+    @Setter private int selectedPosition = RecyclerView.NO_POSITION;
     private FoldersFragment fragment;
-
-    @Override
-    public void clearAllSelection(){
-        this.selectedPosition = RecyclerView.NO_POSITION;
-        notifyDataSetChanged();
-    }
 
     /**
      * Конструктор получает на входе список элементов List<P>
@@ -84,10 +79,9 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
     public void onBindViewHolder(ViewHolder holder, int position) {
         View itemView = holder.itemView.findViewById(R.id.selected_position);
 
-        if (selectedPosition != RecyclerView.NO_POSITION) //Если ничего не выделенно
-            itemView.setBackgroundColor((position == selectedPosition) ?
-                    context.getColor(R.color.colorPrimary) : //Цвет выделения
-                    context.getColor(R.color.colorPrimaryDark)); //Цвет фона
+        itemView.setBackgroundColor((position == selectedPosition) ?
+                context.getColor(R.color.colorPrimary) : //Цвет выделения
+                context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
         Item item = mData.get(position);
 
@@ -155,6 +149,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
      * @param items List<P>
      */
     public void changeListOfItems(List items) {
+        selectedPosition = RecyclerView.NO_POSITION;
         mData.clear();
         mData.addAll(items);
         notifyDataSetChanged();
@@ -183,9 +178,12 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
         @Override
         public void onClick(View view) {
+            ((OrganizerActivity)fragment.getActivity()).getEditTextSearch().clearFocus();
+
             if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return;
 
             selectedPosition = getBindingAdapterPosition();
+            //Чтобы выделить строку СТРАЗУ при нажатии
             view.findViewById(R.id.selected_position)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 

@@ -21,5 +21,4 @@ public interface OrganizerFragment<T extends Item> {
 
     OrganizerRecViewAdapter<T> getAdapter();
 
-    Integer getLocalSelectedPosition();
 }

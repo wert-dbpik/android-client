@@ -183,7 +183,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     public void fillRecViewWithItems(List<Passport> items) {
         orgActivity.runOnUiThread(() -> {
-            adapter = new PassportsRecViewAdapter(orgContext, items);
+            adapter = new PassportsRecViewAdapter(this, orgContext, items);
             adapter.setClickListener(PassportsFragment.this);
             rv.setAdapter(adapter);
         });

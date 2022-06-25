@@ -55,12 +55,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
     private FragmentManager fm;
 
-    public void clearSelection(int pos) {
-        View v = rv.findViewHolderForAdapterPosition(pos).itemView;
-        v.setSelected(false);
-        adapter.notifyItemChanged(localSelectedPosition);
-    }
-
     @Getter private Long upperProductGroupId;
     @Setter@Getter private Integer localSelectedPosition;
 
@@ -217,6 +211,10 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     }
 
     public List<Item> currentListWithGlobalOff(Item item){
+//        if(adapter != null) {
+//            adapter.setSelectedPosition(RecyclerView.NO_POSITION);
+//            adapter.notifyDataSetChanged();
+//        }
         List<Item> foundItems = new ArrayList<>();
         //Нулевая точка - исходное состояние каталога
         if(upperProductGroupId.equals(1L)) {

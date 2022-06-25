@@ -8,7 +8,4 @@ public interface OrganizerRecViewAdapter<T extends Item> {
 
     void changeListOfItems(List foundItems);
 
-    void clearAllSelection();
-
-
 }
