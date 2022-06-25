@@ -27,6 +27,7 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
+import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
@@ -38,7 +39,7 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
 
-    private final List<Passport> data;
+    private final List<Item> data;
     private final LayoutInflater inflater;
     private passportsClickListener clickListener;
     private final Context context;
@@ -50,7 +51,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public PassportsRecViewAdapter(PassportsFragment fragment, Context context, List<Passport> items) {
+    public PassportsRecViewAdapter(PassportsFragment fragment, Context context, List<Item> items) {
         this.fragment = fragment;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
@@ -84,7 +85,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
                 context.getColor(R.color.colorPrimary) : //Цвет выделения
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
-        Passport passport = data.get(position);
+        Passport passport = (Passport) data.get(position);
 
         //Децимальный номер
         String numberText;
@@ -216,7 +217,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
      * @return P extends Item
      */
     public Passport getItem(int index) {
-        return data.get(index);
+        return (Passport) data.get(index);
     }
 
     public void setClickListener(passportsClickListener passportsClickListener) {

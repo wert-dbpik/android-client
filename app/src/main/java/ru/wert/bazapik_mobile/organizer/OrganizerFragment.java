@@ -21,4 +21,6 @@ public interface OrganizerFragment<T extends Item> {
 
     OrganizerRecViewAdapter<T> getAdapter();
 
+    void fillRecViewWithItems(List<Item> items);
+
 }

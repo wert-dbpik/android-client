@@ -117,7 +117,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             adapter.setSelectedPosition(localSelectedPosition);
 
         orgActivity.fragmentChanged(this);
-        orgActivity.setCurrentFragment(FragmentTag.FOLDERS_TAG);
+        orgActivity.setCurrentTypeFragment(FragmentTag.FOLDERS_TAG);
 
         adapter.setStateRestorationPolicy(PREVENT_WHEN_EMPTY);
 
@@ -202,6 +202,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
                 DividerItemDecoration.VERTICAL));
     }
 
+    @Override
     public void fillRecViewWithItems(List<Item> items){
         orgActivity.runOnUiThread(()->{
             adapter = new FoldersRecViewAdapter(this, orgContext, items);
@@ -211,10 +212,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     }
 
     public List<Item> currentListWithGlobalOff(Item item){
-//        if(adapter != null) {
-//            adapter.setSelectedPosition(RecyclerView.NO_POSITION);
-//            adapter.notifyDataSetChanged();
-//        }
+
         List<Item> foundItems = new ArrayList<>();
         //Нулевая точка - исходное состояние каталога
         if(upperProductGroupId.equals(1L)) {

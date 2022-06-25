@@ -88,6 +88,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         if (item instanceof ProductGroup) {
 
             holder.llFolder.removeView(holder.showFolderMenu);
+
             holder.folder.setClickable(false); //Не обрабатывает нажатие на себя
             if (!fragment.getUpperProductGroupId().equals(1L) && position == 0) {
                 String str = "< . . . . .>";

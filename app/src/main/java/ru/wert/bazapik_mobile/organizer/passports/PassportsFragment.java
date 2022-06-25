@@ -110,7 +110,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         createRecycleViewOfFoundItems();
 
         orgActivity.fragmentChanged(this);
-        orgActivity.setCurrentFragment(FragmentTag.PASSPORT_TAG);
+        orgActivity.setCurrentTypeFragment(FragmentTag.PASSPORT_TAG);
 
         return v;
     }
@@ -157,8 +157,8 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     }
 
-    private List<Passport> findPassports(Folder selectedFolder){
-        List<Passport> foundPassports = null;
+    private List<Item> findPassports(Folder selectedFolder){
+        List<Item> foundPassports = null;
         if(selectedFolder == null) {
             foundPassports = new ArrayList<>(ALL_PASSPORTS);
             global = true;
@@ -170,7 +170,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     }
 
 
-    public List<Passport>  findPassportsInFolder(Folder folder){
+    public List<Item> findPassportsInFolder(Folder folder){
         Set<Passport> foundPassports = new HashSet<>();
         for(Draft d: ALL_DRAFTS){
             if(d.getFolder().equals(folder))
@@ -181,7 +181,8 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         return new ArrayList<>(sortedList);
     }
 
-    public void fillRecViewWithItems(List<Passport> items) {
+    @Override //OrganizerFragment
+    public void fillRecViewWithItems(List<Item> items) {
         orgActivity.runOnUiThread(() -> {
             adapter = new PassportsRecViewAdapter(this, orgContext, items);
             adapter.setClickListener(PassportsFragment.this);

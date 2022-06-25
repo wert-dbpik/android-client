@@ -25,7 +25,6 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
 import lombok.Getter;
 import lombok.Setter;
 import ru.wert.bazapik_mobile.ChangePassActivity;
@@ -37,7 +36,6 @@ import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.VersionAndroid;
 import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
-import ru.wert.bazapik_mobile.info.PassportRecViewAdapter;
 import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
 import ru.wert.bazapik_mobile.keyboards.KeyboardSwitcher;
 import ru.wert.bazapik_mobile.keyboards.MyKeyboard;
@@ -47,7 +45,6 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
-import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -56,7 +53,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     @Getter private FragmentManager fm;
     @Getter private PassportsFragment currentPassportsFragment;
     @Getter@Setter private FoldersFragment currentFoldersFragment;
-    @Getter@Setter private FragmentTag currentFragment = FragmentTag.FOLDERS_TAG;
+    @Getter@Setter private FragmentTag currentTypeFragment = FragmentTag.FOLDERS_TAG;
 
     private final String FRAGMENT_TAG = "fragment_tag";
     private final String POSITION = "position";
@@ -109,7 +106,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     public void onPause() {
         super.onPause();
         bundleRecyclerViewState = new Bundle();
-        bundleRecyclerViewState.putString(FRAGMENT_TAG, String.valueOf(currentFragment));
+        bundleRecyclerViewState.putString(FRAGMENT_TAG, String.valueOf(currentTypeFragment));
     }
 
     /**
@@ -119,14 +116,14 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     public void onResume() {
         super.onResume();
         if (bundleRecyclerViewState != null) {
-            currentFragment = FragmentTag.valueOf(bundleRecyclerViewState.getString(FRAGMENT_TAG));
+            currentTypeFragment = FragmentTag.valueOf(bundleRecyclerViewState.getString(FRAGMENT_TAG));
             openCurrentFragment();
         }
     }
 
     private void openCurrentFragment(){
-        if(currentFragment.equals(FragmentTag.FOLDERS_TAG)) openFoldersFragment();
-        else if(currentFragment.equals(FragmentTag.PASSPORT_TAG)) openPassportFragment();
+        if(currentTypeFragment.equals(FragmentTag.FOLDERS_TAG)) openFoldersFragment();
+        else if(currentTypeFragment.equals(FragmentTag.PASSPORT_TAG)) openPassportFragment();
     }
 
 
@@ -184,14 +181,11 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         //При нажатии на поле ввода клавиатура появляется, при потере фокуса
         //при нажатии на список или рестарте активити - клавиатура исчезает
         editTextSearch.setOnFocusChangeListener((view, hasFocus) -> {
-            OrganizerFragment<Item> fr = (OrganizerFragment<Item>) fm.findFragmentById(R.id.organizer_fragment_container);
             if(hasFocus){
                 keyboardContainer.setVisibility(View.VISIBLE);
-
             } else {
                 keyboardContainer.setVisibility(View.GONE);
             }
-
         });
 
     }
@@ -200,6 +194,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     public void onBackPressed() {
         OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
         if(keyboardContainer.getVisibility() == View.VISIBLE) {
+            editTextSearch.clearFocus();
             keyboardContainer.setVisibility(View.GONE);
         } else if(fr instanceof FoldersFragment) {
             if(currentFoldersFragment.getUpperProductGroupId().equals(1L))
@@ -239,20 +234,15 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                 String text = s.toString();
                 new Thread(() -> {
                     OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
-                    if (text == null || text.equals("")) {
+                    if (text == null || text.equals("")) { //Если строка поска пустая
                         if (fr instanceof FoldersFragment) {
                             List<Item> items = ((FoldersFragment) fr).currentListWithGlobalOff(null);
                             ((FoldersFragment) fr).fillRecViewWithItems(items);
                             return;
                         } else
-                            fr.setFoundItems(fr.getAllItems());
-                    } else {
-                        fr.setFoundItems(fr.findProperItems(text));
-                        runOnUiThread(() -> {
-                            if (fr.getFoundItems() != null)
-                                fr.getAdapter().changeListOfItems(fr.getFoundItems());
-                        });
-                    }
+                            fr.fillRecViewWithItems(fr.getAllItems());
+                    } else //Если в строке поиска что-то есть
+                        fr.fillRecViewWithItems(fr.findProperItems(text));
 
                 }).start();
             }
