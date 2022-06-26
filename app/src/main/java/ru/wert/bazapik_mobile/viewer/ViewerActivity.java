@@ -218,6 +218,7 @@ public class ViewerActivity extends BaseActivity {
                         runOnUiThread(()->{
                             new WarningDialog1().show(ViewerActivity.this, "Внимание!",
                                     "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
+                            this.finish(); //Закроет активити
                         });
                     }
 
@@ -226,6 +227,7 @@ public class ViewerActivity extends BaseActivity {
                     runOnUiThread(()->{
                         new WarningDialog1().show(ViewerActivity.this, "Внимание!",
                                 "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
+                        this.finish(); //Закроет активити
                     });
                 }
             }
@@ -335,8 +337,3 @@ public class ViewerActivity extends BaseActivity {
 
     }
 }
-//
-//enum But {
-//    NEXT,
-//    PREV;
-//}

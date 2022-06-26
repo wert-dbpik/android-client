@@ -84,6 +84,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
                 runOnUiThread(()->{
                     new WarningDialog1().show(PassportInfoActivity.this,
                             "Ошибка!", "Что-то пошло не так, вероятно потереяна связь с сервером.");
+                    this.finish();
                 });
 
             }
