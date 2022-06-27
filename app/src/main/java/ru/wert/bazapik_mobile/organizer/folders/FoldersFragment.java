@@ -47,6 +47,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     @Getter@Setter private List<Item> foundItems;
 
     @Getter@Setter private Bundle initBundle;
+    @Getter@Setter private Bundle resumeBundle;
 
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
     private final String KEY_RECYCLER_STATE = "recycler_state";
@@ -111,7 +112,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         } else {
             upperProductGroupId = initBundle.getLong(UPPER_PRODUCT_GROUP_ID);
         }
-        createRecycleViewOfFoundItems();
+        createRecycleViewOfFoundItems(null);
 
         if(localSelectedPosition != null)
             adapter.setSelectedPosition(localSelectedPosition);
@@ -125,6 +126,24 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         return v;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(!orgActivity.getEditTextSearch().getText().toString().isEmpty()){
+            resumeBundle = createSaveStateBundle();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(resumeBundle != null){
+            String text = resumeBundle.getString(SEARCH_TEXT);
+            orgActivity.getEditTextSearch().setText(text);
+            if (!text.isEmpty())
+                createRecycleViewOfFoundItems(findProperItems(text));
+        }
+    }
 
     @Override
     public void onStop() {
@@ -184,9 +203,15 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     /**
      * Создаем список состоящий из найденных элементов
      */
-    private void createRecycleViewOfFoundItems() {
+    private void createRecycleViewOfFoundItems(List<Item> items) {
 
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        if (items == null)
+            fillRecViewWithItems(currentListWithGlobalOff(null));
+        else
+            fillRecViewWithItems(items);
+
 
         fillRecViewWithItems(currentListWithGlobalOff(null));
 
