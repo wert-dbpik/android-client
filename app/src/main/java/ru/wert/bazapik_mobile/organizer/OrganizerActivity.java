@@ -238,9 +238,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                         if (fr instanceof FoldersFragment) {
                             List<Item> items = ((FoldersFragment) fr).currentListWithGlobalOff(null);
                             ((FoldersFragment) fr).fillRecViewWithItems(items);
-                            return;
                         } else
-                            fr.fillRecViewWithItems(fr.getAllItems());
+                            fr.fillRecViewWithItems(new ArrayList<>(ALL_PASSPORTS));
                     } else //Если в строке поиска что-то есть
                         fr.fillRecViewWithItems(fr.findProperItems(text));
 
