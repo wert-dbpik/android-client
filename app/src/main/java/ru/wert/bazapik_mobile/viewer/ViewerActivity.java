@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -28,6 +30,7 @@ import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
+import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.utils.Dest;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -216,18 +219,28 @@ public class ViewerActivity extends BaseActivity {
                         Log.e(TAG, String.format("remoteFileString = '%s', localFileString = '%s', message from server: %s",
                                 remoteFileString, localFileString, res));
                         runOnUiThread(()->{
-                            new WarningDialog1().show(ViewerActivity.this, "Внимание!",
-                                    "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
-                            this.finish(); //Закроет активити
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Внимание!")
+                                    .setMessage("Не удалось загрузить файл чертежа, возможно, сервер не доступен.")
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface arg0, int arg1) {
+                                            ViewerActivity.this.finish(); //Закроет активити
+                                        }
+                                    }).create().show();
                         });
                     }
 
                 } catch (ExecutionException | InterruptedException e) {
                     Log.e(TAG, "could not download file from server by error: " + e.toString());
                     runOnUiThread(()->{
-                        new WarningDialog1().show(ViewerActivity.this, "Внимание!",
-                                "Не удалось загрузить файл чертежа, возможно, сервер не доступен.");
-                        this.finish(); //Закроет активити
+                        new AlertDialog.Builder(this)
+                                .setTitle("Внимание!")
+                                .setMessage("Не удалось загрузить файл чертежа, возможно, сервер не доступен.")
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface arg0, int arg1) {
+                                        ViewerActivity.this.finish(); //Закроет активити
+                                    }
+                                }).create().show();
                     });
                 }
             }
