@@ -47,7 +47,7 @@
             android:configChanges="orientation|screenSize"
             android:exported="false" />
         <activity
-            android:name=".info.PassportInfoActivity"
+            android:name=".info.InfoActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:theme="@style/AppTheme" />

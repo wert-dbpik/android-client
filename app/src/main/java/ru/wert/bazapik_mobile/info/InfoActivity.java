@@ -33,12 +33,12 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
  * Далее доступные для элемента чертежи в rvDrafts
  * для каждого чертежа представлен его тип, стр, статус
  */
-public class PassportInfoActivity extends BaseActivity  implements PassportRecViewAdapter.PassportClickListener{
+public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.InfoClickListener {
     private static final String TAG = "+++ PassportInfoActivity +++" ;
     private TextView tvDecNumber, tvName;
     private RecyclerView rvDrafts;
     private TextView tvDrafts;
-    private PassportRecViewAdapter mAdapter;
+    private InfoRecViewAdapter mAdapter;
     private Long passId;
 
     private Passport passport;
@@ -82,7 +82,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
                 Log.e(TAG, String.format("An error occur while trying to get Passport of id = %s, PASSPORT_SERVICE = %s"
                         ,passId, ThisApplication.PASSPORT_SERVICE));
                 runOnUiThread(()->{
-                    new WarningDialog1().show(PassportInfoActivity.this,
+                    new WarningDialog1().show(InfoActivity.this,
                             "Ошибка!", "Что-то пошло не так, вероятно потереяна связь с сервером.");
                     this.finish();
                 });
@@ -128,15 +128,15 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
                     ArrayList<Draft> foundDrafts = new ArrayList<>(response.body());
                     ThisApplication.filterList(foundDrafts); //Фильтруем
                     foundDraftIdsForIntent = ThisApplication.convertToStringArray(foundDrafts);
-                    mAdapter = new PassportRecViewAdapter(PassportInfoActivity.this, foundDrafts);
-                    mAdapter.setClickListener(PassportInfoActivity.this);
+                    mAdapter = new InfoRecViewAdapter(InfoActivity.this, foundDrafts);
+                    mAdapter.setClickListener(InfoActivity.this);
                     rvDrafts.setAdapter(mAdapter);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Draft>> call, Throwable t) {
-                new WarningDialog1().show(PassportInfoActivity.this, "Внимание!","Проблемы на линии!");
+                new WarningDialog1().show(InfoActivity.this, "Внимание!","Проблемы на линии!");
             }
             
         });
@@ -150,7 +150,7 @@ public class PassportInfoActivity extends BaseActivity  implements PassportRecVi
 
     @Override
     public void onItemClick(View view, int position) {
-        Intent intent = new Intent(PassportInfoActivity.this, ViewerActivity.class);
+        Intent intent = new Intent(InfoActivity.this, ViewerActivity.class);
         intent.putStringArrayListExtra("DRAFTS", foundDraftIdsForIntent);
         intent.putExtra("DRAFT_ID", String.valueOf(mAdapter.getItem(position).getId()));
         startActivity(intent);

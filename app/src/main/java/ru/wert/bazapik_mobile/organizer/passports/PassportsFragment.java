@@ -32,7 +32,7 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
-import ru.wert.bazapik_mobile.info.PassportInfoActivity;
+import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.organizer.FragmentTag;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
@@ -130,7 +130,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
      * @param position
      */
     private void openInfoView(int position){
-        Intent intent = new Intent(orgActivity, PassportInfoActivity.class);
+        Intent intent = new Intent(orgActivity, InfoActivity.class);
         intent.putExtra("PASSPORT_ID", String.valueOf(adapter.getItem(position).getId()));
         startActivity(intent);
     }

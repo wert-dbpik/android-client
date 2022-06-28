@@ -79,9 +79,9 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        View itemView = holder.itemView.findViewById(R.id.selected_position);
+        View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
 
-        itemView.setBackgroundColor((position == selectedPosition) ?
+        selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
                 context.getColor(R.color.colorPrimary) : //Цвет выделения
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
@@ -117,7 +117,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
             holder.mShowDraft.setOnClickListener(e -> {
                 selectedPosition = holder.getBindingAdapterPosition();
                 if(selectedPosition == RecyclerView.NO_POSITION) return; //Если ткнули в путое место
-                itemView.setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
+                selectedLinearLayout.setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
                 notifyDataSetChanged(); //Сбрасываем остальные выделения
 
                 openViewer(passport);
@@ -200,7 +200,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
             if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return;
 
             selectedPosition = getBindingAdapterPosition();
-            view.findViewById(R.id.selected_position)
+            view.findViewById(R.id.selectedLinearLayout)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
             if (clickListener != null)

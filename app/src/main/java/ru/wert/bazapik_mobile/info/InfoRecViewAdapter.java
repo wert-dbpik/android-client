@@ -1,35 +1,26 @@
 package ru.wert.bazapik_mobile.info;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
-import ru.wert.bazapik_mobile.data.models.Passport;
-import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
-public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecViewAdapter.ViewHolder>{
+public class InfoRecViewAdapter extends RecyclerView.Adapter<InfoRecViewAdapter.ViewHolder>{
 
     private final List<Draft> mData;
     private final LayoutInflater mInflater;
-    private PassportClickListener mClickListener;
+    private InfoClickListener mClickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
@@ -38,7 +29,7 @@ public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecView
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public PassportRecViewAdapter(Context context, List<Draft> items) {
+    public InfoRecViewAdapter(Context context, List<Draft> items) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = items;
@@ -64,11 +55,11 @@ public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecView
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (selectedPosition != RecyclerView.NO_POSITION) //Если ничего не выделенно
-            holder.itemView.findViewById(R.id.selected_position)
-                    .setBackgroundColor((position == selectedPosition) ?
-                            context.getColor(R.color.colorPrimary) : //Цвет выделения
-                            context.getColor(R.color.colorPrimaryDark)); //Цвет фона
+
+        View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
+        selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
+                context.getColor(R.color.colorPrimary) : //Цвет выделения
+                context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
 
         Draft item = mData.get(position);
@@ -117,7 +108,7 @@ public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecView
             if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return;
 
             selectedPosition = getBindingAdapterPosition();
-            view.findViewById(R.id.selected_position)
+            view.findViewById(R.id.selectedLinearLayout)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
             if (mClickListener != null)
@@ -137,12 +128,12 @@ public class PassportRecViewAdapter extends RecyclerView.Adapter<PassportRecView
     }
 
     // allows clicks events to be caught
-    public void setClickListener(PassportClickListener itemClickListener) {
+    public void setClickListener(InfoClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
     // parent activity will implement this method to respond to click events
-    public interface PassportClickListener {
+    public interface InfoClickListener {
         void onItemClick(View view, int position);
     }
 }

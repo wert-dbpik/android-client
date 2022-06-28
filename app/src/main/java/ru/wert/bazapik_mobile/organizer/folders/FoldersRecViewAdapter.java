@@ -34,19 +34,14 @@ import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
 
-    private final List<Item> mData;
+    private List<Item> mData;
     private final LayoutInflater mInflater;
     private ItemFolderClickListener mClickListener;
     private final Context context;
     @Setter private int selectedPosition = RecyclerView.NO_POSITION;
     private FoldersFragment fragment;
 
-    /**
-     * Конструктор получает на входе список элементов List<P>
-     * Для отображения в RecycleView список преобразуется в List<String>
-     *
-     * @param context Context
-     */
+
     public FoldersRecViewAdapter(FoldersFragment fragment, Context context, List<Item> items) {
         this.fragment = fragment;
         this.context = context;
@@ -67,6 +62,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         View view = mInflater.inflate(R.layout.recview_folder_row, parent, false);
 
         return new ViewHolder(view);
+
     }
 
     /**
@@ -77,9 +73,9 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
      */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        View itemView = holder.itemView.findViewById(R.id.selected_position);
 
-        itemView.setBackgroundColor((position == selectedPosition) ?
+        View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
+        selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
                 context.getColor(R.color.colorPrimary) : //Цвет выделения
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
@@ -87,7 +83,8 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
         if (item instanceof ProductGroup) {
 
-            holder.llFolder.removeView(holder.showFolderMenu);
+            holder.showFolderMenu.setVisibility(View.INVISIBLE);
+            holder.showFolderMenu.setClickable(false);
 
             holder.folder.setClickable(false); //Не обрабатывает нажатие на себя
             if (!fragment.getUpperProductGroupId().equals(1L) && position == 0) {
@@ -104,6 +101,10 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         }
 
         if (item instanceof Folder) {
+            holder.showFolderMenu.setVisibility(View.VISIBLE);
+            holder.showFolderMenu.setClickable(true);
+            holder.showFolderMenu.showContextMenu();
+
             String str = ((Folder) item).getName();
             holder.numberAndName.setText(str);
             holder.folder.setImageDrawable(context.getDrawable(R.drawable.folders256));
@@ -153,7 +154,9 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         selectedPosition = RecyclerView.NO_POSITION;
         mData.clear();
         mData.addAll(items);
+//        mData = new ArrayList<Item>(items);
         notifyDataSetChanged();
+//        fragment.getRv().invalidate();
     }
 
     /**
@@ -163,14 +166,12 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         TextView numberAndName;
         ImageButton folder; //кнопка в виде чертежика
         ImageButton showFolderMenu; //три точки
-        LinearLayout llFolder;
 
         ViewHolder(View itemView) {
             super(itemView);
             numberAndName = itemView.findViewById(R.id.number_and_name);
             folder = itemView.findViewById(R.id.btnFolder);
             showFolderMenu = itemView.findViewById(R.id.btnShowFoldersMenu);
-            llFolder = itemView.findViewById(R.id.llFolder);
 
             showFolderMenu.setOnCreateContextMenuListener(this);
 
@@ -185,7 +186,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
             selectedPosition = getBindingAdapterPosition();
             //Чтобы выделить строку СТРАЗУ при нажатии
-            view.findViewById(R.id.selected_position)
+            view.findViewById(R.id.selectedLinearLayout)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
             if (mClickListener != null)
@@ -209,7 +210,8 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            Folder folder = (Folder) mData.get(getBindingAdapterPosition());
+            int pos = getBindingAdapterPosition();
+            Folder folder = (Folder) mData.get(pos);
             switch (item.getItemId()) {
                 case R.id.showAllFolderDraftsFirst:
                     openDraftsInFolder(folder, false);
