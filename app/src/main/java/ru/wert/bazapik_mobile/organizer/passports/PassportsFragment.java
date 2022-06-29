@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.organizer.passports;
 
+import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
@@ -49,52 +50,71 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
+    private final String SELECTED_POSITION = "selected_pos";
+
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
 
     @Getter@Setter private boolean global = true;
-    @Setter@Getter private Integer localSelectedPosition;
+    @Setter@Getter private int localSelectedPosition = RecyclerView.NO_POSITION;
 
-    private EditText editTextSearch;
-
+    private static Bundle resumeBundle;
 
     @Override
     public PassportsRecViewAdapter getAdapter() {
         return adapter;
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBundle(SAVED_STATE_BUNDLE, createSaveStateBundle());
-    }
+//    @Override
+//    public void onSaveInstanceState(@NonNull Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        outState.putBundle(SAVED_STATE_BUNDLE, createSaveStateBundle());
+//    }
+//
+//    @Override
+//    public void onViewStateRestored(Bundle savedInstanceState) {
+//        super.onViewStateRestored(savedInstanceState);
+//        if(savedInstanceState != null){
+//            Bundle b = savedInstanceState.getBundle(SAVED_STATE_BUNDLE);
+//
+//            Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
+//            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
+//
+//        }
+//    }
+//
+//
+//    private Bundle createSaveStateBundle(){
+//        Bundle bundle = new Bundle();
+//        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+//        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+//
+//        bundle.putInt(SELECTED_POSITION, localSelectedPosition);
+//
+//        return bundle;
+//    }
+
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        resumeBundle = createSaveStateBundle();
+//    }
 
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState != null){
-            Bundle b = savedInstanceState.getBundle(SAVED_STATE_BUNDLE);
-
-            Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
-            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
-
-            orgActivity.getEditTextSearch().setText(b.getString(SEARCH_TEXT));
+    public void onResume() {
+        super.onResume();
+        if (resumeBundle != null) {
+            Parcelable listState = resumeBundle.getParcelable(KEY_RECYCLER_STATE);
+            getRv().getLayoutManager().onRestoreInstanceState(listState);
         }
-    }
 
-    private Bundle createSaveStateBundle(){
-        Bundle bundle = new Bundle();
-        bundle.putString(SEARCH_TEXT, editTextSearch.getText().toString());
-
-        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
-        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
-
-        return bundle;
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        onSaveInstanceState(createSaveStateBundle());
+    public void onPause() {
+        super.onPause();
+        resumeBundle = new Bundle();
+        Parcelable listState = getRv().getLayoutManager().onSaveInstanceState();
+        resumeBundle.putParcelable(KEY_RECYCLER_STATE, listState);
     }
 
     @Override
@@ -103,14 +123,17 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         this.orgActivity = (OrganizerActivity) getActivity();
         this.orgContext = getContext();
 
-        editTextSearch = orgActivity.getEditTextSearch();
-
         rv = v.findViewById(R.id.recycle_view_passports);
 
         createRecycleViewOfFoundItems();
 
+        adapter.setSelectedPosition(localSelectedPosition);
+        adapter.notifyDataSetChanged();
+
         orgActivity.fragmentChanged(this);
         orgActivity.setCurrentTypeFragment(FragmentTag.PASSPORT_TAG);
+
+//        adapter.setStateRestorationPolicy(PREVENT_WHEN_EMPTY);
 
         return v;
     }

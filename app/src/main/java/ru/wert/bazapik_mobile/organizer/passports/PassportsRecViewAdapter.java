@@ -80,7 +80,6 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
-
         selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
                 context.getColor(R.color.colorPrimary) : //Цвет выделения
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона

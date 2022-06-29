@@ -51,22 +51,13 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
     private final String KEY_RECYCLER_STATE = "recycler_state";
-    private final String SEARCH_TEXT = "search_text";
+    private final String SELECTED_POSITION = "selected_pos";
     private final String UPPER_PRODUCT_GROUP_ID = "upper_product_group_id";
 
     private FragmentManager fm;
-//    private static String textSearch = "";
-//
-//    public static String getTextSearch() {
-//        return textSearch;
-//    }
-//
-//    public static void setTextSearch(String textSearch) {
-//        FoldersFragment.textSearch = textSearch;
-//    }
 
     @Getter private Long upperProductGroupId;
-    @Setter@Getter private Integer localSelectedPosition;
+    @Setter@Getter private int localSelectedPosition = RecyclerView.NO_POSITION;
 
 
     @Override
@@ -89,16 +80,15 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
 
-            orgActivity.getEditTextSearch().setText(b.getString(SEARCH_TEXT));
-
         }
     }
 
     private Bundle createSaveStateBundle(){
         Bundle bundle = new Bundle();
-        bundle.putString(SEARCH_TEXT, orgActivity.getEditTextSearch().getText().toString());
         Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
         bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+
+        bundle.putInt(SELECTED_POSITION, localSelectedPosition);
 
         return bundle;
     }
@@ -112,7 +102,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         this.orgContext = getContext();
         this.fm = orgActivity.getFm();
 
-
         rv = v.findViewById(R.id.recycle_view_folders);
 
         initBundle = getArguments();
@@ -123,10 +112,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         }
 
         createRecycleViewOfFoundItems(null);
-//        orgActivity.getEditTextSearch().setText(textSearch);
-
-        if(localSelectedPosition != null)
-            adapter.setSelectedPosition(localSelectedPosition);
 
         orgActivity.fragmentChanged(this);
         orgActivity.setCurrentTypeFragment(FragmentTag.FOLDERS_TAG);
@@ -138,28 +123,27 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if(!orgActivity.getEditTextSearch().getText().toString().isEmpty()){
-            resumeBundle = createSaveStateBundle();
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        if(resumeBundle != null){
-            String text = resumeBundle.getString(SEARCH_TEXT);
-            orgActivity.getEditTextSearch().setText(text);
-            if (!text.isEmpty())
-                createRecycleViewOfFoundItems(findProperItems(text));
-        }
+        orgActivity.runOnUiThread(()->{
+            if (resumeBundle != null) {
+                int pos = resumeBundle.getInt(SELECTED_POSITION);
+                if(pos != RecyclerView.NO_POSITION) {
+                    adapter.setSelectedPosition(pos);
+                    adapter.notifyItemChanged(pos);
+                }
+            } else {
+                if (localSelectedPosition != RecyclerView.NO_POSITION)
+                    adapter.setSelectedPosition(localSelectedPosition);
+            }
+        });
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        onSaveInstanceState(createSaveStateBundle());
+        resumeBundle = createSaveStateBundle();
     }
 
     /**
@@ -201,6 +185,10 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             }
         }
         if(clickedItem instanceof Folder){
+            //Удаляем все из строки поиска
+            orgActivity.setFoldersTextSearch("");
+            orgActivity.getEditTextSearch().setText("");
+
             orgActivity.setSelectedFolder((Folder)clickedItem);
             PassportsFragment passportsFragment = orgActivity.getCurrentPassportsFragment();
             FragmentTransaction ft = orgActivity.getFm().beginTransaction();

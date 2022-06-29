@@ -67,9 +67,11 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     public static final int ENG_KEYBOARD = 2;
 
     @Getter private Button btnFoldersTab, btnPassportsTab;
+    @Getter@Setter private Folder selectedFolder;
 
-    @Getter@Setter
-    private Folder selectedFolder;
+    @Getter@Setter private String foldersTextSearch = "";
+    @Getter@Setter private String passportsTextSearch = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,10 +87,12 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
 
         btnFoldersTab = findViewById(R.id.btnFoldersTab);
         btnFoldersTab.setOnClickListener(v->{
+            editTextSearch.setText(foldersTextSearch);
             openFoldersFragment();
         });
         btnPassportsTab = findViewById(R.id.btnPassportsTab);
         btnPassportsTab.setOnClickListener(v->{
+            editTextSearch.setText(passportsTextSearch);
             openPassportFragment();
         });
         btnPassportsTab.setOnLongClickListener(v -> {
@@ -122,8 +126,15 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     }
 
     private void openCurrentFragment(){
-        if(currentTypeFragment.equals(FragmentTag.FOLDERS_TAG)) openFoldersFragment();
-        else if(currentTypeFragment.equals(FragmentTag.PASSPORT_TAG)) openPassportFragment();
+        if(currentTypeFragment.equals(FragmentTag.FOLDERS_TAG)) {
+            editTextSearch.setText(foldersTextSearch);
+            openFoldersFragment();
+
+        }
+        else if(currentTypeFragment.equals(FragmentTag.PASSPORT_TAG)) {
+            editTextSearch.setText(passportsTextSearch);
+            openPassportFragment();
+        }
     }
 
 
@@ -237,9 +248,11 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                     OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
 
                     if(fr instanceof FoldersFragment){
+                        foldersTextSearch = text;
                         if(text.isEmpty())  items = ((FoldersFragment) fr).currentListWithGlobalOff(null);
                         else items = fr.findProperItems(text);
                     } else if(fr instanceof PassportsFragment){
+                        passportsTextSearch = text;
                         if(text.isEmpty()) items = new ArrayList<>(ALL_PASSPORTS);
                         else items = fr.findProperItems(text);
                     }
