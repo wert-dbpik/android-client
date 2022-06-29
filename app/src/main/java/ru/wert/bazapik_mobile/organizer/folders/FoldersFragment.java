@@ -55,6 +55,15 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     private final String UPPER_PRODUCT_GROUP_ID = "upper_product_group_id";
 
     private FragmentManager fm;
+//    private static String textSearch = "";
+//
+//    public static String getTextSearch() {
+//        return textSearch;
+//    }
+//
+//    public static void setTextSearch(String textSearch) {
+//        FoldersFragment.textSearch = textSearch;
+//    }
 
     @Getter private Long upperProductGroupId;
     @Setter@Getter private Integer localSelectedPosition;
@@ -112,7 +121,9 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         } else {
             upperProductGroupId = initBundle.getLong(UPPER_PRODUCT_GROUP_ID);
         }
+
         createRecycleViewOfFoundItems(null);
+//        orgActivity.getEditTextSearch().setText(textSearch);
 
         if(localSelectedPosition != null)
             adapter.setSelectedPosition(localSelectedPosition);

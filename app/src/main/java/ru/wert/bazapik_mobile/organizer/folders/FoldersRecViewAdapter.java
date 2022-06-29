@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.organizer.folders;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.ContextMenu;
@@ -72,7 +73,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
      * @param position int
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
         View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
         selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
@@ -103,7 +104,32 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         if (item instanceof Folder) {
             holder.showFolderMenu.setVisibility(View.VISIBLE);
             holder.showFolderMenu.setClickable(true);
-            holder.showFolderMenu.showContextMenu();
+            holder.showFolderMenu.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                    ((View)v.getParent().getParent()).setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
+                    notifyDataSetChanged();
+
+                    PopupMenu popup = new PopupMenu(v.getContext(), v);
+                    popup.getMenuInflater().inflate(R.menu.folder_context_menu, popup.getMenu());
+                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            Folder folder = (Folder) mData.get(position);
+                            switch (item.getItemId()) {
+                                case R.id.showAllFolderDraftsFirst:
+                                    openDraftsInFolder(folder, false);
+                                    break;
+                                case R.id.showAllFolderAssemblesFirst:
+                                    openDraftsInFolder(folder, true);
+                                    break;
+                            }
+                            return true;
+                        }
+                    });
+                    popup.show();
+                }
+            });
 
             String str = ((Folder) item).getName();
             holder.numberAndName.setText(str);
@@ -151,10 +177,9 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
      * @param items List<P>
      */
     public void changeListOfItems(List items) {
+
+        mData = new ArrayList<Item>(items);
         selectedPosition = RecyclerView.NO_POSITION;
-        mData.clear();
-        mData.addAll(items);
-//        mData = new ArrayList<Item>(items);
         notifyDataSetChanged();
 //        fragment.getRv().invalidate();
     }
@@ -162,7 +187,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
     /**
      * Вложенный класс, описывающий и создающий ограниченной количество ViewHolder
      */
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView numberAndName;
         ImageButton folder; //кнопка в виде чертежика
         ImageButton showFolderMenu; //три точки
@@ -173,7 +198,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
             folder = itemView.findViewById(R.id.btnFolder);
             showFolderMenu = itemView.findViewById(R.id.btnShowFoldersMenu);
 
-            showFolderMenu.setOnCreateContextMenuListener(this);
+//            showFolderMenu.setOnCreateContextMenuListener(this);
 
             itemView.setOnClickListener(this);
         }
@@ -197,31 +222,9 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         }
 
 
-        @Override
-        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            ((View)v.getParent().getParent()).setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
-            notifyDataSetChanged();
 
-            PopupMenu popup = new PopupMenu(v.getContext(), v);
-            popup.getMenuInflater().inflate(R.menu.folder_context_menu, popup.getMenu());
-            popup.setOnMenuItemClickListener(this);
-            popup.show();
-        }
 
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            int pos = getBindingAdapterPosition();
-            Folder folder = (Folder) mData.get(pos);
-            switch (item.getItemId()) {
-                case R.id.showAllFolderDraftsFirst:
-                    openDraftsInFolder(folder, false);
-                    break;
-                case R.id.showAllFolderAssemblesFirst:
-                    openDraftsInFolder(folder, true);
-                    break;
-            }
-            return true;
-        }
+
     }
 
     /**
