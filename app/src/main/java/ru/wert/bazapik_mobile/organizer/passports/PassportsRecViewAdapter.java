@@ -39,11 +39,11 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
 
-    private final List<Item> data;
+    @Getter private final List<Item> data;
     private final LayoutInflater inflater;
     private passportsClickListener clickListener;
     private final Context context;
-    @Setter private int selectedPosition = RecyclerView.NO_POSITION;
+    @Setter@Getter private int selectedPosition = RecyclerView.NO_POSITION;
     private PassportsFragment fragment;
 
     /**
@@ -79,8 +79,9 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
-        selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
+        View itemView = holder.itemView.findViewById(R.id.selectedLinearLayout);
+
+        itemView.setBackgroundColor((position == selectedPosition) ?
                 context.getColor(R.color.colorPrimary) : //Цвет выделения
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
@@ -116,7 +117,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
             holder.mShowDraft.setOnClickListener(e -> {
                 selectedPosition = holder.getBindingAdapterPosition();
                 if(selectedPosition == RecyclerView.NO_POSITION) return; //Если ткнули в путое место
-                selectedLinearLayout.setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
+                itemView.setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
                 notifyDataSetChanged(); //Сбрасываем остальные выделения
 
                 openViewer(passport);

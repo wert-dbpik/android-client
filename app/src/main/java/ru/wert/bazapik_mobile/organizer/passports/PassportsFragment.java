@@ -50,71 +50,51 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SEARCH_TEXT = "search_text";
-    private final String SELECTED_POSITION = "selected_pos";
-
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
 
     @Getter@Setter private boolean global = true;
-    @Setter@Getter private int localSelectedPosition = RecyclerView.NO_POSITION;
+    @Setter@Getter private Integer localSelectedPosition;
 
-    private static Bundle resumeBundle;
+    @Getter@Setter private List<Item> currentData;
+
 
     @Override
     public PassportsRecViewAdapter getAdapter() {
         return adapter;
     }
 
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putBundle(SAVED_STATE_BUNDLE, createSaveStateBundle());
-//    }
-//
-//    @Override
-//    public void onViewStateRestored(Bundle savedInstanceState) {
-//        super.onViewStateRestored(savedInstanceState);
-//        if(savedInstanceState != null){
-//            Bundle b = savedInstanceState.getBundle(SAVED_STATE_BUNDLE);
-//
-//            Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
-//            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
-//
-//        }
-//    }
-//
-//
-//    private Bundle createSaveStateBundle(){
-//        Bundle bundle = new Bundle();
-//        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
-//        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
-//
-//        bundle.putInt(SELECTED_POSITION, localSelectedPosition);
-//
-//        return bundle;
-//    }
-
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        resumeBundle = createSaveStateBundle();
-//    }
-
     @Override
-    public void onResume() {
-        super.onResume();
-        if (resumeBundle != null) {
-            Parcelable listState = resumeBundle.getParcelable(KEY_RECYCLER_STATE);
-            getRv().getLayoutManager().onRestoreInstanceState(listState);
-        }
-
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBundle(SAVED_STATE_BUNDLE, createSaveStateBundle());
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        resumeBundle = new Bundle();
-        Parcelable listState = getRv().getLayoutManager().onSaveInstanceState();
-        resumeBundle.putParcelable(KEY_RECYCLER_STATE, listState);
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if(savedInstanceState != null){
+            Bundle b = savedInstanceState.getBundle(SAVED_STATE_BUNDLE);
+
+            Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
+            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
+
+            orgActivity.getEditTextSearch().setText(b.getString(SEARCH_TEXT));
+        }
+    }
+
+    private Bundle createSaveStateBundle(){
+        Bundle bundle = new Bundle();
+
+        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
+        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+
+        return bundle;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        onSaveInstanceState(createSaveStateBundle());
     }
 
     @Override
@@ -127,13 +107,10 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
         createRecycleViewOfFoundItems();
 
-        adapter.setSelectedPosition(localSelectedPosition);
-        adapter.notifyDataSetChanged();
-
         orgActivity.fragmentChanged(this);
         orgActivity.setCurrentTypeFragment(FragmentTag.PASSPORT_TAG);
 
-//        adapter.setStateRestorationPolicy(PREVENT_WHEN_EMPTY);
+        currentData = new ArrayList<>(adapter.getData());
 
         return v;
     }
@@ -221,7 +198,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     @Override
     public List<Item> findProperItems(String text) {
         List<Item> foundItems = new ArrayList<>();
-        for (Item item : ALL_PASSPORTS) {
+        for (Item item : currentData) {
             if (item.toUsefulString().toLowerCase().contains(text.toLowerCase())){
                 foundItems.add(item);
             }
@@ -230,5 +207,6 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         foundItems.sort(ThisApplication.usefulStringComparator());
         return foundItems;
     }
+
 
 }

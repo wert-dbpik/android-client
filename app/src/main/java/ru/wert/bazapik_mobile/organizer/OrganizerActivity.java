@@ -97,6 +97,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
         });
         btnPassportsTab.setOnLongClickListener(v -> {
             currentPassportsFragment.getAdapter().changeListOfItems(new ArrayList<>(ALL_PASSPORTS));
+            currentPassportsFragment.setCurrentData(new ArrayList<>(currentPassportsFragment.getAdapter().getData()));
             return false;
         });
 
@@ -127,12 +128,9 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
 
     private void openCurrentFragment(){
         if(currentTypeFragment.equals(FragmentTag.FOLDERS_TAG)) {
-            editTextSearch.setText(foldersTextSearch);
             openFoldersFragment();
-
         }
         else if(currentTypeFragment.equals(FragmentTag.PASSPORT_TAG)) {
-            editTextSearch.setText(passportsTextSearch);
             openPassportFragment();
         }
     }
@@ -253,7 +251,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                         else items = fr.findProperItems(text);
                     } else if(fr instanceof PassportsFragment){
                         passportsTextSearch = text;
-                        if(text.isEmpty()) items = new ArrayList<>(ALL_PASSPORTS);
+                        if(text.isEmpty())
+                            items = currentPassportsFragment.getCurrentData();
                         else items = fr.findProperItems(text);
                     }
 
