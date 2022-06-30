@@ -25,6 +25,7 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import lombok.Getter;
 import lombok.Setter;
 import ru.wert.bazapik_mobile.ChangePassActivity;
@@ -43,6 +44,7 @@ import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
+import ru.wert.bazapik_mobile.organizer.folders.FoldersRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
@@ -218,6 +220,10 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             if(currentFoldersFragment.getUpperProductGroupId().equals(1L))
                 showAlertDialogAndExit();
             else{
+                Item i = ((FoldersRecViewAdapter)currentFoldersFragment.getAdapter()).getItem(0);
+                if(i instanceof Folder){ //Если папка, значит имеем список папок
+                    showAlertDialogAndExit();
+                } else
                 currentFoldersFragment.onItemClick(currentFoldersFragment.getView(), 0);
             }
         } else if(fr instanceof PassportsFragment){
@@ -324,7 +330,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
         ft.replace(R.id.organizer_fragment_container, currentPassportsFragment);
-        ft.addToBackStack(null);
+//        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -332,7 +338,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
         ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
-        ft.addToBackStack(null);
+//        ft.addToBackStack(null);
         ft.commit();
     }
 
