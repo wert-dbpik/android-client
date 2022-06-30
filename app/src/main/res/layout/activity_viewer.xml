@@ -61,39 +61,5 @@
 
         />
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="bottom">-->
-
-<!--        <Button-->
-<!--            android:id="@+id/btnShowPrevious"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:gravity="start"-->
-<!--            android:paddingStart="20dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:text=":"-->
-<!--            android:textColor="#9E9D24"-->
-<!--            android:textStyle="bold" />-->
-
-
-<!--        <Button-->
-<!--            android:id="@+id/btnShowNext"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:gravity="end"-->
-<!--            android:paddingEnd="20dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:text=":"-->
-<!--            android:textColor="#9E9D24"-->
-<!--            android:textStyle="bold" />-->
-
-<!--    </LinearLayout>-->
-
-
-
 </FrameLayout>
 

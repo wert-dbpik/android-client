@@ -193,13 +193,18 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
                 if (backwardFoldersFragment == null) {
                     Log.e("FoldersFragment", "Fragment lost, tag = " + tag);
                     backwardFoldersFragment = new FoldersFragment();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+                    ft.replace(R.id.organizer_fragment_container, backwardFoldersFragment);
+                    ft.addToBackStack("folders1");
+                    ft.commit();
+                } else {
+
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+                    ft.replace(R.id.organizer_fragment_container, backwardFoldersFragment);
+                    ft.commit();
                 }
-
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-                ft.replace(R.id.organizer_fragment_container, backwardFoldersFragment);
-                ft.commit();
-
 
             } else { //FORWARD
                 Long upperProductGroupId = clickedItem.getId();

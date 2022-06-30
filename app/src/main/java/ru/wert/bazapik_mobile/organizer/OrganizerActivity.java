@@ -49,7 +49,8 @@ import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
-public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher, OrgActivityAndFoldersFragmentInteraction {
+public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
+        OrgActivityAndFoldersFragmentInteraction, OrgActivityAndPassportsFragmentInteraction {
 
     @Getter private FragmentManager fm;
     @Getter private PassportsFragment currentPassportsFragment;
@@ -57,7 +58,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     @Getter@Setter private FragmentTag currentTypeFragment = FragmentTag.FOLDERS_TAG;
 
     private final String FRAGMENT_TAG = "fragment_tag";
-    private final String POSITION = "position";
     private static Bundle bundleRecyclerViewState;
 
     private FragmentContainerView keyboardContainer;

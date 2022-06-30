@@ -3,6 +3,7 @@ package ru.wert.bazapik_mobile.organizer.passports;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.organizer.FragmentTag;
+import ru.wert.bazapik_mobile.organizer.OrgActivityAndPassportsFragmentInteraction;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 
@@ -40,7 +42,7 @@ import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 public class PassportsFragment extends Fragment implements PassportsRecViewAdapter.passportsClickListener, OrganizerFragment<Item> {
 
     private Context orgContext;
-    private OrganizerActivity orgActivity;
+    private OrgActivityAndPassportsFragmentInteraction org;
     @Setter private PassportsRecViewAdapter adapter;
     @Getter@Setter private RecyclerView rv;
     @Getter@Setter private List<Item> allItems;
@@ -54,6 +56,12 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     @Getter@Setter private List<Item> currentData;
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        org = (OrgActivityAndPassportsFragmentInteraction) context;
+    }
 
     @Override
     public PassportsRecViewAdapter getAdapter() {
@@ -95,15 +103,15 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_passports, container, false);
-        this.orgActivity = (OrganizerActivity) getActivity();
+        this.org = (OrganizerActivity) getActivity();
         this.orgContext = getContext();
 
         rv = v.findViewById(R.id.recycle_view_passports);
 
         createRecycleViewOfFoundItems();
 
-        orgActivity.fragmentChanged(this);
-        orgActivity.setCurrentTypeFragment(FragmentTag.PASSPORT_TAG);
+        org.fragmentChanged(this);
+        org.setCurrentTypeFragment(FragmentTag.PASSPORT_TAG);
 
         currentData = new ArrayList<>(adapter.getData());
 
@@ -125,7 +133,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
      * @param position
      */
     private void openInfoView(int position){
-        Intent intent = new Intent(orgActivity, InfoActivity.class);
+        Intent intent = new Intent(((Activity)org), InfoActivity.class);
         intent.putExtra("PASSPORT_ID", String.valueOf(adapter.getItem(position).getId()));
         startActivity(intent);
     }
@@ -137,12 +145,12 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fillRecViewWithItems(findPassports(orgActivity.getSelectedFolder()));
+        fillRecViewWithItems(findPassports(org.getSelectedFolder()));
 
         //При касании списка, поле ввода должно потерять фокус
         //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
         rv.setOnTouchListener((v, event) -> {
-            orgActivity.getEditTextSearch().clearFocus();
+            org.getEditTextSearch().clearFocus();
             return false; //если возвращать true, то список ограничится видимой частью
         });
 
@@ -178,7 +186,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     @Override //OrganizerFragment
     public void fillRecViewWithItems(List<Item> items) {
-        orgActivity.runOnUiThread(() -> {
+        ((Activity)org).runOnUiThread(() -> {
             adapter = new PassportsRecViewAdapter(this, orgContext, items);
             adapter.setClickListener(PassportsFragment.this);
             rv.setAdapter(adapter);
