@@ -33,7 +33,6 @@ import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
-import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 

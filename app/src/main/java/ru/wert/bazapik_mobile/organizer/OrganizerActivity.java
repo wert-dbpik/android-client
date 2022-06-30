@@ -16,12 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentOnAttachListener;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
@@ -45,12 +43,11 @@ import ru.wert.bazapik_mobile.keyboards.NumKeyboard;
 import ru.wert.bazapik_mobile.keyboards.RuKeyboard;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
-import ru.wert.bazapik_mobile.organizer.folders.FoldersRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
-public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher {
+public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher, OrgActivityAndFoldersFragmentInteraction {
 
     @Getter private FragmentManager fm;
     @Getter private PassportsFragment currentPassportsFragment;
@@ -71,8 +68,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     @Getter private Button btnFoldersTab, btnPassportsTab;
     @Getter@Setter private Folder selectedFolder;
 
-    @Getter private String foldersTextSearch = "";
-    @Setter private String passportsTextSearch = "";
+    @Getter@Setter private String foldersTextSearch = "";
+    @Getter@Setter private String passportsTextSearch = "";
 
 
     @Override
@@ -101,12 +98,17 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
             return false;
         });
 
-        fm.addFragmentOnAttachListener((fragmentManager, fragment) -> {
-            if(fragment instanceof FoldersFragment)
-                editTextSearch.setText(foldersTextSearch);
-            else if (fragment instanceof PassportsFragment)
-                editTextSearch.setText(passportsTextSearch);
-        });
+        fm.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
+            @Override
+            public void onFragmentResumed(FragmentManager manager, Fragment fragment) {
+                super.onFragmentResumed(manager, fragment);
+                if (fragment instanceof FoldersFragment)
+                    editTextSearch.setText(foldersTextSearch);
+                else if (fragment instanceof PassportsFragment)
+                    editTextSearch.setText(passportsTextSearch);
+            }
+        }, true);
+
 
         createKeyboards();
         createSearchEditText();
@@ -394,5 +396,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }
 

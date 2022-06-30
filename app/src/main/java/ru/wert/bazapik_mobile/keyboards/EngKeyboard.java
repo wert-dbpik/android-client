@@ -3,7 +3,6 @@ package ru.wert.bazapik_mobile.keyboards;
 import static ru.wert.bazapik_mobile.organizer.OrganizerActivity.RU_KEYBOARD;
 import static ru.wert.bazapik_mobile.organizer.OrganizerActivity.NUM_KEYBOARD;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;

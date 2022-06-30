@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 
-import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
@@ -20,15 +17,7 @@ import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
-import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
-import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
-import ru.wert.bazapik_mobile.data.servicesREST.FileService;
-import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
-import ru.wert.bazapik_mobile.warnings.WarningDialog1;
-
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
 
 public class DataLoadingAsyncTask extends AsyncTask<Void, Void, Void> {
 

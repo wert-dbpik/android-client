@@ -30,7 +30,6 @@ import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
-import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.utils.Dest;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 

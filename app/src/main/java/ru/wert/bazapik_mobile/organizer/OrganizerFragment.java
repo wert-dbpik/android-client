@@ -4,6 +4,7 @@ import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
+import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
 
 public interface OrganizerFragment<T extends Item> {
 

@@ -1,9 +1,11 @@
 package ru.wert.bazapik_mobile.organizer.folders;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
 import ru.wert.bazapik_mobile.organizer.FragmentTag;
+import ru.wert.bazapik_mobile.organizer.OrgActivityAndFoldersFragmentInteraction;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
@@ -40,7 +43,7 @@ import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
 public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.ItemFolderClickListener, OrganizerFragment<Item> {
 
     private Context orgContext;
-    private OrganizerActivity orgActivity;
+//    private OrganizerActivity orgActivity;
     @Setter private FoldersRecViewAdapter adapter;
     @Getter@Setter private RecyclerView rv;
     @Getter@Setter private List<Item> allItems;
@@ -59,6 +62,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     @Getter private Long upperProductGroupId;
     @Setter@Getter private int localSelectedPosition = RecyclerView.NO_POSITION;
 
+    private OrgActivityAndFoldersFragmentInteraction org;
 
     @Override
     public OrganizerRecViewAdapter getAdapter() {
@@ -93,21 +97,27 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         return bundle;
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        org = (OrgActivityAndFoldersFragmentInteraction) context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_folders, container, false);
-        this.orgActivity = (OrganizerActivity) getActivity();
+//        this.orgActivity = (OrganizerActivity) getActivity();
         this.orgContext = getContext();
-        this.fm = orgActivity.getFm();
+        this.fm = org.getFm();
 
         rv = v.findViewById(R.id.recycle_view_folders);
 
         initBundle = getArguments();
         List<Item> listItems = null;
         if(resumeBundle != null){
-            String searchText = orgActivity.getFoldersTextSearch();
+            String searchText = org.getFoldersTextSearch();
             if(!searchText.isEmpty())
                 listItems = findProperItems(searchText);
         } else {
@@ -123,19 +133,19 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         createRecycleViewOfFoundItems(listItems);
 
 
-        orgActivity.fragmentChanged(this);
-        orgActivity.setCurrentTypeFragment(FragmentTag.FOLDERS_TAG);
+        org.fragmentChanged(this);
+        org.setCurrentTypeFragment(FragmentTag.FOLDERS_TAG);
 
         adapter.setStateRestorationPolicy(PREVENT_WHEN_EMPTY);
 
-        orgActivity.setCurrentFoldersFragment(this);
+        org.setCurrentFoldersFragment(this);
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        orgActivity.runOnUiThread(()->{
+        ((Activity)org).runOnUiThread(()->{
             if (resumeBundle != null) {
 
 
@@ -177,14 +187,17 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             if(position == 0 && upperProductGroupId != 1L) {//BACKWARD
 
                 Long upperProductGroupId = ((ProductGroup) clickedItem).getParentId();
-
                 String tag = "folders" + upperProductGroupId;
                 FoldersFragment backwardFoldersFragment = (FoldersFragment) fm.findFragmentByTag(tag);
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-                ft.replace(R.id.organizer_fragment_container, backwardFoldersFragment);
-                ft.commit();
 
+                if(backwardFoldersFragment == null)
+                    Log.e("FoldersFragment", "Fragment lost, tag = " + tag);
+                else {
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+                    ft.replace(R.id.organizer_fragment_container, backwardFoldersFragment);
+                    ft.commit();
+                }
 
             } else { //FORWARD
                 Long upperProductGroupId = clickedItem.getId();
@@ -205,11 +218,11 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         }
         if(clickedItem instanceof Folder){
 
-            orgActivity.setPassportsTextSearch("");
+            org.setPassportsTextSearch("");
 
-            orgActivity.setSelectedFolder((Folder)clickedItem);
-            PassportsFragment passportsFragment = orgActivity.getCurrentPassportsFragment();
-            FragmentTransaction ft = orgActivity.getFm().beginTransaction();
+            org.setSelectedFolder((Folder)clickedItem);
+            PassportsFragment passportsFragment = org.getCurrentPassportsFragment();
+            FragmentTransaction ft = org.getFm().beginTransaction();
             ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
             ft.replace(R.id.organizer_fragment_container, passportsFragment);
             ft.commit();
@@ -243,7 +256,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
     @Override
     public void fillRecViewWithItems(List<Item> items){
-        orgActivity.runOnUiThread(()->{
+        ((Activity)org).runOnUiThread(()->{
             adapter = new FoldersRecViewAdapter(this, orgContext, items);
             adapter.setClickListener(FoldersFragment.this);
             rv.setAdapter(adapter);

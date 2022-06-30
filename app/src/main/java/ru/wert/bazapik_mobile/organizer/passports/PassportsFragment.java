@@ -1,6 +1,5 @@
 package ru.wert.bazapik_mobile.organizer.passports;
 
-import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
@@ -11,7 +10,6 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
