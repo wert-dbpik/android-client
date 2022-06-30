@@ -105,13 +105,23 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         rv = v.findViewById(R.id.recycle_view_folders);
 
         initBundle = getArguments();
-        if(initBundle == null) {
-            upperProductGroupId = 1L;
+        List<Item> listItems = null;
+        if(resumeBundle != null){
+            String searchText = orgActivity.getFoldersTextSearch();
+            if(!searchText.isEmpty())
+                listItems = findProperItems(searchText);
         } else {
-            upperProductGroupId = initBundle.getLong(UPPER_PRODUCT_GROUP_ID);
+            if (initBundle == null) {
+                upperProductGroupId = 1L;
+            } else {
+                upperProductGroupId = initBundle.getLong(UPPER_PRODUCT_GROUP_ID);
+                initBundle = null;
+            }
+
         }
 
-        createRecycleViewOfFoundItems(null);
+        createRecycleViewOfFoundItems(listItems);
+
 
         orgActivity.fragmentChanged(this);
         orgActivity.setCurrentTypeFragment(FragmentTag.FOLDERS_TAG);
@@ -127,11 +137,14 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         super.onResume();
         orgActivity.runOnUiThread(()->{
             if (resumeBundle != null) {
+
+
                 int pos = resumeBundle.getInt(SELECTED_POSITION);
                 if(pos != RecyclerView.NO_POSITION) {
                     adapter.setSelectedPosition(pos);
                     adapter.notifyItemChanged(pos);
                 }
+                resumeBundle = null;
             } else {
                 if (localSelectedPosition != RecyclerView.NO_POSITION)
                     adapter.setSelectedPosition(localSelectedPosition);
@@ -143,6 +156,12 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     @Override
     public void onStop() {
         super.onStop();
+        resumeBundle = createSaveStateBundle();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
         resumeBundle = createSaveStateBundle();
     }
 
@@ -185,9 +204,8 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             }
         }
         if(clickedItem instanceof Folder){
-            //Удаляем все из строки поиска
-            orgActivity.setFoldersTextSearch("");
-            orgActivity.getEditTextSearch().setText("");
+
+            orgActivity.setPassportsTextSearch("");
 
             orgActivity.setSelectedFolder((Folder)clickedItem);
             PassportsFragment passportsFragment = orgActivity.getCurrentPassportsFragment();
@@ -210,9 +228,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
             fillRecViewWithItems(currentListWithGlobalOff(null));
         else
             fillRecViewWithItems(items);
-
-
-        fillRecViewWithItems(currentListWithGlobalOff(null));
 
         //При касании списка, поле ввода должно потерять фокус
         //чтобы наша клавиатура скрылась с экрана и мы увидели весь список

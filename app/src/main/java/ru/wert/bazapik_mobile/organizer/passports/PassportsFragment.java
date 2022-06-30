@@ -49,7 +49,6 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     @Getter@Setter private List<Item> foundItems;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
-    private final String SEARCH_TEXT = "search_text";
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
 
     @Getter@Setter private boolean global = true;
@@ -77,8 +76,6 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
             Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
-
-            orgActivity.getEditTextSearch().setText(b.getString(SEARCH_TEXT));
         }
     }
 

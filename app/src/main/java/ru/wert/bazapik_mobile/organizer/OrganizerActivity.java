@@ -16,10 +16,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentOnAttachListener;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
@@ -69,8 +71,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
     @Getter private Button btnFoldersTab, btnPassportsTab;
     @Getter@Setter private Folder selectedFolder;
 
-    @Getter@Setter private String foldersTextSearch = "";
-    @Getter@Setter private String passportsTextSearch = "";
+    @Getter private String foldersTextSearch = "";
+    @Setter private String passportsTextSearch = "";
 
 
     @Override
@@ -87,18 +89,23 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
 
         btnFoldersTab = findViewById(R.id.btnFoldersTab);
         btnFoldersTab.setOnClickListener(v->{
-            editTextSearch.setText(foldersTextSearch);
             openFoldersFragment();
         });
         btnPassportsTab = findViewById(R.id.btnPassportsTab);
         btnPassportsTab.setOnClickListener(v->{
-            editTextSearch.setText(passportsTextSearch);
             openPassportFragment();
         });
         btnPassportsTab.setOnLongClickListener(v -> {
             currentPassportsFragment.getAdapter().changeListOfItems(new ArrayList<>(ALL_PASSPORTS));
             currentPassportsFragment.setCurrentData(new ArrayList<>(currentPassportsFragment.getAdapter().getData()));
             return false;
+        });
+
+        fm.addFragmentOnAttachListener((fragmentManager, fragment) -> {
+            if(fragment instanceof FoldersFragment)
+                editTextSearch.setText(foldersTextSearch);
+            else if (fragment instanceof PassportsFragment)
+                editTextSearch.setText(passportsTextSearch);
         });
 
         createKeyboards();
@@ -240,6 +247,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher 
 
             @Override
             public void afterTextChanged(Editable s) {
+                //Реагируем только если editText меняется вручную
+                if(!editTextSearch.hasFocus()) return;
                 String text = s.toString();
                 new Thread(() -> {
                     List<Item> items = null;
