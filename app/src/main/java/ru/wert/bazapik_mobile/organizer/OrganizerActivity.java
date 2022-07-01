@@ -25,7 +25,6 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
 import lombok.Getter;
 import lombok.Setter;
 import ru.wert.bazapik_mobile.ChangePassActivity;
@@ -46,6 +45,7 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersFragment;
 import ru.wert.bazapik_mobile.organizer.folders.FoldersRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
+import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -95,8 +95,13 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             openPassportFragment();
         });
         btnPassportsTab.setOnLongClickListener(v -> {
-            currentPassportsFragment.getAdapter().changeListOfItems(new ArrayList<>(ALL_PASSPORTS));
-            currentPassportsFragment.setCurrentData(new ArrayList<>(currentPassportsFragment.getAdapter().getData()));
+            PassportsRecViewAdapter adapter = currentPassportsFragment.getAdapter();
+            if(adapter == null) {
+                openPassportFragment();
+            } else {
+                adapter.changeListOfItems(new ArrayList<>(ALL_PASSPORTS));
+                currentPassportsFragment.setCurrentData(new ArrayList<>(currentPassportsFragment.getAdapter().getData()));
+            }
             return false;
         });
 
@@ -208,6 +213,16 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             }
         });
 
+//        editTextSearch.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                String text = editTextSearch.getText().toString();
+//                if(!text.isEmpty())
+//                    searchByText(text);
+//                return false;
+//            }
+//        });
+
     }
 
     @Override
@@ -258,26 +273,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 //Реагируем только если editText меняется вручную
                 if(!editTextSearch.hasFocus()) return;
                 String text = s.toString();
-                new Thread(() -> {
-                    List<Item> items = null;
-                    OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
-
-                    if(fr instanceof FoldersFragment){
-                        foldersTextSearch = text;
-                        if(text.isEmpty())  items = ((FoldersFragment) fr).currentListWithGlobalOff(null);
-                        else items = fr.findProperItems(text);
-                    } else if(fr instanceof PassportsFragment){
-                        passportsTextSearch = text;
-                        if(text.isEmpty())
-                            items = currentPassportsFragment.getCurrentData();
-                        else items = fr.findProperItems(text);
-                    }
-
-                    List<Item> finalItems = items;
-                    runOnUiThread(() -> {
-                        fr.getAdapter().changeListOfItems(finalItems);
-                    });
-                }).start();
+                searchByText(text);
             }
 
             @Override
@@ -289,6 +285,30 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             }
 
         });
+    }
+
+    private void searchByText(String text) {
+
+        new Thread(() -> {
+            List<Item> items = null;
+            OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
+
+            if(fr instanceof FoldersFragment){
+                foldersTextSearch = text;
+                if(text.isEmpty())  items = ((FoldersFragment) fr).currentListWithGlobalOff(null);
+                else items = fr.findProperItems(text);
+            } else if(fr instanceof PassportsFragment){
+                passportsTextSearch = text;
+                if(text.isEmpty())
+                    items = currentPassportsFragment.getCurrentData();
+                else items = fr.findProperItems(text);
+            }
+
+            List<Item> finalItems = items;
+            runOnUiThread(() -> {
+                fr.getAdapter().changeListOfItems(finalItems);
+            });
+        }).start();
     }
 
     /**

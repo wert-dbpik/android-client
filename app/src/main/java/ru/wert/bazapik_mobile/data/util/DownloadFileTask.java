@@ -27,9 +27,6 @@ public class DownloadFileTask extends AsyncTask<String, String, Boolean> {
     private final WeakReference<Context> context;
     private final WeakReference<String> fromFolder, destDir;
     private final ProgressDialog mProgressDialog;
-    private File destFile;
-
-    int prevProgress = DIALOG_DOWNLOAD_PROGRESS;
 
     public DownloadFileTask(Context context, String fromFolder, String destDir) {
         this.context = new WeakReference<>(context);
