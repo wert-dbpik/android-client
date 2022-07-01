@@ -7,7 +7,9 @@ import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.ThisApplication.loadSettings;
 import static ru.wert.bazapik_mobile.ThisApplication.setProp;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.method.LinkMovementMethod;
@@ -15,11 +17,14 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.data.util.DownloadFileTask;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 
 public class SettingsActivity extends BaseActivity {
@@ -28,6 +33,8 @@ public class SettingsActivity extends BaseActivity {
     private CheckBox cbHidePrefixes;
     private TextView tvVersion;
     private TextView tvVersionAvailable, tvLoadEDeawings;
+    private AsyncTask<String, String, Boolean> downloadTask;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +56,13 @@ public class SettingsActivity extends BaseActivity {
                     .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
                         String fileName = "eDrawings.apk";
                         File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                        FILE_SERVICE.download("apk", fileName, destinationFolder.toString(), SettingsActivity.this);
+
+                        downloadTask = new DownloadFileTask(
+                                this,
+                                "apk",
+                                destinationFolder.toString());
+                        downloadTask.execute(fileName);
+
                     }).create().show();
 
         });
@@ -75,6 +88,13 @@ public class SettingsActivity extends BaseActivity {
                         .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
                             String fileName = "BazaPIK-" + APPLICATION_VERSION_AVAILABLE + ".apk";
                             File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                            downloadTask = new DownloadFileTask(
+                                            this,
+                                            "apk",
+                                            destinationFolder.toString());
+                            downloadTask.execute(fileName);
+
                             FILE_SERVICE.download("apk", fileName, destinationFolder.toString(), SettingsActivity.this);
                         }).create().show();
 
@@ -100,10 +120,10 @@ public class SettingsActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        setProp("SHOW_SOLID_FILES", String.valueOf(cbShowSolidFiles.isChecked()));
-        setProp("HIDE_PREFIXES", String.valueOf(cbHidePrefixes.isChecked()));
+            setProp("SHOW_SOLID_FILES", String.valueOf(cbShowSolidFiles.isChecked()));
+            setProp("HIDE_PREFIXES", String.valueOf(cbHidePrefixes.isChecked()));
 
-        loadSettings();
+            loadSettings();
 
     }
 }

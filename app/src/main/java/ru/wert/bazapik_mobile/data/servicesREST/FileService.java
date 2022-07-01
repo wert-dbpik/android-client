@@ -6,6 +6,7 @@ import static ru.wert.bazapik_mobile.data.servicesREST.DraftService.getBytesFrom
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -28,6 +29,7 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.FileApiInterface;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.data.util.DownloadFileTask;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class FileService extends Application {

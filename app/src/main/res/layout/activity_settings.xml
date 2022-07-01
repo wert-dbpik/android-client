@@ -28,7 +28,8 @@
     <TextView
         android:id="@+id/tvLoadEDrawings"
         android:layout_marginStart="50dp"
-        android:text="загрузить для просмотра eDrawings"
+        android:text="загрузить просмотрщик eDrawings"
+        android:layout_marginVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
@@ -84,6 +85,7 @@
             android:id="@+id/tvVersionAvalable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
             android:text="Доступна новая версия: 1.1 "
             android:textSize="16sp" />
 
@@ -101,6 +103,7 @@
         android:id="@+id/tvVideo"
         android:layout_marginStart="20dp"
         android:text="@string/videoYouTube"
+        android:layout_marginVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"/>
