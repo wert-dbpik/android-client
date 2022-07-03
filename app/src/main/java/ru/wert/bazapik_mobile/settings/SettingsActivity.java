@@ -7,7 +7,6 @@ import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.ThisApplication.loadSettings;
 import static ru.wert.bazapik_mobile.ThisApplication.setProp;
 
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,8 +16,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -32,7 +29,7 @@ public class SettingsActivity extends BaseActivity {
     private CheckBox cbShowSolidFiles;
     private CheckBox cbHidePrefixes;
     private TextView tvVersion;
-    private TextView tvVersionAvailable, tvLoadEDeawings;
+    private TextView tvVersionAvailable, tvLoadEDrawings;
     private AsyncTask<String, String, Boolean> downloadTask;
 
 
@@ -45,10 +42,10 @@ public class SettingsActivity extends BaseActivity {
         cbHidePrefixes = findViewById(R.id.cbHidePrefixes);
         tvVersion = findViewById(R.id.tvVersion);
         tvVersionAvailable = findViewById(R.id.tvVersionAvalable);
-        tvLoadEDeawings = findViewById(R.id.tvLoadEDrawings);
+        tvLoadEDrawings = findViewById(R.id.tvLoadEDrawings);
 
-        tvLoadEDeawings.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
-        tvLoadEDeawings.setOnClickListener(e->{
+        tvLoadEDrawings.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
+        tvLoadEDrawings.setOnClickListener(e->{
             new AlertDialog.Builder(SettingsActivity.this)
                     .setTitle("ВНИМАНИЕ!")
                     .setMessage( "Файл 'eDrawings.apk' будет сохранен в папку Загрузки")
@@ -95,7 +92,6 @@ public class SettingsActivity extends BaseActivity {
                                             destinationFolder.toString());
                             downloadTask.execute(fileName);
 
-                            FILE_SERVICE.download("apk", fileName, destinationFolder.toString(), SettingsActivity.this);
                         }).create().show();
 
             });

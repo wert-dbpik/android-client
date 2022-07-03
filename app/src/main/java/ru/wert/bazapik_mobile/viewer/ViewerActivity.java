@@ -64,6 +64,8 @@ public class ViewerActivity extends BaseActivity {
     private Button btnTapLeft, btnTapRight;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
