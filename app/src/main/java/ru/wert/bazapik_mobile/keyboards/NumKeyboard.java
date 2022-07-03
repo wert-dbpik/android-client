@@ -96,6 +96,11 @@ public class NumKeyboard extends Fragment implements MyKeyboard{
             }
         });
 
+        mBtnBackspace.setOnLongClickListener(v->{
+            editTextSearch.setText("");
+            return true;
+        });
+
         //Специальная кнопка Clear
         final Button mBtnCLear = view.findViewById(R.id.mBtnEngClear);
         mBtnCLear.setOnClickListener(v->{
