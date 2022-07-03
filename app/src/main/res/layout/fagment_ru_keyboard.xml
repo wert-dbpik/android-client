@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".keyboards.RuKeyboard">
 
     <LinearLayout
@@ -457,10 +458,11 @@
             <Button
                 android:id="@+id/mBtnRuLanguage"
                 style="?android:attr/buttonBarButtonStyle"
+                android:maxLines="1"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
-                android:layout_weight="40"
+                android:layout_weight="1"
                 android:text="Eng"
                 android:padding="0pt"
                 android:textAlignment="center"
@@ -470,10 +472,11 @@
             <Button
                 android:id="@+id/mBtnRuSpace"
                 style="?android:attr/buttonBarButtonStyle"
+                android:maxLines="1"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
-                android:layout_weight="90"
+                android:layout_weight="2"
                 android:paddingHorizontal="0pt"
                 android:text="П Р О Б Е Л"
                 android:padding="0pt"
@@ -483,28 +486,29 @@
             <Button
                 android:id="@+id/mBtnRu123"
                 style="?android:attr/buttonBarButtonStyle"
+                android:layout_gravity="center"
+                android:maxLines="1"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/btn_letter_margin"
-                android:layout_weight="20"
+                android:layout_weight="1"
                 android:paddingHorizontal="0pt"
                 android:text="123"
                 android:padding="0pt"
                 android:textSize="@dimen/letters_btn_font_size" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/mBtnRuClear"
-                style="?android:attr/buttonBarButtonStyle"
+                android:background="@android:color/transparent"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/search256"
                 android:layout_width="0px"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/btn_letter_margin"
-                android:layout_weight="30"
+                android:layout_height="18sp"
+                android:scaleType="centerInside"
+                android:layout_marginHorizontal="@dimen/btn_margin"
+                android:layout_weight="0.5"
                 android:paddingHorizontal="0pt"
-                android:textAlignment="textEnd"
-                android:paddingEnd="20dp"
-                android:text="C"
-                android:padding="0pt"
-                android:textSize="@dimen/letters_btn_font_size" />
+                android:textSize="@dimen/btn_text_size" />
 
         </LinearLayout>
 

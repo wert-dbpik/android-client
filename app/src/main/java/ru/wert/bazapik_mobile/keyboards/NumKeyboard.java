@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -34,7 +35,7 @@ public class NumKeyboard extends Fragment implements MyKeyboard{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         container.setVisibility(View.GONE);
-        View view = inflater.inflate(R.layout.fr_number_keyboard, container, false);
+        View view = inflater.inflate(R.layout.fragment_number_keyboard, container, false);
 
         init(view);
 
@@ -101,10 +102,11 @@ public class NumKeyboard extends Fragment implements MyKeyboard{
             return true;
         });
 
-        //Специальная кнопка Clear
-        final Button mBtnCLear = view.findViewById(R.id.mBtnEngClear);
+        //Специальная кнопка принудительного поиска
+        final ImageButton mBtnCLear = view.findViewById(R.id.mBtnEngClear);
         mBtnCLear.setOnClickListener(v->{
-            editTextSearch.setText("");
+            String text = editTextSearch.getText().toString();
+            editTextSearch.setText(text);
         });
 
         //Специальная кнопка PIK - выводт префикс по умолчанию

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -34,7 +35,8 @@ public class RuKeyboard extends Fragment implements MyKeyboard{
     private List<Button> letterButtons; //Буквенные кнопки
     private Map<Button, String> values; //Пары кнопка-значение
 
-    private Button btnSpace, btnShift, btnClear, btnBackspace, btnLanguage, btn123;
+    private Button btnSpace, btnShift, btnBackspace, btnLanguage, btn123;
+    private ImageButton btnClear;
 
     final private List<String> capitalLetters = Arrays.asList("А", "Б", "В", "Г", "Д", "Е", "Ж",
             "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч",
@@ -51,7 +53,7 @@ public class RuKeyboard extends Fragment implements MyKeyboard{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         container.setVisibility(View.GONE);
-        View view = inflater.inflate(R.layout.fr_ru_keyboard, container, false);
+        View view = inflater.inflate(R.layout.fagment_ru_keyboard, container, false);
 
         Button btnA = view.findViewById(R.id.mBtnRuA);
         Button btnB = view.findViewById(R.id.mBtnRuB);

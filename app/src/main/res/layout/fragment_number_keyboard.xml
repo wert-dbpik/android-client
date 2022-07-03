@@ -102,15 +102,17 @@
                 android:text="6"
                 android:textSize="@dimen/btn_text_size" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/mBtnEngClear"
-                style="?android:attr/buttonBarButtonStyle"
+                android:background="@android:color/transparent"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/search256"
                 android:layout_width="0px"
-                android:layout_height="wrap_content"
+                android:layout_height="18sp"
+                android:scaleType="centerInside"
                 android:layout_marginHorizontal="@dimen/btn_margin"
                 android:layout_weight="100"
                 android:padding="0pt"
-                android:text="C"
                 android:textSize="@dimen/btn_text_size" />
         </TableRow>
 

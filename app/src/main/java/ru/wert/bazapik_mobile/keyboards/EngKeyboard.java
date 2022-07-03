@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 
 import androidx.fragment.app.Fragment;
@@ -43,13 +44,14 @@ public class EngKeyboard extends Fragment implements MyKeyboard{
     final private List<String> smallLetters = Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h",
             "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z");
 
-    private Button btnSpace, btnShift, btnClear, btnBackspace, btnLanguage, btn123;
+    private Button btnSpace, btnShift, btnBackspace, btnLanguage, btn123;
+    private ImageButton btnClear;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         container.setVisibility(View.GONE);
-        View view = inflater.inflate(R.layout.fr_eng_keyboard, container, false);
+        View view = inflater.inflate(R.layout.fragment_eng_keyboard, container, false);
 
         Button btnA = view.findViewById(R.id.mBtnEngA);
         Button btnB = view.findViewById(R.id.mBtnEngB);
