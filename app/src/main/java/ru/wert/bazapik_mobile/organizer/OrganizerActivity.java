@@ -6,7 +6,9 @@ import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SH
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -22,6 +24,7 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +38,7 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.VersionAndroid;
 import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
+import ru.wert.bazapik_mobile.data.util.DownloadFileTask;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
 import ru.wert.bazapik_mobile.keyboards.KeyboardSwitcher;
@@ -72,6 +76,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     @Getter@Setter private String foldersTextSearch = "";
     @Getter@Setter private String passportsTextSearch = "";
+    private AsyncTask<String, String, Boolean> downloadTask;
 
 
     @Override
@@ -178,11 +183,24 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
                 APP_VERSION_NOTIFICATION_SHOWN = true;
                 runOnUiThread(() -> {
-                    new WarningDialog1().show(OrganizerActivity.this,
-                            "Внимание!",
-                            String.format("Доступна новая версия %s. Чтобы скачать и обновить программу " +
-                                    "зайдите в настройки и кликните по мигающей надписи. Далее: " +
-                                    "установите программу из скачанного файла apk", APPLICATION_VERSION_AVAILABLE));
+                    new AlertDialog.Builder(OrganizerActivity.this)
+                            .setTitle("ВНИМАНИЕ!")
+                            .setMessage( String.format("Доступна новая версия %s. Хотите скачать и обновить программу? " +
+                                    "После загрузки файла, зайдите в папку Загрузки и установите программу из файла 'BazaPIK-%s.apk'. "
+                                    , APPLICATION_VERSION_AVAILABLE, APPLICATION_VERSION_AVAILABLE))
+                            .setNegativeButton(R.string.later, null)
+                            .setPositiveButton(R.string.download, (arg0, arg1) -> {
+                                String fileName = "BazaPIK-" + APPLICATION_VERSION_AVAILABLE + ".apk";
+
+                                File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                                downloadTask = new DownloadFileTask(
+                                        this,
+                                        "apk",
+                                        destinationFolder.toString());
+                                downloadTask.execute(fileName);
+
+                            }).create().show();
                 });
             }
         }).start();

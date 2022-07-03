@@ -19,6 +19,8 @@
     <string name="menuSettings">Настройки</string>
     <string name="menuExit">Выход</string>
     <string name="search">ПОИСК</string>
+    <string name="later">Позже</string>
+    <string name="download">Загрузить</string>
     <string name="tvNaimenovanie">Наименование</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
