@@ -204,7 +204,7 @@ public class ViewerActivity extends BaseActivity {
             for (Draft d : ALL_DRAFTS) {
                 if (d.getId().equals(currentDraftId)) {
                     currentDraft = d;
-                    createLog(true, String.format("открыл чертеж '%s'", d.toUsefulString()));
+                    createLog(true, String.format("Открыл чертеж '%s' из комплекта '%s'", d.toUsefulString(), d.getFolder().toUsefulString()));
                     break;
                 }
             }

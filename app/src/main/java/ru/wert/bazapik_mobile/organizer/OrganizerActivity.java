@@ -273,7 +273,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        OrganizerActivity.super.onBackPressed();
                         exitApplication();
                     }
                 }).create().show();
