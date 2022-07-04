@@ -77,7 +77,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * Метод создает запись лога в базе данных
      * CURRENT_PROJECT_VERSION не определяется при запуске приложения из-под IDE
      */
-    protected void createLog(boolean forAdminOnly, String text) {
+    public void createLog(boolean forAdminOnly, String text) {
 
         if (forAdminOnly && !CURRENT_USER.isLogging()) return;
         AppLogApiInterface api = RetrofitClient.getInstance().getRetrofit().create(AppLogApiInterface.class);

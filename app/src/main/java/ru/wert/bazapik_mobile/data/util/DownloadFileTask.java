@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 
+import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
@@ -27,6 +28,7 @@ public class DownloadFileTask extends AsyncTask<String, String, Boolean> {
     private final WeakReference<Context> context;
     private final WeakReference<String> fromFolder, destDir;
     private final ProgressDialog mProgressDialog;
+    private String fileName;
 
     public DownloadFileTask(Context context, String fromFolder, String destDir) {
         this.context = new WeakReference<>(context);
@@ -55,43 +57,46 @@ public class DownloadFileTask extends AsyncTask<String, String, Boolean> {
     @Override
     protected Boolean doInBackground(String... fileNames) {
 
-            int count;
+        fileName = fileNames[0];
 
-            try {
+        //Перед загрузкой проверяем наличие уже загруженного ранее файла
+        File destFile = new File(destDir.get() + "/" + fileNames[0]);
+        if (destFile.exists())
+            destFile.delete();
 
-                URL url = new URL(DATA_BASE_URL + "/drafts/download/" + fromFolder.get() + "/" + fileNames[0]);
+        int count;
 
-                //Перед загрузкой проверяем наличие уже загруженного ранее файла
-                File destFile = new File(destDir.get() + "/" + fileNames[0]);
-                if (destFile.exists())
-                    destFile.delete();
+        try {
 
-                URLConnection conexion = url.openConnection();
-                conexion.connect();
+            URL url = new URL(DATA_BASE_URL + "/drafts/download/" + fromFolder.get() + "/" + fileNames[0]);
 
-                int lengthOfFile = conexion.getContentLength();
-                Log.d("ANDRO_ASYNC", "Lenght of file: " + lengthOfFile);
 
-                InputStream input = new BufferedInputStream(url.openStream());
+            URLConnection conexion = url.openConnection();
+            conexion.connect();
 
-                OutputStream output = new FileOutputStream(destDir.get() + "/" + fileNames[0]);
+            int lengthOfFile = conexion.getContentLength();
+            Log.d("ANDRO_ASYNC", "Lenght of file: " + lengthOfFile);
 
-                byte data[] = new byte[1024];
+            InputStream input = new BufferedInputStream(url.openStream());
 
-                long total = 0;
+            OutputStream output = new FileOutputStream(destDir.get() + "/" + fileNames[0]);
 
-                while ((count = input.read(data)) != -1) {
-                    total += count;
-                    publishProgress("" + (int) ((total * 100) / lengthOfFile));
-                    output.write(data, 0, count);
-                }
+            byte data[] = new byte[1024];
 
-                output.flush();
-                output.close();
-                input.close();
-            } catch (Exception e) {
-                return false;
+            long total = 0;
+
+            while ((count = input.read(data)) != -1) {
+                total += count;
+                publishProgress("" + (int) ((total * 100) / lengthOfFile));
+                output.write(data, 0, count);
             }
+
+            output.flush();
+            output.close();
+            input.close();
+        } catch (Exception e) {
+            return false;
+        }
 
         return true;
 
@@ -115,10 +120,11 @@ public class DownloadFileTask extends AsyncTask<String, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean result) {
         mProgressDialog.dismiss();
-        if (result)
+        if (result) {
+            ((BaseActivity)context.get()).createLog(true, String.format("Загрузил файл '%s'", fileName));
             new WarningDialog1().show(context.get(), "Поздравляю!",
                     "Загрузка прошла успешно!");
-        else
+        } else
             new WarningDialog1().show(context.get(), "Ошибка!",
                     "Что-то пошло не так и загрузка сорвалась! " +
                             "Возможно, потерялась связь с сервером. " +
