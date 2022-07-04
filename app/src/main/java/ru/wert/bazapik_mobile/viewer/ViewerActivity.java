@@ -71,9 +71,9 @@ public class ViewerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewer);
 
-        fm = getSupportFragmentManager();
         //Из интента получаем id чертежа
         currentDraftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
+
         //Инициализируем список чертежей и итератор с текущей позицей
         iterator = findInitPosition();
 
@@ -93,6 +93,14 @@ public class ViewerActivity extends BaseActivity {
         btnTapLeft.setOnTouchListener(createOnSwipeTouchListener());
         btnTapRight = findViewById(R.id.btnTapRight);
         btnTapRight.setOnTouchListener(createOnSwipeTouchListener());
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fm = getSupportFragmentManager();
+
 
     }
 
@@ -193,9 +201,12 @@ public class ViewerActivity extends BaseActivity {
         //Этот поток позволяет показать ProgressIndicator
         new Thread(()->{
             //Достаем запись чертежа из БД
-            for(Draft d : ALL_DRAFTS){
-                if(d.getId().equals(currentDraftId)){
-                    currentDraft = d; break;}
+            for (Draft d : ALL_DRAFTS) {
+                if (d.getId().equals(currentDraftId)) {
+                    currentDraft = d;
+                    createLog(true, String.format("открыл чертеж '%s'", d.toUsefulString()));
+                    break;
+                }
             }
             if (currentDraft == null) return;
             //Формируем конечный путь до удаленного файла

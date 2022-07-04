@@ -128,6 +128,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected void exitApplication(){
+        createLog(true, "вышел из приложения");
         StaticMethods.clearAppCash();
 
         Intent sweetHome = new Intent(Intent.ACTION_MAIN);
