@@ -9,5 +9,5 @@
     <dimen name="btn_margin">2pt</dimen>
     <dimen name="letters_btn_font_size">20sp</dimen>
     <dimen name="btn_letter_margin">0pt</dimen>
-    <dimen name="img_btn_size">60dp</dimen>
+    <dimen name="img_btn_size">40dp</dimen>
 </resources>

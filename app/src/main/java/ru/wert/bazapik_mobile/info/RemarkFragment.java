@@ -1,65 +1,95 @@
 package ru.wert.bazapik_mobile.info;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
+import ru.wert.bazapik_mobile.data.models.Remark;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link RemarkFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
+
 public class RemarkFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private EditText editor;
+    private Button btnAdd;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String remarkText;
+    private String TAG = "RemarkFragment";
 
-    public RemarkFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RemarkFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RemarkFragment newInstance(String param1, String param2) {
-        RemarkFragment fragment = new RemarkFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private IRemarkFragmentInteraction viewInteraction;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        viewInteraction = (IRemarkFragmentInteraction) context;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_remark, container, false);
+        container.setVisibility(View.VISIBLE);
+
+        View view = inflater.inflate(R.layout.fragment_remark, container, false);
+
+        editor = view.findViewById(R.id.etTextRemark);
+        btnAdd = view.findViewById(R.id.btnAddRemark);
+        btnAdd.setOnClickListener(v->{
+            addRemark();
+        });
+
+        return view;
+    }
+
+    private void addRemark(){
+        Remark remark = new Remark();
+        remark.setPassport(viewInteraction.getPassport());
+        remark.setUser(CURRENT_USER);
+        remark.setText(editor.getText().toString());
+        //Время
+        Date date = Calendar.getInstance().getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        remark.setCreationTime(df.format(date));
+
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        Call<Remark> call = api.create(remark);
+        call.enqueue(new Callback<Remark>() {
+            @Override
+            public void onResponse(Call<Remark> call, Response<Remark> response) {
+                if(response.isSuccessful()){
+                    viewInteraction.closeRemarkFragment();
+                } else {
+                    Log.d(TAG, "Не удалось сохранить запись");
+                    new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось сохранить запись");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Remark> call, Throwable t) {
+                Log.d(TAG, "Не удалось сохранить запись");
+                new WarningDialog1().show(getActivity(), "Ошибка!", "Не удалось сохранить запись");
+            }
+        });
+
     }
 }

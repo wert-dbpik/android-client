@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.info;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -7,8 +8,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,19 +41,24 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
  * Далее доступные для элемента чертежи в rvDrafts
  * для каждого чертежа представлен его тип, стр, статус
  */
-public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.InfoClickListener {
+public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.InfoClickListener,
+        IRemarkFragmentInteraction {
+
     private static final String TAG = "+++ PassportInfoActivity +++" ;
+    private View rootView;
     private TextView tvDecNumber, tvName;
     private RecyclerView rvDrafts;
     private TextView tvDrafts;
     private InfoRecViewAdapter mAdapter;
     private Long passId;
 
-    private Passport passport;
+    @Getter private Passport passport;
     private String decNum;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private static Bundle mBundleRecyclerViewState;
+
+    private FragmentContainerView remarkContainerView;
 
     //Все найденные элементы
     private List<Draft> foundDrafts;
@@ -62,6 +71,7 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
         setContentView(R.layout.activity_info);
         //Получаем Id пасспорта
         passId = Long.parseLong(getIntent().getStringExtra("PASSPORT_ID"));
+        remarkContainerView = findViewById(R.id.addRemarkContainer);
 
 
         tvDecNumber = findViewById(R.id.tvDecNumber);//Децимальный номер пасспорта
@@ -101,6 +111,7 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
     @Override
     protected void onResume() {
         super.onResume();
+        remarkContainerView.setVisibility(View.INVISIBLE);
         if (mBundleRecyclerViewState != null) {
             Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
             rvDrafts.getLayoutManager().onRestoreInstanceState(listState);
@@ -205,7 +216,7 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
                 return true;
 
             case R.id.action_addRemark:
-
+                remarkContainerView.setVisibility(View.VISIBLE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -215,4 +226,20 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if(remarkContainerView.getVisibility() == View.VISIBLE) {
+            remarkContainerView.setVisibility(View.INVISIBLE);
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getContentScene().getSceneRoot().getWindowToken(), 0);
+        }
+    }
+
+    @Override
+    public void closeRemarkFragment() {
+        remarkContainerView.setVisibility(View.INVISIBLE);
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getContentScene().getSceneRoot().getWindowToken(), 0);
+    }
 }
