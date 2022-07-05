@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -29,7 +28,6 @@ import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
-import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -61,7 +59,7 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_passport_info);
+        setContentView(R.layout.activity_info);
         //Получаем Id пасспорта
         passId = Long.parseLong(getIntent().getStringExtra("PASSPORT_ID"));
 
@@ -204,6 +202,10 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
             case R.id.action_showFilterDialog:
                 FilterDialog filterDialog = new FilterDialog(InfoActivity.this);
                 filterDialog.show();
+                return true;
+
+            case R.id.action_addRemark:
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

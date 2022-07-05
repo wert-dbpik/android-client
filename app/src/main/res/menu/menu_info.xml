@@ -10,7 +10,12 @@
 
     <item android:title="Фильтр"
         android:id="@+id/action_showFilterDialog"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
+        app:showAsAction="never"/>
+
+    <item android:title="Добавить замечание"
+        android:id="@+id/action_addRemark"
+        android:orderInCategory="3"
         app:showAsAction="never"/>
 
 </menu>

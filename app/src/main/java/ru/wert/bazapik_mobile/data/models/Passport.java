@@ -24,6 +24,7 @@ public class Passport extends _BaseEntity implements Item, Parcelable {
     private String number;
     private String name;
     private List<Long> draftIds;
+    private List<Long> remarkIds;
 
     @Override
     public String toUsefulString() {
@@ -56,6 +57,7 @@ public class Passport extends _BaseEntity implements Item, Parcelable {
         dest.writeString(this.number);
         dest.writeString(this.name);
         dest.writeList(this.draftIds);
+        dest.writeList(this.remarkIds);
     }
 
     public void readFromParcel(Parcel source) {
@@ -64,7 +66,9 @@ public class Passport extends _BaseEntity implements Item, Parcelable {
         this.number = source.readString();
         this.name = source.readString();
         this.draftIds = new ArrayList<Long>();
+        this.remarkIds = new ArrayList<Long>();
         source.readList(this.draftIds, Long.class.getClassLoader());
+        source.readList(this.remarkIds, Long.class.getClassLoader());
     }
 
     protected Passport(Parcel in) {
@@ -73,7 +77,9 @@ public class Passport extends _BaseEntity implements Item, Parcelable {
         this.number = in.readString();
         this.name = in.readString();
         this.draftIds = new ArrayList<Long>();
+        this.remarkIds = new ArrayList<Long>();
         in.readList(this.draftIds, Long.class.getClassLoader());
+        in.readList(this.remarkIds, Long.class.getClassLoader());
     }
 
     public static final Creator<Passport> CREATOR = new Creator<Passport>() {
