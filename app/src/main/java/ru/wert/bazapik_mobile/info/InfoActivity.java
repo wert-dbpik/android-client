@@ -150,11 +150,16 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
             public void onResponse(Call<List<Remark>> call, Response<List<Remark>> response) {
                 if(response.isSuccessful() && response.body() != null) {
                     ArrayList<Remark> foundRemarks = new ArrayList<>(response.body());
-                    ArrayList<Remark> sortedList = (ArrayList<Remark>) foundRemarks.stream().sorted((o1, o2)-> o2.getCreationTime().compareTo(o1.getCreationTime())).collect(Collectors.toList());
-                    foundDraftIdsForIntent = ThisApplication.convertToStringArray(sortedList);
-                    remarksAdapter = new InfoRemarksViewAdapter(InfoActivity.this, foundRemarks);
-                    remarksAdapter.setClickListener(InfoActivity.this);
-                    rvRemarks.setAdapter(remarksAdapter);
+                    if(!foundRemarks.isEmpty()) {
+                        List<Remark> sortedList =
+                                foundRemarks.stream()
+                                        .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+                                        .collect(Collectors.toList());
+                        foundDraftIdsForIntent = ThisApplication.convertToStringArray(new ArrayList<>(sortedList));
+                        remarksAdapter = new InfoRemarksViewAdapter(InfoActivity.this, sortedList);
+                        remarksAdapter.setClickListener(InfoActivity.this);
+                        rvRemarks.setAdapter(remarksAdapter);
+                    }
                 }
             }
 
@@ -180,13 +185,12 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
             public void onResponse(Call<List<Remark>> call, Response<List<Remark>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     ArrayList<Remark> foundRemarks = new ArrayList<>(response.body());
-                    foundRemarks.stream().sorted((o1, o2)-> o2.getCreationTime().compareTo(o1.getCreationTime())).collect(Collectors.toList());
-                    remarksAdapter.changeListOfItems(foundRemarks.stream().sorted(new Comparator<Remark>() {
-                        @Override
-                        public int compare(Remark o1, Remark o2) {
-                            return o2.getCreationTime().compareTo(o1.getCreationTime()) * (-1);
-                        }
-                    }).collect(Collectors.toList()));
+                    if(!foundRemarks.isEmpty()) {
+                        List<Remark> sortedList = foundRemarks.stream()
+                                .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+                                .collect(Collectors.toList());
+                        remarksAdapter.changeListOfItems(sortedList);
+                    }
                 }
             }
 
@@ -254,6 +258,8 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
                     mAdapter = new InfoDraftsViewAdapter(InfoActivity.this, foundDrafts);
                     mAdapter.setClickListener(InfoActivity.this);
                     rvDrafts.setAdapter(mAdapter);
+                } else {
+                    new WarningDialog1().show(InfoActivity.this, "Внимание!","Проблемы на линии!");
                 }
             }
 
@@ -272,13 +278,22 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
 
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onDraftRowClick(View view, int position) {
         Intent intent = new Intent(InfoActivity.this, ViewerActivity.class);
         intent.putStringArrayListExtra("DRAFTS", foundDraftIdsForIntent);
         intent.putExtra("DRAFT_ID", String.valueOf(mAdapter.getItem(position).getId()));
         startActivity(intent);
     }
 
+    @Override
+    public void onRemarkRowClick(View view, int position) {
+
+    }
+
+    @Override
+    public void onRemarkRowLongClick(View view, int position) {
+
+    }
 
 
     /**

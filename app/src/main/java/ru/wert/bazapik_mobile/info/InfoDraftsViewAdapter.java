@@ -112,7 +112,7 @@ public class InfoDraftsViewAdapter extends RecyclerView.Adapter<InfoDraftsViewAd
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
             if (mClickListener != null)
-                mClickListener.onItemClick(view, getBindingAdapterPosition());
+                mClickListener.onDraftRowClick(view, getBindingAdapterPosition());
 
             notifyDataSetChanged();
         }
@@ -134,7 +134,7 @@ public class InfoDraftsViewAdapter extends RecyclerView.Adapter<InfoDraftsViewAd
 
     // parent activity will implement this method to respond to click events
     public interface InfoDraftClickListener {
-        void onItemClick(View view, int position);
+        void onDraftRowClick(View view, int position);
     }
 }
 

@@ -61,6 +61,7 @@ public class RemarkFragment extends Fragment {
     }
 
     private void addRemark(){
+
         //Время
         Date date = Calendar.getInstance().getTime();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -71,6 +72,8 @@ public class RemarkFragment extends Fragment {
                 editor.getText().toString(),
                 df.format(date)
         );
+        //Очищаем поле ввода
+        editor.setText("");
 
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
         Call<Remark> call = api.create(remark);

@@ -66,6 +66,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         Remark item = mData.get(position);
         holder.tvRemarkUser.setText(item.getUser().getName());
         holder.tvRemarkText.setText(item.getText());
+        holder.itemView.setLongClickable(true);
     }
 
     /**
@@ -91,7 +92,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
      * Вложенный класс, описывающий и создающий ограниченной количество ViewHolder
      *
      */
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView tvRemarkUser;
         TextView tvRemarkText;
 
@@ -112,9 +113,25 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
             if (mClickListener != null)
-                mClickListener.onItemClick(view, getBindingAdapterPosition());
+                mClickListener.onRemarkRowClick(view, getBindingAdapterPosition());
 
             notifyDataSetChanged();
+        }
+
+        @Override
+        public boolean onLongClick(View view) {
+            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return false;
+
+            selectedPosition = getBindingAdapterPosition();
+            view.findViewById(R.id.selectedLinearLayout)
+                    .setBackgroundColor(context.getColor(R.color.colorPrimary));
+
+            if (mClickListener != null)
+                mClickListener.onRemarkRowLongClick(view, getBindingAdapterPosition());
+
+            notifyDataSetChanged();
+
+            return true;
         }
     }
 
@@ -134,7 +151,9 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
 
     // parent activity will implement this method to respond to click events
     public interface InfoRemarkClickListener {
-        void onItemClick(View view, int position);
+        void onRemarkRowClick(View view, int position);
+        void onRemarkRowLongClick(View view, int position);
     }
+
 }
 
