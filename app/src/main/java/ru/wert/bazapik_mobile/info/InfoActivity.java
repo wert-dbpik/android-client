@@ -1,7 +1,6 @@
 package ru.wert.bazapik_mobile.info;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -10,15 +9,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import retrofit2.Call;
@@ -27,8 +32,10 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
+import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
@@ -42,24 +49,28 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
  * Далее доступные для элемента чертежи в rvDrafts
  * для каждого чертежа представлен его тип, стр, статус
  */
-public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.InfoClickListener,
+public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter.InfoDraftClickListener, InfoRemarksViewAdapter.InfoRemarkClickListener,
         IRemarkFragmentInteraction {
 
     private static final String TAG = "+++ PassportInfoActivity +++" ;
-    private View rootView;
+    private LinearLayout llInfo;
     private TextView tvDecNumber, tvName;
-    private RecyclerView rvDrafts;
-    private TextView tvDrafts;
-    private InfoRecViewAdapter mAdapter;
+    private RecyclerView rvDrafts, rvRemarks;
+    private TextView tvDrafts, tvRemarks;
+    private InfoDraftsViewAdapter mAdapter;
+    private InfoRemarksViewAdapter remarksAdapter;
     private Long passId;
 
     @Getter private Passport passport;
     private String decNum;
 
-    private final String KEY_RECYCLER_STATE = "recycler_state";
-    private static Bundle mBundleRecyclerViewState;
+    private final String KEY_RECYCLER_DRAFTS_STATE = "recycler_drafts_state";
+    private final String KEY_RECYCLER_REMARKS_STATE = "recycler_remarks_state";
+    private static Bundle resumeBundle;
+    private final String REMARK_TEXT = "remark_text";
 
     private FragmentContainerView remarkContainerView;
+    private RemarkFragment remarkFragment;
 
     //Все найденные элементы
     private List<Draft> foundDrafts;
@@ -73,21 +84,42 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
         //Получаем Id пасспорта
         passId = Long.parseLong(getIntent().getStringExtra("PASSPORT_ID"));
         remarkContainerView = findViewById(R.id.addRemarkContainer);
+        remarkContainerView.setVisibility(View.INVISIBLE);
 
+        remarkFragment = new RemarkFragment();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.addRemarkContainer, (Fragment) remarkFragment, "remark_tag");
+        ft.commit();
+
+        llInfo = findViewById(R.id.llInfo); //LinearLayout для удаления надписи
 
         tvDecNumber = findViewById(R.id.tvDecNumber);//Децимальный номер пасспорта
         tvName = findViewById(R.id.tvName); //Наименование пасспорта
         tvDrafts = findViewById(R.id.tvDrafts);//Строка Доступные чертежи
         rvDrafts = findViewById(R.id.rvDrafts); //RecycleView
-        createRecycleViewOfFoundItems();
+
+
+        tvRemarks = findViewById(R.id.tvRemarks);//Строка Доступные чертежи
+
         new Thread(()->{
+
             passport = ThisApplication.PASSPORT_SERVICE.findById(passId);
+
             if(passport != null) {
                 decNum = passport.getPrefix() == null ?
                         passport.getNumber() :
                         passport.getPrefix().getName() + "." + passport.getNumber();
 
                 runOnUiThread(() -> {
+                    createRecycleViewOfFoundItems();
+                    if (!passport.getRemarkIds().isEmpty()) {
+                        rvRemarks = findViewById(R.id.rvRemarks); //RecycleView
+                        createRecycleViewOfFoundRemarks();
+                    } else
+                        llInfo.removeView(findViewById(R.id.tvRemarks));
+
                     tvDecNumber.setText(decNum);
                     tvName.setText(passport.getName());
                     tvDrafts.setText("Доступные чертежи");
@@ -108,23 +140,98 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
 
     }
 
+    private void createRecycleViewOfFoundRemarks() {
+        rvRemarks.setLayoutManager(new LinearLayoutManager(this));
+
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        Call<List<Remark>> call =  api.getAllByPassportId(passId);
+        call.enqueue(new Callback<List<Remark>>() {
+            @Override
+            public void onResponse(Call<List<Remark>> call, Response<List<Remark>> response) {
+                if(response.isSuccessful() && response.body() != null) {
+                    ArrayList<Remark> foundRemarks = new ArrayList<>(response.body());
+                    ArrayList<Remark> sortedList = (ArrayList<Remark>) foundRemarks.stream().sorted((o1, o2)-> o2.getCreationTime().compareTo(o1.getCreationTime())).collect(Collectors.toList());
+                    foundDraftIdsForIntent = ThisApplication.convertToStringArray(sortedList);
+                    remarksAdapter = new InfoRemarksViewAdapter(InfoActivity.this, foundRemarks);
+                    remarksAdapter.setClickListener(InfoActivity.this);
+                    rvRemarks.setAdapter(remarksAdapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Remark>> call, Throwable t) {
+                new WarningDialog1().show(InfoActivity.this, "Внимание!","Проблемы на линии!");
+            }
+
+        });
+
+        //Для красоты используем разделитель между элементами списка
+        rvRemarks.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
+                DividerItemDecoration.VERTICAL));
+
+    }
+
+    @Override
+    public void updateRemarkAdapter(){
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        Call<List<Remark>> call =  api.getAllByPassportId(passId);
+        call.enqueue(new Callback<List<Remark>>() {
+            @Override
+            public void onResponse(Call<List<Remark>> call, Response<List<Remark>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ArrayList<Remark> foundRemarks = new ArrayList<>(response.body());
+                    foundRemarks.stream().sorted((o1, o2)-> o2.getCreationTime().compareTo(o1.getCreationTime())).collect(Collectors.toList());
+                    remarksAdapter.changeListOfItems(foundRemarks.stream().sorted(new Comparator<Remark>() {
+                        @Override
+                        public int compare(Remark o1, Remark o2) {
+                            return o2.getCreationTime().compareTo(o1.getCreationTime()) * (-1);
+                        }
+                    }).collect(Collectors.toList()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Remark>> call, Throwable t) {
+                new WarningDialog1().show(InfoActivity.this, "Внимание!", "Проблемы на линии!");
+            }
+        });
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        remarkContainerView.setVisibility(View.INVISIBLE);
-        if (mBundleRecyclerViewState != null) {
-            Parcelable listState = mBundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
-            rvDrafts.getLayoutManager().onRestoreInstanceState(listState);
+        if(resumeBundle == null){
+            remarkContainerView.setVisibility(View.INVISIBLE);
+        } else {
+            String remarkText = resumeBundle.getString(REMARK_TEXT);
+            if(remarkText == null || remarkText.isEmpty()) remarkContainerView.setVisibility(View.INVISIBLE);
+            else {
+                remarkContainerView.setVisibility(View.VISIBLE);
+                remarkFragment.getEditor().setText(remarkText);
+                remarkFragment.getEditor().setSelection(remarkText.length());
+            }
+
+            Parcelable listDraftsState = resumeBundle.getParcelable(KEY_RECYCLER_DRAFTS_STATE);
+            rvDrafts.getLayoutManager().onRestoreInstanceState(listDraftsState);
+
+            Parcelable listRemarksState = resumeBundle.getParcelable(KEY_RECYCLER_REMARKS_STATE);
+            rvDrafts.getLayoutManager().onRestoreInstanceState(listRemarksState);
         }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mBundleRecyclerViewState = new Bundle();
-        Parcelable listState = rvDrafts.getLayoutManager().onSaveInstanceState();
-        mBundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, listState);
+        resumeBundle = new Bundle();
+        resumeBundle.putString(REMARK_TEXT, remarkFragment.getEditor().getText().toString());
+
+        Parcelable listDraftsState = rvDrafts.getLayoutManager().onSaveInstanceState();
+        resumeBundle.putParcelable(KEY_RECYCLER_DRAFTS_STATE, listDraftsState);
+
+        Parcelable listRemarksState = rvRemarks.getLayoutManager().onSaveInstanceState();
+        resumeBundle.putParcelable(KEY_RECYCLER_REMARKS_STATE, listRemarksState);
 
     }
 
@@ -144,7 +251,7 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
                     ArrayList<Draft> foundDrafts = new ArrayList<>(response.body());
                     ThisApplication.filterList(foundDrafts); //Фильтруем
                     foundDraftIdsForIntent = ThisApplication.convertToStringArray(foundDrafts);
-                    mAdapter = new InfoRecViewAdapter(InfoActivity.this, foundDrafts);
+                    mAdapter = new InfoDraftsViewAdapter(InfoActivity.this, foundDrafts);
                     mAdapter.setClickListener(InfoActivity.this);
                     rvDrafts.setAdapter(mAdapter);
                 }

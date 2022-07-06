@@ -6,21 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
+import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
+import ru.wert.bazapik_mobile.data.models.Remark;
 
-public class InfoRecViewAdapter extends RecyclerView.Adapter<InfoRecViewAdapter.ViewHolder>{
+public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksViewAdapter.ViewHolder>{
 
-    private final List<Draft> mData;
+    private final List<Remark> mData;
     private final LayoutInflater mInflater;
-    private InfoClickListener mClickListener;
+    private InfoRemarkClickListener mClickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
 
@@ -29,7 +30,7 @@ public class InfoRecViewAdapter extends RecyclerView.Adapter<InfoRecViewAdapter.
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public InfoRecViewAdapter(Context context, List<Draft> items) {
+    public InfoRemarksViewAdapter(Context context, List<Remark> items) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = items;
@@ -44,7 +45,7 @@ public class InfoRecViewAdapter extends RecyclerView.Adapter<InfoRecViewAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.recview_draft_info, parent, false);
+        View view = mInflater.inflate(R.layout.recview_remark_row, parent, false);
         return new ViewHolder(view);
     }
 
@@ -62,10 +63,9 @@ public class InfoRecViewAdapter extends RecyclerView.Adapter<InfoRecViewAdapter.
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
 
-        Draft item = mData.get(position);
-        String draftType = EDraftType.getDraftTypeById(item.getDraftType()).getTypeName() + " - " + item.getPageNumber();
-        holder.tvDraft.setText(draftType);
-        holder.tvStatus.setText(EDraftStatus.getStatusById(item.getStatus()).getStatusName());
+        Remark item = mData.get(position);
+        holder.tvRemarkUser.setText(item.getUser().getName());
+        holder.tvRemarkText.setText(item.getText());
     }
 
     /**
@@ -81,7 +81,7 @@ public class InfoRecViewAdapter extends RecyclerView.Adapter<InfoRecViewAdapter.
      * Обновляет отображаемые данные
      * @param items List<P>
      */
-    public void changeListOfItems(List<Draft> items){
+    public void changeListOfItems(List<Remark> items){
         mData.clear();
         mData.addAll(items);
         notifyDataSetChanged();
@@ -92,13 +92,13 @@ public class InfoRecViewAdapter extends RecyclerView.Adapter<InfoRecViewAdapter.
      *
      */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView tvDraft;
-        TextView tvStatus;
+        TextView tvRemarkUser;
+        TextView tvRemarkText;
 
         ViewHolder(View itemView) {
             super(itemView);
-            tvDraft = itemView.findViewById(R.id.tvDraft);
-            tvStatus = itemView.findViewById(R.id.tvStatus);
+            tvRemarkUser = itemView.findViewById(R.id.tvRemarkUser);
+            tvRemarkText = itemView.findViewById(R.id.tvRemarkText);
 
             itemView.setOnClickListener(this);
         }
@@ -123,17 +123,17 @@ public class InfoRecViewAdapter extends RecyclerView.Adapter<InfoRecViewAdapter.
      * @param index int
      * @return P extends Item
      */
-    public Draft getItem(int index) {
+    public Remark getItem(int index) {
         return mData.get(index);
     }
 
     // allows clicks events to be caught
-    public void setClickListener(InfoClickListener itemClickListener) {
+    public void setClickListener(InfoRemarkClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
     // parent activity will implement this method to respond to click events
-    public interface InfoClickListener {
+    public interface InfoRemarkClickListener {
         void onItemClick(View view, int position);
     }
 }

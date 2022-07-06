@@ -14,7 +14,7 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"user", "text"}, callSuper = false)
-public class Remark extends _BaseEntity implements Item {
+public class Remark extends _BaseEntity implements Item, Comparable {
 
     private Passport passport;
     private User user;
@@ -30,5 +30,11 @@ public class Remark extends _BaseEntity implements Item {
     @Override
     public String toUsefulString() {
         return user + ": " + text;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return ((Remark)o).getCreationTime().compareTo(creationTime);
+//        return creationTime.compareTo(((Remark)o).getCreationTime());
     }
 }

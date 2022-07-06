@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import lombok.Getter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,10 +32,9 @@ import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 public class RemarkFragment extends Fragment {
 
-    private EditText editor;
+    @Getter private EditText editor;
     private Button btnAdd;
 
-    private String remarkText;
     private String TAG = "RemarkFragment";
 
     private IRemarkFragmentInteraction viewInteraction;
@@ -49,7 +49,6 @@ public class RemarkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         container.setVisibility(View.VISIBLE);
-
         View view = inflater.inflate(R.layout.fragment_remark, container, false);
 
         editor = view.findViewById(R.id.etTextRemark);
@@ -80,6 +79,7 @@ public class RemarkFragment extends Fragment {
             public void onResponse(Call<Remark> call, Response<Remark> response) {
                 if(response.isSuccessful()){
                     viewInteraction.closeRemarkFragment();
+                    viewInteraction.updateRemarkAdapter();
                 } else {
                     Log.d(TAG, String.format("Не удалось сохранить запись, %s", response.message()));
                     new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось сохранить запись");
