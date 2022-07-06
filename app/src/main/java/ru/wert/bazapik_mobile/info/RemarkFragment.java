@@ -62,14 +62,16 @@ public class RemarkFragment extends Fragment {
     }
 
     private void addRemark(){
-        Remark remark = new Remark();
-        remark.setPassport(viewInteraction.getPassport());
-        remark.setUser(CURRENT_USER);
-        remark.setText(editor.getText().toString());
         //Время
         Date date = Calendar.getInstance().getTime();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        remark.setCreationTime(df.format(date));
+
+        Remark remark = new Remark(
+                viewInteraction.getPassport(),
+                CURRENT_USER,
+                editor.getText().toString(),
+                df.format(date)
+        );
 
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
         Call<Remark> call = api.create(remark);
@@ -79,14 +81,14 @@ public class RemarkFragment extends Fragment {
                 if(response.isSuccessful()){
                     viewInteraction.closeRemarkFragment();
                 } else {
-                    Log.d(TAG, "Не удалось сохранить запись");
+                    Log.d(TAG, String.format("Не удалось сохранить запись, %s", response.message()));
                     new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось сохранить запись");
                 }
             }
 
             @Override
             public void onFailure(Call<Remark> call, Throwable t) {
-                Log.d(TAG, "Не удалось сохранить запись");
+                Log.d(TAG, String.format("Не удалось сохранить запись, %s", t.getMessage()));
                 new WarningDialog1().show(getActivity(), "Ошибка!", "Не удалось сохранить запись");
             }
         });

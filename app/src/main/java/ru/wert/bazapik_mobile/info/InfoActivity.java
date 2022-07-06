@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.info;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -228,18 +229,20 @@ public class InfoActivity extends BaseActivity  implements InfoRecViewAdapter.In
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if(remarkContainerView.getVisibility() == View.VISIBLE) {
             remarkContainerView.setVisibility(View.INVISIBLE);
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getContentScene().getSceneRoot().getWindowToken(), 0);
-        }
+        } else
+            super.onBackPressed();
     }
 
     @Override
     public void closeRemarkFragment() {
+        try {
+            InputMethodManager input = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            input.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         remarkContainerView.setVisibility(View.INVISIBLE);
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getContentScene().getSceneRoot().getWindowToken(), 0);
     }
 }

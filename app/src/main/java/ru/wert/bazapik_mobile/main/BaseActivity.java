@@ -96,11 +96,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
         Call<AppLog> call = api.create(log);
-//        try {
-//            call.execute();
-//        } catch (IOException e) {
-//            Log.e(TAG, e.getMessage());
-//        }
         call.enqueue(new Callback<AppLog>() {
             @Override
             public void onResponse(Call<AppLog> call, Response<AppLog> response) {
