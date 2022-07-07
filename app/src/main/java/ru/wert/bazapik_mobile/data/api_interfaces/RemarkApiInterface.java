@@ -26,7 +26,7 @@ public interface RemarkApiInterface {
     Call<Remark> create(@Body Remark entity);
 
     @PUT("remarks/update")
-    Call<Void> update(@Body Remark entity);
+    Call<Remark> update(@Body Remark entity);
 
     @DELETE("remarks/delete/{id}")
     Call<Void> deleteById(@Path("id") Long id);

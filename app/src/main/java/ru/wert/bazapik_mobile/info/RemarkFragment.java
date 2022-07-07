@@ -104,28 +104,27 @@ public class RemarkFragment extends Fragment {
 
     private void changeRemark(){
 
-        Remark remark = changedRemark;
-        remark.setUser(CURRENT_USER);
-        remark.setText(editor.getText().toString());
-        remark.setCreationTime(ThisApplication.getCurrentTime());
+        changedRemark.setUser(CURRENT_USER);
+        changedRemark.setText(editor.getText().toString());
+        changedRemark.setCreationTime(ThisApplication.getCurrentTime());
 
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<Void> call = api.update(remark);
-        call.enqueue(new Callback<Void>() {
+        Call<Remark> call = api.update(changedRemark);
+        call.enqueue(new Callback<Remark>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<Remark> call, Response<Remark> response) {
                 if(response.isSuccessful()){
                     viewInteraction.closeRemarkFragment();
                     viewInteraction.updateRemarkAdapter();
                 } else {
-                    Log.d(TAG, String.format("Не удалось сохранить запись, %s", response.message()));
+                    Log.d(TAG, String.format("Не удалось изменить запись, %s", response.message()));
                     new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось сохранить запись");
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.d(TAG, String.format("Не удалось сохранить запись, %s", t.getMessage()));
+            public void onFailure(Call<Remark> call, Throwable t) {
+                Log.d(TAG, String.format("Не удалось изменить запись, %s", t.getMessage()));
                 new WarningDialog1().show(getActivity(), "Ошибка!", "Не удалось сохранить запись");
             }
         });
