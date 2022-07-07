@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,16 +56,16 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
     private TextView tvDecNumber, tvName;
     private RecyclerView rvDrafts, rvRemarks;
     private TextView tvDrafts, tvRemarks;
-    private InfoDraftsViewAdapter mAdapter;
+    private InfoDraftsViewAdapter draftsAdapter;
     private InfoRemarksViewAdapter remarksAdapter;
     private Long passId;
 
     @Getter private Passport passport;
     private String decNum;
 
+    private Bundle resumeBundle;
     private final String KEY_RECYCLER_DRAFTS_STATE = "recycler_drafts_state";
     private final String KEY_RECYCLER_REMARKS_STATE = "recycler_remarks_state";
-    private static Bundle resumeBundle;
     private final String REMARK_TEXT = "remark_text";
 
     private FragmentContainerView remarkContainerView;
@@ -75,6 +74,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
     //Все найденные элементы
     private List<Draft> foundDrafts;
     private ArrayList<String> foundDraftIdsForIntent;
+    private ArrayList<String> foundRemarkIdsForIntent;
 
 
     @Override
@@ -113,7 +113,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
                         passport.getPrefix().getName() + "." + passport.getNumber();
 
                 runOnUiThread(() -> {
-                    createRecycleViewOfFoundItems();
+                    createRecycleViewOfFoundDrafts();
                     if (!passport.getRemarkIds().isEmpty()) {
                         rvRemarks = findViewById(R.id.rvRemarks); //RecycleView
                         createRecycleViewOfFoundRemarks();
@@ -155,7 +155,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
                                 foundRemarks.stream()
                                         .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
                                         .collect(Collectors.toList());
-                        foundDraftIdsForIntent = ThisApplication.convertToStringArray(new ArrayList<>(sortedList));
+//                        foundRemarkIdsForIntent = ThisApplication.convertToStringArray(new ArrayList<>(sortedList));
                         remarksAdapter = new InfoRemarksViewAdapter(InfoActivity.this, sortedList);
                         remarksAdapter.setClickListener(InfoActivity.this);
                         rvRemarks.setAdapter(remarksAdapter);
@@ -209,7 +209,8 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
             remarkContainerView.setVisibility(View.INVISIBLE);
         } else {
             String remarkText = resumeBundle.getString(REMARK_TEXT);
-            if(remarkText == null || remarkText.isEmpty()) remarkContainerView.setVisibility(View.INVISIBLE);
+            if (remarkText == null || remarkText.isEmpty())
+                remarkContainerView.setVisibility(View.INVISIBLE);
             else {
                 remarkContainerView.setVisibility(View.VISIBLE);
                 remarkFragment.getEditor().setText(remarkText);
@@ -217,10 +218,14 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
             }
 
             Parcelable listDraftsState = resumeBundle.getParcelable(KEY_RECYCLER_DRAFTS_STATE);
-            rvDrafts.getLayoutManager().onRestoreInstanceState(listDraftsState);
+            if (listDraftsState != null && rvDrafts != null)
+                rvDrafts.getLayoutManager().onRestoreInstanceState(listDraftsState);
 
             Parcelable listRemarksState = resumeBundle.getParcelable(KEY_RECYCLER_REMARKS_STATE);
-            rvDrafts.getLayoutManager().onRestoreInstanceState(listRemarksState);
+            if (listRemarksState != null && rvRemarks != null)
+                rvRemarks.getLayoutManager().onRestoreInstanceState(listRemarksState);
+
+            resumeBundle = null;
         }
 
     }
@@ -231,18 +236,22 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
         resumeBundle = new Bundle();
         resumeBundle.putString(REMARK_TEXT, remarkFragment.getEditor().getText().toString());
 
-        Parcelable listDraftsState = rvDrafts.getLayoutManager().onSaveInstanceState();
-        resumeBundle.putParcelable(KEY_RECYCLER_DRAFTS_STATE, listDraftsState);
+        if(rvDrafts != null) {
+            Parcelable listDraftsState = rvDrafts.getLayoutManager().onSaveInstanceState();
+            resumeBundle.putParcelable(KEY_RECYCLER_DRAFTS_STATE, listDraftsState);
+        }
 
-        Parcelable listRemarksState = rvRemarks.getLayoutManager().onSaveInstanceState();
-        resumeBundle.putParcelable(KEY_RECYCLER_REMARKS_STATE, listRemarksState);
+        if(rvRemarks != null) {
+            Parcelable listRemarksState = rvRemarks.getLayoutManager().onSaveInstanceState();
+            resumeBundle.putParcelable(KEY_RECYCLER_REMARKS_STATE, listRemarksState);
+        }
 
     }
 
     /**
      * Создаем список состоящий из найденных элементов
      */
-    private void createRecycleViewOfFoundItems() {
+    private void createRecycleViewOfFoundDrafts() {
 
         rvDrafts.setLayoutManager(new LinearLayoutManager(this));
 
@@ -254,10 +263,10 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
                 if(response.isSuccessful() && response.body() != null) {
                     ArrayList<Draft> foundDrafts = new ArrayList<>(response.body());
                     ThisApplication.filterList(foundDrafts); //Фильтруем
-                    foundDraftIdsForIntent = ThisApplication.convertToStringArray(foundDrafts);
-                    mAdapter = new InfoDraftsViewAdapter(InfoActivity.this, foundDrafts);
-                    mAdapter.setClickListener(InfoActivity.this);
-                    rvDrafts.setAdapter(mAdapter);
+//                    foundDraftIdsForIntent = ThisApplication.convertToStringArray(foundDrafts);
+                    draftsAdapter = new InfoDraftsViewAdapter(InfoActivity.this, foundDrafts);
+                    draftsAdapter.setClickListener(InfoActivity.this);
+                    rvDrafts.setAdapter(draftsAdapter);
                 } else {
                     new WarningDialog1().show(InfoActivity.this, "Внимание!","Проблемы на линии!");
                 }
@@ -281,7 +290,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
     public void onDraftRowClick(View view, int position) {
         Intent intent = new Intent(InfoActivity.this, ViewerActivity.class);
         intent.putStringArrayListExtra("DRAFTS", foundDraftIdsForIntent);
-        intent.putExtra("DRAFT_ID", String.valueOf(mAdapter.getItem(position).getId()));
+        intent.putExtra("DRAFT_ID", String.valueOf(draftsAdapter.getItem(position).getId()));
         startActivity(intent);
     }
 

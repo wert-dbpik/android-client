@@ -6,83 +6,96 @@
     android:layout_height="match_parent"
     tools:context=".info.InfoActivity">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-
-        <LinearLayout
-            android:id="@+id/llInfo"
+        <TextView
+            android:id="@+id/tvDecNumber"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:paddingLeft="20dp"
+            android:textSize="20sp" />
 
-            <TextView
-                android:id="@+id/tvDecNumber"
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFF00"
+            android:layout_marginBottom="10dp"
+            android:paddingStart="20dp"
+            android:textSize="20sp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:id="@+id/llInfo"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:textSize="20sp" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:paddingStart="20dp"
-                android:textSize="20sp" />
 
-            <TextView
-                android:id="@+id/tvDrafts"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:textSize="20sp"
-                android:textStyle="bold" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fillViewport="true">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvDrafts"
+                <TextView
+                    android:id="@+id/tvDrafts"
+                    android:textColor="#FFFFFF"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:scrollbars="vertical" />
+                    android:layout_marginBottom="10dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-
-            </FrameLayout>
-
-            <TextView
-                android:id="@+id/tvRemarks"
-                android:text="Замечания"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fillViewport="true">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvRemarks"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:scrollbars="vertical" />
-            </FrameLayout>
-        </LinearLayout>
-    </ScrollView>
+                    android:layout_weight="1"
+                    android:fillViewport="true">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvDrafts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:scrollbars="vertical" />
+
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvRemarks"
+                    android:text="Комментарии"
+                    android:textColor="#FFFFFF"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fillViewport="true">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvRemarks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"/>
+                </FrameLayout>
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/addRemarkContainer"
         android:name="ru.wert.bazapik_mobile.info.RemarkFragment"

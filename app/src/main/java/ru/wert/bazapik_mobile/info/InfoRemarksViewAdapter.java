@@ -6,15 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
-import ru.wert.bazapik_mobile.data.enums.EDraftType;
-import ru.wert.bazapik_mobile.data.models.Draft;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Remark;
 
 public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksViewAdapter.ViewHolder>{
@@ -65,9 +66,11 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
 
         Remark item = mData.get(position);
         holder.tvRemarkUser.setText(item.getUser().getName());
+        holder.tvRemarkTime.setText(ThisApplication.parseStringToDate(item.getCreationTime()));
         holder.tvRemarkText.setText(item.getText());
         holder.itemView.setLongClickable(true);
     }
+
 
     /**
      * Возвращает общее количество элементов в списке List<P>
@@ -94,11 +97,13 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
      */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView tvRemarkUser;
+        TextView tvRemarkTime;
         TextView tvRemarkText;
 
         ViewHolder(View itemView) {
             super(itemView);
             tvRemarkUser = itemView.findViewById(R.id.tvRemarkUser);
+            tvRemarkTime = itemView.findViewById(R.id.tvRemarkTime);
             tvRemarkText = itemView.findViewById(R.id.tvRemarkText);
 
             itemView.setOnClickListener(this);
@@ -144,12 +149,10 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         return mData.get(index);
     }
 
-    // allows clicks events to be caught
     public void setClickListener(InfoRemarkClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
     public interface InfoRemarkClickListener {
         void onRemarkRowClick(View view, int position);
         void onRemarkRowLongClick(View view, int position);

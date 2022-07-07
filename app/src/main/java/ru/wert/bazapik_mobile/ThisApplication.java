@@ -8,12 +8,16 @@ import android.content.SharedPreferences;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
@@ -305,5 +309,33 @@ public class ThisApplication extends Application {
             return number1.compareTo(number2);
 
         };
+    }
+
+    /**
+     * Метод парсит строку формата "yyyy-MM-dd'T'HH:mm:ss" в необходимый фотрмат
+     */
+    public static  String parseStringToDate(String dateString){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        try {
+            Date date = format.parse(dateString);
+            SimpleDateFormat myFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+            return myFormat.format(date);
+        } catch (ParseException e) {
+            return dateString;
+        }
+    }
+
+    /**
+     * Метод парсит строку формата "yyyy-MM-dd'T'HH:mm:ss" в необходимый фотрмат
+     */
+    public static  String parseStringToDateAndTime(String dateString){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        try {
+            Date date = format.parse(dateString);
+            SimpleDateFormat myFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+            return myFormat.format(date);
+        } catch (ParseException e) {
+            return dateString;
+        }
     }
 }

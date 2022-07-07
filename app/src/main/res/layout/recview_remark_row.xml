@@ -15,29 +15,67 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="end"
-            android:background="@color/colorPrimaryDark"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvRemarkUser"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:textColor="#FFFFFF"
-                    android:textSize="16sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:text="от:   "
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:textStyle="italic"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvRemarkUser"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:text="дата: "
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:textColor="@color/colorAccent"
+                        android:textStyle="italic"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvRemarkTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/tvRemarkText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#FFFF00"
+                    android:textColor="#FFFFFF"
                     android:maxLines="1000"
                     android:textSize="16sp" />
 

@@ -127,12 +127,10 @@ public class InfoDraftsViewAdapter extends RecyclerView.Adapter<InfoDraftsViewAd
         return mData.get(index);
     }
 
-    // allows clicks events to be caught
     public void setClickListener(InfoDraftClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
     public interface InfoDraftClickListener {
         void onDraftRowClick(View view, int position);
     }
