@@ -6,11 +6,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import lombok.Getter;
+import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
@@ -33,9 +35,13 @@ import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 public class RemarkFragment extends Fragment {
 
     @Getter private EditText editor;
-    private Button btnAdd;
+    @Getter private Button btnAdd;
 
     private String TAG = "RemarkFragment";
+    public static final String sAdd = "добавить";
+    public static final String sChange = "изменить";
+
+    @Setter private Remark changedRemark;
 
     private IRemarkFragmentInteraction viewInteraction;
 
@@ -54,7 +60,10 @@ public class RemarkFragment extends Fragment {
         editor = view.findViewById(R.id.etTextRemark);
         btnAdd = view.findViewById(R.id.btnAddRemark);
         btnAdd.setOnClickListener(v->{
-            addRemark();
+            if(btnAdd.getText().equals(sAdd))
+                addRemark();
+            else
+                changeRemark();
         });
 
         return view;
@@ -62,18 +71,12 @@ public class RemarkFragment extends Fragment {
 
     private void addRemark(){
 
-        //Время
-        Date date = Calendar.getInstance().getTime();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
         Remark remark = new Remark(
                 viewInteraction.getPassport(),
                 CURRENT_USER,
                 editor.getText().toString(),
-                df.format(date)
+                ThisApplication.getCurrentTime()
         );
-        //Очищаем поле ввода
-        editor.setText("");
 
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
         Call<Remark> call = api.create(remark);
@@ -96,5 +99,35 @@ public class RemarkFragment extends Fragment {
             }
         });
 
+    }
+
+
+    private void changeRemark(){
+
+        Remark remark = changedRemark;
+        remark.setUser(CURRENT_USER);
+        remark.setText(editor.getText().toString());
+        remark.setCreationTime(ThisApplication.getCurrentTime());
+
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        Call<Void> call = api.update(remark);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()){
+                    viewInteraction.closeRemarkFragment();
+                    viewInteraction.updateRemarkAdapter();
+                } else {
+                    Log.d(TAG, String.format("Не удалось сохранить запись, %s", response.message()));
+                    new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось сохранить запись");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d(TAG, String.format("Не удалось сохранить запись, %s", t.getMessage()));
+                new WarningDialog1().show(getActivity(), "Ошибка!", "Не удалось сохранить запись");
+            }
+        });
     }
 }

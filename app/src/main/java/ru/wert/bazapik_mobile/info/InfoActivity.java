@@ -114,11 +114,9 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
 
                 runOnUiThread(() -> {
                     createRecycleViewOfFoundDrafts();
-                    if (!passport.getRemarkIds().isEmpty()) {
-                        rvRemarks = findViewById(R.id.rvRemarks); //RecycleView
-                        createRecycleViewOfFoundRemarks();
-                    } else
-                        llInfo.removeView(findViewById(R.id.tvRemarks));
+
+                    rvRemarks = findViewById(R.id.rvRemarks); //RecycleView
+                    createRecycleViewOfFoundRemarks();
 
                     tvDecNumber.setText(decNum);
                     tvName.setText(passport.getName());
@@ -148,18 +146,28 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
         call.enqueue(new Callback<List<Remark>>() {
             @Override
             public void onResponse(Call<List<Remark>> call, Response<List<Remark>> response) {
-                if(response.isSuccessful() && response.body() != null) {
-                    ArrayList<Remark> foundRemarks = new ArrayList<>(response.body());
-                    if(!foundRemarks.isEmpty()) {
-                        List<Remark> sortedList =
-                                foundRemarks.stream()
-                                        .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
-                                        .collect(Collectors.toList());
-//                        foundRemarkIdsForIntent = ThisApplication.convertToStringArray(new ArrayList<>(sortedList));
-                        remarksAdapter = new InfoRemarksViewAdapter(InfoActivity.this, sortedList);
-                        remarksAdapter.setClickListener(InfoActivity.this);
-                        rvRemarks.setAdapter(remarksAdapter);
+                if(response.isSuccessful()) {
+                    ArrayList<Remark> foundRemarks  = new ArrayList<>();
+                    if(response.body() != null) foundRemarks = new ArrayList<>(response.body());
+
+                    if (foundRemarks.isEmpty()) {
+                        tvRemarks.setVisibility(View.INVISIBLE);
+                    } else {
+                        tvRemarks.setVisibility(View.VISIBLE);
+                        if (foundRemarks.size() > 1) {
+                            foundRemarks =
+                                    new ArrayList<>(foundRemarks.stream()
+                                            .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+                                            .collect(Collectors.toList()));
+                        }
                     }
+//                    foundRemarkIdsForIntent = ThisApplication.convertToStringArray(new ArrayList<>(sortedList));
+
+                    remarksAdapter = new InfoRemarksViewAdapter(InfoActivity.this, foundRemarks);
+                    remarksAdapter.setClickListener(InfoActivity.this);
+                    rvRemarks.setAdapter(remarksAdapter);
+                } else {
+                    new WarningDialog1().show(InfoActivity.this, "Внимание!", "Проблемы на линии!");
                 }
             }
 
@@ -176,26 +184,60 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
 
     }
 
-    @Override
     public void updateRemarkAdapter(){
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
         Call<List<Remark>> call =  api.getAllByPassportId(passId);
         call.enqueue(new Callback<List<Remark>>() {
             @Override
             public void onResponse(Call<List<Remark>> call, Response<List<Remark>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ArrayList<Remark> foundRemarks = new ArrayList<>(response.body());
-                    if(!foundRemarks.isEmpty()) {
-                        List<Remark> sortedList = foundRemarks.stream()
-                                .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
-                                .collect(Collectors.toList());
-                        remarksAdapter.changeListOfItems(sortedList);
+                if (response.isSuccessful()) {
+                    ArrayList<Remark> foundRemarks  = new ArrayList<>();
+                    if(response.body() != null) foundRemarks = new ArrayList<>(response.body());
+
+                    if(foundRemarks.isEmpty()) {
+                        tvRemarks.setVisibility(View.INVISIBLE);
+                    } else {
+                        tvRemarks.setVisibility(View.VISIBLE);
+                        if (foundRemarks.size() > 1) {
+                            foundRemarks = new ArrayList<>(foundRemarks.stream()
+                                    .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+                                    .collect(Collectors.toList()));
+                        }
                     }
+                    remarksAdapter.changeListOfItems(foundRemarks);
+                } else {
+                    new WarningDialog1().show(InfoActivity.this, "Внимание!", "Проблемы на линии!");
                 }
             }
 
             @Override
             public void onFailure(Call<List<Remark>> call, Throwable t) {
+                new WarningDialog1().show(InfoActivity.this, "Внимание!", "Проблемы на линии!");
+            }
+        });
+    }
+
+    public void changeRemark(Remark remark) {
+        remarkFragment.getEditor().setText(remark.getText());
+        remarkFragment.setChangedRemark(remark);
+        remarkFragment.getBtnAdd().setText(RemarkFragment.sChange);
+        remarkContainerView.setVisibility(View.VISIBLE);
+
+    }
+
+    public void deleteRemark(Remark remark) {
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        Call<Void> call =  api.deleteById(remark.getId());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    updateRemarkAdapter();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
                 new WarningDialog1().show(InfoActivity.this, "Внимание!", "Проблемы на линии!");
             }
         });
@@ -263,7 +305,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
                 if(response.isSuccessful() && response.body() != null) {
                     ArrayList<Draft> foundDrafts = new ArrayList<>(response.body());
                     ThisApplication.filterList(foundDrafts); //Фильтруем
-//                    foundDraftIdsForIntent = ThisApplication.convertToStringArray(foundDrafts);
+                    foundDraftIdsForIntent = ThisApplication.convertToStringArray(foundDrafts); //Для
                     draftsAdapter = new InfoDraftsViewAdapter(InfoActivity.this, foundDrafts);
                     draftsAdapter.setClickListener(InfoActivity.this);
                     rvDrafts.setAdapter(draftsAdapter);
@@ -296,11 +338,6 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
 
     @Override
     public void onRemarkRowClick(View view, int position) {
-
-    }
-
-    @Override
-    public void onRemarkRowLongClick(View view, int position) {
 
     }
 
@@ -348,6 +385,8 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
                 return true;
 
             case R.id.action_addRemark:
+                remarkFragment.getEditor().setText("");
+                remarkFragment.getBtnAdd().setText(RemarkFragment.sAdd);
                 remarkContainerView.setVisibility(View.VISIBLE);
                 return true;
             default:

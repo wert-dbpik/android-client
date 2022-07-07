@@ -196,8 +196,6 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
             folder = itemView.findViewById(R.id.btnFolder);
             showFolderMenu = itemView.findViewById(R.id.btnShowFoldersMenu);
 
-//            showFolderMenu.setOnCreateContextMenuListener(this);
-
             itemView.setOnClickListener(this);
         }
 

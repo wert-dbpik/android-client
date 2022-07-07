@@ -1,7 +1,9 @@
 package ru.wert.bazapik_mobile.info;
 
 import android.content.Context;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -13,10 +15,15 @@ import java.util.List;
 import java.util.Locale;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
+import ru.wert.bazapik_mobile.data.models.Folder;
+import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Remark;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 
 public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksViewAdapter.ViewHolder>{
 
@@ -69,6 +76,23 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         holder.tvRemarkTime.setText(ThisApplication.parseStringToDate(item.getCreationTime()));
         holder.tvRemarkText.setText(item.getText());
         holder.itemView.setLongClickable(true);
+        holder.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+            PopupMenu popup = new PopupMenu(v.getContext(), v);
+            popup.getMenuInflater().inflate(R.menu.remark_context_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(item1 -> {
+                Remark remark = (Remark) mData.get(position);
+                switch (item1.getItemId()) {
+                    case R.id.changeRemark:
+                        ((InfoActivity)context).changeRemark(remark);
+                        break;
+                    case R.id.deleteRemark:
+                        ((InfoActivity)context).deleteRemark(remark);
+                        break;
+                }
+                return true;
+            });
+            popup.show();
+        });
     }
 
 
@@ -82,7 +106,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
     }
 
     /**
-     * Обновляет отображаемые данные
+     * Обновляет отображаемые данные с заданным списком
      * @param items List<P>
      */
     public void changeListOfItems(List<Remark> items){
@@ -91,11 +115,12 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         notifyDataSetChanged();
     }
 
+
     /**
      * Вложенный класс, описывающий и создающий ограниченной количество ViewHolder
      *
      */
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView tvRemarkUser;
         TextView tvRemarkTime;
         TextView tvRemarkText;
@@ -106,7 +131,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             tvRemarkTime = itemView.findViewById(R.id.tvRemarkTime);
             tvRemarkText = itemView.findViewById(R.id.tvRemarkText);
 
-            itemView.setOnClickListener(this);
+//            itemView.setOnLongClickListener(this);
         }
 
         @Override
@@ -117,27 +142,27 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             view.findViewById(R.id.selectedLinearLayout)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
-            if (mClickListener != null)
-                mClickListener.onRemarkRowClick(view, getBindingAdapterPosition());
+//            if (mClickListener != null)
+//                mClickListener.onRemarkRowClick(view, getBindingAdapterPosition());
 
             notifyDataSetChanged();
         }
 
-        @Override
-        public boolean onLongClick(View view) {
-            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return false;
-
-            selectedPosition = getBindingAdapterPosition();
-            view.findViewById(R.id.selectedLinearLayout)
-                    .setBackgroundColor(context.getColor(R.color.colorPrimary));
-
-            if (mClickListener != null)
-                mClickListener.onRemarkRowLongClick(view, getBindingAdapterPosition());
-
-            notifyDataSetChanged();
-
-            return true;
-        }
+//        @Override
+//        public boolean onLongClick(View view) {
+//            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return false;
+//
+//            selectedPosition = getBindingAdapterPosition();
+//            view.findViewById(R.id.selectedLinearLayout)
+//                    .setBackgroundColor(context.getColor(R.color.colorPrimary));
+//
+//            if (mClickListener != null)
+//                mClickListener.onRemarkRowLongClick(view, getBindingAdapterPosition());
+//
+//            notifyDataSetChanged();
+//
+//            return true;
+//        }
     }
 
     /**
@@ -148,14 +173,14 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
     public Remark getItem(int index) {
         return mData.get(index);
     }
-
+//
     public void setClickListener(InfoRemarkClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
-
+//
     public interface InfoRemarkClickListener {
         void onRemarkRowClick(View view, int position);
-        void onRemarkRowLongClick(View view, int position);
+//        void onRemarkRowLongClick(View view, int position);
     }
 
 }

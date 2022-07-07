@@ -8,10 +8,12 @@ import android.content.SharedPreferences;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -337,5 +339,14 @@ public class ThisApplication extends Application {
         } catch (ParseException e) {
             return dateString;
         }
+    }
+
+    /**
+     * Метод возвращает текущее время в формате "yyyy-MM-dd'T'HH:mm:ss"
+     */
+    public static String getCurrentTime(){
+        Date date = Calendar.getInstance().getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return df.format(date);
     }
 }
