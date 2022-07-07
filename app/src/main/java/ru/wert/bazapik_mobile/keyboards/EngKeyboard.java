@@ -45,7 +45,7 @@ public class EngKeyboard extends Fragment implements MyKeyboard{
             "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z");
 
     private Button btnSpace, btnShift, btnBackspace, btnLanguage, btn123;
-    private ImageButton btnClear;
+    private ImageButton btnSearchNow;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,8 +82,8 @@ public class EngKeyboard extends Fragment implements MyKeyboard{
 
         btnShift = view.findViewById(R.id.mBtnEngShift);
         btnSpace = view.findViewById(R.id.mBtnEngSpace);
-        btnClear = view.findViewById(R.id.mBtnEngClear);
-        btnBackspace = view.findViewById(R.id.mBtnEngBackspace);
+        btnSearchNow = view.findViewById(R.id.mBtnNumSearchNow);
+        btnBackspace = view.findViewById(R.id.mBtnNumBackspace);
         btnLanguage = view.findViewById(R.id.mBtnEngLanguage);
         btn123 = view.findViewById(R.id.mBtnEng123);
 
@@ -168,6 +168,11 @@ public class EngKeyboard extends Fragment implements MyKeyboard{
             }
         });
 
+        btnBackspace.setOnLongClickListener(v->{
+            editTextSearch.setText("");
+            return true;
+        });
+
         //SHIFT с подчерком
         btnShift.setOnClickListener(v->{
             shiftOn = !shiftOn;
@@ -186,8 +191,10 @@ public class EngKeyboard extends Fragment implements MyKeyboard{
         });
 
         //CLEAR ALL
-        btnClear.setOnClickListener(v->{
-            editTextSearch.setText("");
+        btnSearchNow.setOnClickListener(v->{
+            String text = editTextSearch.getText().toString();
+            editTextSearch.setText(text);
+            editTextSearch.setSelection(editTextSearch.length());
         });
 
         //RU - ENG

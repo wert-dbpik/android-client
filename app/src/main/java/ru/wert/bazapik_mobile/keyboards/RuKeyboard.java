@@ -36,7 +36,7 @@ public class RuKeyboard extends Fragment implements MyKeyboard{
     private Map<Button, String> values; //Пары кнопка-значение
 
     private Button btnSpace, btnShift, btnBackspace, btnLanguage, btn123;
-    private ImageButton btnClear;
+    private ImageButton btnSearchNow;
 
     final private List<String> capitalLetters = Arrays.asList("А", "Б", "В", "Г", "Д", "Е", "Ж",
             "З", "И", "Й", "К", "Л", "М", "Н", "О", "П", "Р", "С", "Т", "У", "Ф", "Х", "Ц", "Ч",
@@ -90,7 +90,7 @@ public class RuKeyboard extends Fragment implements MyKeyboard{
 
         btnShift = view.findViewById(R.id.mBtnRuShift);
         btnSpace = view.findViewById(R.id.mBtnRuSpace);
-        btnClear = view.findViewById(R.id.mBtnRuClear);
+        btnSearchNow = view.findViewById(R.id.mBtnRuSearchNow);
         btnBackspace = view.findViewById(R.id.mBtnRuBackspace);
         btnLanguage = view.findViewById(R.id.mBtnRuLanguage);
         btn123 = view.findViewById(R.id.mBtnRu123);
@@ -178,6 +178,11 @@ public class RuKeyboard extends Fragment implements MyKeyboard{
             }
         });
 
+        btnBackspace.setOnLongClickListener(v->{
+            editTextSearch.setText("");
+            return true;
+        });
+
         //SHIFT с подчерком
         btnShift.setOnClickListener(v->{
             shiftOn = !shiftOn;
@@ -196,8 +201,10 @@ public class RuKeyboard extends Fragment implements MyKeyboard{
         });
 
         //CLEAR ALL
-        btnClear.setOnClickListener(v->{
-            editTextSearch.setText("");
+        btnSearchNow.setOnClickListener(v->{
+            String text = editTextSearch.getText().toString();
+            editTextSearch.setText(text);
+            editTextSearch.setSelection(editTextSearch.length());
         });
 
         //RU - ENG

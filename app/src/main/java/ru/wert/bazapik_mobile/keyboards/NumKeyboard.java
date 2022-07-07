@@ -87,7 +87,7 @@ public class NumKeyboard extends Fragment implements MyKeyboard{
         }
 
         //Специальная кнопка Backspace <=
-        final Button mBtnBackspace = view.findViewById(R.id.mBtnEngBackspace);
+        final Button mBtnBackspace = view.findViewById(R.id.mBtnNumBackspace);
         mBtnBackspace.setOnClickListener(v->{
             StringBuilder text = new StringBuilder(String.valueOf(editTextSearch.getText()));
             if(editTextSearch.getSelectionStart() !=0) {
@@ -103,10 +103,11 @@ public class NumKeyboard extends Fragment implements MyKeyboard{
         });
 
         //Специальная кнопка принудительного поиска
-        final ImageButton mBtnCLear = view.findViewById(R.id.mBtnEngClear);
-        mBtnCLear.setOnClickListener(v->{
+        final ImageButton mBtnSearchNow = view.findViewById(R.id.mBtnNumSearchNow);
+        mBtnSearchNow.setOnClickListener(v->{
             String text = editTextSearch.getText().toString();
             editTextSearch.setText(text);
+            editTextSearch.setSelection(editTextSearch.length());
         });
 
         //Специальная кнопка PIK - выводт префикс по умолчанию

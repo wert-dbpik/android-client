@@ -498,7 +498,7 @@
                 android:textSize="@dimen/letters_btn_font_size" />
 
             <ImageButton
-                android:id="@+id/mBtnRuClear"
+                android:id="@+id/mBtnRuSearchNow"
                 android:background="@android:color/transparent"
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/search256"

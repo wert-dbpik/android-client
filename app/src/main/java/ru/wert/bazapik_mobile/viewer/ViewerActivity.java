@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,6 +29,8 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
+import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
 import ru.wert.bazapik_mobile.utils.Dest;
@@ -35,6 +38,7 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static android.content.Intent.ACTION_VIEW;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
 import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
@@ -56,12 +60,14 @@ public class ViewerActivity extends BaseActivity {
     private Integer iterator; //Текущая позиция
     private Long currentDraftId; //id текущего чертежа на экране
     private Draft currentDraft;
+    private Passport currentPassport;
     private FragmentManager fm;
 
     private ImageButton btnShowPrevious, btnShowNext;
     private Dest destination = Dest.NEXT;
     private Fragment draftFragment;
     private Button btnTapLeft, btnTapRight;
+    private ImageButton btnShowRemarks;
 
 
 
@@ -93,6 +99,13 @@ public class ViewerActivity extends BaseActivity {
         btnTapLeft.setOnTouchListener(createOnSwipeTouchListener());
         btnTapRight = findViewById(R.id.btnTapRight);
         btnTapRight.setOnTouchListener(createOnSwipeTouchListener());
+
+        btnShowRemarks = findViewById(R.id.btnShowRemarks);
+        btnShowRemarks.setOnClickListener(view -> {
+            Intent intent = new Intent(ViewerActivity.this, InfoActivity.class);
+            intent.putExtra("PASSPORT_ID", String.valueOf(currentPassport.getId()));
+            startActivity(intent);
+        });
 
     }
 
@@ -204,6 +217,17 @@ public class ViewerActivity extends BaseActivity {
             for (Draft d : ALL_DRAFTS) {
                 if (d.getId().equals(currentDraftId)) {
                     currentDraft = d;
+                    Long passportId = currentDraft.getPassport().getId();
+                    for(Passport p: ALL_PASSPORTS){
+                        if (p.getId().equals(passportId)) {
+                            currentPassport = p;
+                            if(currentPassport.getRemarkIds().isEmpty()) {
+                                btnShowRemarks.setVisibility(View.INVISIBLE);
+                                btnShowRemarks.setClickable(false);
+                            }
+                        }
+                    }
+
                     createLog(true, String.format("Открыл чертеж '%s' из комплекта '%s'", d.toUsefulString(), d.getFolder().toUsefulString()));
                     break;
                 }

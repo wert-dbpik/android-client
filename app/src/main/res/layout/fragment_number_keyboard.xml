@@ -54,7 +54,7 @@
                 android:textSize="@dimen/btn_text_size" />
 
             <Button
-                android:id="@+id/mBtnEngBackspace"
+                android:id="@+id/mBtnNumBackspace"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0px"
                 android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
                 android:textSize="@dimen/btn_text_size" />
 
             <ImageButton
-                android:id="@+id/mBtnEngClear"
+                android:id="@+id/mBtnNumSearchNow"
                 android:background="@android:color/transparent"
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/search256"

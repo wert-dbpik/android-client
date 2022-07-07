@@ -108,7 +108,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
         rv = v.findViewById(R.id.recycle_view_passports);
 
-        createRecycleViewOfFoundItems();
+        createRecycleViewOfFoundPassportsAndFolders();
 
         org.fragmentChanged(this);
         org.setCurrentTypeFragment(FragmentTag.PASSPORT_TAG);
@@ -141,7 +141,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     /**
      * Создаем список состоящий из найденных элементов
      */
-    private void createRecycleViewOfFoundItems() {
+    private void createRecycleViewOfFoundPassportsAndFolders() {
 
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
