@@ -23,8 +23,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import lombok.Getter;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
@@ -59,8 +61,9 @@ public class ViewerActivity extends BaseActivity {
     private ArrayList<Long> allDraftsIds = new ArrayList<>(); //Лист с id чертежей в PassportInfoActivity
     private Integer iterator; //Текущая позиция
     private Long currentDraftId; //id текущего чертежа на экране
-    private Draft currentDraft;
-    private Passport currentPassport;
+    @Getter private Long currentPassportId;
+    @Getter private Draft currentDraft;
+    private Passport currentPassport; //инициализируется поздно
     private FragmentManager fm;
 
     private ImageButton btnShowPrevious, btnShowNext;
@@ -68,6 +71,8 @@ public class ViewerActivity extends BaseActivity {
     private Fragment draftFragment;
     private Button btnTapLeft, btnTapRight;
     private ImageButton btnShowRemarks;
+
+    private FragmentContainerView allRemarksContainer;
 
 
 
@@ -79,6 +84,8 @@ public class ViewerActivity extends BaseActivity {
 
         //Из интента получаем id чертежа
         currentDraftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
+        currentPassportId = Long.parseLong(getIntent().getStringExtra("PASSPORT_ID"));
+
 
         //Инициализируем список чертежей и итератор с текущей позицей
         iterator = findInitPosition();
@@ -101,12 +108,20 @@ public class ViewerActivity extends BaseActivity {
         btnTapRight.setOnTouchListener(createOnSwipeTouchListener());
 
         btnShowRemarks = findViewById(R.id.btnShowRemarks);
+        allRemarksContainer = findViewById(R.id.allRemarksContainer);
+        allRemarksContainer.setVisibility(View.INVISIBLE);
         btnShowRemarks.setOnClickListener(view -> {
-            Intent intent = new Intent(ViewerActivity.this, InfoActivity.class);
-            intent.putExtra("PASSPORT_ID", String.valueOf(currentPassport.getId()));
-            startActivity(intent);
+            allRemarksContainer.setVisibility(View.VISIBLE);
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(allRemarksContainer.getVisibility() == View.VISIBLE) {
+            allRemarksContainer.setVisibility(View.INVISIBLE);
+        } else
+            super.onBackPressed();
     }
 
     @Override

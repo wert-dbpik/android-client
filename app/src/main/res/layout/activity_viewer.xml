@@ -12,26 +12,39 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageButton
-        android:id="@+id/btnShowRemarks"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_margin="20dp"
-        android:scaleType="centerInside"
-        app:srcCompat="@drawable/attention256"
-        android:background="@android:color/transparent"
-        android:layout_gravity="top"
-        />
 
-    <Button
-        android:id="@+id/btnShowMenu"
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:background="@android:color/transparent"
-        android:text=". . ."
-        android:textColor="#000000"
-        android:textStyle="bold" />
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnShowMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text=". . ."
+                android:textColor="#000000"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnShowRemarks"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="10dp"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/attention256"
+                android:background="@android:color/transparent"
+                />
+
+    </LinearLayout>
+
+
 
     <Button
         android:id="@+id/btnTapLeft"
@@ -71,6 +84,13 @@
         android:layout_gravity="bottom|right"
 
         />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/allRemarksContainer"
+        android:name="ru.wert.bazapik_mobile.viewer.AllRemarksFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
 
 </FrameLayout>
 

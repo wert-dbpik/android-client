@@ -10,7 +10,6 @@ import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
@@ -25,14 +24,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
-public class RemarkFragment extends Fragment {
+public class RemarkEditorFragment extends Fragment {
 
     @Getter private EditText editor;
     @Getter private Button btnAdd;
@@ -55,7 +49,7 @@ public class RemarkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         container.setVisibility(View.VISIBLE);
-        View view = inflater.inflate(R.layout.fragment_remark, container, false);
+        View view = inflater.inflate(R.layout.fragment_remark_editor, container, false);
 
         editor = view.findViewById(R.id.etTextRemark);
         btnAdd = view.findViewById(R.id.btnAddRemark);

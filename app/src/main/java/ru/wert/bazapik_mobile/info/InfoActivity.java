@@ -69,7 +69,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
     private final String REMARK_TEXT = "remark_text";
 
     private FragmentContainerView remarkContainerView;
-    private RemarkFragment remarkFragment;
+    private RemarkEditorFragment remarkEditorFragment;
 
     //Все найденные элементы
     private List<Draft> foundDrafts;
@@ -86,11 +86,11 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
         remarkContainerView = findViewById(R.id.addRemarkContainer);
         remarkContainerView.setVisibility(View.INVISIBLE);
 
-        remarkFragment = new RemarkFragment();
+        remarkEditorFragment = new RemarkEditorFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.addRemarkContainer, (Fragment) remarkFragment, "remark_tag");
+        ft.replace(R.id.addRemarkContainer, (Fragment) remarkEditorFragment, "remark_tag");
         ft.commit();
 
         llInfo = findViewById(R.id.llInfo); //LinearLayout для удаления надписи
@@ -218,9 +218,9 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
     }
 
     public void changeRemark(Remark remark) {
-        remarkFragment.getEditor().setText(remark.getText());
-        remarkFragment.setChangedRemark(remark);
-        remarkFragment.getBtnAdd().setText(RemarkFragment.sChange);
+        remarkEditorFragment.getEditor().setText(remark.getText());
+        remarkEditorFragment.setChangedRemark(remark);
+        remarkEditorFragment.getBtnAdd().setText(RemarkEditorFragment.sChange);
         remarkContainerView.setVisibility(View.VISIBLE);
 
     }
@@ -255,8 +255,8 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
                 remarkContainerView.setVisibility(View.INVISIBLE);
             else {
                 remarkContainerView.setVisibility(View.VISIBLE);
-                remarkFragment.getEditor().setText(remarkText);
-                remarkFragment.getEditor().setSelection(remarkText.length());
+                remarkEditorFragment.getEditor().setText(remarkText);
+                remarkEditorFragment.getEditor().setSelection(remarkText.length());
             }
 
             Parcelable listDraftsState = resumeBundle.getParcelable(KEY_RECYCLER_DRAFTS_STATE);
@@ -276,7 +276,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
     protected void onPause() {
         super.onPause();
         resumeBundle = new Bundle();
-        resumeBundle.putString(REMARK_TEXT, remarkFragment.getEditor().getText().toString());
+        resumeBundle.putString(REMARK_TEXT, remarkEditorFragment.getEditor().getText().toString());
 
         if(rvDrafts != null) {
             Parcelable listDraftsState = rvDrafts.getLayoutManager().onSaveInstanceState();
@@ -333,6 +333,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
         Intent intent = new Intent(InfoActivity.this, ViewerActivity.class);
         intent.putStringArrayListExtra("DRAFTS", foundDraftIdsForIntent);
         intent.putExtra("DRAFT_ID", String.valueOf(draftsAdapter.getItem(position).getId()));
+        intent.putExtra("PASSPORT_ID", String.valueOf(draftsAdapter.getItem(position).getPassport().getId()));
         startActivity(intent);
     }
 
@@ -385,8 +386,8 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
                 return true;
 
             case R.id.action_addRemark:
-                remarkFragment.getEditor().setText("");
-                remarkFragment.getBtnAdd().setText(RemarkFragment.sAdd);
+                remarkEditorFragment.getEditor().setText("");
+                remarkEditorFragment.getBtnAdd().setText(RemarkEditorFragment.sAdd);
                 remarkContainerView.setVisibility(View.VISIBLE);
                 return true;
             default:

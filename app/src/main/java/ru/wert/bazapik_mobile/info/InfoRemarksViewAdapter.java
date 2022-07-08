@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -24,6 +25,7 @@ import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksViewAdapter.ViewHolder>{
 
@@ -93,6 +95,18 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             });
             popup.show();
         });
+        if(context instanceof ViewerActivity){
+            holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorPrimaryDark));
+            holder.tvRemarkUser.setBackgroundColor(context.getColor(R.color.colorLessWhite));
+            holder.tvRemarkTime.setTextColor(context.getColor(R.color.colorPrimaryDark));
+            holder.tvRemarkTime.setBackgroundColor(context.getColor(R.color.colorLessWhite));
+            holder.tvRemarkText.setTextColor(context.getColor(R.color.colorPrimaryDark));
+            holder.tvRemarkText.setBackgroundColor(context.getColor(R.color.colorLessWhite));
+
+
+            holder.itemView.setBackgroundColor(context.getColor(R.color.colorLessWhite));
+            holder.iv.setBackgroundColor(context.getColor(R.color.colorLessWhite));
+        }
     }
 
 
@@ -124,12 +138,14 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         TextView tvRemarkUser;
         TextView tvRemarkTime;
         TextView tvRemarkText;
+        LinearLayout iv;
 
         ViewHolder(View itemView) {
             super(itemView);
             tvRemarkUser = itemView.findViewById(R.id.tvRemarkUser);
             tvRemarkTime = itemView.findViewById(R.id.tvRemarkTime);
             tvRemarkText = itemView.findViewById(R.id.tvRemarkText);
+            iv = itemView.findViewById(R.id.selectedLinearLayout);
 
 //            itemView.setOnLongClickListener(this);
         }

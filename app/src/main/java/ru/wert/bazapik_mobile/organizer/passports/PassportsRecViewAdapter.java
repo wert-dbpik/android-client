@@ -141,6 +141,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
                     Intent intent = new Intent(context, ViewerActivity.class);
                     intent.putStringArrayListExtra("DRAFTS", stringList);
                     intent.putExtra("DRAFT_ID", String.valueOf(foundDrafts.get(0).getId()));
+                    intent.putExtra("PASSPORT_ID", String.valueOf(passport.getId()));
                     context.startActivity(intent);
                 }
             }
