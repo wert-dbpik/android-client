@@ -1,4 +1,4 @@
-package ru.wert.bazapik_mobile.info;
+package ru.wert.bazapik_mobile.remark;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Remark;
+import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksViewAdapter.ViewHolder>{

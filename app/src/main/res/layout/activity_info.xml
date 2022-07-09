@@ -106,7 +106,7 @@
     </LinearLayout>
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/addRemarkContainer"
-        android:name="ru.wert.bazapik_mobile.info.RemarkEditorFragment"
+        android:name="ru.wert.bazapik_mobile.remark.RemarkEditorFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom" />

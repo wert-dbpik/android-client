@@ -1,4 +1,4 @@
-package ru.wert.bazapik_mobile.info;
+package ru.wert.bazapik_mobile.remark;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.remark.IRemarkFragmentInteraction;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import android.util.Log;

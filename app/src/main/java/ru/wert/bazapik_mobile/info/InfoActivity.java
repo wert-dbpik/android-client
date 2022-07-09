@@ -39,6 +39,9 @@ import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
+import ru.wert.bazapik_mobile.remark.IRemarkFragmentInteraction;
+import ru.wert.bazapik_mobile.remark.InfoRemarksViewAdapter;
+import ru.wert.bazapik_mobile.remark.RemarkEditorFragment;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 

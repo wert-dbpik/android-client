@@ -1,6 +1,5 @@
-package ru.wert.bazapik_mobile.viewer;
+package ru.wert.bazapik_mobile.remark;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -16,8 +15,7 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.info.InfoActivity;
-import ru.wert.bazapik_mobile.info.InfoRemarksViewAdapter;
+import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import android.view.LayoutInflater;

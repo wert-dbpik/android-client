@@ -1,4 +1,4 @@
-package ru.wert.bazapik_mobile.info;
+package ru.wert.bazapik_mobile.remark;
 
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Remark;
