@@ -95,7 +95,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             holder.tvRemarkText.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
 
 
-            holder.itemView.setBackgroundColor(context.getColor(R.color.colorMyGray));
+            holder.itemView.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
             holder.iv.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
         }
     }
@@ -149,27 +149,9 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             view.findViewById(R.id.selectedLinearLayout)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
-//            if (mClickListener != null)
-//                mClickListener.onRemarkRowClick(view, getBindingAdapterPosition());
-
             notifyDataSetChanged();
         }
 
-//        @Override
-//        public boolean onLongClick(View view) {
-//            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return false;
-//
-//            selectedPosition = getBindingAdapterPosition();
-//            view.findViewById(R.id.selectedLinearLayout)
-//                    .setBackgroundColor(context.getColor(R.color.colorPrimary));
-//
-//            if (mClickListener != null)
-//                mClickListener.onRemarkRowLongClick(view, getBindingAdapterPosition());
-//
-//            notifyDataSetChanged();
-//
-//            return true;
-//        }
     }
 
     /**

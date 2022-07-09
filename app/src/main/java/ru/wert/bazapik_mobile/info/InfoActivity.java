@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile.info;
 
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -235,6 +237,7 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
+                    findPassportById(passId).getRemarkIds().remove(remark.getId());
                     updateRemarkAdapter();
                 }
             }
@@ -418,5 +421,14 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
             e.printStackTrace();
         }
         remarkContainerView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public Passport findPassportById(Long id){
+        for(Passport p : ALL_PASSPORTS){
+            if(p.getId().equals(id))
+                return p;
+        }
+        return null;
     }
 }

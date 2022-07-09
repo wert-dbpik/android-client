@@ -81,6 +81,8 @@ public class RemarkEditorFragment extends Fragment {
                 if(response.isSuccessful()){
                     viewInteraction.closeRemarkFragment();
                     viewInteraction.updateRemarkAdapter();
+                    viewInteraction.findPassportById(viewInteraction.getPassport().getId())
+                            .getRemarkIds().add(response.body().getId());
                 } else {
                     Log.d(TAG, String.format("Не удалось сохранить запись, %s", response.message()));
                     new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось сохранить запись");

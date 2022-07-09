@@ -232,9 +232,8 @@ public class ViewerActivity extends BaseActivity {
             for (Draft d : ALL_DRAFTS) {
                 if (d.getId().equals(currentDraftId)) {
                     currentDraft = d;
-                    Long passportId = currentDraft.getPassport().getId();
                     for(Passport p: ALL_PASSPORTS){
-                        if (p.getId().equals(passportId)) {
+                        if (p.getId().equals(currentPassportId)) {
                             currentPassport = p;
                             if(currentPassport.getRemarkIds().isEmpty()) {
                                 btnShowRemarks.setVisibility(View.INVISIBLE);
