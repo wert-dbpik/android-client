@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile.data.api_interfaces;
 
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -9,6 +10,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 
 public interface RemarkApiInterface {
@@ -30,5 +32,16 @@ public interface RemarkApiInterface {
 
     @DELETE("remarks/delete/{id}")
     Call<Void> deleteById(@Path("id") Long id);
+
+    //==========  КАРТИНКИ И КОММЕНТАРИИ
+
+    @GET("products/pics-in-product/{productId}")
+    Call<Set<Pic>> getPics(@Path("productId") Long id);
+
+    @GET("products/add-pic-in-product/{productId}/{picId}")
+    Call<Set<Pic>> addPic(@Path("productId") Long productId, @Path("picId") Long picId);
+
+    @GET("products/remove-pic-in-product/{productId}/{picId}")
+    Call<Set<Pic>> removePic(@Path("productId") Long productId, @Path("picId") Long picId);
 
 }

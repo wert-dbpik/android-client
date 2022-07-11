@@ -17,7 +17,9 @@ import retrofit2.http.Path;
 import retrofit2.http.Streaming;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Product;
-
+/*
+Отдельно выделенный интерфейс использует методы из DraftsApiInterface
+ */
 public interface FileApiInterface {
 
     @Streaming
