@@ -34,7 +34,7 @@ public interface FileApiInterface {
      * @return
      */
     @Multipart
-    @POST("files/upload/{folder}/{newName}")
-    Call<Void> upload(@Path("folder") String folder, @Path("newName") String newName, @Part MultipartBody.Part file);
+    @POST("files/upload/{folder}")
+    Call<Void> upload(@Path("folder") String folder, @Part MultipartBody.Part file);
 
 }

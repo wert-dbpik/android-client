@@ -101,17 +101,28 @@ public class RemarkEditorFragment extends Fragment {
                                             String fileNewName = savedPic.getId() + "." + savedPic.getExtension();
                                             File picFile = new File(new URI(uri.toString()));
                                             byte[] draftBytes = Files.readAllBytes(picFile.toPath());
-                                            RequestBody requestBody = RequestBody.create(MediaType.parse("application/pdf"), draftBytes);
-                                            MultipartBody.Part body = MultipartBody.Part.createFormData("file", fileNewName, picFile);
+                                            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), draftBytes);
+                                            MultipartBody.Part body = MultipartBody.Part.createFormData("file", fileNewName, requestBody);
                                             FileApiInterface fileApi = RetrofitClient.getInstance().getRetrofit().create(FileApiInterface.class);
-                                            Call<Void> uploadCall = fileApi.upload("pic",
-                                                    String.valueOf(savedPic.getId()),
-                                                    picFile);
+                                            Call<Void> uploadCall = fileApi.upload("pic", body);
+                                            uploadCall.enqueue(new Callback<Void>() {
+                                                @Override
+                                                public void onResponse(Call<Void> call, Response<Void> response) {
+                                                    if(response.isSuccessful()){
+                                                        viewInteraction.updateRemarkAdapter();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<Void> call, Throwable t) {
+                                                    new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось загрузить изображение");
+                                                }
+                                            });
                                         }
 
                                         @Override
                                         public void onFailure(Call<Pic> call, Throwable t) {
-
+                                            new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось загрузить изображение");
                                         }
                                     });
 
@@ -142,9 +153,10 @@ public class RemarkEditorFragment extends Fragment {
         ImageButton btnAddImage = view.findViewById(R.id.btnAddImage);
         btnAddImage.setOnClickListener(v ->{
             Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.setAction(Intent.ACTION_PICK);
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             intent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+
             pickUpPictureResultLauncher.launch(intent);
         });
 
