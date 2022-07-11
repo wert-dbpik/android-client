@@ -7,15 +7,24 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
+import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.info.InfoActivity;
+import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksViewAdapter.ViewHolder>{
@@ -86,6 +95,27 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             });
             popup.show();
         });
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        Call<Set<Pic>> call = api.getPics(item.getId());
+        call.enqueue(new Callback<Set<Pic>>() {
+            @Override
+            public void onResponse(@NonNull Call<Set<Pic>> call, @NonNull Response<Set<Pic>> response) {
+                if(response.isSuccessful()){
+                    assert response.body() != null;
+                    holder.rvRemarkPics.setAdapter(new PicsAdapter(context, new ArrayList<>(response.body())));
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Set<Pic>> call, Throwable t) {
+
+            }
+        });
+
+
+
         if(context instanceof ViewerActivity){
             holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorWhite));
             holder.tvRemarkUser.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
@@ -129,6 +159,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         TextView tvRemarkUser;
         TextView tvRemarkTime;
         TextView tvRemarkText;
+        RecyclerView rvRemarkPics;
         LinearLayout iv;
 
         ViewHolder(View itemView) {
@@ -137,6 +168,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             tvRemarkTime = itemView.findViewById(R.id.tvRemarkTime);
             tvRemarkText = itemView.findViewById(R.id.tvRemarkText);
             iv = itemView.findViewById(R.id.selectedLinearLayout);
+            rvRemarkPics = itemView.findViewById(R.id.rvRemarkPics);
 
 //            itemView.setOnLongClickListener(this);
         }

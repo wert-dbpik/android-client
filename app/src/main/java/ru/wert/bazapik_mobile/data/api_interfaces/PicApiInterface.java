@@ -10,19 +10,19 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
-import ru.wert.bazapik_mobile.data.models.AppLog;
+import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 
 public interface PicApiInterface {
 
     @POST("pics/create")
-    Call<AppLog> create(@Body AppLog p);
+    Call<Pic> create(@Body Pic p);
 
     @GET("pics/id/{id}")
-    Call<AppLog> getById(@Path("id") Long id);
+    Call<Pic> getById(@Path("id") Long id);
     
     @GET("pics/all")
-    Call<List<AppLog>> getAll();
+    Call<List<Pic>> getAll();
     
     @DELETE("pics/delete/{id}")
     Call<Void> deleteById(@Path("id") Long id);

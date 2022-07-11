@@ -23,11 +23,18 @@ import ru.wert.bazapik_mobile.data.models.Product;
 public interface FileApiInterface {
 
     @Streaming
-    @GET("drafts/download/{path}/{fileName}")
+    @GET("files/download/{path}/{fileName}")
     Call<ResponseBody> download(@Path("path") String path, @Path("fileName") String fileName);
 
+    /**
+     * Загрузка файла на сервер
+     * @param folder, String - имя папки хранения на сервере ("pics", "drafts" "excels")
+     * @param newName - имя под которым необходимо сохранить файл, nullable
+     * @param file - собственно файл
+     * @return
+     */
     @Multipart
-    @POST("drafts/upload/{path}")
-    Call<Void> upload(@Path("path") String path, @Part MultipartBody.Part file);
+    @POST("files/upload/{folder}/{newName}")
+    Call<Void> upload(@Path("folder") String folder, @Path("newName") String newName, @Part MultipartBody.Part file);
 
 }
