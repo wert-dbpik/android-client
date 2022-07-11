@@ -34,7 +34,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
-                        android:textStyle="italic"
+                        android:textStyle="italic|bold"
                         android:textColor="@color/colorAccent"
                         android:textSize="12sp" />
 
@@ -58,7 +58,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="20dp"
                         android:textColor="@color/colorAccent"
-                        android:textStyle="italic"
+                        android:textStyle="italic|bold"
                         android:textSize="12sp" />
 
                     <TextView
@@ -75,6 +75,7 @@
                     android:id="@+id/tvRemarkText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
                     android:textColor="#FFFFFF"
                     android:maxLines="1000"
                     android:textSize="16sp" />

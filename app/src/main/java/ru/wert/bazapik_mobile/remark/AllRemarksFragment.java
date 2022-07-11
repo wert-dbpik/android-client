@@ -1,6 +1,6 @@
-package ru.wert.bazapik_mobile.viewer;
+package ru.wert.bazapik_mobile.remark;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -16,13 +16,15 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.info.InfoActivity;
-import ru.wert.bazapik_mobile.info.InfoRemarksViewAdapter;
+import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,9 @@ public class AllRemarksFragment extends Fragment {
     private InfoRemarksViewAdapter remarksAdapter;
     private ViewerActivity viewerActivity;
     private Long passId;
+    private int oldY;
+    private int fragmentHeight;
+    private ViewGroup.LayoutParams params;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -42,12 +47,35 @@ public class AllRemarksFragment extends Fragment {
         viewerActivity = (ViewerActivity) context;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_remarks, container, false);
         rvRemarks = view.findViewById(R.id.rvRemarks);
         passId = viewerActivity.getCurrentPassportId();
+        final LinearLayout llRemarksFragment = view.findViewById(R.id.llRemarksFragment);
+        params = llRemarksFragment.getLayoutParams();
+        final LinearLayout llMoving = view.findViewById(R.id.llMoving);
+
+        llMoving.setOnTouchListener((view1, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    oldY = (int) motionEvent.getRawY();
+                    fragmentHeight = llRemarksFragment.getHeight();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    float deltaY = oldY - motionEvent.getRawY();
+                    oldY = (int) motionEvent.getRawY();
+                    params.height = (int) (fragmentHeight + deltaY);
+                    llRemarksFragment.setLayoutParams(params);
+                    fragmentHeight = params.height;
+                    break;
+            }
+
+            return true;
+        });
+
         createRecycleViewOfFoundRemarks();
 
         return view;

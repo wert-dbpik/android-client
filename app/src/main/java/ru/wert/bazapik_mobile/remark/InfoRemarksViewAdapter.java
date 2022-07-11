@@ -1,30 +1,21 @@
-package ru.wert.bazapik_mobile.info;
+package ru.wert.bazapik_mobile.remark;
 
 import android.content.Context;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
-import ru.wert.bazapik_mobile.data.models.Folder;
-import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Remark;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksViewAdapter.ViewHolder>{
@@ -96,16 +87,16 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             popup.show();
         });
         if(context instanceof ViewerActivity){
-            holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorPrimaryDark));
-            holder.tvRemarkUser.setBackgroundColor(context.getColor(R.color.colorLessWhite));
-            holder.tvRemarkTime.setTextColor(context.getColor(R.color.colorPrimaryDark));
-            holder.tvRemarkTime.setBackgroundColor(context.getColor(R.color.colorLessWhite));
-            holder.tvRemarkText.setTextColor(context.getColor(R.color.colorPrimaryDark));
-            holder.tvRemarkText.setBackgroundColor(context.getColor(R.color.colorLessWhite));
+            holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorWhite));
+            holder.tvRemarkUser.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
+            holder.tvRemarkTime.setTextColor(context.getColor(R.color.colorWhite));
+            holder.tvRemarkTime.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
+            holder.tvRemarkText.setTextColor(context.getColor(R.color.colorWhite));
+            holder.tvRemarkText.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
 
 
-            holder.itemView.setBackgroundColor(context.getColor(R.color.colorLessWhite));
-            holder.iv.setBackgroundColor(context.getColor(R.color.colorLessWhite));
+            holder.itemView.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
+            holder.iv.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
         }
     }
 
@@ -158,27 +149,9 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             view.findViewById(R.id.selectedLinearLayout)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
-//            if (mClickListener != null)
-//                mClickListener.onRemarkRowClick(view, getBindingAdapterPosition());
-
             notifyDataSetChanged();
         }
 
-//        @Override
-//        public boolean onLongClick(View view) {
-//            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return false;
-//
-//            selectedPosition = getBindingAdapterPosition();
-//            view.findViewById(R.id.selectedLinearLayout)
-//                    .setBackgroundColor(context.getColor(R.color.colorPrimary));
-//
-//            if (mClickListener != null)
-//                mClickListener.onRemarkRowLongClick(view, getBindingAdapterPosition());
-//
-//            notifyDataSetChanged();
-//
-//            return true;
-//        }
     }
 
     /**

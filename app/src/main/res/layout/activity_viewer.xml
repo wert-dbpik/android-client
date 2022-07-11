@@ -12,14 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
+
         android:orientation="vertical">
 
             <Button
@@ -87,7 +84,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/allRemarksContainer"
-        android:name="ru.wert.bazapik_mobile.viewer.AllRemarksFragment"
+        android:name="ru.wert.bazapik_mobile.remark.AllRemarksFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom" />
