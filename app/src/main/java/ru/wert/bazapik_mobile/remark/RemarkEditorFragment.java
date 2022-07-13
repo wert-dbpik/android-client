@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -33,6 +36,7 @@ import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.serviceNew.files.FileRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceNew.files.PicRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceNew.files.RemarkRetrofitService;
+import ru.wert.bazapik_mobile.utils.ScalingUtilities;
 
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
@@ -92,13 +96,24 @@ public class RemarkEditorFragment extends Fragment implements
     }
 
     @Override//IPicCreator
-    public void doWhenPicIsCreated(Response<Pic> response, Uri uri) {
+    public void doWhenPicHasBeenCreated(Response<Pic> response, Uri uri) {
         try {
             Pic savedPic = (Pic) response.body();
-            String fileNewName = savedPic.getId() + "." + savedPic.getExtension();
+            String fileNewName = savedPic.getId() + "." + "jpg";
+
             InputStream iStream;
             iStream = context.getContentResolver().openInputStream(uri);
             byte[] draftBytes = ThisApplication.getBytes(iStream);
+
+
+//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+//            Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(bitmap, 600, 600, ScalingUtilities.ScalingLogic.FIT);
+//
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//
+//            byte[] draftBytes = baos.toByteArray();
+
             FileRetrofitService.uploadFile(RemarkEditorFragment.this, context, "pics", fileNewName, draftBytes);
             //Смотри doWhenFileIsUploaded
         } catch (IOException e) {
@@ -107,7 +122,7 @@ public class RemarkEditorFragment extends Fragment implements
     }
 
     @Override //FileRetrofitService.IFileUploader
-    public void doWhenFileIsUploaded() {
+    public void doWhenFileHasBeenUploaded() {
         viewInteraction.updateRemarkAdapter();
     }
 
@@ -154,7 +169,7 @@ public class RemarkEditorFragment extends Fragment implements
     }
 
     @Override//RemarkRetrofitService.IRemarkCreator
-    public void doWhenRemarkIsCreated(Response<Remark> response) {
+    public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
         viewInteraction.closeRemarkFragment();
         viewInteraction.updateRemarkAdapter();
         viewInteraction.findPassportById(viewInteraction.getPassport().getId())
@@ -177,4 +192,6 @@ public class RemarkEditorFragment extends Fragment implements
         viewInteraction.closeRemarkFragment();
         viewInteraction.updateRemarkAdapter();
     }
+
+
 }

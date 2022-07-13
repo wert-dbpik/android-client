@@ -26,7 +26,7 @@ public class RemarkRetrofitService {
             @Override
             public void onResponse(@NonNull Call<Remark> call, @NonNull Response<Remark> response) {
                 if (response.isSuccessful()) {
-                    cl.doWhenRemarkIsCreated(response);
+                    cl.doWhenRemarkHasBeenCreated(response);
 
                 } else {
                     Log.d(TAG, String.format("Не удалось сохранить запись, %s", response.message()));
@@ -43,7 +43,7 @@ public class RemarkRetrofitService {
     }
 
     public interface IRemarkCreator{
-        void doWhenRemarkIsCreated(Response<Remark> response);
+        void doWhenRemarkHasBeenCreated(Response<Remark> response);
     }
 
     //Изменить комментарий
@@ -54,7 +54,7 @@ public class RemarkRetrofitService {
             @Override
             public void onResponse(Call<Remark> call, Response<Remark> response) {
                 if(response.isSuccessful()){
-                    cl.doWhenRemarkIsCreated(response);
+                    cl.doWhenRemarkHasBeenCreated(response);
 
                 } else {
                     Log.d(TAG, String.format("Не удалось изменить запись, %s", response.message()));

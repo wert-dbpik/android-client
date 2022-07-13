@@ -25,7 +25,7 @@ public class FileRetrofitService {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    cl.doWhenFileIsUploaded();
+                    cl.doWhenFileHasBeenUploaded();
                 }
             }
 
@@ -37,6 +37,6 @@ public class FileRetrofitService {
     }
 
     public interface IFileUploader{
-        void doWhenFileIsUploaded();
+        void doWhenFileHasBeenUploaded();
     }
 }

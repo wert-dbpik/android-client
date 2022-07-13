@@ -30,7 +30,7 @@ public class PicRetrofitService {
             @Override
             public void onResponse(@NonNull Call<Pic> call, @NonNull Response<Pic> response) {
                 if (response.isSuccessful()) {
-                    cl.doWhenPicIsCreated(response, uri);
+                    cl.doWhenPicHasBeenCreated(response, uri);
                 }
 
             }
@@ -43,6 +43,6 @@ public class PicRetrofitService {
     }
 
     public interface IPicCreator {
-        void doWhenPicIsCreated(Response<Pic> response, Uri uri);
+        void doWhenPicHasBeenCreated(Response<Pic> response, Uri uri);
     }
 }
