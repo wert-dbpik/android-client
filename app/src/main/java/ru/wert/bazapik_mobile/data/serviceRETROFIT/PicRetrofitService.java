@@ -1,4 +1,4 @@
-package ru.wert.bazapik_mobile.data.serviceNew.files;
+package ru.wert.bazapik_mobile.data.serviceRETROFIT;
 
 import android.content.Context;
 import android.net.Uri;
@@ -45,4 +45,27 @@ public class PicRetrofitService {
     public interface IPicCreator {
         void doWhenPicHasBeenCreated(Response<Pic> response, Uri uri);
     }
+
+    public static void findByPicId(PicRetrofitService.IPicFindByPicId cl, Context context, Long pikId) {
+
+        PicApiInterface api = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
+        Call<Pic> call = api.getById(pikId);
+        call.enqueue(new Callback<Pic>() {
+            @Override
+            public void onResponse(@NonNull Call<Pic> call, @NonNull Response<Pic> response) {
+                if (response.isSuccessful()) {
+                    cl.doWhenPicHasBeenFoundByPikId(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Pic> call, Throwable t) {
+                new WarningDialog1().show(context, "Ошибка!", "Не удалось загрузить изображение");
+            }
+        });
+    }
+    public interface IPicFindByPicId {
+        void doWhenPicHasBeenFoundByPikId(Response<Pic> response);
+    }
+
 }

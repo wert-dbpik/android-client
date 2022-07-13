@@ -15,9 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +26,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import lombok.Getter;
 import lombok.Setter;
 import retrofit2.Response;
@@ -33,15 +34,16 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
-import ru.wert.bazapik_mobile.data.serviceNew.files.FileRetrofitService;
-import ru.wert.bazapik_mobile.data.serviceNew.files.PicRetrofitService;
-import ru.wert.bazapik_mobile.data.serviceNew.files.RemarkRetrofitService;
+import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
+import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
+import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
+import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.utils.ScalingUtilities;
 
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 public class RemarkEditorFragment extends Fragment implements
-        RemarkRetrofitService.IRemarkCreator, RemarkRetrofitService.IRemarkChanger,
+        RemarkRetrofitService.IRemarkCreate, RemarkRetrofitService.IRemarkChange,
         FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     @Getter private EditText editor;
@@ -57,6 +59,8 @@ public class RemarkEditorFragment extends Fragment implements
     @Setter private Remark changedRemark;
 
     private IRemarkFragmentInteraction viewInteraction;
+
+    private List<Bitmap> currentListOfPics;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -79,15 +83,22 @@ public class RemarkEditorFragment extends Fragment implements
                             chosenPics = (clipData == null ?
                                     Collections.singletonList(data.getData()) :
                                     ThisApplication.clipDataToList(clipData));
-                            for(Uri uri : chosenPics){
-                                String ext;
-                                String mimeType = context.getContentResolver().getType(uri);
-                                if(mimeType.startsWith("image"))
-                                    ext = mimeType.split("/", -1)[1];
-                                else
-                                    return;
-                                PicRetrofitService.create(RemarkEditorFragment.this, context, uri, ext);
-                                //Смотри doWhenPicIsCreated
+
+                            //каждое изображение chosenPics преобразуемBitmap, и добавляем его в currentListOfPics<Bitmap>
+                            //Изменяем adapter с новыми картинками
+
+
+                            currentListOfPics
+
+//                            for(Uri uri : chosenPics){
+//                                String ext;
+//                                String mimeType = context.getContentResolver().getType(uri);
+//                                if(mimeType.startsWith("image"))
+//                                    ext = mimeType.split("/", -1)[1];
+//                                else
+//                                    return;
+//                                PicRetrofitService.create(RemarkEditorFragment.this, context, uri, ext);
+//                                //Смотри doWhenPicIsCreated
 
                             }
                         }
@@ -98,7 +109,7 @@ public class RemarkEditorFragment extends Fragment implements
     @Override//IPicCreator
     public void doWhenPicHasBeenCreated(Response<Pic> response, Uri uri) {
         try {
-            Pic savedPic = (Pic) response.body();
+            Pic savedPic = response.body();
             String fileNewName = savedPic.getId() + "." + "jpg";
 
             InputStream iStream;
@@ -113,6 +124,13 @@ public class RemarkEditorFragment extends Fragment implements
 //            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 //
 //            byte[] draftBytes = baos.toByteArray();
+
+            //Добавим изображение в поле под текстом
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+            Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(bitmap, 600, 600, ScalingUtilities.ScalingLogic.FIT);
+
+            currentListOfPics.add(scaledBitmap);
+
 
             FileRetrofitService.uploadFile(RemarkEditorFragment.this, context, "pics", fileNewName, draftBytes);
             //Смотри doWhenFileIsUploaded
@@ -150,6 +168,9 @@ public class RemarkEditorFragment extends Fragment implements
 
             pickUpPictureResultLauncher.launch(intent);
         });
+
+        RecyclerView rvEditorRemarkPics = view.findViewById(R.id.rvEditorRemarkPics);
+        rvEditorRemarkPics.setAdapter(new PicsAdapter(context, new ArrayList<>()));
 
         return view;
     }

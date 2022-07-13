@@ -38,6 +38,7 @@ import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
@@ -53,7 +54,10 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
  * Далее доступные для элемента чертежи в rvDrafts
  * для каждого чертежа представлен его тип, стр, статус
  */
-public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter.InfoDraftClickListener, InfoRemarksViewAdapter.InfoRemarkClickListener,
+public class InfoActivity extends BaseActivity  implements
+        RemarkRetrofitService.IRemarkFindByPassportId,
+        InfoDraftsViewAdapter.InfoDraftClickListener,
+        InfoRemarksViewAdapter.InfoRemarkClickListener,
         IRemarkFragmentInteraction {
 
     private static final String TAG = "+++ PassportInfoActivity +++" ;
@@ -190,36 +194,27 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
     }
 
     public void updateRemarkAdapter(){
-        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<List<Remark>> call =  api.getAllByPassportId(passId);
-        call.enqueue(new Callback<List<Remark>>() {
-            @Override
-            public void onResponse(Call<List<Remark>> call, Response<List<Remark>> response) {
-                if (response.isSuccessful()) {
-                    ArrayList<Remark> foundRemarks  = new ArrayList<>();
-                    if(response.body() != null) foundRemarks = new ArrayList<>(response.body());
+        RemarkRetrofitService.findByPassportId(InfoActivity.this, this, passId);
+        //Смотри doWhenRemarkHasBeenFoundByPassportId
+        //Происходит перестроение RecyclerView
+    }
 
-                    if(foundRemarks.isEmpty()) {
-                        tvRemarks.setVisibility(View.INVISIBLE);
-                    } else {
-                        tvRemarks.setVisibility(View.VISIBLE);
-                        if (foundRemarks.size() > 1) {
-                            foundRemarks = new ArrayList<>(foundRemarks.stream()
-                                    .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
-                                    .collect(Collectors.toList()));
-                        }
-                    }
-                    remarksAdapter.changeListOfItems(foundRemarks);
-                } else {
-                    new WarningDialog1().show(InfoActivity.this, "Внимание!", "Проблемы на линии!");
-                }
-            }
+    @Override
+    public void doWhenRemarkHasBeenFoundByPassportId(Response<List<Remark>> response) {
+        ArrayList<Remark> foundRemarks  = new ArrayList<>();
+        if(response.body() != null) foundRemarks = new ArrayList<>(response.body());
 
-            @Override
-            public void onFailure(Call<List<Remark>> call, Throwable t) {
-                new WarningDialog1().show(InfoActivity.this, "Внимание!", "Проблемы на линии!");
+        if(foundRemarks.isEmpty()) {
+            tvRemarks.setVisibility(View.INVISIBLE);
+        } else {
+            tvRemarks.setVisibility(View.VISIBLE);
+            if (foundRemarks.size() > 1) {
+                foundRemarks = new ArrayList<>(foundRemarks.stream()
+                        .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+                        .collect(Collectors.toList()));
             }
-        });
+        }
+        remarksAdapter.changeListOfItems(foundRemarks);
     }
 
     public void changeRemark(Remark remark) {
@@ -431,4 +426,6 @@ public class InfoActivity extends BaseActivity  implements InfoDraftsViewAdapter
         }
         return null;
     }
+
+
 }

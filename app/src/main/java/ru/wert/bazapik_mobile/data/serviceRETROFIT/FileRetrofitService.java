@@ -1,4 +1,4 @@
-package ru.wert.bazapik_mobile.data.serviceNew.files;
+package ru.wert.bazapik_mobile.data.serviceRETROFIT;
 
 import android.content.Context;
 

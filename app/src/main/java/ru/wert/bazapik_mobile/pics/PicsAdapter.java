@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.api_interfaces.FileApiInterface;
+import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 
@@ -90,5 +92,15 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
             super(itemView);
             ivPicture = itemView.findViewById(R.id.ivPicture);
         }
+    }
+
+    /**
+     * Обновляет отображаемые данные
+     *
+     * @param items List<P>
+     */
+    public void changeListOfItems(List items) {
+        data = new ArrayList<Pic>(items);
+        notifyDataSetChanged();
     }
 }
