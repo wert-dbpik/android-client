@@ -1,40 +1,11 @@
 package ru.wert.bazapik_mobile.remark;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.data.api_interfaces.FileApiInterface;
-import ru.wert.bazapik_mobile.data.api_interfaces.PicApiInterface;
-import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
-import ru.wert.bazapik_mobile.data.models.Pic;
-import ru.wert.bazapik_mobile.data.models.Remark;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.remark.IRemarkFragmentInteraction;
-import ru.wert.bazapik_mobile.warnings.WarningDialog1;
-
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,26 +13,42 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import org.apache.commons.io.FileUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
-import java.io.File;
-import java.net.URI;
-import java.nio.file.Files;
-import java.util.ArrayList;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import lombok.Getter;
+import lombok.Setter;
+import retrofit2.Response;
+import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.data.models.Pic;
+import ru.wert.bazapik_mobile.data.models.Remark;
+import ru.wert.bazapik_mobile.data.serviceNew.files.FileRetrofitService;
+import ru.wert.bazapik_mobile.data.serviceNew.files.PicRetrofitService;
+import ru.wert.bazapik_mobile.data.serviceNew.files.RemarkRetrofitService;
 
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
-public class RemarkEditorFragment extends Fragment {
+public class RemarkEditorFragment extends Fragment implements
+        RemarkRetrofitService.IRemarkCreator, RemarkRetrofitService.IRemarkChanger,
+        FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     @Getter private EditText editor;
     @Getter private Button btnAdd;
 
-    private String TAG = "RemarkFragment";
+    private final String TAG = "RemarkFragment";
     public static final String sAdd = "добавить";
     public static final String sChange = "изменить";
 
     private ActivityResultLauncher<Intent> pickUpPictureResultLauncher;
-    private static final int SELECT_PICTURE = 1;
+    private Context context;
 
     @Setter private Remark changedRemark;
 
@@ -70,6 +57,7 @@ public class RemarkEditorFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        this.context = context;
         viewInteraction = (IRemarkFragmentInteraction) context;
     }
 
@@ -81,56 +69,46 @@ public class RemarkEditorFragment extends Fragment {
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        if (Intent.ACTION_SEND_MULTIPLE.equals(data.getAction()) && data.hasExtra(Intent.EXTRA_STREAM)) {
-                            ArrayList<Parcelable> list = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-                            if (list != null) {
-                                for (Parcelable parcel : list) {
-                                    Uri uri = (Uri) parcel;
-                                    String ext = FileUtils.getExtension(uri.getPath().toLowerCase());
-                                    Pic newPic = new Pic();
-                                    newPic.setExtension(ext);
-                                    newPic.setUser(CURRENT_USER);
+                        if(data != null) {
+                            List<Uri> chosenPics;
+                            ClipData clipData = data.getClipData();
+                            chosenPics = (clipData == null ?
+                                    Collections.singletonList(data.getData()) :
+                                    ThisApplication.clipDataToList(clipData));
+                            for(Uri uri : chosenPics){
+                                String ext;
+                                String mimeType = context.getContentResolver().getType(uri);
+                                if(mimeType.startsWith("image"))
+                                    ext = mimeType.split("/", -1)[1];
+                                else
+                                    return;
+                                PicRetrofitService.create(RemarkEditorFragment.this, context, uri, ext);
+                                //Смотри doWhenPicIsCreated
 
-                                    PicApiInterface api = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
-                                    Call<Pic> call = api.create(newPic);
-                                    call.enqueue(new Callback<Pic>() {
-                                        @SneakyThrows
-                                        @Override
-                                        public void onResponse(Call<Pic> call, Response<Pic> response) {
-                                            Pic savedPic = response.body();
-                                            String fileNewName = savedPic.getId() + "." + savedPic.getExtension();
-                                            File picFile = new File(new URI(uri.toString()));
-                                            byte[] draftBytes = Files.readAllBytes(picFile.toPath());
-                                            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), draftBytes);
-                                            MultipartBody.Part body = MultipartBody.Part.createFormData("file", fileNewName, requestBody);
-                                            FileApiInterface fileApi = RetrofitClient.getInstance().getRetrofit().create(FileApiInterface.class);
-                                            Call<Void> uploadCall = fileApi.upload("pic", body);
-                                            uploadCall.enqueue(new Callback<Void>() {
-                                                @Override
-                                                public void onResponse(Call<Void> call, Response<Void> response) {
-                                                    if(response.isSuccessful()){
-                                                        viewInteraction.updateRemarkAdapter();
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onFailure(Call<Void> call, Throwable t) {
-                                                    new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось загрузить изображение");
-                                                }
-                                            });
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<Pic> call, Throwable t) {
-                                            new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось загрузить изображение");
-                                        }
-                                    });
-
-                                }
                             }
                         }
                     }
                 });
+    }
+
+    @Override//IPicCreator
+    public void doWhenPicIsCreated(Response<Pic> response, Uri uri) {
+        try {
+            Pic savedPic = (Pic) response.body();
+            String fileNewName = savedPic.getId() + "." + savedPic.getExtension();
+            InputStream iStream;
+            iStream = context.getContentResolver().openInputStream(uri);
+            byte[] draftBytes = ThisApplication.getBytes(iStream);
+            FileRetrofitService.uploadFile(RemarkEditorFragment.this, context, "pics", fileNewName, draftBytes);
+            //Смотри doWhenFileIsUploaded
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override //FileRetrofitService.IFileUploader
+    public void doWhenFileIsUploaded() {
+        viewInteraction.updateRemarkAdapter();
     }
 
     @Override
@@ -148,12 +126,10 @@ public class RemarkEditorFragment extends Fragment {
                 changeRemark();
         });
 
-
-
         ImageButton btnAddImage = view.findViewById(R.id.btnAddImage);
         btnAddImage.setOnClickListener(v ->{
             Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_PICK);
+            intent.setAction(Intent.ACTION_GET_CONTENT);
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             intent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
 
@@ -172,29 +148,17 @@ public class RemarkEditorFragment extends Fragment {
                 ThisApplication.getCurrentTime()
         );
 
-        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<Remark> call = api.create(remark);
-        call.enqueue(new Callback<Remark>() {
-            @Override
-            public void onResponse(Call<Remark> call, Response<Remark> response) {
-                if(response.isSuccessful()){
-                    viewInteraction.closeRemarkFragment();
-                    viewInteraction.updateRemarkAdapter();
-                    viewInteraction.findPassportById(viewInteraction.getPassport().getId())
-                            .getRemarkIds().add(response.body().getId());
-                } else {
-                    Log.d(TAG, String.format("Не удалось сохранить запись, %s", response.message()));
-                    new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось сохранить запись");
-                }
-            }
+        RemarkRetrofitService.create(RemarkEditorFragment.this, context, remark);
+        //Смотри doWhenRemarkIsCreated
 
-            @Override
-            public void onFailure(Call<Remark> call, Throwable t) {
-                Log.d(TAG, String.format("Не удалось сохранить запись, %s", t.getMessage()));
-                new WarningDialog1().show(getActivity(), "Ошибка!", "Не удалось сохранить запись");
-            }
-        });
+    }
 
+    @Override//RemarkRetrofitService.IRemarkCreator
+    public void doWhenRemarkIsCreated(Response<Remark> response) {
+        viewInteraction.closeRemarkFragment();
+        viewInteraction.updateRemarkAdapter();
+        viewInteraction.findPassportById(viewInteraction.getPassport().getId())
+                .getRemarkIds().add(response.body().getId());
     }
 
 
@@ -204,25 +168,13 @@ public class RemarkEditorFragment extends Fragment {
         changedRemark.setText(editor.getText().toString());
         changedRemark.setCreationTime(ThisApplication.getCurrentTime());
 
-        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<Remark> call = api.update(changedRemark);
-        call.enqueue(new Callback<Remark>() {
-            @Override
-            public void onResponse(Call<Remark> call, Response<Remark> response) {
-                if(response.isSuccessful()){
-                    viewInteraction.closeRemarkFragment();
-                    viewInteraction.updateRemarkAdapter();
-                } else {
-                    Log.d(TAG, String.format("Не удалось изменить запись, %s", response.message()));
-                    new WarningDialog1().show(getActivity(), "Ошибка!","Не удалось сохранить запись");
-                }
-            }
+        RemarkRetrofitService.change(RemarkEditorFragment.this, context, changedRemark);
+        //Смотри doWhenRemarkHasBeenChanged
+    }
 
-            @Override
-            public void onFailure(Call<Remark> call, Throwable t) {
-                Log.d(TAG, String.format("Не удалось изменить запись, %s", t.getMessage()));
-                new WarningDialog1().show(getActivity(), "Ошибка!", "Не удалось сохранить запись");
-            }
-        });
+    @Override//RemarkRetrofitService.IRemarkChanger
+    public void doWhenRemarkHasBeenChanged(Response<Remark> response) {
+        viewInteraction.closeRemarkFragment();
+        viewInteraction.updateRemarkAdapter();
     }
 }

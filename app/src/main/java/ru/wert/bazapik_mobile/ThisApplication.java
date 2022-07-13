@@ -3,11 +3,16 @@ package ru.wert.bazapik_mobile;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -348,5 +353,26 @@ public class ThisApplication extends Application {
         Date date = Calendar.getInstance().getTime();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         return df.format(date);
+    }
+
+    public static byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
+
+    public static List<Uri> clipDataToList(ClipData clipData){
+        List<Uri> list = new ArrayList<>();
+        for(int i = 0 ; i < clipData.getItemCount(); i++){
+            list.add(clipData.getItemAt(i).getUri());
+        }
+        return list;
+
     }
 }
