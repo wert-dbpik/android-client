@@ -1,6 +1,8 @@
 package ru.wert.bazapik_mobile.data.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -20,6 +22,8 @@ public class Remark extends _BaseEntity implements Item, Comparable {
     private User user;
     private String text;
     private String creationTime;
+
+    private Set<Pic> picsInRemark;
 
 
     @Override

@@ -7,22 +7,17 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
@@ -82,7 +77,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.getMenuInflater().inflate(R.menu.remark_context_menu, popup.getMenu());
             popup.setOnMenuItemClickListener(item1 -> {
-                Remark remark = (Remark) mData.get(position);
+                Remark remark = mData.get(position);
                 switch (item1.getItemId()) {
                     case R.id.changeRemark:
                         ((InfoActivity)context).changeRemark(remark);
@@ -95,24 +90,30 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             });
             popup.show();
         });
-        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<Set<Pic>> call = api.getPics(item.getId());
-        call.enqueue(new Callback<Set<Pic>>() {
-            @Override
-            public void onResponse(@NonNull Call<Set<Pic>> call, @NonNull Response<Set<Pic>> response) {
-                if(response.isSuccessful()){
-                    assert response.body() != null;
-                    holder.rvRemarkPics.setAdapter(new PicsAdapter(context, new ArrayList<>(response.body())));
-                } else {
 
-                }
-            }
+        Set<Pic> picsInRemark = item.getPicsInRemark() == null ? new HashSet<>() : item.getPicsInRemark();
 
-            @Override
-            public void onFailure(Call<Set<Pic>> call, Throwable t) {
+        holder.rvRemarkPics.setAdapter(new PicsAdapter(context, picsInRemark));
+        holder.rvRemarkPics.getAdapter().notifyDataSetChanged();
 
-            }
-        });
+//        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+//        Call<Set<Pic>> call = api.getPics(item.getId());
+//        call.enqueue(new Callback<Set<Pic>>() {
+//            @Override
+//            public void onResponse(@NonNull Call<Set<Pic>> call, @NonNull Response<Set<Pic>> response) {
+//                if(response.isSuccessful()){
+//                    assert response.body() != null;
+//                    holder.rvRemarkPics.setAdapter(new PicsAdapter(context, new ArrayList<>(response.body())));
+//                } else {
+//
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Set<Pic>> call, Throwable t) {
+//
+//            }
+//        });
 
 
 

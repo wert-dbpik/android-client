@@ -218,7 +218,7 @@ public class InfoActivity extends BaseActivity  implements
     }
 
     public void changeRemark(Remark remark) {
-        remarkEditorFragment.getEditor().setText(remark.getText());
+        remarkEditorFragment.getTextEditor().setText(remark.getText());
         remarkEditorFragment.setChangedRemark(remark);
         remarkEditorFragment.getBtnAdd().setText(RemarkEditorFragment.sChange);
         remarkContainerView.setVisibility(View.VISIBLE);
@@ -256,8 +256,8 @@ public class InfoActivity extends BaseActivity  implements
                 remarkContainerView.setVisibility(View.INVISIBLE);
             else {
                 remarkContainerView.setVisibility(View.VISIBLE);
-                remarkEditorFragment.getEditor().setText(remarkText);
-                remarkEditorFragment.getEditor().setSelection(remarkText.length());
+                remarkEditorFragment.getTextEditor().setText(remarkText);
+                remarkEditorFragment.getTextEditor().setSelection(remarkText.length());
             }
 
             Parcelable listDraftsState = resumeBundle.getParcelable(KEY_RECYCLER_DRAFTS_STATE);
@@ -277,7 +277,7 @@ public class InfoActivity extends BaseActivity  implements
     protected void onPause() {
         super.onPause();
         resumeBundle = new Bundle();
-        resumeBundle.putString(REMARK_TEXT, remarkEditorFragment.getEditor().getText().toString());
+        resumeBundle.putString(REMARK_TEXT, remarkEditorFragment.getTextEditor().getText().toString());
 
         if(rvDrafts != null) {
             Parcelable listDraftsState = rvDrafts.getLayoutManager().onSaveInstanceState();
@@ -387,7 +387,7 @@ public class InfoActivity extends BaseActivity  implements
                 return true;
 
             case R.id.action_addRemark:
-                remarkEditorFragment.getEditor().setText("");
+                remarkEditorFragment.getTextEditor().setText("");
                 remarkEditorFragment.getBtnAdd().setText(RemarkEditorFragment.sAdd);
                 remarkContainerView.setVisibility(View.VISIBLE);
                 return true;

@@ -12,6 +12,7 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,9 +34,9 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
     private final Context context;
     private final Activity activity;
 
-    public PicsAdapter(Context context, List<Pic> data) {
+    public PicsAdapter(Context context, Set<Pic> data) {
         this.context = context;
-        this.data = data;
+        this.data = new ArrayList<>(data);
         this.inflater = LayoutInflater.from(context);
         this.activity = (Activity) context;
     }
