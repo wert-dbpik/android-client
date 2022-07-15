@@ -148,7 +148,6 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         ((Activity)org).runOnUiThread(()->{
             if (resumeBundle != null) {
 
-
                 int pos = resumeBundle.getInt(SELECTED_POSITION);
                 if(pos != RecyclerView.NO_POSITION) {
                     adapter.setSelectedPosition(pos);

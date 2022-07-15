@@ -29,7 +29,6 @@ public interface FileApiInterface {
     /**
      * Загрузка файла на сервер
      * @param folder, String - имя папки хранения на сервере ("pics", "drafts" "excels")
-     * @param newName - имя под которым необходимо сохранить файл, nullable
      * @param file - собственно файл
      * @return
      */

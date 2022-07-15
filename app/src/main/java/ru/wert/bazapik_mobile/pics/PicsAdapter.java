@@ -10,12 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import lombok.SneakyThrows;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,7 +36,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
     private final Context context;
     private final Activity activity;
 
-    public PicsAdapter(Context context, Set<Pic> data) {
+    public PicsAdapter(Context context, List<Pic> data) {
         this.context = context;
         this.data = new ArrayList<>(data);
         this.inflater = LayoutInflater.from(context);
@@ -55,16 +57,29 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
         String picName = pic.getId() + "." + pic.getExtension();
         Call<ResponseBody> call = api.download("pics", picName);
         call.enqueue(new Callback<ResponseBody>() {
+
             @Override
             public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
                 if(response.isSuccessful()){
                     assert response.body() != null;
-                    Bitmap bmp = BitmapFactory.decodeStream(response.body().byteStream());
-                    holder.ivPicture.setImageBitmap(bmp);
+                    new Thread(()->{
+                        try {
+                            byte [] bt = response.body().bytes();
+                            activity.runOnUiThread(()->{
+                                Bitmap bmp = BitmapFactory.decodeByteArray(bt, 0 , bt.length);
+                                holder.ivPicture.setAdjustViewBounds(true);
+                                holder.ivPicture.setImageBitmap(bmp);
+                            });
+                        } catch (IOException e) {
+                            Log.e(TAG, "Ошибка декодирования файла: " + e.getMessage());
+                        }
+                    }).start();
+
                 } else {
                     Log.e(TAG, "Couldn't download picture");
                     Bitmap bmp = BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.noimage);
+                    holder.ivPicture.setAdjustViewBounds(true);
                     holder.ivPicture.setImageBitmap(bmp);
                 }
             }

@@ -175,11 +175,9 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
      * @param items List<P>
      */
     public void changeListOfItems(List items) {
-
         mData = new ArrayList<Item>(items);
         selectedPosition = RecyclerView.NO_POSITION;
         notifyDataSetChanged();
-//        fragment.getRv().invalidate();
     }
 
     /**

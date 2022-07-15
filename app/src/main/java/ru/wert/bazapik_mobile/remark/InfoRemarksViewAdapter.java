@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,10 +92,10 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             popup.show();
         });
 
-        Set<Pic> picsInRemark = item.getPicsInRemark() == null ? new HashSet<>() : item.getPicsInRemark();
+//        Set<Pic> picsInRemark = item.getPicsInRemark() == null ? new HashSet<>() : item.getPicsInRemark();
 
-        holder.rvRemarkPics.setAdapter(new PicsAdapter(context, picsInRemark));
-        holder.rvRemarkPics.getAdapter().notifyDataSetChanged();
+//        holder.rvRemarkPics.setAdapter(new PicsAdapter(context, new ArrayList<>(picsInRemark)));
+//        holder.rvRemarkPics.getAdapter().notifyDataSetChanged();
 
 //        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
 //        Call<Set<Pic>> call = api.getPics(item.getId());

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -28,6 +31,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +44,7 @@ import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
+import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.utils.ScalingUtilities;
 
@@ -57,18 +63,24 @@ public class RemarkEditorFragment extends Fragment implements
 
     private ActivityResultLauncher<Intent> pickUpPictureResultLauncher;
     private Context context;
+    private InfoActivity activity;
 
     @Setter private Remark changedRemark;
 
     private IRemarkFragmentInteraction viewInteraction;
     private RecyclerView rvEditorRemarkPics;
 
-    private Set<Pic> picsInAdapter = new HashSet<>();
+    @Getter private PicsAdapter picsAdapter;
+    private List<Pic> picsInAdapter;
+    private Bundle resumeBundle;
+    private final String KEY_RECYCLER_STATE = "recycler_state";
+    private final String REMARK_TEXT = "remark_text";
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
+        this.activity = (InfoActivity) context;
         viewInteraction = (IRemarkFragmentInteraction) context;
     }
 
@@ -103,6 +115,41 @@ public class RemarkEditorFragment extends Fragment implements
                 });
     }
 
+    private Bundle createSaveStateBundle(){
+        Bundle bundle = new Bundle();
+        bundle.putString(REMARK_TEXT, textEditor.getText().toString());
+
+        Parcelable listState = Objects.requireNonNull(rvEditorRemarkPics.getLayoutManager()).onSaveInstanceState();
+        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+
+        return bundle;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(resumeBundle == null) return;
+        activity.runOnUiThread(()->{
+            textEditor.setText(resumeBundle.getString(REMARK_TEXT));
+
+            Parcelable savedRecyclerLayoutState = resumeBundle.getParcelable(KEY_RECYCLER_STATE);
+            Objects.requireNonNull(rvEditorRemarkPics.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
+        });
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        resumeBundle = createSaveStateBundle();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        resumeBundle = createSaveStateBundle();
+    }
+
     @Override//IPicCreator
     public void doWhenPicHasBeenCreated(Response<Pic> response, Uri uri) {
         //Добавляем выбранную картинку в уоллекцию для адаптера
@@ -111,33 +158,48 @@ public class RemarkEditorFragment extends Fragment implements
             Pic savedPic = response.body();
             String fileNewName = savedPic.getId() + "." + "jpg";
 
-            InputStream iStream;
-            iStream = context.getContentResolver().openInputStream(uri);
-            byte[] draftBytes = ThisApplication.getBytes(iStream);
-
-
-//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-//            Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(bitmap, 600, 600, ScalingUtilities.ScalingLogic.FIT);
-//
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//
-//            byte[] draftBytes = baos.toByteArray();
-
-            //Добавим изображение в поле под текстом
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-            Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(bitmap, 600, 600, ScalingUtilities.ScalingLogic.FIT);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+            byte[] draftBytes = baos.toByteArray();
 
             FileRetrofitService.uploadFile(RemarkEditorFragment.this, context, "pics", fileNewName, draftBytes);
-            //Смотри doWhenFileIsUploaded
+            //doWhenFileHasBeenUploaded
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * НЕ УДАЛЯТЬ
+     */
+    private void archive(){
+//            1) Изображение переносится 1:1 - размер огромный
+//            InputStream iStream;
+//            iStream = context.getContentResolver().openInputStream(uri);
+//            byte[] draftBytes = ThisApplication.getBytes(iStream);
+
+//            2) Метод использованием  класса ScalingUtilities с подгонкой размера под габариты,
+//            размер после упаковывания в контейнер bitmap приемлимый чуть больше 250кб
+//            не отображается в просмотрщике windows
+//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+//            Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(bitmap, 600, 600, ScalingUtilities.ScalingLogic.FIT);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            byte[] draftBytes = baos.toByteArray();
+
+//            3) Самый сжатый рисунок всего 195кб,
+//            не отображается в просмотрщике windows
+//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+//            byte[] draftBytes = baos.toByteArray();
+    }
+
     @Override //FileRetrofitService.IFileUploader
     public void doWhenFileHasBeenUploaded() {
-        ((PicsAdapter)rvEditorRemarkPics.getAdapter()).changeListOfItems(new ArrayList<>(picsInAdapter));
+
+            picsAdapter.changeListOfItems(new ArrayList<>(picsInAdapter));
 
 //        viewInteraction.updateRemarkAdapter();
     }
@@ -168,9 +230,22 @@ public class RemarkEditorFragment extends Fragment implements
         });
 
         rvEditorRemarkPics = view.findViewById(R.id.rvEditorRemarkPics);
-        rvEditorRemarkPics.setAdapter(new PicsAdapter(context, picsInAdapter));
+        picsInAdapter = new ArrayList<>();
+        Pic p = new Pic();
+        p.setId(54L);
+        p.setExtension("jpg");
+        picsInAdapter.add(p);
+        fillRecViewWithPics(picsInAdapter);
 
         return view;
+    }
+
+    private void fillRecViewWithPics(List<Pic> pics) {
+        rvEditorRemarkPics.setLayoutManager(new LinearLayoutManager(getContext()));
+        picsAdapter = new PicsAdapter(context, pics);
+        rvEditorRemarkPics.setAdapter(picsAdapter);
+        rvEditorRemarkPics.addItemDecoration(new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL));
     }
 
     private void addRemark(){
@@ -180,7 +255,7 @@ public class RemarkEditorFragment extends Fragment implements
                 CURRENT_USER,
                 textEditor.getText().toString(),
                 ThisApplication.getCurrentTime(),
-                picsInAdapter
+                new HashSet<>(picsInAdapter)
         );
 
         RemarkRetrofitService.create(RemarkEditorFragment.this, context, remark);
