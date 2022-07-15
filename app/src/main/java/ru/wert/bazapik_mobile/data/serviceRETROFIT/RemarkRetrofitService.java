@@ -4,12 +4,15 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.List;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.wert.bazapik_mobile.data.api_interfaces.PicApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
+import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
@@ -101,5 +104,30 @@ public class RemarkRetrofitService {
 
     public interface IRemarkChange {
         void doWhenRemarkHasBeenChanged(Response<Remark> response);
+    }
+
+    public static void addPic(RemarkRetrofitService.IRemarkAddPic cl, Context context, Remark remark, Pic pic){
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        Call<Set<Pic>> call = api.addPic(remark.getId(), pic.getId());
+        call.enqueue(new Callback<Set<Pic>>() {
+            @Override
+            public void onResponse(Call<Set<Pic>> call, Response<Set<Pic>> response) {
+                if (response.isSuccessful()) {
+                    cl.doWhenRemarkHasBeenAddedPic(response);
+                } else {
+                    Log.d(TAG, String.format("Не удалось добавить картинку в комментарий, %s", response.message()));
+                    new WarningDialog1().show(context, "Ошибка!", "Не удалось добавить картинку в комментарий");
+                }
+            }
+            @Override
+            public void onFailure(Call<Set<Pic>> call, Throwable t) {
+                Log.d(TAG, String.format("Не удалось добавить картинку в комментарий, %s", t.getMessage()));
+                new WarningDialog1().show(context, "Ошибка!", "Не удалось добавить картинку в комментарий");
+            }
+        });
+    }
+
+    public interface IRemarkAddPic {
+        void doWhenRemarkHasBeenAddedPic(Response<Set<Pic>> response);
     }
 }

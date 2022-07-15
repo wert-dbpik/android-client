@@ -77,7 +77,7 @@ public class InfoActivity extends BaseActivity  implements
     private final String KEY_RECYCLER_REMARKS_STATE = "recycler_remarks_state";
     private final String REMARK_TEXT = "remark_text";
 
-    private FragmentContainerView remarkContainerView;
+    @Getter private FragmentContainerView remarkContainerView;
     private RemarkEditorFragment remarkEditorFragment;
 
     //Все найденные элементы

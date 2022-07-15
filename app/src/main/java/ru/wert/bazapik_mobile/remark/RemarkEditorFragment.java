@@ -51,7 +51,7 @@ import ru.wert.bazapik_mobile.utils.ScalingUtilities;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 public class RemarkEditorFragment extends Fragment implements
-        RemarkRetrofitService.IRemarkCreate, RemarkRetrofitService.IRemarkChange,
+        RemarkRetrofitService.IRemarkCreate, RemarkRetrofitService.IRemarkChange, RemarkRetrofitService.IRemarkAddPic,
         FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     @Getter private EditText textEditor;
@@ -102,9 +102,10 @@ public class RemarkEditorFragment extends Fragment implements
                             for(Uri uri : chosenPics){
                                 String ext;
                                 String mimeType = context.getContentResolver().getType(uri);
-                                if(mimeType.startsWith("image"))
-                                    ext = mimeType.split("/", -1)[1];
-                                else
+                                if(mimeType.startsWith("image")) {
+                                    String str = mimeType.split("/", -1)[1];
+                                    ext = str.equals("jpeg") ? "jpg" : str;
+                                } else
                                     return;
                                 PicRetrofitService.create(RemarkEditorFragment.this, context, uri, ext);
                                 //Смотри doWhenPicIsCreated
@@ -131,9 +132,11 @@ public class RemarkEditorFragment extends Fragment implements
         if(resumeBundle == null) return;
         activity.runOnUiThread(()->{
             textEditor.setText(resumeBundle.getString(REMARK_TEXT));
+            textEditor.setSelection(textEditor.length());
 
             Parcelable savedRecyclerLayoutState = resumeBundle.getParcelable(KEY_RECYCLER_STATE);
             Objects.requireNonNull(rvEditorRemarkPics.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
+            viewInteraction.getRemarkContainerView().setVisibility(View.VISIBLE);
         });
 
     }
@@ -199,7 +202,7 @@ public class RemarkEditorFragment extends Fragment implements
     @Override //FileRetrofitService.IFileUploader
     public void doWhenFileHasBeenUploaded() {
 
-            picsAdapter.changeListOfItems(new ArrayList<>(picsInAdapter));
+        picsAdapter.changeListOfItems(new ArrayList<>(picsInAdapter));
 
 //        viewInteraction.updateRemarkAdapter();
     }
@@ -231,10 +234,6 @@ public class RemarkEditorFragment extends Fragment implements
 
         rvEditorRemarkPics = view.findViewById(R.id.rvEditorRemarkPics);
         picsInAdapter = new ArrayList<>();
-        Pic p = new Pic();
-        p.setId(54L);
-        p.setExtension("jpg");
-        picsInAdapter.add(p);
         fillRecViewWithPics(picsInAdapter);
 
         return view;
@@ -263,14 +262,23 @@ public class RemarkEditorFragment extends Fragment implements
 
     }
 
+
     @Override//RemarkRetrofitService.IRemarkCreator
     public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
+        for (int i = 0 ; i < picsInAdapter.size(); i++) {
+            assert response.body() != null;
+            RemarkRetrofitService.addPic(this, context, response.body(), picsInAdapter.get(i));
+        }
         viewInteraction.closeRemarkFragment();
         viewInteraction.updateRemarkAdapter();
         viewInteraction.findPassportById(viewInteraction.getPassport().getId())
                 .getRemarkIds().add(response.body().getId());
     }
 
+    @Override
+    public void doWhenRemarkHasBeenAddedPic(Response<Set<Pic>> response) {
+
+    }
 
     private void changeRemark(){
 
@@ -287,6 +295,7 @@ public class RemarkEditorFragment extends Fragment implements
         viewInteraction.closeRemarkFragment();
         viewInteraction.updateRemarkAdapter();
     }
+
 
 
 }

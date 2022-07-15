@@ -35,13 +35,13 @@ public interface RemarkApiInterface {
 
     //==========  КАРТИНКИ И КОММЕНТАРИИ
 
-    @GET("products/pics-in-product/{productId}")
-    Call<Set<Pic>> getPics(@Path("productId") Long id);
+    @GET("remarks/pics-in-remark/{remarkId}")
+    Call<Set<Pic>> getPics(@Path("remarkId") Long id);
 
-    @GET("products/add-pic-in-product/{productId}/{picId}")
-    Call<Set<Pic>> addPic(@Path("productId") Long productId, @Path("picId") Long picId);
+    @GET("remarks/add-pic-in-remark/{remarkId}/{picId}")
+    Call<Set<Pic>> addPic(@Path("remarkId") Long remarkId, @Path("picId") Long picId);
 
-    @GET("products/remove-pic-in-product/{productId}/{picId}")
-    Call<Set<Pic>> removePic(@Path("productId") Long productId, @Path("picId") Long picId);
+    @GET("remarks/remove-pic-in-remark/{remarkId}/{picId}")
+    Call<Set<Pic>> removePic(@Path("remarkId") Long remarkId, @Path("picId") Long picId);
 
 }

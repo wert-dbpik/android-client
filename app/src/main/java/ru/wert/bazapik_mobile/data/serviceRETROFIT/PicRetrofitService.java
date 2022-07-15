@@ -10,6 +10,7 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.PicApiInterface;
 import ru.wert.bazapik_mobile.data.models.Pic;
+import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -67,5 +68,7 @@ public class PicRetrofitService {
     public interface IPicFindByPicId {
         void doWhenPicHasBeenFoundByPikId(Response<Pic> response);
     }
+
+
 
 }

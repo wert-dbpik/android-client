@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile.data.models;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class Remark extends _BaseEntity implements Item, Comparable {
     private String text;
     private String creationTime;
 
-    private Set<Pic> picsInRemark;
+    private Set<Pic> picsInRemark = new HashSet<>(0);
 
 
     @Override
