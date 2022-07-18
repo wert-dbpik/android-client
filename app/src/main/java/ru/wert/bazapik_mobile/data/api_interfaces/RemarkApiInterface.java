@@ -38,8 +38,8 @@ public interface RemarkApiInterface {
     @GET("remarks/pics-in-remark/{remarkId}")
     Call<Set<Pic>> getPics(@Path("remarkId") Long id);
 
-    @GET("remarks/add-pic-in-remark/{remarkId}/{picId}")
-    Call<Set<Pic>> addPic(@Path("remarkId") Long remarkId, @Path("picId") Long picId);
+    @GET("remarks/add-pics-in-remark/{remarkId}/{picIds}")
+    Call<Set<Pic>> addPics(@Path("remarkId") Long remarkId, @Path("picId") List<Long> picId);
 
     @GET("remarks/remove-pic-in-remark/{remarkId}/{picId}")
     Call<Set<Pic>> removePic(@Path("remarkId") Long remarkId, @Path("picId") Long picId);

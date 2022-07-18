@@ -18,7 +18,6 @@ import android.widget.ImageButton;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,7 +45,6 @@ import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
-import ru.wert.bazapik_mobile.utils.ScalingUtilities;
 
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
@@ -265,10 +263,9 @@ public class RemarkEditorFragment extends Fragment implements
 
     @Override//RemarkRetrofitService.IRemarkCreator
     public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
-        for (int i = 0 ; i < picsInAdapter.size(); i++) {
-            assert response.body() != null;
-            RemarkRetrofitService.addPic(this, context, response.body(), picsInAdapter.get(i));
-        }
+
+        assert response.body() != null;
+        RemarkRetrofitService.addPics(this, context, response.body(), picsInAdapter);
         viewInteraction.closeRemarkFragment();
         viewInteraction.updateRemarkAdapter();
         viewInteraction.findPassportById(viewInteraction.getPassport().getId())

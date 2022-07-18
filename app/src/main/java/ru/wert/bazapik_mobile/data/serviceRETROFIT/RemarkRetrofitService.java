@@ -5,12 +5,13 @@ import android.util.Log;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import androidx.annotation.NonNull;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.wert.bazapik_mobile.data.api_interfaces.PicApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
@@ -106,9 +107,10 @@ public class RemarkRetrofitService {
         void doWhenRemarkHasBeenChanged(Response<Remark> response);
     }
 
-    public static void addPic(RemarkRetrofitService.IRemarkAddPic cl, Context context, Remark remark, Pic pic){
+    public static void addPics(RemarkRetrofitService.IRemarkAddPic cl, Context context, Remark remark, List<Pic> pics){
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<Set<Pic>> call = api.addPic(remark.getId(), pic.getId());
+        List<Long> picIds = pics.stream().flatMap(p -> Stream.of(p.getId())).collect(Collectors.toList());
+        Call<Set<Pic>> call = api.addPics(remark.getId(), picIds);
         call.enqueue(new Callback<Set<Pic>>() {
             @Override
             public void onResponse(Call<Set<Pic>> call, Response<Set<Pic>> response) {
