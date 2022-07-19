@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import androidx.annotation.NonNull;
+import lombok.SneakyThrows;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -109,21 +111,23 @@ public class RemarkRetrofitService {
 
     public static void addPics(RemarkRetrofitService.IRemarkAddPic cl, Context context, Remark remark, List<Pic> pics){
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        List<Long> picIds = pics.stream().flatMap(p -> Stream.of(p.getId())).collect(Collectors.toList());
-        Call<Set<Pic>> call = api.addPics(remark.getId(), picIds);
+        List<String> picIds = pics.stream().flatMap(p -> Stream.of(String.valueOf(p.getId()))).collect(Collectors.toList());
+        Call<Set<Pic>> call = api.addPics(picIds, remark.getId());
         call.enqueue(new Callback<Set<Pic>>() {
+            @SneakyThrows
             @Override
             public void onResponse(Call<Set<Pic>> call, Response<Set<Pic>> response) {
                 if (response.isSuccessful()) {
                     cl.doWhenRemarkHasBeenAddedPic(response);
                 } else {
-                    Log.d(TAG, String.format("Не удалось добавить картинку в комментарий, %s", response.message()));
+
+                    Log.e(TAG, String.format("Не удалось добавить картинку в комментарий, %s", response.errorBody().string()));
                     new WarningDialog1().show(context, "Ошибка!", "Не удалось добавить картинку в комментарий");
                 }
             }
             @Override
             public void onFailure(Call<Set<Pic>> call, Throwable t) {
-                Log.d(TAG, String.format("Не удалось добавить картинку в комментарий, %s", t.getMessage()));
+                Log.e(TAG, String.format("Не удалось добавить картинку в комментарий, %s", t.getMessage()));
                 new WarningDialog1().show(context, "Ошибка!", "Не удалось добавить картинку в комментарий");
             }
         });

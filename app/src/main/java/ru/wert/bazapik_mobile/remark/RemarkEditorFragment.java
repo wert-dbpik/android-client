@@ -252,7 +252,7 @@ public class RemarkEditorFragment extends Fragment implements
                 CURRENT_USER,
                 textEditor.getText().toString(),
                 ThisApplication.getCurrentTime(),
-                new HashSet<>(picsInAdapter)
+                new HashSet<>()
         );
 
         RemarkRetrofitService.create(RemarkEditorFragment.this, context, remark);

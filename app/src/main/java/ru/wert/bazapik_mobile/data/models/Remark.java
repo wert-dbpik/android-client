@@ -24,7 +24,7 @@ public class Remark extends _BaseEntity implements Item, Comparable {
     private String text;
     private String creationTime;
 
-    private Set<Pic> picsInRemark = new HashSet<>(0);
+    private Set<Pic> picsInRemark;
 
 
     @Override
