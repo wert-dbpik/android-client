@@ -14,11 +14,18 @@ import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
@@ -92,31 +99,13 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             popup.show();
         });
 
-//        Set<Pic> picsInRemark = item.getPicsInRemark() == null ? new HashSet<>() : item.getPicsInRemark();
+        Set<Pic> picsInRemark = item.getPicsInRemark() == null ? new HashSet<>() : item.getPicsInRemark();
 
-//        holder.rvRemarkPics.setAdapter(new PicsAdapter(context, new ArrayList<>(picsInRemark)));
-//        holder.rvRemarkPics.getAdapter().notifyDataSetChanged();
-
-//        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-//        Call<Set<Pic>> call = api.getPics(item.getId());
-//        call.enqueue(new Callback<Set<Pic>>() {
-//            @Override
-//            public void onResponse(@NonNull Call<Set<Pic>> call, @NonNull Response<Set<Pic>> response) {
-//                if(response.isSuccessful()){
-//                    assert response.body() != null;
-//                    holder.rvRemarkPics.setAdapter(new PicsAdapter(context, new ArrayList<>(response.body())));
-//                } else {
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Set<Pic>> call, Throwable t) {
-//
-//            }
-//        });
-
-
+        holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
+        PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark));
+        holder.rvRemarkPics.setAdapter(picsAdapter);
+        holder.rvRemarkPics.addItemDecoration(new DividerItemDecoration(context,
+                DividerItemDecoration.VERTICAL));
 
         if(context instanceof ViewerActivity){
             holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorWhite));
