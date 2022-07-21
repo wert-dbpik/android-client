@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/selectedLinearLayout"
+            android:id="@+id/llRemark"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="end"
@@ -20,14 +20,15 @@
 
 
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/selectedLinearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">

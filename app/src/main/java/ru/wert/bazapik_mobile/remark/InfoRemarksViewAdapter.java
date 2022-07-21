@@ -1,9 +1,12 @@
 package ru.wert.bazapik_mobile.remark;
 
 import android.content.Context;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,6 +26,7 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
+import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
@@ -70,18 +74,20 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
-        selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
-                context.getColor(R.color.colorPrimary) : //Цвет выделения
-                context.getColor(R.color.colorPrimaryDark)); //Цвет фона
-
+        View llRemark = holder.itemView.findViewById(R.id.llRemark);
+        if (context instanceof ViewerActivity) {
+            llRemark.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
+            holder.btnShowRemarkMenu.setVisibility(View.INVISIBLE);
+            holder.btnShowRemarkMenu.setClickable(false);
+        } else
+            llRemark.setBackgroundColor(context.getColor(R.color.colorPrimaryDark));
 
         Remark item = mData.get(position);
         holder.tvRemarkUser.setText(item.getUser().getName());
         holder.tvRemarkTime.setText(ThisApplication.parseStringToDate(item.getCreationTime()));
         holder.tvRemarkText.setText(item.getText());
-        holder.itemView.setLongClickable(true);
-        holder.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+
+        holder.btnShowRemarkMenu.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
             PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.getMenuInflater().inflate(R.menu.remark_context_menu, popup.getMenu());
             popup.setOnMenuItemClickListener(item1 -> {
@@ -102,7 +108,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         List<Pic> picsInRemark = item.getPicsInRemark() == null ? new ArrayList<>() : item.getPicsInRemark();
 
         holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
-        PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark));
+        PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark), PicsAdapter.INFO_ACTIVITY);
         holder.rvRemarkPics.setAdapter(picsAdapter);
         holder.rvRemarkPics.addItemDecoration(new DividerItemDecoration(context,
                 DividerItemDecoration.VERTICAL));
@@ -151,6 +157,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         TextView tvRemarkTime;
         TextView tvRemarkText;
         RecyclerView rvRemarkPics;
+        ImageButton btnShowRemarkMenu;
         LinearLayout iv;
 
         ViewHolder(View itemView) {
@@ -160,6 +167,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             tvRemarkText = itemView.findViewById(R.id.tvRemarkText);
             iv = itemView.findViewById(R.id.selectedLinearLayout);
             rvRemarkPics = itemView.findViewById(R.id.rvRemarkPics);
+            btnShowRemarkMenu = itemView.findViewById(R.id.btnShowRemarkMenu);
 
 //            itemView.setOnLongClickListener(this);
         }

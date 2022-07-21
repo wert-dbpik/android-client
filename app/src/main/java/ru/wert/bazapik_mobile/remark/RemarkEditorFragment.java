@@ -70,7 +70,7 @@ public class RemarkEditorFragment extends Fragment implements
     private RecyclerView rvEditorRemarkPics;
 
     @Getter private PicsAdapter picsAdapter;
-    private List<Pic> picsInAdapter;
+    @Setter private List<Pic> picsInAdapter;
     private Bundle resumeBundle;
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String REMARK_TEXT = "remark_text";
@@ -216,14 +216,13 @@ public class RemarkEditorFragment extends Fragment implements
 
     private void fillRecViewWithPics(List<Pic> pics) {
         rvEditorRemarkPics.setLayoutManager(new LinearLayoutManager(getContext()));
-        picsAdapter = new PicsAdapter(context, pics);
+        picsAdapter = new PicsAdapter(context, pics, PicsAdapter.EDITOR_FRAGMENT, this);
         rvEditorRemarkPics.setAdapter(picsAdapter);
         rvEditorRemarkPics.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
     }
 
     private void addRemark(){
-
 
         Remark remark = new Remark(
                 viewInteraction.getPassport(),
@@ -235,7 +234,6 @@ public class RemarkEditorFragment extends Fragment implements
 
         RemarkRetrofitService.create(RemarkEditorFragment.this, context, remark);
         //Смотри doWhenRemarkIsCreated
-
     }
 
 
@@ -243,11 +241,12 @@ public class RemarkEditorFragment extends Fragment implements
     public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
 
         assert response.body() != null;
-//        RemarkRetrofitService.addPics(this, context, response.body(), picsInAdapter);
         viewInteraction.closeRemarkFragment();
         viewInteraction.updateRemarkAdapter();
         viewInteraction.findPassportById(viewInteraction.getPassport().getId())
                 .getRemarkIds().add(response.body().getId());
+
+        clearRemarkEditor();
     }
 
     @Override
@@ -259,6 +258,7 @@ public class RemarkEditorFragment extends Fragment implements
 
         changedRemark.setUser(CURRENT_USER);
         changedRemark.setText(textEditor.getText().toString());
+        changedRemark.setPicsInRemark(new ArrayList<>(picsInAdapter));
         changedRemark.setCreationTime(ThisApplication.getCurrentTime());
 
         RemarkRetrofitService.change(RemarkEditorFragment.this, context, changedRemark);
@@ -269,6 +269,16 @@ public class RemarkEditorFragment extends Fragment implements
     public void doWhenRemarkHasBeenChanged(Response<Remark> response) {
         viewInteraction.closeRemarkFragment();
         viewInteraction.updateRemarkAdapter();
+
+        clearRemarkEditor();
+    }
+
+    /**
+     * Метод удаляет из редактора текст и изображения
+     */
+    private void clearRemarkEditor() {
+        picsInAdapter = new ArrayList<>();
+        textEditor.setText("");
     }
 
     /**

@@ -102,31 +102,28 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         if (item instanceof Folder) {
             holder.showFolderMenu.setVisibility(View.VISIBLE);
             holder.showFolderMenu.setClickable(true);
-            holder.showFolderMenu.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-                @Override
-                public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                    ((View)v.getParent().getParent()).setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
-                    notifyDataSetChanged();
+            holder.showFolderMenu.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+                ((View)v.getParent().getParent()).setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
+                notifyDataSetChanged();
 
-                    PopupMenu popup = new PopupMenu(v.getContext(), v);
-                    popup.getMenuInflater().inflate(R.menu.folder_context_menu, popup.getMenu());
-                    popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            Folder folder = (Folder) mData.get(position);
-                            switch (item.getItemId()) {
-                                case R.id.showAllFolderDraftsFirst:
-                                    openDraftsInFolder(folder, false);
-                                    break;
-                                case R.id.showAllFolderAssemblesFirst:
-                                    openDraftsInFolder(folder, true);
-                                    break;
-                            }
-                            return true;
+                PopupMenu popup = new PopupMenu(v.getContext(), v);
+                popup.getMenuInflater().inflate(R.menu.folder_context_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item1) {
+                        Folder folder = (Folder) mData.get(position);
+                        switch (item1.getItemId()) {
+                            case R.id.showAllFolderDraftsFirst:
+                                openDraftsInFolder(folder, false);
+                                break;
+                            case R.id.showAllFolderAssemblesFirst:
+                                openDraftsInFolder(folder, true);
+                                break;
                         }
-                    });
-                    popup.show();
-                }
+                        return true;
+                    }
+                });
+                popup.show();
             });
 
             String str = ((Folder) item).getName();

@@ -75,6 +75,7 @@ public class InfoActivity extends BaseActivity  implements
     private Bundle resumeBundle;
     private final String KEY_RECYCLER_DRAFTS_STATE = "recycler_drafts_state";
     private final String KEY_RECYCLER_REMARKS_STATE = "recycler_remarks_state";
+    private final String EDITOR_IS_OPEN = "editor_is_open";
     private final String REMARK_TEXT = "remark_text";
 
     @Getter private FragmentContainerView remarkContainerView;
@@ -219,9 +220,11 @@ public class InfoActivity extends BaseActivity  implements
 
     public void changeRemark(Remark remark) {
         remarkEditorFragment.getTextEditor().setText(remark.getText());
+        remarkEditorFragment.getPicsAdapter().changeListOfItems(remark.getPicsInRemark());
+        remarkEditorFragment.setPicsInAdapter(new ArrayList<>(remark.getPicsInRemark()));
         remarkEditorFragment.setChangedRemark(remark);
         remarkEditorFragment.getBtnAdd().setText(RemarkEditorFragment.sChange);
-        remarkContainerView.setVisibility(View.VISIBLE);
+        remarkContainerView.setVisibility(View.INVISIBLE);
 
     }
 
@@ -251,14 +254,16 @@ public class InfoActivity extends BaseActivity  implements
         if(resumeBundle == null){
             remarkContainerView.setVisibility(View.INVISIBLE);
         } else {
-            String remarkText = resumeBundle.getString(REMARK_TEXT);
-            if (remarkText == null || remarkText.isEmpty())
-                remarkContainerView.setVisibility(View.INVISIBLE);
-            else {
-                remarkContainerView.setVisibility(View.VISIBLE);
-                remarkEditorFragment.getTextEditor().setText(remarkText);
-                remarkEditorFragment.getTextEditor().setSelection(remarkText.length());
-            }
+//            String remarkText = resumeBundle.getString(REMARK_TEXT);
+//            if (remarkText == null || remarkText.isEmpty())
+//                remarkContainerView.setVisibility(View.INVISIBLE);
+//            else {
+//                remarkContainerView.setVisibility(View.VISIBLE);
+//                remarkEditorFragment.getTextEditor().setText(remarkText);
+//                remarkEditorFragment.getTextEditor().setSelection(remarkText.length());
+//            }
+
+
 
             Parcelable listDraftsState = resumeBundle.getParcelable(KEY_RECYCLER_DRAFTS_STATE);
             if (listDraftsState != null && rvDrafts != null)
@@ -267,6 +272,10 @@ public class InfoActivity extends BaseActivity  implements
             Parcelable listRemarksState = resumeBundle.getParcelable(KEY_RECYCLER_REMARKS_STATE);
             if (listRemarksState != null && rvRemarks != null)
                 rvRemarks.getLayoutManager().onRestoreInstanceState(listRemarksState);
+
+            if(resumeBundle.getInt(EDITOR_IS_OPEN) == View.INVISIBLE) {
+                remarkContainerView.setVisibility(View.INVISIBLE);
+            }
 
             resumeBundle = null;
         }
@@ -278,6 +287,7 @@ public class InfoActivity extends BaseActivity  implements
         super.onPause();
         resumeBundle = new Bundle();
         resumeBundle.putString(REMARK_TEXT, remarkEditorFragment.getTextEditor().getText().toString());
+        resumeBundle.putInt(EDITOR_IS_OPEN, remarkContainerView.getVisibility());
 
         if(rvDrafts != null) {
             Parcelable listDraftsState = rvDrafts.getLayoutManager().onSaveInstanceState();
