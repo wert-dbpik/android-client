@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -54,6 +55,7 @@ public class RemarkEditorFragment extends Fragment implements
         FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     @Getter private EditText textEditor;
+    @Getter private TextView tvTitle;
     @Getter private Button btnAdd;
 
     private final String TAG = "RemarkFragment";
@@ -189,6 +191,7 @@ public class RemarkEditorFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_remark_editor, container, false);
 
         textEditor = view.findViewById(R.id.etTextRemark);
+        tvTitle = view.findViewById(R.id.tvRemarkTitle);
         btnAdd = view.findViewById(R.id.btnAddRemark);
         btnAdd.setOnClickListener(v->{
             if(btnAdd.getText().equals(sAdd))
@@ -276,8 +279,9 @@ public class RemarkEditorFragment extends Fragment implements
     /**
      * Метод удаляет из редактора текст и изображения
      */
-    private void clearRemarkEditor() {
+    public void clearRemarkEditor() {
         picsInAdapter = new ArrayList<>();
+        picsAdapter.changeListOfItems(picsInAdapter);
         textEditor.setText("");
     }
 

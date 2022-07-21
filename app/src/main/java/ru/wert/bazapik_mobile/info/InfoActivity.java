@@ -3,10 +3,12 @@ package ru.wert.bazapik_mobile.info;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
 import android.app.Activity;
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,7 +81,7 @@ public class InfoActivity extends BaseActivity  implements
     private final String REMARK_TEXT = "remark_text";
 
     @Getter private FragmentContainerView remarkContainerView;
-    private RemarkEditorFragment remarkEditorFragment;
+    private final RemarkEditorFragment remarkEditorFragment = new RemarkEditorFragment() ;
 
     //Все найденные элементы
     private List<Draft> foundDrafts;
@@ -95,8 +97,6 @@ public class InfoActivity extends BaseActivity  implements
         passId = Long.parseLong(getIntent().getStringExtra("PASSPORT_ID"));
         remarkContainerView = findViewById(R.id.addRemarkContainer);
         remarkContainerView.setVisibility(View.INVISIBLE);
-
-        remarkEditorFragment = new RemarkEditorFragment();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -219,12 +219,13 @@ public class InfoActivity extends BaseActivity  implements
     }
 
     public void changeRemark(Remark remark) {
+        remarkEditorFragment.getTvTitle().setText("Изменить комментарий:");
         remarkEditorFragment.getTextEditor().setText(remark.getText());
         remarkEditorFragment.getPicsAdapter().changeListOfItems(remark.getPicsInRemark());
         remarkEditorFragment.setPicsInAdapter(new ArrayList<>(remark.getPicsInRemark()));
         remarkEditorFragment.setChangedRemark(remark);
         remarkEditorFragment.getBtnAdd().setText(RemarkEditorFragment.sChange);
-        remarkContainerView.setVisibility(View.INVISIBLE);
+        remarkContainerView.setVisibility(View.VISIBLE);
 
     }
 
@@ -251,6 +252,7 @@ public class InfoActivity extends BaseActivity  implements
     @Override
     protected void onResume() {
         super.onResume();
+        remarkContainerView.clearAnimation();
         if(resumeBundle == null){
             remarkContainerView.setVisibility(View.INVISIBLE);
         } else {
@@ -274,7 +276,11 @@ public class InfoActivity extends BaseActivity  implements
                 rvRemarks.getLayoutManager().onRestoreInstanceState(listRemarksState);
 
             if(resumeBundle.getInt(EDITOR_IS_OPEN) == View.INVISIBLE) {
-                remarkContainerView.setVisibility(View.INVISIBLE);
+                new Thread(()->{
+                    remarkContainerView.setVisibility(View.INVISIBLE);
+                    Instrumentation inst = new Instrumentation();
+                    inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
+                }).start();
             }
 
             resumeBundle = null;
@@ -285,6 +291,18 @@ public class InfoActivity extends BaseActivity  implements
     @Override
     protected void onPause() {
         super.onPause();
+        createResumeBundle();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        createResumeBundle();
+
+    }
+
+    private void createResumeBundle(){
         resumeBundle = new Bundle();
         resumeBundle.putString(REMARK_TEXT, remarkEditorFragment.getTextEditor().getText().toString());
         resumeBundle.putInt(EDITOR_IS_OPEN, remarkContainerView.getVisibility());
@@ -298,7 +316,6 @@ public class InfoActivity extends BaseActivity  implements
             Parcelable listRemarksState = rvRemarks.getLayoutManager().onSaveInstanceState();
             resumeBundle.putParcelable(KEY_RECYCLER_REMARKS_STATE, listRemarksState);
         }
-
     }
 
     /**
@@ -397,6 +414,8 @@ public class InfoActivity extends BaseActivity  implements
                 return true;
 
             case R.id.action_addRemark:
+                remarkEditorFragment.clearRemarkEditor();
+                remarkEditorFragment.getTvTitle().setText("Новый комментарий:");
                 remarkEditorFragment.getTextEditor().setText("");
                 remarkEditorFragment.getBtnAdd().setText(RemarkEditorFragment.sAdd);
                 remarkContainerView.setVisibility(View.VISIBLE);
