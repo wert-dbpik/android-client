@@ -24,7 +24,7 @@ public class Remark extends _BaseEntity implements Item, Comparable {
     private String text;
     private String creationTime;
 
-    private Set<Pic> picsInRemark;
+    private List<Pic> picsInRemark;
 
 
     @Override
@@ -34,7 +34,7 @@ public class Remark extends _BaseEntity implements Item, Comparable {
 
     @Override
     public String toUsefulString() {
-        return user + ": " + text;
+        return user + ": " + text + "pics: " + picsInRemark.toString();
     }
 
     @Override

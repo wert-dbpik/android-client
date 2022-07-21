@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -171,31 +172,7 @@ public class RemarkEditorFragment extends Fragment implements
         }
     }
 
-    /**
-     * НЕ УДАЛЯТЬ
-     */
-    private void archive(){
-//            1) Изображение переносится 1:1 - размер огромный
-//            InputStream iStream;
-//            iStream = context.getContentResolver().openInputStream(uri);
-//            byte[] draftBytes = ThisApplication.getBytes(iStream);
 
-//            2) Метод использованием  класса ScalingUtilities с подгонкой размера под габариты,
-//            размер после упаковывания в контейнер bitmap приемлимый чуть больше 250кб
-//            не отображается в просмотрщике windows
-//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-//            Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(bitmap, 600, 600, ScalingUtilities.ScalingLogic.FIT);
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//            byte[] draftBytes = baos.toByteArray();
-
-//            3) Самый сжатый рисунок всего 195кб,
-//            не отображается в просмотрщике windows
-//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-//            byte[] draftBytes = baos.toByteArray();
-    }
 
     @Override //FileRetrofitService.IFileUploader
     public void doWhenFileHasBeenUploaded() {
@@ -247,12 +224,13 @@ public class RemarkEditorFragment extends Fragment implements
 
     private void addRemark(){
 
+
         Remark remark = new Remark(
                 viewInteraction.getPassport(),
                 CURRENT_USER,
                 textEditor.getText().toString(),
                 ThisApplication.getCurrentTime(),
-                new HashSet<>()
+                picsInAdapter
         );
 
         RemarkRetrofitService.create(RemarkEditorFragment.this, context, remark);
@@ -265,7 +243,7 @@ public class RemarkEditorFragment extends Fragment implements
     public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
 
         assert response.body() != null;
-        RemarkRetrofitService.addPics(this, context, response.body(), picsInAdapter);
+//        RemarkRetrofitService.addPics(this, context, response.body(), picsInAdapter);
         viewInteraction.closeRemarkFragment();
         viewInteraction.updateRemarkAdapter();
         viewInteraction.findPassportById(viewInteraction.getPassport().getId())
@@ -293,6 +271,30 @@ public class RemarkEditorFragment extends Fragment implements
         viewInteraction.updateRemarkAdapter();
     }
 
+    /**
+     * НЕ УДАЛЯТЬ
+     */
+    private void archive(){
+//            1) Изображение переносится 1:1 - размер огромный
+//            InputStream iStream;
+//            iStream = context.getContentResolver().openInputStream(uri);
+//            byte[] draftBytes = ThisApplication.getBytes(iStream);
 
+//            2) Метод использованием  класса ScalingUtilities с подгонкой размера под габариты,
+//            размер после упаковывания в контейнер bitmap приемлимый чуть больше 250кб
+//            не отображается в просмотрщике windows
+//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+//            Bitmap scaledBitmap = ScalingUtilities.createScaledBitmap(bitmap, 600, 600, ScalingUtilities.ScalingLogic.FIT);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            byte[] draftBytes = baos.toByteArray();
+
+//            3) Самый сжатый рисунок всего 195кб,
+//            не отображается в просмотрщике windows
+//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+//            byte[] draftBytes = baos.toByteArray();
+    }
 
 }

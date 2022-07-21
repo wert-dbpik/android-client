@@ -4,11 +4,22 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/ivPicture"
+    <LinearLayout
+        android:id="@+id/llPicContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:scaleType="centerInside" />
+        android:weightSum="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivPicture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:scaleType="centerInside" />
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

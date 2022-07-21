@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:padding="2dp">
 
@@ -15,9 +16,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="end"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+
 
             <LinearLayout
+
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="10dp"
@@ -29,46 +32,78 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:text="от:   "
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/llAuthorAndDate"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:textStyle="italic|bold"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="12sp" />
+                        android:layout_weight="300"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tvRemarkUser"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
+                        <LinearLayout
+                            android:id="@+id/llAuthor"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:text="от:   "
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:textStyle="italic|bold"
+                                android:textColor="@color/colorAccent"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvRemarkUser"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/llDate"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:text="дата: "
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="20dp"
+                                android:textColor="@color/colorAccent"
+                                android:textStyle="italic|bold"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvRemarkTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/btnShowRemarkMenu"
+                        app:srcCompat="@drawable/menu_vert_dots"
+                        android:layout_width="22sp"
+                        android:layout_height="22sp"
+                        android:layout_marginStart="8dp"
+                        android:padding="0dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center_vertical"
+                        android:background="@android:color/transparent"
+                        android:scaleType="fitXY" />
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
 
-                    <TextView
-                        android:text="дата: "
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:textColor="@color/colorAccent"
-                        android:textStyle="italic|bold"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tvRemarkTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
 
 
                 <TextView

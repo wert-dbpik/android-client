@@ -38,7 +38,7 @@ public interface RemarkApiInterface {
     @GET("remarks/pics-in-remark/{remarkId}")
     Call<Set<Pic>> getPics(@Path("remarkId") Long id);
 
-    @POST("remarks/add-pics-in-remark/{remarkId}")
+    @PUT("remarks/add-pics-in-remark/{remarkId}")
     Call<Set<Pic>> addPics(@Body List<String> picIds, @Path("remarkId") Long remarkId);
 
     @DELETE("remarks/remove-pic-in-remark/{remarkId}/{picId}")

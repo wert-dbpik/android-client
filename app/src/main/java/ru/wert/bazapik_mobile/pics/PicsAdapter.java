@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,8 +68,19 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
                             byte [] bt = response.body().bytes();
                             activity.runOnUiThread(()->{
                                 Bitmap bmp = BitmapFactory.decodeByteArray(bt, 0 , bt.length);
-                                holder.ivPicture.setAdjustViewBounds(true);
+                                LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                float w = bmp.getWidth();
+                                float h = bmp.getHeight();
+                                if(w < h)
+                                    lParams.weight = 0.6f;
+                                else if(w > h)
+                                    lParams.weight = 0.9f;
+                                else
+                                    lParams.weight = 0.75f;
+                                holder.ivPicture.setLayoutParams(lParams);
                                 holder.ivPicture.setImageBitmap(bmp);
+                                holder.ivPicture.setAdjustViewBounds(true);
+//                                holder.ivPicture.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,0.7f));
                             });
                         } catch (IOException e) {
                             Log.e(TAG, "Ошибка декодирования файла: " + e.getMessage());
@@ -103,10 +115,14 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView ivPicture;
+        LinearLayout llPicContainer;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivPicture = itemView.findViewById(R.id.ivPicture);
+            llPicContainer = itemView.findViewById(R.id.llPicContainer);
+
+
         }
     }
 

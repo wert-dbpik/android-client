@@ -99,7 +99,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             popup.show();
         });
 
-        Set<Pic> picsInRemark = item.getPicsInRemark() == null ? new HashSet<>() : item.getPicsInRemark();
+        List<Pic> picsInRemark = item.getPicsInRemark() == null ? new ArrayList<>() : item.getPicsInRemark();
 
         holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
         PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark));
