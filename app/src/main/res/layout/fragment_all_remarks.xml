@@ -23,7 +23,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvRemarks"
+                android:id="@+id/tvNewComment"
                 android:text="Комментарии"
                 android:textColor="#FFFFFF"
                 android:layout_width="match_parent"
