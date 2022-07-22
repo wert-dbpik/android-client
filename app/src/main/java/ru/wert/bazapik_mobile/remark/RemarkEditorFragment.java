@@ -249,6 +249,7 @@ public class RemarkEditorFragment extends Fragment implements
         viewInteraction.findPassportById(viewInteraction.getPassport().getId())
                 .getRemarkIds().add(response.body().getId());
 
+        viewInteraction.increaseCountOfRemarks();
         clearRemarkEditor();
     }
 

@@ -12,6 +12,11 @@ public interface IRemarkFragmentInteraction {
     void updateRemarkAdapter();
     Passport findPassportById(Long id);
     FragmentContainerView getRemarkContainerView();
+
+    void showInfoInCommentsContainer();
+
+    void increaseCountOfRemarks();
+    void decreaseCountOfRemarks();
 //    void changeRemark(Remark remark);
 //    void deleteRemark(Remark remark);
 }

@@ -92,7 +92,7 @@ public class InfoActivity extends BaseActivity  implements
     private boolean remarksShown; //Флаг комментарии отображаются
     private LinearLayout llCommentsContainer; //Контейенер содержащий Надпись, количество комментариев и кнопку свернуть/развернуть
     private TextView tvCountOfRemarks; //Количество комментариев, меняется при добавлени и удалении комментариев
-    private int countOfRemarks; //Числовое значение количества коментариев, меняется при добавлени и удалении комментариев
+    @Getter private int countOfRemarks; //Числовое значение количества коментариев, меняется при добавлени и удалении комментариев
 
 
     @Override
@@ -135,8 +135,11 @@ public class InfoActivity extends BaseActivity  implements
             remarksShown = !remarksShown;
         });
 
+        createRVDrafts();
 
+    }
 
+    private void createRVDrafts() {
         new Thread(()->{
 
             passport = ThisApplication.PASSPORT_SERVICE.findById(passId);
@@ -146,7 +149,7 @@ public class InfoActivity extends BaseActivity  implements
                         passport.getNumber() :
                         passport.getPrefix().getName() + "." + passport.getNumber();
 
-
+                countOfRemarks = passport.getRemarkIds().size();
                 runOnUiThread(() -> {
                     createRecycleViewOfFoundDrafts();
 
@@ -171,14 +174,9 @@ public class InfoActivity extends BaseActivity  implements
 
             }
         }).start();
-
-
     }
 
-    private void showInfoInCommentsContainer() {
-        llCommentsContainer.setVisibility(View.VISIBLE);
-        tvCountOfRemarks.setText(String.valueOf(passport.getRemarkIds().size()));
-    }
+
 
     private void hideInfoInCommentsContainer() {
         llCommentsContainer.setVisibility(View.GONE);
@@ -286,6 +284,7 @@ public class InfoActivity extends BaseActivity  implements
                 if (response.isSuccessful()) {
                     findPassportById(passId).getRemarkIds().remove(remark.getId());
                     updateRemarkAdapter();
+                    decreaseCountOfRemarks();
                 }
             }
 
@@ -420,9 +419,7 @@ public class InfoActivity extends BaseActivity  implements
 
         getMenuInflater().inflate(R.menu.menu_info, menu);
         return true;
-
     }
-
 
 /**
      * Обработка выбора меню
@@ -435,11 +432,7 @@ public class InfoActivity extends BaseActivity  implements
         // получим идентификатор выбранного пункта меню
         int id = item.getItemId();
 
-        // Операции для выбранного пункта меню
-
-
         switch (id) {
-
             case R.id.action_update:
                 Intent updateView = new Intent(InfoActivity.this, DataLoadingActivity.class);
                 startActivity(updateView);
@@ -451,6 +444,8 @@ public class InfoActivity extends BaseActivity  implements
                 return true;
 
             case R.id.action_addRemark:
+                if(rvRemarks.getLayoutManager() == null)
+                    createRecycleViewOfFoundRemarks();
                 remarkEditorFragment.clearRemarkEditor();
                 remarkEditorFragment.getTvTitle().setText("Новый комментарий:");
                 remarkEditorFragment.getTextEditor().setText("");
@@ -459,10 +454,7 @@ public class InfoActivity extends BaseActivity  implements
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-
         }
-
-
     }
 
     @Override
@@ -493,5 +485,23 @@ public class InfoActivity extends BaseActivity  implements
         return null;
     }
 
+    @Override
+    public void increaseCountOfRemarks() {
+        countOfRemarks++;
+        if(llCommentsContainer.getVisibility() == View.GONE) showInfoInCommentsContainer();
+        tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
+    }
 
+    @Override
+    public void decreaseCountOfRemarks() {
+        countOfRemarks--;
+        if(countOfRemarks == 0) hideInfoInCommentsContainer();
+        tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
+    }
+
+    @Override
+    public void showInfoInCommentsContainer() {
+        llCommentsContainer.setVisibility(View.VISIBLE);
+        tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
+    }
 }
