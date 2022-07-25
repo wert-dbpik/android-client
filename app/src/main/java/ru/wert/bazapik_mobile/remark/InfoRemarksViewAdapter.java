@@ -95,13 +95,15 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             popup.show();
         });
 
-        List<Pic> picsInRemark = item.getPicsInRemark() == null ? new ArrayList<>() : item.getPicsInRemark();
+        if(item.getPicsInRemark() != null &&  !item.getPicsInRemark().isEmpty() ) {
+            List<Pic> picsInRemark = item.getPicsInRemark();
 
-        holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
-        PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark), PicsAdapter.INFO_ACTIVITY);
-        holder.rvRemarkPics.setAdapter(picsAdapter);
-        holder.rvRemarkPics.addItemDecoration(new DividerItemDecoration(context,
-                DividerItemDecoration.VERTICAL));
+            holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
+            PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark), PicsAdapter.INFO_ACTIVITY);
+            holder.rvRemarkPics.setAdapter(picsAdapter);
+            holder.rvRemarkPics.addItemDecoration(new DividerItemDecoration(context,
+                    DividerItemDecoration.VERTICAL));
+        }
 
         if(context instanceof ViewerActivity){
             holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorWhite));

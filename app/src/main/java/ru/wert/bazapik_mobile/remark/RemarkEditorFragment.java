@@ -51,7 +51,7 @@ import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 public class RemarkEditorFragment extends Fragment implements
-        RemarkRetrofitService.IRemarkCreate, RemarkRetrofitService.IRemarkChange, RemarkRetrofitService.IRemarkAddPic,
+
         FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     @Getter private EditText textEditor;
@@ -66,7 +66,7 @@ public class RemarkEditorFragment extends Fragment implements
     private Context context;
     private InfoActivity activity;
 
-    @Setter private Remark changedRemark;
+
 
     private IRemarkFragmentInteraction viewInteraction;
     private RecyclerView rvEditorRemarkPics;
@@ -226,56 +226,13 @@ public class RemarkEditorFragment extends Fragment implements
     }
 
     private void addRemark(){
-
-        Remark remark = new Remark(
-                viewInteraction.getPassport(),
-                CURRENT_USER,
-                textEditor.getText().toString(),
-                ThisApplication.getCurrentTime(),
-                picsInAdapter
-        );
-
-        RemarkRetrofitService.create(RemarkEditorFragment.this, context, remark);
-        //Смотри doWhenRemarkIsCreated
+        activity.getRm().addRemark(picsInAdapter);
     }
 
-
-    @Override//RemarkRetrofitService.IRemarkCreator
-    public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
-
-        assert response.body() != null;
-        viewInteraction.closeRemarkFragment();
-        viewInteraction.updateRemarkAdapter();
-        viewInteraction.findPassportById(viewInteraction.getPassport().getId())
-                .getRemarkIds().add(response.body().getId());
-
-        viewInteraction.increaseCountOfRemarks();
-
-        clearRemarkEditor();
-    }
-
-    @Override
-    public void doWhenRemarkHasBeenAddedPic(Response<Set<Pic>> response) {
-
-    }
 
     private void changeRemark(){
 
-        changedRemark.setUser(CURRENT_USER);
-        changedRemark.setText(textEditor.getText().toString());
-        changedRemark.setPicsInRemark(new ArrayList<>(picsInAdapter));
-        changedRemark.setCreationTime(ThisApplication.getCurrentTime());
-
-        RemarkRetrofitService.change(RemarkEditorFragment.this, context, changedRemark);
-        //Смотри doWhenRemarkHasBeenChanged
-    }
-
-    @Override//RemarkRetrofitService.IRemarkChanger
-    public void doWhenRemarkHasBeenChanged(Response<Remark> response) {
-        viewInteraction.closeRemarkFragment();
-        viewInteraction.updateRemarkAdapter();
-
-        clearRemarkEditor();
+        activity.getRm().changeRemark(picsInAdapter);
     }
 
     /**

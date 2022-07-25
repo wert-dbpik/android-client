@@ -56,7 +56,6 @@ public class InfoActivity extends BaseActivity  implements
         IRemarkFragmentInteraction {
 
     private static final String TAG = "+++ PassportInfoActivity +++" ;
-    private LinearLayout llInfo;
     private TextView tvDecNumber, tvName;
     private RecyclerView rvDrafts;
     private TextView tvDrafts;
