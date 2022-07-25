@@ -88,16 +88,23 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
                         try {
                             byte [] bt = response.body().bytes();
                             activity.runOnUiThread(()->{
-                                Bitmap bmp = BitmapFactory.decodeByteArray(bt, 0 , bt.length);
-                                LinearLayout.LayoutParams lParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                float w = bmp.getWidth();
-                                float h = bmp.getHeight();
-                                if(w - h < w * 0.1f)
-                                    lParams.weight = 0.6f;
-                                else if(w - h > w * 0.1f)
-                                    lParams.weight = 0.9f;
-                                else
-                                    lParams.weight = 0.75f;
+                                Bitmap bmp = null;
+                                LinearLayout.LayoutParams lParams = null;
+                                try {
+                                    bmp = BitmapFactory.decodeByteArray(bt, 0 , bt.length);
+                                    lParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    float w = bmp.getWidth();
+                                    float h = bmp.getHeight();
+                                    if(w - h < w * 0.1f)
+                                        lParams.weight = 0.6f;
+                                    else if(w - h > w * 0.1f)
+                                        lParams.weight = 0.9f;
+                                    else
+                                        lParams.weight = 0.75f;
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Ошибка декодирования файла: " + e.getMessage());
+                                    return;
+                                }
                                 holder.ivPicture.setLayoutParams(lParams);
                                 holder.ivPicture.setImageBitmap(bmp);
                                 holder.ivPicture.setAdjustViewBounds(true);

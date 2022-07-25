@@ -250,6 +250,7 @@ public class RemarkEditorFragment extends Fragment implements
                 .getRemarkIds().add(response.body().getId());
 
         viewInteraction.increaseCountOfRemarks();
+
         clearRemarkEditor();
     }
 

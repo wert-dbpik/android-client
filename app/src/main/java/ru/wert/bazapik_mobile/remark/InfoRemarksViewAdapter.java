@@ -1,9 +1,7 @@
 package ru.wert.bazapik_mobile.remark;
 
 import android.content.Context;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -11,25 +9,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
-import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
@@ -94,10 +84,10 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
                 Remark remark = mData.get(position);
                 switch (item1.getItemId()) {
                     case R.id.changeRemark:
-                        ((InfoActivity)context).changeRemark(remark);
+                        ((InfoActivity)context).getRm().openChangeRemarkFragment(remark);
                         break;
                     case R.id.deleteRemark:
-                        ((InfoActivity)context).deleteRemark(remark);
+                        ((InfoActivity)context).getRm().deleteRemark(remark);
                         break;
                 }
                 return true;
