@@ -53,8 +53,6 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
     @Getter private final RecyclerView rvRemarks;
     private final TextView tvRemarks; //Слово Комментарии
 
-
-
     /**
      * Конструктор.
      * @param activity InfoActivity
@@ -83,6 +81,8 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
             }
             remarksShown = !remarksShown;
         });
+
+        createRecycleViewOfFoundRemarks();
 
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -136,7 +136,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
 
     }
 
-    public void deleteRemark(Remark remark) {
+    public void deleteRemark(Remark remark, int pos) {
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
         Call<Void> call =  api.deleteById(remark.getId());
         call.enqueue(new Callback<Void>() {
@@ -144,7 +144,9 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     infoActivity.findPassportById(passId).getRemarkIds().remove(remark.getId());
-                    updateRemarkAdapter();
+
+                    remarksAdapter.notifyItemRemoved(pos);
+//                    updateRemarkAdapter();
                     decreaseCountOfRemarks();
                 }
             }

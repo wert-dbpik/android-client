@@ -86,7 +86,7 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
                         ((InfoActivity)context).getRm().openChangeRemarkFragment(remark);
                         break;
                     case R.id.deleteRemark:
-                        ((InfoActivity)context).getRm().deleteRemark(remark);
+                        ((InfoActivity)context).getRm().deleteRemark(remark, position);
                         break;
                 }
                 return true;
@@ -94,13 +94,14 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             popup.show();
         });
 
-        if(remark.getPicsInRemark() != null &&  !remark.getPicsInRemark().isEmpty() ) {
-            List<Pic> picsInRemark = remark.getPicsInRemark();
+            List<Pic> picsInRemark =
+                    remark.getPicsInRemark() == null || remark.getPicsInRemark().isEmpty() ?
+                            new ArrayList<>() :
+                            remark.getPicsInRemark();
 
             holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
             PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark), PicsAdapter.INFO_ACTIVITY);
             holder.rvRemarkPics.setAdapter(picsAdapter);
-        }
 
         if(context instanceof ViewerActivity){
             holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorWhite));

@@ -51,7 +51,6 @@ import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 public class RemarkEditorFragment extends Fragment implements
-
         FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     @Getter private EditText textEditor;
@@ -65,8 +64,6 @@ public class RemarkEditorFragment extends Fragment implements
     private ActivityResultLauncher<Intent> pickUpPictureResultLauncher;
     private Context context;
     private InfoActivity activity;
-
-
 
     private IRemarkFragmentInteraction viewInteraction;
     private RecyclerView rvEditorRemarkPics;

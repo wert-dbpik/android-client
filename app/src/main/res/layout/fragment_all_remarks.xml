@@ -10,7 +10,6 @@
         android:id="@+id/llRemarksFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="5dp"
         android:backgroundTint="@color/colorMyDarkerGray"
         android:background="@drawable/borders"
         android:orientation="vertical">
