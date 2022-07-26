@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.remark;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,14 +95,17 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             popup.show();
         });
 
+        new Thread(()->{
             List<Pic> picsInRemark =
                     remark.getPicsInRemark() == null || remark.getPicsInRemark().isEmpty() ?
                             new ArrayList<>() :
                             remark.getPicsInRemark();
-
-            holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
-            PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark), PicsAdapter.INFO_ACTIVITY);
-            holder.rvRemarkPics.setAdapter(picsAdapter);
+            ((Activity)context).runOnUiThread(()->{
+                holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
+                PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark), PicsAdapter.INFO_ACTIVITY);
+                holder.rvRemarkPics.setAdapter(picsAdapter);
+            });
+        }).start();
 
         if(context instanceof ViewerActivity){
             holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorWhite));

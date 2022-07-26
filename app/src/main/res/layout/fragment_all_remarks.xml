@@ -49,7 +49,7 @@
             android:fillViewport="true">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRemarks"
+                android:id="@+id/rvAllRemarks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"

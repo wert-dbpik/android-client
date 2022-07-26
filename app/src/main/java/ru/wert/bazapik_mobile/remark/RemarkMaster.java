@@ -68,7 +68,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
         remarkContainerView.setVisibility(View.INVISIBLE);
 
         tvRemarks = activity.findViewById(R.id.tvNewComment); //Текст Новый комментарий
-        rvRemarks = activity.findViewById(R.id.rvRemarks); //RecycleView
+        rvRemarks = activity.findViewById(R.id.rvInfoRemarks); //RecycleView
 
         final ImageButton btnOpenAllRemarks = activity.findViewById(R.id.btnOpenAllRemarks);
         btnOpenAllRemarks.setOnClickListener(v->{

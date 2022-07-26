@@ -24,7 +24,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ public class AllRemarksFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_all_remarks, container, false);
-        rvRemarks = view.findViewById(R.id.rvRemarks);
+        rvRemarks = view.findViewById(R.id.rvAllRemarks);
         passId = viewerActivity.getCurrentPassportId();
         final LinearLayout llRemarksFragment = view.findViewById(R.id.llRemarksFragment);
         params = llRemarksFragment.getLayoutParams();
