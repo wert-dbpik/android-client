@@ -72,16 +72,15 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
         } else
             llRemark.setBackgroundColor(context.getColor(R.color.colorPrimaryDark));
 
-        Remark item = mData.get(position);
-        holder.tvRemarkUser.setText(item.getUser().getName());
-        holder.tvRemarkTime.setText(ThisApplication.parseStringToDate(item.getCreationTime()));
-        holder.tvRemarkText.setText(item.getText());
+        Remark remark = mData.get(position);
+        holder.tvRemarkUser.setText(remark.getUser().getName());
+        holder.tvRemarkTime.setText(ThisApplication.parseStringToDate(remark.getCreationTime()));
+        holder.tvRemarkText.setText(remark.getText());
 
         holder.btnShowRemarkMenu.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
             PopupMenu popup = new PopupMenu(v.getContext(), v);
             popup.getMenuInflater().inflate(R.menu.remark_context_menu, popup.getMenu());
             popup.setOnMenuItemClickListener(item1 -> {
-                Remark remark = mData.get(position);
                 switch (item1.getItemId()) {
                     case R.id.changeRemark:
                         ((InfoActivity)context).getRm().openChangeRemarkFragment(remark);
@@ -95,14 +94,12 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             popup.show();
         });
 
-        if(item.getPicsInRemark() != null &&  !item.getPicsInRemark().isEmpty() ) {
-            List<Pic> picsInRemark = item.getPicsInRemark();
+        if(remark.getPicsInRemark() != null &&  !remark.getPicsInRemark().isEmpty() ) {
+            List<Pic> picsInRemark = remark.getPicsInRemark();
 
             holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
             PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark), PicsAdapter.INFO_ACTIVITY);
             holder.rvRemarkPics.setAdapter(picsAdapter);
-            holder.rvRemarkPics.addItemDecoration(new DividerItemDecoration(context,
-                    DividerItemDecoration.VERTICAL));
         }
 
         if(context instanceof ViewerActivity){
@@ -112,8 +109,6 @@ public class InfoRemarksViewAdapter extends RecyclerView.Adapter<InfoRemarksView
             holder.tvRemarkTime.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
             holder.tvRemarkText.setTextColor(context.getColor(R.color.colorWhite));
             holder.tvRemarkText.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
-
-
             holder.itemView.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
             holder.iv.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
         }

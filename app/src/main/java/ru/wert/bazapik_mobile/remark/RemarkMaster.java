@@ -116,7 +116,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
 //                    foundRemarkIdsForIntent = ThisApplication.convertToStringArray(new ArrayList<>(sortedList));
 
                     remarksAdapter = new InfoRemarksViewAdapter(infoActivity, foundRemarks);
-                    remarksAdapter.setClickListener(infoActivity);
+//                    remarksAdapter.setClickListener(infoActivity);
                     rvRemarks.setAdapter(remarksAdapter);
                 } else {
                     new WarningDialog1().show(infoActivity, "Внимание!", "Проблемы на линии!");
