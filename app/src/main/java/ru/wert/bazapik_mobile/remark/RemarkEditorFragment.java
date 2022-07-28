@@ -153,7 +153,7 @@ public class RemarkEditorFragment extends Fragment implements
 
     @Override//IPicCreator
     public void doWhenPicHasBeenCreated(Response<Pic> response, Uri uri) {
-        //Добавляем выбранную картинку в уоллекцию для адаптера
+        //Добавляем выбранную картинку в коллекцию для адаптера
         picsInAdapter.add(response.body());
         try {
             Pic savedPic = response.body();

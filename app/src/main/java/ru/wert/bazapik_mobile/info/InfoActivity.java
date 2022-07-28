@@ -11,7 +11,6 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentContainerView;
@@ -38,7 +37,7 @@ import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
 import ru.wert.bazapik_mobile.remark.IRemarkFragmentInteraction;
-import ru.wert.bazapik_mobile.remark.InfoRemarksViewAdapter;
+import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarkMaster;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
@@ -52,7 +51,7 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 public class InfoActivity extends BaseActivity  implements
         RemarkRetrofitService.IRemarkFindByPassportId,
         InfoDraftsViewAdapter.InfoDraftClickListener,
-        InfoRemarksViewAdapter.InfoRemarkClickListener,
+        RemarksAdapter.InfoRemarkClickListener,
         IRemarkFragmentInteraction {
 
     private static final String TAG = "+++ PassportInfoActivity +++" ;

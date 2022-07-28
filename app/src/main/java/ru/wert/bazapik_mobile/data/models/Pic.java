@@ -14,6 +14,8 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 @EqualsAndHashCode(of = {"user", "time"}, callSuper = false)
 public class Pic extends _BaseEntity implements Item {
     private String extension;
+    private Integer width;
+    private Integer height;
     private User user;
     private String time;
 

@@ -21,7 +21,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:layout_marginBottom="10dp"
                 android:layout_weight="1"
@@ -104,34 +104,21 @@
 
                 </LinearLayout>
 
-
-
-
                 <TextView
                     android:id="@+id/tvRemarkText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingHorizontal="10dp"
                     android:textColor="#FFFFFF"
                     android:maxLines="1000"
                     android:textSize="16sp" />
 
-                <FrameLayout
+                <LinearLayout
+                    android:id="@+id/llPictures"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fillViewport="true">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvRemarkPics"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:scrollbars="vertical" />
-
-
-                </FrameLayout>
+                    android:weightSum="1"
+                    android:orientation="vertical"/>
 
             </LinearLayout>
 

@@ -46,7 +46,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
     @Setter private Remark changedRemark;
 
 
-    private InfoRemarksViewAdapter remarksAdapter;
+    private RemarksAdapter remarksAdapter;
     @Getter private final LinearLayout llCommentsContainer; //Контейенер содержащий Надпись, количество комментариев и кнопку свернуть/развернуть
     @Getter private final TextView tvCountOfRemarks; //Количество комментариев, меняется при добавлени и удалении комментариев
     @Getter private final FragmentContainerView remarkContainerView;
@@ -115,9 +115,13 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
                     }
 //                    foundRemarkIdsForIntent = ThisApplication.convertToStringArray(new ArrayList<>(sortedList));
 
-                    remarksAdapter = new InfoRemarksViewAdapter(infoActivity, foundRemarks);
+                    remarksAdapter = new RemarksAdapter(infoActivity, foundRemarks);
 //                    remarksAdapter.setClickListener(infoActivity);
                     rvRemarks.setAdapter(remarksAdapter);
+                    //Оптимизация работы
+                    rvRemarks.setItemViewCacheSize(20);
+                    rvRemarks.setDrawingCacheEnabled(true);
+                    rvRemarks.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
                 } else {
                     new WarningDialog1().show(infoActivity, "Внимание!", "Проблемы на линии!");
                 }

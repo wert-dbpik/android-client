@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class AllRemarksFragment extends Fragment {
 
     private RecyclerView rvRemarks;
-    private InfoRemarksViewAdapter remarksAdapter;
+    private RemarksAdapter remarksAdapter;
     private ViewerActivity viewerActivity;
     private Long passId;
     private int oldY;
@@ -99,7 +99,7 @@ public class AllRemarksFragment extends Fragment {
                                             .collect(Collectors.toList()));
                         }
 
-                    remarksAdapter = new InfoRemarksViewAdapter(viewerActivity, foundRemarks);
+                    remarksAdapter = new RemarksAdapter(viewerActivity, foundRemarks);
                     rvRemarks.setAdapter(remarksAdapter);
                 } else {
                     new WarningDialog1().show(getActivity(), "Внимание!", "Проблемы на линии!");

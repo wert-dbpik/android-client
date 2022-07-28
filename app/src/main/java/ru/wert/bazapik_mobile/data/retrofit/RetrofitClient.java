@@ -18,7 +18,7 @@ import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 @Log
 public class RetrofitClient extends Application {
     private static final String TAG = "RetrofitClient";
-    static String BASE_URL = "";
+    public static String BASE_URL = "";
     private static RetrofitClient mInstance;
     private static Retrofit mRetrofit;
     private Gson gson;
