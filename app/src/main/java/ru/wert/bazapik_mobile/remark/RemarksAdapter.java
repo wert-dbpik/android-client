@@ -116,23 +116,25 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         for(Pic pic: picsInRemark) {
             String str = BASE_URL + "files/download/pics/" + pic.getId() + "." + pic.getExtension();
             Uri uri = Uri.parse(str);
-            ImageView imageView = new ImageView(context);
-            Picasso.get().load(uri).into(imageView);
-            imageView.setPadding(0, 20, 0, 20);
-            holder.llPictures.setWeightSum(1f);
-            holder.llPictures.addView(imageView);
-            LinearLayout.LayoutParams lParams  = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            holder.llPictures.setWeightSum(1f);
+//            LinearLayout.LayoutParams lParams  = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
             int w = pic.getWidth();
             int h = pic.getHeight();
+            int layerWidth = holder.llPictures.getWidth();
+            int pictureWidth;
             if (w - h < w * 0.1f)
-                lParams.weight = 0.6f;
+                pictureWidth = (int) (0.6f * w);
             else if (w - h > w * 0.1f)
-                lParams.weight = 0.9f;
+                pictureWidth = (int) (0.9f * w);
             else
-                lParams.weight = 0.75f;
-            imageView.setLayoutParams(lParams);
+                pictureWidth = (int) (0.7f * w);
 
-
+            ImageView imageView = new ImageView(context);
+            imageView.setAdjustViewBounds(true);
+            imageView.setPadding(0, 20, 0, 20);
+//            imageView.setLayoutParams(lParams);
+            holder.llPictures.addView(imageView);
+            Picasso.get().load(uri).resize(pictureWidth, 0).into(imageView);
 
         }
 
