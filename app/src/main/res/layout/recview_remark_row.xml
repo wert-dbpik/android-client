@@ -113,14 +113,14 @@
                     android:maxLines="1000"
                     android:textSize="16sp" />
 
-                <LinearLayout
-                    android:id="@+id/llPictures"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/llPictures"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:weightSum="1.0"-->
+<!--                    android:orientation="vertical">-->
 
 
-                </LinearLayout>
 
 
             </LinearLayout>

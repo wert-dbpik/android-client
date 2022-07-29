@@ -7,6 +7,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.DisplayMetrics;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
@@ -375,4 +376,5 @@ public class ThisApplication extends Application {
         return list;
 
     }
+
 }

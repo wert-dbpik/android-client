@@ -82,7 +82,6 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
             remarksShown = !remarksShown;
         });
 
-        createRecycleViewOfFoundRemarks();
 
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();

@@ -1,38 +1,31 @@
 package ru.wert.bazapik_mobile.remark;
 
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
-import android.provider.ContactsContract;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.info.InfoActivity;
-import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 import static ru.wert.bazapik_mobile.data.retrofit.RetrofitClient.BASE_URL;
@@ -54,6 +47,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
         this.mData = items;
+
     }
 
     /**
@@ -114,63 +108,9 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
                         remark.getPicsInRemark();
 
         for(Pic pic: picsInRemark) {
-            String str = BASE_URL + "files/download/pics/" + pic.getId() + "." + pic.getExtension();
-            Uri uri = Uri.parse(str);
-//            holder.llPictures.setWeightSum(1f);
-//            LinearLayout.LayoutParams lParams  = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
-            int w = pic.getWidth();
-            int h = pic.getHeight();
-            int layerWidth = holder.llPictures.getWidth();
-            int pictureWidth;
-            if (w - h < w * 0.1f)
-                pictureWidth = (int) (0.6f * w);
-            else if (w - h > w * 0.1f)
-                pictureWidth = (int) (0.9f * w);
-            else
-                pictureWidth = (int) (0.7f * w);
-
-            ImageView imageView = new ImageView(context);
-            imageView.setAdjustViewBounds(true);
-            imageView.setPadding(0, 20, 0, 20);
-//            imageView.setLayoutParams(lParams);
-            holder.llPictures.addView(imageView);
-            Picasso.get().load(uri).resize(pictureWidth, 0).into(imageView);
+            showPic2(holder, pic);
 
         }
-
-//            Picasso.get().load(uri).into(new Target() {
-//                @Override
-//                public void onBitmapLoaded(Bitmap bmp, Picasso.LoadedFrom from) {
-//                    LinearLayout.LayoutParams lParams  = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                    float w = bmp.getWidth();
-//                    float h = bmp.getHeight();
-//                    if(w - h < w * 0.1f)
-//                        lParams.weight = 0.6f;
-//                    else if(w - h > w * 0.1f)
-//                        lParams.weight = 0.9f;
-//                    else
-//                        lParams.weight = 0.75f;
-//                    imageView.setLayoutParams(lParams);
-//                    imageView.setImageBitmap(bmp);
-//
-//                }
-//
-//                @Override
-//                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-//
-//                }
-//
-//                @Override
-//                public void onPrepareLoad(Drawable placeHolderDrawable) {
-//
-//                }
-//            });
-
-
-//        holder.rvRemarkPics.setLayoutManager(new LinearLayoutManager(context));
-//        PicsAdapter picsAdapter = new PicsAdapter(context, new ArrayList<>(picsInRemark), PicsAdapter.INFO_ACTIVITY);
-//        holder.rvRemarkPics.setAdapter(picsAdapter);
-
 
         if(context instanceof ViewerActivity){
             holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorWhite));
@@ -182,6 +122,62 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
             holder.itemView.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
             holder.iv.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
         }
+    }
+
+    private void showPic2(ViewHolder holder, Pic pic) {
+        String str = BASE_URL + "files/download/pics/" + pic.getId() + "." + pic.getExtension();
+        Uri uri = Uri.parse(str);
+        LinearLayout.LayoutParams lParamsLL  = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout ll = new LinearLayout(context);
+        ll.setLayoutParams(lParamsLL);
+        ll.setWeightSum(1.0f);
+        LinearLayout.LayoutParams lParams  = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+        int w = pic.getWidth();
+        int h = pic.getHeight();
+
+        float weight;
+        if (w - h < w * 0.1f)
+            weight = 0.6f;
+        else if (w - h > w * 0.1f)
+            weight = 0.9f;
+        else
+            weight = 0.7f;
+        lParams.weight = weight;
+        lParams.gravity = Gravity.START;
+
+        ImageView imageView = new ImageView(context);
+        Picasso.get().load(uri).into(imageView);
+        imageView.setAdjustViewBounds(true);
+        imageView.setPadding(0, 20, 0, 20);
+
+        ll.addView(imageView, lParams);
+        holder.llRemark.addView(ll);
+    }
+
+    private void showPic1(ViewHolder holder, Pic pic) {
+        String str = BASE_URL + "files/download/pics/" + pic.getId() + "." + pic.getExtension();
+        Uri uri = Uri.parse(str);
+//            holder.llPictures.setWeightSum(1f);
+//            LinearLayout.LayoutParams lParams  = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
+        int w = pic.getWidth();
+        int h = pic.getHeight();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int layerWidth =  displayMetrics.widthPixels;
+        int pictureWidth;
+        if (w - h < w * 0.1f)
+            pictureWidth = (int) (0.6f * layerWidth);
+        else if (w - h > w * 0.1f)
+            pictureWidth = (int) (0.9f * layerWidth);
+        else
+            pictureWidth = (int) (0.7f * layerWidth);
+
+        ImageView imageView = new ImageView(context);
+//            imageView.setAdjustViewBounds(true);
+        imageView.setPadding(0, 20, 0, 20);
+//            imageView.setLayoutParams(lParams);
+        holder.llPictures.addView(imageView);
+        Picasso.get().load(uri).resize(pictureWidth, 0).into(imageView);
     }
 
 
@@ -217,6 +213,8 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         RecyclerView rvRemarkPics;
         ImageButton btnShowRemarkMenu;
         LinearLayout iv;
+        LinearLayout llRemark;
+
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -225,9 +223,10 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
             tvRemarkText = itemView.findViewById(R.id.tvRemarkText);
             iv = itemView.findViewById(R.id.selectedLinearLayout);
 //            rvRemarkPics = itemView.findViewById(R.id.rvRemarkPics);
-            llPictures = itemView.findViewById(R.id.llPictures);
+//            llPictures = itemView.findViewById(R.id.llPictures);
             btnShowRemarkMenu = itemView.findViewById(R.id.btnShowRemarkMenu);
-
+            btnShowRemarkMenu = itemView.findViewById(R.id.btnShowRemarkMenu);
+            llRemark = itemView.findViewById(R.id.llRemark);
 //            itemView.setOnLongClickListener(this);
         }
 
