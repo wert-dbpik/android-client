@@ -82,7 +82,7 @@ public class RemarkRetrofitService {
     }
 
     //Изменить комментарий
-    public static void  change(RemarkRetrofitService.IRemarkChange cl, Context context, Remark changedRemark) {
+    public static void update(RemarkRetrofitService.IRemarkChange cl, Context context, Remark changedRemark) {
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
         Call<Remark> call = api.update(changedRemark);
         call.enqueue(new Callback<Remark>() {

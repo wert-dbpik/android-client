@@ -1,9 +1,7 @@
 package ru.wert.bazapik_mobile.remark;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,22 +19,25 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
+import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
+import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 import static ru.wert.bazapik_mobile.data.retrofit.RetrofitClient.BASE_URL;
 
-public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHolder>{
+public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHolder> {
 
-    private final List<Remark> mData;
+    private final List<Remark> data;
     private final LayoutInflater mInflater;
     private InfoRemarkClickListener mClickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
+
 
     /**
      * Конструктор получает на входе список элементов List<P>
@@ -46,7 +47,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
     public RemarksAdapter(Context context, List<Remark> items) {
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
-        this.mData = items;
+        this.data = items;
 
     }
 
@@ -79,7 +80,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         } else
             llRemark.setBackgroundColor(context.getColor(R.color.colorPrimaryDark));
 
-        Remark remark = mData.get(position);
+        Remark remark = data.get(position);
         holder.tvRemarkUser.setText(remark.getUser().getName());
         holder.tvRemarkTime.setText(ThisApplication.parseStringToDate(remark.getCreationTime()));
         holder.tvRemarkText.setText(remark.getText());
@@ -108,7 +109,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
                         remark.getPicsInRemark();
 
         for(Pic pic: picsInRemark) {
-            showPic2(holder, pic);
+            showPicture(holder, pic, position);
 
         }
 
@@ -124,7 +125,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         }
     }
 
-    private void showPic2(ViewHolder holder, Pic pic) {
+    private void showPicture(ViewHolder holder, Pic pic, int position) {
         String str = BASE_URL + "files/download/pics/" + pic.getId() + "." + pic.getExtension();
         Uri uri = Uri.parse(str);
         LinearLayout.LayoutParams lParamsLL  = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -154,40 +155,13 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         holder.llRemark.addView(ll);
     }
 
-    private void showPic1(ViewHolder holder, Pic pic) {
-        String str = BASE_URL + "files/download/pics/" + pic.getId() + "." + pic.getExtension();
-        Uri uri = Uri.parse(str);
-//            holder.llPictures.setWeightSum(1f);
-//            LinearLayout.LayoutParams lParams  = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
-        int w = pic.getWidth();
-        int h = pic.getHeight();
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int layerWidth =  displayMetrics.widthPixels;
-        int pictureWidth;
-        if (w - h < w * 0.1f)
-            pictureWidth = (int) (0.6f * layerWidth);
-        else if (w - h > w * 0.1f)
-            pictureWidth = (int) (0.9f * layerWidth);
-        else
-            pictureWidth = (int) (0.7f * layerWidth);
-
-        ImageView imageView = new ImageView(context);
-//            imageView.setAdjustViewBounds(true);
-        imageView.setPadding(0, 20, 0, 20);
-//            imageView.setLayoutParams(lParams);
-        holder.llPictures.addView(imageView);
-        Picasso.get().load(uri).resize(pictureWidth, 0).into(imageView);
-    }
-
-
     /**
      * Возвращает общее количество элементов в списке List<P>
      * @return int
      */
     @Override
     public int getItemCount() {
-        return mData.size();
+        return data.size();
     }
 
     /**
@@ -195,10 +169,12 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
      * @param items List<P>
      */
     public void changeListOfItems(List<Remark> items){
-        mData.clear();
-        mData.addAll(items);
+        data.clear();
+        data.addAll(items);
         notifyDataSetChanged();
     }
+
+
 
 
     /**
@@ -249,7 +225,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
      * @return P extends Item
      */
     public Remark getItem(int index) {
-        return mData.get(index);
+        return data.get(index);
     }
 //
     public void setClickListener(InfoRemarkClickListener itemClickListener) {

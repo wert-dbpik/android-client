@@ -323,7 +323,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
         changedRemark.setPicsInRemark(new ArrayList<>(picsInAdapter));
         changedRemark.setCreationTime(ThisApplication.getCurrentTime());
 
-        RemarkRetrofitService.change(this, infoActivity, changedRemark);
+        RemarkRetrofitService.update(this, infoActivity, changedRemark);
         //Смотри doWhenRemarkHasBeenChanged
     }
 
