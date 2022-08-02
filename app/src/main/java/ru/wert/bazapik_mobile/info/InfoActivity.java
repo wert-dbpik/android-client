@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.info;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
+import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,6 +46,7 @@ import ru.wert.bazapik_mobile.organizer.FilterDialog;
 import ru.wert.bazapik_mobile.remark.IRemarkFragmentInteraction;
 import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarkMaster;
+import ru.wert.bazapik_mobile.remark.RemarksEditor;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -59,11 +67,14 @@ public class InfoActivity extends BaseActivity  implements
     private RecyclerView rvDrafts;
     private TextView tvDrafts;
     private InfoDraftsViewAdapter draftsAdapter;
-    
+
     private Long passId;
 
     @Getter private Passport passport;
     private String decNum;
+
+    public static final String REMARK_PASSPORT = "remark_passport";
+    public static final String NEW_REMARK = "new_remark";
 
     private Bundle resumeBundle;
     private final String KEY_RECYCLER_DRAFTS_STATE = "recycler_drafts_state";
@@ -270,6 +281,8 @@ public class InfoActivity extends BaseActivity  implements
         // получим идентификатор выбранного пункта меню
         int id = item.getItemId();
 
+
+
         switch (id) {
             case R.id.action_update:
                 Intent updateView = new Intent(InfoActivity.this, DataLoadingActivity.class);
@@ -290,6 +303,29 @@ public class InfoActivity extends BaseActivity  implements
                 rm.getRemarkEditorFragment().getBtnAdd().setText(rm.getRemarkEditorFragment().sAdd);
                 rm.getRemarkContainerView().setVisibility(View.VISIBLE);
                 return true;
+
+            case R.id.action_addRemark_new:
+                Intent remarksEditor = new Intent(InfoActivity.this, RemarksEditor.class);
+                remarksEditor.putExtra(REMARK_PASSPORT, passport);
+                registerForActivityResult(
+                        new ActivityResultContracts.StartActivityForResult(),
+                        result -> {
+                            if (result.getResultCode() == Activity.RESULT_OK) {
+                                Intent data = result.getData();
+                                if (data != null) {
+                                    Remark newRemark = data.getParcelableExtra(NEW_REMARK);
+                                    rm.createRemark();
+                                } else {
+
+                                }
+
+                            } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
+
+                            }
+
+                        }).launch(remarksEditor);
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

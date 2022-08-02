@@ -278,7 +278,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
      * Вызывается из RemarkEditorFragment
      * @param picsInAdapter
      */
-    public void addRemark(List<Pic> picsInAdapter){
+    public void createRemark(List<Pic> picsInAdapter){
 
         Remark remark = new Remark(
                 infoActivity.getPassport(),

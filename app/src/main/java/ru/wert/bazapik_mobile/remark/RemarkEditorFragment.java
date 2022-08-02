@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -41,14 +38,10 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Pic;
-import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
-import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
-
-import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 public class RemarkEditorFragment extends Fragment implements
         FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
@@ -223,7 +216,7 @@ public class RemarkEditorFragment extends Fragment implements
     }
 
     private void addRemark(){
-        activity.getRm().addRemark(picsInAdapter);
+        activity.getRm().createRemark(picsInAdapter);
     }
 
 

@@ -2,20 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.wert.bazapik_mobile">
 
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <!-- If you don't know the MIME type in advance, set "mimeType" to "*/*". -->
-            <data android:mimeType="application/solidworks-file" />
-        </intent>
-
-        <package android:name="com.solidworks.eDrawingsProAndroid" />
-    </queries>
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:name=".ThisApplication"
         android:allowBackup="true"
@@ -27,10 +13,13 @@
         android:theme="@style/AppTheme.AppCompat"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".remark.RemarksEditor"
+            android:exported="false" />
+        <activity
             android:name=".organizer.OrganizerActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ChangePassActivity"
             android:exported="false" />
@@ -78,5 +67,19 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <!-- If you don't know the MIME type in advance, set "mimeType" to "*/*". -->
+            <data android:mimeType="application/solidworks-file" />
+        </intent>
+
+        <package android:name="com.solidworks.eDrawingsProAndroid" />
+    </queries>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

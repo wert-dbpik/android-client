@@ -18,5 +18,10 @@
         android:orderInCategory="3"
         app:showAsAction="never"/>
 
+    <item android:title="Добавить комментарий new"
+        android:id="@+id/action_addRemark_new"
+        android:orderInCategory="4"
+        app:showAsAction="never"/>
+
 </menu>
     <!--            android:checked="true"/>-->
