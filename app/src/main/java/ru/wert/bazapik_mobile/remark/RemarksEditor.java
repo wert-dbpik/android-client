@@ -197,7 +197,7 @@ public class RemarksEditor extends AppCompatActivity implements
 
     private void fillRecViewWithPics(List<Pic> pics) {
         rvEditorRemarkPics.setLayoutManager(new LinearLayoutManager(this));
-        picsAdapter = new PicsAdapter(this, pics, PicsAdapter.REMARK_EDITOR);
+        picsAdapter = new PicsAdapter(this, pics, PicsAdapter.REMARK_EDITOR, this);
         rvEditorRemarkPics.setAdapter(picsAdapter);
         rvEditorRemarkPics.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
