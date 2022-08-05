@@ -6,10 +6,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,24 +16,19 @@ import android.widget.LinearLayout;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
-import lombok.SneakyThrows;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.api_interfaces.FileApiInterface;
-import ru.wert.bazapik_mobile.data.interfaces.Item;
-import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.remark.RemarkEditorFragment;
-import ru.wert.bazapik_mobile.viewer.ViewerActivity;
+import ru.wert.bazapik_mobile.remark.RemarksEditor;
 
 public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
 
@@ -45,13 +38,13 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
     private final Context context;
     private final Activity activity;
 
-    RemarkEditorFragment editor;
-
     private int whoCallMe;
     public static final int INFO_ACTIVITY = 0;
-    public static final int EDITOR_FRAGMENT = 1;
+    public static final int REMARK_EDITOR = 1;
 
-    public PicsAdapter(Context context, List<Pic> data, int whoCallMe, RemarkEditorFragment editor) {
+    RemarksEditor editor;
+
+    public PicsAdapter(Context context, List<Pic> data, int whoCallMe, RemarksEditor editor) {
         this(context, data, whoCallMe);
         this.editor = editor;
     }
@@ -108,7 +101,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
                                 holder.ivPicture.setLayoutParams(lParams);
                                 holder.ivPicture.setImageBitmap(bmp);
                                 holder.ivPicture.setAdjustViewBounds(true);
-                                if (whoCallMe == EDITOR_FRAGMENT)
+                                if (whoCallMe == REMARK_EDITOR)
                                     holder.ivPicture.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
                                         PopupMenu popup = new PopupMenu(v.getContext(), v, Gravity.RIGHT, R.attr.actionOverflowMenuStyle, 0);
                                         popup.getMenuInflater().inflate(R.menu.picture_context_menu, popup.getMenu());

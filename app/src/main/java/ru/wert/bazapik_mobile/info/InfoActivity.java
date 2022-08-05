@@ -3,12 +3,10 @@ package ru.wert.bazapik_mobile.info;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,7 +36,6 @@ import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
-import ru.wert.bazapik_mobile.remark.IRemarkFragmentInteraction;
 import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarkMaster;
 import ru.wert.bazapik_mobile.remark.RemarksEditor;
@@ -55,8 +51,8 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 public class InfoActivity extends BaseActivity  implements
         RemarkRetrofitService.IRemarkFindByPassportId,
         InfoDraftsViewAdapter.InfoDraftClickListener,
-        RemarksAdapter.InfoRemarkClickListener,
-        IRemarkFragmentInteraction {
+        RemarksAdapter.InfoRemarkClickListener
+{
 
     private static final String TAG = "+++ PassportInfoActivity +++" ;
     private TextView tvDecNumber, tvName;
@@ -70,22 +66,27 @@ public class InfoActivity extends BaseActivity  implements
     private String decNum;
 
     public static final String REMARK_PASSPORT = "remark_passport";
+    public static final String TYPE_OF_REMARK_OPERATION = "type_of_remark_operaton";
     public static final String NEW_REMARK = "new_remark";
+    public static final String CHANGING_REMARK = "changing_remark";
 
     private Bundle resumeBundle;
     private final String KEY_RECYCLER_DRAFTS_STATE = "recycler_drafts_state";
     private final String KEY_RECYCLER_REMARKS_STATE = "recycler_remarks_state";
-    private final String EDITOR_IS_OPEN = "editor_is_open";
-    private final String REMARK_TEXT = "remark_text";
-    
+
     //Все найденные элементы
     private List<Draft> foundDrafts;
     private ArrayList<String> foundDraftIdsForIntent;
     private ArrayList<String> foundRemarkIdsForIntent;
 
     private ActivityResultLauncher<Intent> addRemarkActivityForResultLauncher;
-    
+    private ActivityResultLauncher<Intent> changeRemarkActivityForResultLauncher;
+
     @Getter private RemarkMaster rm;
+    public static final Integer ADD_REMARK = 1;
+    public static final Integer CHANGE_REMARK = 2;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,7 @@ public class InfoActivity extends BaseActivity  implements
         rvDrafts = findViewById(R.id.rvDrafts); //RecycleView
 
         registerAddRemarkActivityForResultLauncher();
+        registerChangeRemarkActivityForResultLauncher();
 
         createRVDrafts();
 
@@ -116,7 +118,27 @@ public class InfoActivity extends BaseActivity  implements
                         Intent data = result.getData();
                         if (data != null) {
                             Remark newRemark = data.getParcelableExtra(NEW_REMARK);
-                                    rm.createRemarkNew(newRemark);
+                            rm.createRemark(newRemark);
+                        } else {
+
+                        }
+
+                    } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
+
+                    }
+
+                });
+    }
+
+    private void registerChangeRemarkActivityForResultLauncher() {
+        changeRemarkActivityForResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Remark changedRemark = data.getParcelableExtra(CHANGING_REMARK);
+                            rm.changeRemark(changedRemark);
                         } else {
 
                         }
@@ -145,7 +167,7 @@ public class InfoActivity extends BaseActivity  implements
                     if(passport.getRemarkIds().isEmpty())
                         rm.getLlCommentsContainer().setVisibility(View.GONE);
                     else
-                        showInfoInCommentsContainer();
+                        rm.showInfoInCommentsContainer();
 
                     tvDecNumber.setText(decNum);
                     tvName.setText(passport.getName());
@@ -168,10 +190,7 @@ public class InfoActivity extends BaseActivity  implements
     @Override
     protected void onResume() {
         super.onResume();
-        rm.getRemarkContainerView().clearAnimation();
-        if(resumeBundle == null){
-            rm.getRemarkContainerView().setVisibility(View.INVISIBLE);
-        } else {
+        if (resumeBundle != null) {
             Parcelable listDraftsState = resumeBundle.getParcelable(KEY_RECYCLER_DRAFTS_STATE);
             if (listDraftsState != null && rvDrafts != null)
                 rvDrafts.getLayoutManager().onRestoreInstanceState(listDraftsState);
@@ -179,14 +198,6 @@ public class InfoActivity extends BaseActivity  implements
             Parcelable listRemarksState = resumeBundle.getParcelable(KEY_RECYCLER_REMARKS_STATE);
             if (listRemarksState != null && rm.getRvRemarks() != null)
                 rm.getRvRemarks().getLayoutManager().onRestoreInstanceState(listRemarksState);
-
-            if(resumeBundle.getInt(EDITOR_IS_OPEN) == View.INVISIBLE) {
-                rm.getRemarkContainerView().setVisibility(View.INVISIBLE);
-                new Thread(() -> {
-                    Instrumentation inst = new Instrumentation();
-                    inst.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK);
-                }).start();
-            }
 
             resumeBundle = null;
         }
@@ -209,8 +220,6 @@ public class InfoActivity extends BaseActivity  implements
 
     private void createResumeBundle(){
         resumeBundle = new Bundle();
-        resumeBundle.putString(REMARK_TEXT, rm.getRemarkEditorFragment().getTextEditor().getText().toString());
-        resumeBundle.putInt(EDITOR_IS_OPEN, rm.getRemarkContainerView().getVisibility());
 
         if(rvDrafts != null) {
             Parcelable listDraftsState = rvDrafts.getLayoutManager().onSaveInstanceState();
@@ -313,18 +322,12 @@ public class InfoActivity extends BaseActivity  implements
                 return true;
 
             case R.id.action_addRemark:
-                if(rm.getRvRemarks().getLayoutManager() == null)
-                    rm.createRecycleViewOfFoundRemarks();
-                rm.getRemarkEditorFragment().clearRemarkEditor();
-                rm.getRemarkEditorFragment().getTvTitle().setText("Новый комментарий:");
-                rm.getRemarkEditorFragment().getTextEditor().setText("");
-                rm.getRemarkEditorFragment().getBtnAdd().setText(rm.getRemarkEditorFragment().sAdd);
-                rm.getRemarkContainerView().setVisibility(View.VISIBLE);
-                return true;
-
-            case R.id.action_addRemark_new:
                 Intent remarksEditor = new Intent(InfoActivity.this, RemarksEditor.class);
+//                Bundle bundle = new Bundle();
+//                bundle.putInt(TYPE_OF_REMARK_OPERATION, ADD_REMARK);
+                remarksEditor.putExtra(TYPE_OF_REMARK_OPERATION, ADD_REMARK);
                 remarksEditor.putExtra(REMARK_PASSPORT, passport);
+
                 addRemarkActivityForResultLauncher.launch(remarksEditor);
                 return true;
 
@@ -333,56 +336,21 @@ public class InfoActivity extends BaseActivity  implements
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        if(rm.getRemarkContainerView().getVisibility() == View.VISIBLE) {
-            rm.getRemarkContainerView().setVisibility(View.INVISIBLE);
-        } else
-            super.onBackPressed();
-    }
 
+    public void openChangeRemarkActivity(Remark changingRemark) {
+        Intent remarksEditor = new Intent(InfoActivity.this, RemarksEditor.class);
+        remarksEditor.putExtra(TYPE_OF_REMARK_OPERATION, CHANGE_REMARK);
+        remarksEditor.putExtra(CHANGING_REMARK, changingRemark);
+        remarksEditor.putExtra(REMARK_PASSPORT, passport);
 
-    @Override
-    public Passport findPassportById(Long id){
-        for(Passport p : ALL_PASSPORTS){
-            if(p.getId().equals(id))
-                return p;
-        }
-        return null;
-    }
+        changeRemarkActivityForResultLauncher.launch(remarksEditor);
 
-    @Override
-    public FragmentContainerView getRemarkContainerView() {
-        return rm.getRemarkContainerView();
-    }
-
-    @Override
-    public void closeRemarkFragment() {
-        rm.closeRemarkFragment();
-    }
-
-    @Override
-    public void updateRemarkAdapter() {
-        rm.updateRemarkAdapter();
-    }
-
-    @Override
-    public void increaseCountOfRemarks() {
-        rm.increaseCountOfRemarks();
-    }
-
-    @Override
-    public void decreaseCountOfRemarks() {
-        rm.decreaseCountOfRemarks();
-    }
-
-    @Override
-    public void showInfoInCommentsContainer() {
-        rm.showInfoInCommentsContainer();
     }
 
     @Override
     public void doWhenRemarkHasBeenFoundByPassportId(Response<List<Remark>> response) {
         rm.doWhenRemarkHasBeenFoundByPassportId(response);
     }
+
+
 }

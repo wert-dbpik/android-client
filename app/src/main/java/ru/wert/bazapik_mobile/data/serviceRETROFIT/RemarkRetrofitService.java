@@ -35,7 +35,7 @@ public class RemarkRetrofitService {
                 if (response.isSuccessful()) {
                     cl.doWhenRemarkHasBeenFoundByPassportId(response);
                 } else {
-                    new WarningDialog1().show(context, "Внимание!", "Проблемы на линии!");
+                    new WarningDialog1().show(context, "Внимание!", "Требуемый пасспорт не найден!");
                 }
             }
 
@@ -93,7 +93,7 @@ public class RemarkRetrofitService {
 
                 } else {
                     Log.d(TAG, String.format("Не удалось изменить запись, %s", response.message()));
-                    new WarningDialog1().show(context, "Ошибка!","Не удалось сохранить запись");
+                    new WarningDialog1().show(context, "Ошибка!","Не удалось изменить запись");
                 }
             }
 

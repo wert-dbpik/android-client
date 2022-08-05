@@ -45,6 +45,7 @@ public class Passport extends _BaseEntity implements Item, Parcelable {
 
     //==========  Parcelable =======================
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -53,33 +54,33 @@ public class Passport extends _BaseEntity implements Item, Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.id);
-        dest.writeSerializable(this.prefix);
         dest.writeString(this.number);
         dest.writeString(this.name);
         dest.writeList(this.draftIds);
         dest.writeList(this.remarkIds);
+        dest.writeParcelable(this.prefix, flags);
     }
 
     public void readFromParcel(Parcel source) {
         this.id = (Long) source.readValue(Long.class.getClassLoader());
-        this.prefix = (Prefix) source.readSerializable();
         this.number = source.readString();
         this.name = source.readString();
         this.draftIds = new ArrayList<Long>();
-        this.remarkIds = new ArrayList<Long>();
         source.readList(this.draftIds, Long.class.getClassLoader());
+        this.remarkIds = new ArrayList<Long>();
         source.readList(this.remarkIds, Long.class.getClassLoader());
+        this.prefix = source.readParcelable(Prefix.class.getClassLoader());
     }
 
     protected Passport(Parcel in) {
         this.id = (Long) in.readValue(Long.class.getClassLoader());
-        this.prefix = (Prefix) in.readSerializable();
         this.number = in.readString();
         this.name = in.readString();
         this.draftIds = new ArrayList<Long>();
-        this.remarkIds = new ArrayList<Long>();
         in.readList(this.draftIds, Long.class.getClassLoader());
+        this.remarkIds = new ArrayList<Long>();
         in.readList(this.remarkIds, Long.class.getClassLoader());
+        this.prefix = in.readParcelable(Prefix.class.getClassLoader());
     }
 
     public static final Creator<Passport> CREATOR = new Creator<Passport>() {

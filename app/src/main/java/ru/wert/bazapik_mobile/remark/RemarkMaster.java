@@ -1,6 +1,8 @@
 package ru.wert.bazapik_mobile.remark;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -26,6 +28,7 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
+import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
@@ -33,23 +36,25 @@ import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
+import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
+import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 
-public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, RemarkRetrofitService.IRemarkChange, RemarkRetrofitService.IRemarkAddPic{
+public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, RemarkRetrofitService.IRemarkCreate{
+
+    private final String TAG = "RemarkMaster";
 
     private final InfoActivity infoActivity;
     private final Long passId;
 
     private boolean remarksShown; //Флаг комментарии отображаются
     @Setter private int countOfRemarks; //Числовое значение количества коментариев, меняется при добавлени и удалении комментариев
-    @Getter private final RemarkEditorFragment remarkEditorFragment = new RemarkEditorFragment() ;
     @Setter private Remark changedRemark;
 
 
     private RemarksAdapter remarksAdapter;
     @Getter private final LinearLayout llCommentsContainer; //Контейенер содержащий Надпись, количество комментариев и кнопку свернуть/развернуть
     @Getter private final TextView tvCountOfRemarks; //Количество комментариев, меняется при добавлени и удалении комментариев
-    @Getter private final FragmentContainerView remarkContainerView;
     @Getter private final RecyclerView rvRemarks;
     private final TextView tvRemarks; //Слово Комментарии
 
@@ -64,8 +69,6 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
 
         llCommentsContainer = activity.findViewById(R.id.llCommentsContainer);
         tvCountOfRemarks = activity.findViewById(R.id.tvCountOfRemarks);
-        remarkContainerView = activity.findViewById(R.id.addRemarkContainer);
-        remarkContainerView.setVisibility(View.INVISIBLE);
 
         tvRemarks = activity.findViewById(R.id.tvNewComment); //Текст Новый комментарий
         rvRemarks = activity.findViewById(R.id.rvInfoRemarks); //RecycleView
@@ -82,11 +85,6 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
             remarksShown = !remarksShown;
         });
 
-
-        FragmentManager fragmentManager = activity.getSupportFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.addRemarkContainer, remarkEditorFragment, "remark_tag");
-        ft.commit();
     }
 
     public void createRecycleViewOfFoundRemarks() {
@@ -139,42 +137,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
 
     }
 
-    public void deleteRemark(Remark remark, int pos) {
-        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<Void> call =  api.deleteById(remark.getId());
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    infoActivity.findPassportById(passId).getRemarkIds().remove(remark.getId());
 
-                    remarksAdapter.notifyItemRemoved(pos);
-//                    updateRemarkAdapter();
-                    decreaseCountOfRemarks();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                new WarningDialog1().show(infoActivity, "Внимание!", "Проблемы на линии!");
-            }
-        });
-    }
-
-    /**
-     * Метод настраивает редактор Комментариев под изменение
-     * @param remark Remark
-     */
-    public void openChangeRemarkFragment(Remark remark) {
-        remarkEditorFragment.getTvTitle().setText("Изменить комментарий:");
-        remarkEditorFragment.getTextEditor().setText(remark.getText());
-        remarkEditorFragment.getPicsAdapter().changeListOfItems(remark.getPicsInRemark());
-        remarkEditorFragment.setPicsInAdapter(new ArrayList<>(remark.getPicsInRemark()));
-        setChangedRemark(remark);
-        remarkEditorFragment.getBtnAdd().setText(RemarkEditorFragment.sChange);
-        remarkContainerView.setVisibility(View.VISIBLE);
-
-    }
 
 
     public void updateRemarkAdapter(){
@@ -238,6 +201,24 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
         rvRemarks.setVisibility(View.GONE);
     }
 
+
+    // =======================   ДОБАВЛЕНИЕ КОММЕНТАРИЯ ================
+
+    /**
+     * Метод добавляет новое замечание в БД
+     * Вызывается из RemarkEditorFragment
+     */
+    public void createRemark(Remark remark){
+        RemarkRetrofitService.create(this, infoActivity, remark);
+        //Смотри doWhenRemarkIsCreated
+    }
+
+    @Override
+    public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
+        increaseCountOfRemarks();
+        updateRemarkAdapter();
+    }
+
     /**
      * Метод увеличиват количество комментариев на +1
      * И обновляет textView c количеством Комментариев
@@ -246,6 +227,49 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
         countOfRemarks++;
         if(llCommentsContainer.getVisibility() == View.GONE) showInfoInCommentsContainer();
         tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
+    }
+    // =======================   ИЗМЕНЕНИЕ КОММЕНТАРИЯ ================
+
+    /**
+     * Метод изменяет замечание в БД
+     * Вызывается из InfoActivity
+     * @param changedRemark Remark
+     */
+    public void changeRemark(Remark changedRemark){
+        RemarkRetrofitService.update(this, infoActivity, changedRemark);
+        //Смотри doWhenRemarkHasBeenChanged
+    }
+
+    @Override//RemarkRetrofitService.IRemarkChanger
+    public void doWhenRemarkHasBeenChanged(Response<Remark> response) {
+        updateRemarkAdapter();
+    }
+
+    // =======================   УДАЛЕНИЕ КОММЕНТАРИЯ ================
+
+    public void deleteRemark(Remark remark, int pos) {
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        Call<Void> call =  api.deleteById(remark.getId());
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    findPassportById(passId).getRemarkIds().remove(remark.getId());
+
+                    remarksAdapter.notifyItemRemoved(pos);
+//                    updateRemarkAdapter();
+                    decreaseCountOfRemarks();
+                } else {
+                    Log.e(TAG + " : deleteRemark", "Не удалось удалить комментарий");
+                    new WarningDialog1().show(infoActivity, "Внимание!", "Не удалось удалить комментарий!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                new WarningDialog1().show(infoActivity, "Внимание!", "Проблемы на линии!");
+            }
+        });
     }
 
     /**
@@ -258,90 +282,11 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
         tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
     }
 
-    /**
-     * Метод насильно закрывает фрагмент с редактором комментарий, который появляется при нажатии на кнопку back
-     * return происходит из-за Injecting to another application requires INJECT_EVENTS permission
-     */
-    public void closeRemarkFragment() {
-        try {
-            InputMethodManager input = (InputMethodManager) infoActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            input.hideSoftInputFromWindow(infoActivity.getCurrentFocus().getWindowToken(), 0);
-        }catch(Exception e) {
-            return;
+    public Passport findPassportById(Long id){
+        for(Passport p : ALL_PASSPORTS){
+            if(p.getId().equals(id))
+                return p;
         }
-        remarkContainerView.setVisibility(View.INVISIBLE);
+        return null;
     }
-
-
-    /**
-     * Метод добавляет новое замечание в БД
-     * Вызывается из RemarkEditorFragment
-     * @param picsInAdapter
-     */
-    public void createRemark(List<Pic> picsInAdapter){
-
-        Remark remark = new Remark(
-                infoActivity.getPassport(),
-                CURRENT_USER,
-                remarkEditorFragment.getTextEditor().getText().toString(),
-                ThisApplication.getCurrentTime(),
-                picsInAdapter
-        );
-
-
-    }
-
-    /**
-     * Метод добавляет новое замечание в БД
-     * Вызывается из RemarkEditorFragment
-     */
-    public void createRemarkNew(Remark remark){
-        RemarkRetrofitService.create(this, infoActivity, remark);
-        //Смотри doWhenRemarkIsCreated
-    }
-
-
-    @Override//RemarkRetrofitService.IRemarkCreator
-    public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
-
-        assert response.body() != null;
-        closeRemarkFragment();
-        updateRemarkAdapter();
-        infoActivity.findPassportById(passId)
-                .getRemarkIds().add(response.body().getId());
-
-        increaseCountOfRemarks();
-
-        remarkEditorFragment.clearRemarkEditor();
-    }
-
-    @Override
-    public void doWhenRemarkHasBeenAddedPic(Response<Set<Pic>> response) {
-
-    }
-
-    /**
-     * Метод изменяет замечание в БД
-     * Вызывается из RemarkEditorFragment
-     * @param picsInAdapter List<Pic>
-     */
-    public void changeRemark(List<Pic> picsInAdapter){
-
-        changedRemark.setUser(CURRENT_USER);
-        changedRemark.setText(remarkEditorFragment.getTextEditor().getText().toString());
-        changedRemark.setPicsInRemark(new ArrayList<>(picsInAdapter));
-        changedRemark.setCreationTime(ThisApplication.getCurrentTime());
-
-        RemarkRetrofitService.update(this, infoActivity, changedRemark);
-        //Смотри doWhenRemarkHasBeenChanged
-    }
-
-    @Override//RemarkRetrofitService.IRemarkChanger
-    public void doWhenRemarkHasBeenChanged(Response<Remark> response) {
-        closeRemarkFragment();
-        updateRemarkAdapter();
-
-        remarkEditorFragment.clearRemarkEditor();
-    }
-
 }

@@ -1,11 +1,32 @@
 package ru.wert.bazapik_mobile.remark;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.MediaStore;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import lombok.Setter;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
@@ -16,34 +37,15 @@ import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
 
-import android.app.Activity;
-import android.content.ClipData;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.MediaStore;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
+import static ru.wert.bazapik_mobile.info.InfoActivity.ADD_REMARK;
+import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGING_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.REMARK_PASSPORT;
+import static ru.wert.bazapik_mobile.info.InfoActivity.TYPE_OF_REMARK_OPERATION;
 
 public class RemarksEditor extends AppCompatActivity implements
-        FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator{
+        FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     private final String TAG = "RemarkFragment";
 
@@ -51,7 +53,7 @@ public class RemarksEditor extends AppCompatActivity implements
     private String text;
     private List<Pic> pics;
     private RecyclerView rvEditorRemarkPics;
-    private List<Pic> picsInAdapter;
+    @Setter private List<Pic> picsInAdapter;
     private ActivityResultLauncher<Intent> pickUpPictureResultLauncher;
     public static final String sAdd = "добавить";
     public static final String sChange = "изменить";
@@ -66,7 +68,10 @@ public class RemarksEditor extends AppCompatActivity implements
     private final String REMARK_PICS = "remark_pics";
     private final String KEY_RECYCLER_STATE = "recycler_state";
 
-    private Bundle createResumeBundle(){
+    private int typeOfRemarkOperation;
+    private Remark changingRemark;
+
+    private Bundle createResumeBundle() {
         Bundle bundle = new Bundle();
         bundle.putParcelable(REMARK_PASSPORT, passport);
         bundle.putString(REMARK_TEXT, text);
@@ -78,7 +83,7 @@ public class RemarksEditor extends AppCompatActivity implements
         return bundle;
     }
 
-    private void deployResumeBundle(){
+    private void deployResumeBundle() {
         this.passport = resumeBundle.getParcelable(REMARK_PASSPORT);
         this.text = resumeBundle.getString(REMARK_TEXT);
         this.pics = resumeBundle.getParcelableArrayList(REMARK_PICS);
@@ -91,14 +96,32 @@ public class RemarksEditor extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remarks_editor);
 
-        Intent intent = getIntent();
-        passport = intent.getParcelableExtra(REMARK_PASSPORT);
-
         editText = findViewById(R.id.etTextRemark);
         tvTitle = findViewById(R.id.tvRemarkTitle);
         btnAdd = findViewById(R.id.btnAddRemark);
-        btnAdd.setOnClickListener(v->{
-            if(btnAdd.getText().equals(sAdd))
+        rvEditorRemarkPics = findViewById(R.id.rvEditorRemarkPics);
+
+
+        Intent intent = getIntent();
+        typeOfRemarkOperation = intent.getIntExtra(TYPE_OF_REMARK_OPERATION, 1);
+        passport = intent.getParcelableExtra(REMARK_PASSPORT);
+
+        if (typeOfRemarkOperation == ADD_REMARK) {
+            tvTitle.setText("Добавление комментария");
+            btnAdd.setText(sAdd);
+            picsInAdapter = new ArrayList<>();
+            fillRecViewWithPics(picsInAdapter);
+        } else { //CHANGE_REMARK
+            changingRemark = intent.getParcelableExtra(CHANGING_REMARK);
+            tvTitle.setText("Изменение комментария");
+            btnAdd.setText(sChange);
+            editText.setText(changingRemark.getText());
+            picsInAdapter = changingRemark.getPicsInRemark();
+            fillRecViewWithPics(picsInAdapter);
+        }
+
+        btnAdd.setOnClickListener(v -> {
+            if (btnAdd.getText().equals(sAdd))
                 addRemark();
             else
                 changeRemark();
@@ -109,17 +132,17 @@ public class RemarksEditor extends AppCompatActivity implements
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        if(data != null) {
+                        if (data != null) {
                             List<Uri> chosenPics;
                             ClipData clipData = data.getClipData();
                             chosenPics = (clipData == null ?
                                     Collections.singletonList(data.getData()) :
                                     ThisApplication.clipDataToList(clipData));
 
-                            for(Uri uri : chosenPics){
+                            for (Uri uri : chosenPics) {
                                 String ext;
                                 String mimeType = getContentResolver().getType(uri);
-                                if(mimeType.startsWith("image")) {
+                                if (mimeType.startsWith("image")) {
                                     String str = mimeType.split("/", -1)[1];
                                     ext = str.equals("jpeg") ? "jpg" : str;
                                 } else
@@ -133,7 +156,7 @@ public class RemarksEditor extends AppCompatActivity implements
                 });
 
         ImageButton btnAddImage = findViewById(R.id.btnAddImage);
-        btnAddImage.setOnClickListener(v ->{
+        btnAddImage.setOnClickListener(v -> {
             Intent addImageIntent = new Intent();
             addImageIntent.setAction(Intent.ACTION_GET_CONTENT);
             addImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
@@ -141,11 +164,6 @@ public class RemarksEditor extends AppCompatActivity implements
 
             pickUpPictureResultLauncher.launch(addImageIntent);
         });
-
-        rvEditorRemarkPics = findViewById(R.id.rvEditorRemarkPics);
-        picsInAdapter = new ArrayList<>();
-        fillRecViewWithPics(picsInAdapter);
-
 
     }
 
@@ -179,13 +197,13 @@ public class RemarksEditor extends AppCompatActivity implements
 
     private void fillRecViewWithPics(List<Pic> pics) {
         rvEditorRemarkPics.setLayoutManager(new LinearLayoutManager(this));
-        picsAdapter = new PicsAdapter(this, pics, PicsAdapter.EDITOR_FRAGMENT);
+        picsAdapter = new PicsAdapter(this, pics, PicsAdapter.REMARK_EDITOR);
         rvEditorRemarkPics.setAdapter(picsAdapter);
         rvEditorRemarkPics.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
     }
 
-    private void addRemark(){
+    private void addRemark() {
         Remark remark = new Remark(
                 passport,
                 CURRENT_USER,
@@ -198,30 +216,28 @@ public class RemarksEditor extends AppCompatActivity implements
         data.putExtra(NEW_REMARK, remark);
         setResult(RESULT_OK, data);
         finish();
-//        activity.getRm().addRemark(picsInAdapter);
     }
 
 
-    private void changeRemark(){
+    private void changeRemark() {
+        changingRemark.setUser(CURRENT_USER);
+        changingRemark.setText(editText.getText().toString());
+        changingRemark.setCreationTime(ThisApplication.getCurrentTime());
+        changingRemark.setPicsInRemark(picsInAdapter);
 
-//        activity.getRm().changeRemark(picsInAdapter);
+        Intent data = new Intent();
+        data.putExtra(CHANGING_REMARK, changingRemark);
+        setResult(RESULT_OK, data);
+        finish();
     }
 
-    /**
-     * Метод удаляет из редактора текст и изображения
-     */
-    public void clearRemarkEditor() {
-        picsInAdapter = new ArrayList<>();
-        picsAdapter.changeListOfItems(picsInAdapter);
-        editText.setText("");
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(resumeBundle != null) {
+        if (resumeBundle != null) {
             deployResumeBundle();
-            runOnUiThread(()->{
+            runOnUiThread(() -> {
                 editText.setText(resumeBundle.getString(REMARK_TEXT));
                 editText.setSelection(editText.length());
 

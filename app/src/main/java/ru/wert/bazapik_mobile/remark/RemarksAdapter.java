@@ -91,7 +91,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
             popup.setOnMenuItemClickListener(item1 -> {
                 switch (item1.getItemId()) {
                     case R.id.changeRemark:
-                        ((InfoActivity)context).getRm().openChangeRemarkFragment(remark);
+                        ((InfoActivity)context).openChangeRemarkActivity(remark);
                         break;
                     case R.id.deleteRemark:
                         ((InfoActivity)context).getRm().deleteRemark(remark, position);
@@ -102,15 +102,15 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
             popup.show();
         });
 
+        holder.llRemark.removeAllViews();
 
-        List<Pic> picsInRemark =
-                remark.getPicsInRemark() == null || remark.getPicsInRemark().isEmpty() ?
-                        new ArrayList<>() :
-                        remark.getPicsInRemark();
+        List<Pic> picsInRemark = new ArrayList<>();
+        if(remark.getPicsInRemark() != null && !remark.getPicsInRemark().isEmpty()){
+            picsInRemark = new ArrayList<>(remark.getPicsInRemark());
+            for(Pic pic: picsInRemark) {
+                showPicture(holder, pic, position);
 
-        for(Pic pic: picsInRemark) {
-            showPicture(holder, pic, position);
-
+            }
         }
 
         if(context instanceof ViewerActivity){
