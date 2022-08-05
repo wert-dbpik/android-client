@@ -56,6 +56,7 @@ public class UserGroup extends _BaseEntity implements Item, Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
         dest.writeString(this.name);
         dest.writeByte(this.administrate ? (byte) 1 : (byte) 0);
         dest.writeByte(this.editUsers ? (byte) 1 : (byte) 0);
@@ -72,6 +73,7 @@ public class UserGroup extends _BaseEntity implements Item, Parcelable {
     }
 
     public void readFromParcel(Parcel source) {
+        this.id = (Long) source.readValue(Long.class.getClassLoader());
         this.name = source.readString();
         this.administrate = source.readByte() != 0;
         this.editUsers = source.readByte() != 0;
@@ -88,6 +90,7 @@ public class UserGroup extends _BaseEntity implements Item, Parcelable {
     }
 
     protected UserGroup(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
         this.name = in.readString();
         this.administrate = in.readByte() != 0;
         this.editUsers = in.readByte() != 0;

@@ -11,6 +11,7 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Pic;
+import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
@@ -37,6 +38,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
+import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.REMARK_PASSPORT;
 
 public class RemarksEditor extends AppCompatActivity implements
@@ -183,6 +186,18 @@ public class RemarksEditor extends AppCompatActivity implements
     }
 
     private void addRemark(){
+        Remark remark = new Remark(
+                passport,
+                CURRENT_USER,
+                editText.getText().toString(),
+                ThisApplication.getCurrentTime(),
+                picsInAdapter
+        );
+
+        Intent data = new Intent();
+        data.putExtra(NEW_REMARK, remark);
+        setResult(RESULT_OK, data);
+        finish();
 //        activity.getRm().addRemark(picsInAdapter);
     }
 

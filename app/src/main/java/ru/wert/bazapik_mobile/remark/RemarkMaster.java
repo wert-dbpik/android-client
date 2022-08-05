@@ -288,9 +288,18 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkCreate, Remark
                 picsInAdapter
         );
 
+
+    }
+
+    /**
+     * Метод добавляет новое замечание в БД
+     * Вызывается из RemarkEditorFragment
+     */
+    public void createRemarkNew(Remark remark){
         RemarkRetrofitService.create(this, infoActivity, remark);
         //Смотри doWhenRemarkIsCreated
     }
+
 
     @Override//RemarkRetrofitService.IRemarkCreator
     public void doWhenRemarkHasBeenCreated(Response<Remark> response) {

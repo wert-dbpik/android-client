@@ -15,11 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -86,6 +82,8 @@ public class InfoActivity extends BaseActivity  implements
     private List<Draft> foundDrafts;
     private ArrayList<String> foundDraftIdsForIntent;
     private ArrayList<String> foundRemarkIdsForIntent;
+
+    private ActivityResultLauncher<Intent> addRemarkActivityForResultLauncher;
     
     @Getter private RemarkMaster rm;
 
@@ -104,8 +102,30 @@ public class InfoActivity extends BaseActivity  implements
         tvDrafts = findViewById(R.id.tvDrafts);//Строка Доступные чертежи
         rvDrafts = findViewById(R.id.rvDrafts); //RecycleView
 
+        registerAddRemarkActivityForResultLauncher();
+
         createRVDrafts();
 
+    }
+
+    private void registerAddRemarkActivityForResultLauncher() {
+        addRemarkActivityForResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Remark newRemark = data.getParcelableExtra(NEW_REMARK);
+                                    rm.createRemarkNew(newRemark);
+                        } else {
+
+                        }
+
+                    } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
+
+                    }
+
+                });
     }
 
     private void createRVDrafts() {
@@ -270,7 +290,7 @@ public class InfoActivity extends BaseActivity  implements
         return true;
     }
 
-/**
+    /**
      * Обработка выбора меню
      * @param item
      * @return
@@ -280,8 +300,6 @@ public class InfoActivity extends BaseActivity  implements
     public boolean onOptionsItemSelected(MenuItem item) {
         // получим идентификатор выбранного пункта меню
         int id = item.getItemId();
-
-
 
         switch (id) {
             case R.id.action_update:
@@ -307,23 +325,7 @@ public class InfoActivity extends BaseActivity  implements
             case R.id.action_addRemark_new:
                 Intent remarksEditor = new Intent(InfoActivity.this, RemarksEditor.class);
                 remarksEditor.putExtra(REMARK_PASSPORT, passport);
-                registerForActivityResult(
-                        new ActivityResultContracts.StartActivityForResult(),
-                        result -> {
-                            if (result.getResultCode() == Activity.RESULT_OK) {
-                                Intent data = result.getData();
-                                if (data != null) {
-                                    Remark newRemark = data.getParcelableExtra(NEW_REMARK);
-                                    rm.createRemark();
-                                } else {
-
-                                }
-
-                            } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
-
-                            }
-
-                        }).launch(remarksEditor);
+                addRemarkActivityForResultLauncher.launch(remarksEditor);
                 return true;
 
             default:
