@@ -50,6 +50,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
+    public static final String PASSPORT = "passport";
 
     @Getter@Setter private boolean global = true;
     @Setter@Getter private Integer localSelectedPosition;
@@ -134,7 +135,8 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
      */
     private void openInfoView(int position){
         Intent intent = new Intent(((Activity)org), InfoActivity.class);
-        intent.putExtra("PASSPORT_ID", String.valueOf(adapter.getItem(position).getId()));
+        Passport passport = adapter.getItem(position);
+        intent.putExtra(PASSPORT, passport);
         startActivity(intent);
     }
 
