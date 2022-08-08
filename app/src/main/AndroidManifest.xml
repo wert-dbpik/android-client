@@ -46,6 +46,9 @@
         <activity
             android:name=".viewer.ViewerActivity"
             android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".viewer.PicsViewerActivity"
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".MainActivity" />
         <activity android:name=".main.BaseActivity" />
         <activity android:name=".warnings.Error" />

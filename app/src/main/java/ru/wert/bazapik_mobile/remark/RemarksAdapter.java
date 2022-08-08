@@ -1,7 +1,9 @@
 package ru.wert.bazapik_mobile.remark;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +21,17 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
-import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
-import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.info.InfoActivity;
+import ru.wert.bazapik_mobile.viewer.PicsViewerActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 import static ru.wert.bazapik_mobile.data.retrofit.RetrofitClient.BASE_URL;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.ALL_PICS;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.CURRENT_PIC;
 
 public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHolder> {
 
@@ -108,7 +111,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         if(remark.getPicsInRemark() != null && !remark.getPicsInRemark().isEmpty()){
             picsInRemark = new ArrayList<>(remark.getPicsInRemark());
             for(Pic pic: picsInRemark) {
-                showPicture(holder, pic, position);
+                addPictureToRemark(holder, pic, picsInRemark);
 
             }
         }
@@ -125,7 +128,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         }
     }
 
-    private void showPicture(ViewHolder holder, Pic pic, int position) {
+    private void addPictureToRemark(ViewHolder holder, Pic pic, List<Pic> picsInRemark) {
         String str = BASE_URL + "files/download/pics/" + pic.getId() + "." + pic.getExtension();
         Uri uri = Uri.parse(str);
         LinearLayout.LayoutParams lParamsLL  = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -150,6 +153,12 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         Picasso.get().load(uri).into(imageView);
         imageView.setAdjustViewBounds(true);
         imageView.setPadding(0, 20, 0, 20);
+        imageView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PicsViewerActivity.class);
+            intent.putParcelableArrayListExtra(ALL_PICS, (ArrayList<? extends Parcelable>) picsInRemark);
+            intent.putExtra(CURRENT_PIC, pic);
+            context.startActivity(intent);
+        });
 
         ll.addView(imageView, lParams);
         holder.llRemark.addView(ll);

@@ -1,16 +1,11 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import android.content.ContentResolver;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
-import android.widget.Button;
 
 import org.apache.commons.io.FileUtils;
 
@@ -21,12 +16,11 @@ import java.io.File;
 import ru.wert.bazapik_mobile.R;
 
 import static ru.wert.bazapik_mobile.ThisApplication.SOLID_EXTENSIONS;
-import static ru.wert.bazapik_mobile.ThisApplication.getAppContext;
 
 /**
  * Фрагмент для отображения файлов типа JPEG, PNG и т.д.
  */
-public class ImageViewer extends Fragment {
+public class ImageViewerFragment extends Fragment {
 
     private ZoomableImageView mDraftImageView;
 
@@ -42,7 +36,7 @@ public class ImageViewer extends Fragment {
         if(bundle != null) {
             String bundleString = this.getArguments().getString("LOCAL_FILE");
             if(SOLID_EXTENSIONS.contains(FileUtils.getExtension(bundleString))){
-                Bitmap bitmap = BitmapFactory.decodeResource(ImageViewer.this.getResources(),
+                Bitmap bitmap = BitmapFactory.decodeResource(ImageViewerFragment.this.getResources(),
                         R.drawable.image3dpng);
                 mDraftImageView.setImageBitmap(bitmap);
             }else {

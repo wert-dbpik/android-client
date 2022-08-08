@@ -19,7 +19,7 @@ import java.io.File;
 import ru.wert.bazapik_mobile.R;
 
 
-public class PdfViewer extends Fragment {
+public class PdfViewerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
