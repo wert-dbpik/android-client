@@ -7,7 +7,7 @@
     tools:context=".viewer.ImageViewerFragment">
 
     <ru.wert.bazapik_mobile.viewer.ZoomableImageView
-        android:id="@+id/draftImageView"
+        android:id="@+id/picsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#c4c4c4"

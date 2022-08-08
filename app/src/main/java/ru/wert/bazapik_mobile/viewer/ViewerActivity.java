@@ -1,6 +1,5 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,10 +31,9 @@ import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
-import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
-import ru.wert.bazapik_mobile.utils.Dest;
+import ru.wert.bazapik_mobile.utils.AnimationDest;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static android.content.Intent.ACTION_VIEW;
@@ -67,7 +65,7 @@ public class ViewerActivity extends BaseActivity {
     private FragmentManager fm;
 
     private ImageButton btnShowPrevious, btnShowNext;
-    private Dest destination = Dest.NEXT;
+    private AnimationDest destination = AnimationDest.ANIMATE_NEXT;
     private Fragment draftFragment;
     private Button btnTapLeft, btnTapRight;
     private ImageButton btnShowRemarks;
@@ -137,13 +135,13 @@ public class ViewerActivity extends BaseActivity {
             public void onSwipeRight() {
                 if(iterator - 1 < 0) return;
                 currentDraftId = (allDraftsIds.get(--iterator));
-                destination = Dest.PREV;
+                destination = AnimationDest.ANIMATE_PREV;
                 openFragment();
             }
             public void onSwipeLeft() {
                 if(iterator + 1 > allDraftsIds.size()-1) return;
                 currentDraftId = allDraftsIds.get(++iterator);
-                destination = Dest.NEXT;
+                destination = AnimationDest.ANIMATE_NEXT;
                 openFragment();
             }
         };
@@ -152,7 +150,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showNextDraft() {
         return v -> {
             currentDraftId = allDraftsIds.get(++iterator);
-            destination = Dest.NEXT;
+            destination = AnimationDest.ANIMATE_NEXT;
             openFragment();
         };
     }
@@ -160,7 +158,7 @@ public class ViewerActivity extends BaseActivity {
     private View.OnClickListener showPreviousDraft() {
         return v -> {
             currentDraftId = (allDraftsIds.get(--iterator));
-            destination = Dest.PREV;
+            destination = AnimationDest.ANIMATE_PREV;
             openFragment();
         };
     }
@@ -331,10 +329,10 @@ public class ViewerActivity extends BaseActivity {
             //Определяем формат чертежа
             if (PDF_EXTENSIONS.contains(currentDraft.getExtension())) { //Если PDF
                 //Переключаем фрагмент на PdfViewer
-                draftFragment = new PdfViewer();
+                draftFragment = new PdfViewerFragment();
                 draftFragment.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
-                if (destination.equals(Dest.NEXT))
+                if (destination.equals(AnimationDest.ANIMATE_NEXT))
                     ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
                 else
                     ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
@@ -343,10 +341,10 @@ public class ViewerActivity extends BaseActivity {
 
             } else { //Если PNG, JPG, а также показываемое в стороннем приложении
                 //Переключаем фрагмент на ImageView
-                Fragment draftFragment = new ImageViewer();
+                Fragment draftFragment = new ImageViewerFragment();
                 draftFragment.setArguments(bundle);
                 FragmentTransaction ft = fm.beginTransaction();
-                if (destination.equals(Dest.NEXT))
+                if (destination.equals(AnimationDest.ANIMATE_NEXT))
                     ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
                 else
                     ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
