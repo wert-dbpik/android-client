@@ -48,10 +48,9 @@ public class PicsViewerActivity extends AppCompatActivity {
         Intent intent = getIntent();
         allPics = intent.getParcelableArrayListExtra(ALL_PICS);
         currentPic = intent.getParcelableExtra(CURRENT_PIC);
+
         //Получаем текущую позицию рисунка
         initIterator();
-
-
 
         btnShowPrevious.setOnClickListener(showPreviousDraft());
         btnShowNext.setOnClickListener(showNextDraft());

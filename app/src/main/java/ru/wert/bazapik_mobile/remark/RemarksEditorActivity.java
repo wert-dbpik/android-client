@@ -1,11 +1,14 @@
 package ru.wert.bazapik_mobile.remark;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.widget.Button;
@@ -14,20 +17,27 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import lombok.Setter;
 import retrofit2.Response;
+import ru.wert.bazapik_mobile.BuildConfig;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Passport;
@@ -37,6 +47,8 @@ import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
 
+import static androidx.core.content.FileProvider.getUriForFile;
+import static ru.wert.bazapik_mobile.AppPermissions.MY_PERMISSIONS_REQUEST_CAMERA;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.info.InfoActivity.ADD_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGING_REMARK;
@@ -44,7 +56,7 @@ import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.REMARK_PASSPORT;
 import static ru.wert.bazapik_mobile.info.InfoActivity.TYPE_OF_REMARK_OPERATION;
 
-public class RemarksEditor extends AppCompatActivity implements
+public class RemarksEditorActivity extends AppCompatActivity implements
         FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     private final String TAG = "RemarkFragment";
@@ -55,6 +67,7 @@ public class RemarksEditor extends AppCompatActivity implements
     private RecyclerView rvEditorRemarkPics;
     @Setter private List<Pic> picsInAdapter;
     private ActivityResultLauncher<Intent> pickUpPictureResultLauncher;
+    private ActivityResultLauncher<Intent> takePhotoResultLauncher;
     public static final String sAdd = "добавить";
     public static final String sChange = "изменить";
     private PicsAdapter picsAdapter;
@@ -147,7 +160,35 @@ public class RemarksEditor extends AppCompatActivity implements
                                     ext = str.equals("jpeg") ? "jpg" : str;
                                 } else
                                     return;
-                                PicRetrofitService.create(RemarksEditor.this, this, uri, ext);
+                                PicRetrofitService.create(RemarksEditorActivity.this, this, uri, ext);
+                                //Смотри doWhenPicIsCreated
+
+                            }
+                        }
+                    }
+                });
+
+        takePhotoResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            List<Uri> chosenPics;
+                            ClipData clipData = data.getClipData();
+                            chosenPics = (clipData == null ?
+                                    Collections.singletonList(data.getData()) :
+                                    ThisApplication.clipDataToList(clipData));
+
+                            for (Uri uri : chosenPics) {
+                                String ext;
+                                String mimeType = getContentResolver().getType(uri);
+                                if (mimeType.startsWith("image")) {
+                                    String str = mimeType.split("/", -1)[1];
+                                    ext = str.equals("jpeg") ? "jpg" : str;
+                                } else
+                                    return;
+                                PicRetrofitService.create(RemarksEditorActivity.this, this, uri, ext);
                                 //Смотри doWhenPicIsCreated
 
                             }
@@ -165,6 +206,43 @@ public class RemarksEditor extends AppCompatActivity implements
             pickUpPictureResultLauncher.launch(addImageIntent);
         });
 
+        ImageButton btnTakePhoto = findViewById(R.id.btnAddPhoto);
+        btnTakePhoto.setOnClickListener(v -> {
+
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                // разрешение не предоставлено
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
+//
+//            }
+//            else {
+                // разрешение предоставлено
+                Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Uri imageUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", getFile());
+                takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                if (intent.resolveActivity(getPackageManager()) != null)
+                    takePhotoResultLauncher.launch(takePhoto);
+//            }
+
+
+        });
+
+    }
+
+    private File getFile() {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File image_file = null;
+
+        try {
+            File outputDir = getCacheDir(); // context being the Activity pointer
+            image_file = File.createTempFile(imageFileName, ".jpg", outputDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        String mCurrentPhotoPath = image_file.getAbsolutePath();
+        return image_file;
     }
 
     @Override//IPicCreator
@@ -180,7 +258,7 @@ public class RemarksEditor extends AppCompatActivity implements
             bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
             byte[] draftBytes = baos.toByteArray();
 
-            FileRetrofitService.uploadFile(RemarksEditor.this, this, "pics", fileNewName, draftBytes);
+            FileRetrofitService.uploadFile(RemarksEditorActivity.this, this, "pics", fileNewName, draftBytes);
             //doWhenFileHasBeenUploaded
         } catch (IOException e) {
             e.printStackTrace();

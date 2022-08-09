@@ -10,7 +10,6 @@
         android:id="@+id/picsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#c4c4c4"
-        android:src="@drawable/noimage" />
+        android:background="#c4c4c4"/>
 
 </FrameLayout>

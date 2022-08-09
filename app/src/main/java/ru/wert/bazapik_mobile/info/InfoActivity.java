@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,7 +37,7 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
 import ru.wert.bazapik_mobile.remark.RemarkMaster;
 import ru.wert.bazapik_mobile.remark.RemarksAdapter;
-import ru.wert.bazapik_mobile.remark.RemarksEditor;
+import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
@@ -307,7 +306,7 @@ public class InfoActivity extends BaseActivity  implements
                 return true;
 
             case R.id.action_addRemark:
-                Intent remarksEditor = new Intent(InfoActivity.this, RemarksEditor.class);
+                Intent remarksEditor = new Intent(InfoActivity.this, RemarksEditorActivity.class);
 //                Bundle bundle = new Bundle();
 //                bundle.putInt(TYPE_OF_REMARK_OPERATION, ADD_REMARK);
                 remarksEditor.putExtra(TYPE_OF_REMARK_OPERATION, ADD_REMARK);
@@ -323,7 +322,7 @@ public class InfoActivity extends BaseActivity  implements
 
 
     public void openChangeRemarkActivity(Remark changingRemark) {
-        Intent remarksEditor = new Intent(InfoActivity.this, RemarksEditor.class);
+        Intent remarksEditor = new Intent(InfoActivity.this, RemarksEditorActivity.class);
         remarksEditor.putExtra(TYPE_OF_REMARK_OPERATION, CHANGE_REMARK);
         remarksEditor.putExtra(CHANGING_REMARK, changingRemark);
         remarksEditor.putExtra(REMARK_PASSPORT, passport);

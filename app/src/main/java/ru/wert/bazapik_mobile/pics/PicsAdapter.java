@@ -3,6 +3,7 @@ package ru.wert.bazapik_mobile.pics;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -28,7 +30,11 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.api_interfaces.FileApiInterface;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.remark.RemarksEditor;
+import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
+import ru.wert.bazapik_mobile.viewer.PicsViewerActivity;
+
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.ALL_PICS;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.CURRENT_PIC;
 
 public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
 
@@ -42,9 +48,9 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
     public static final int INFO_ACTIVITY = 0;
     public static final int REMARK_EDITOR = 1;
 
-    RemarksEditor editor;
+    RemarksEditorActivity editor;
 
-    public PicsAdapter(Context context, List<Pic> data, int whoCallMe, RemarksEditor editor) {
+    public PicsAdapter(Context context, List<Pic> data, int whoCallMe, RemarksEditorActivity editor) {
         this(context, data, whoCallMe);
         this.editor = editor;
     }
@@ -101,6 +107,12 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
                                 holder.ivPicture.setLayoutParams(lParams);
                                 holder.ivPicture.setImageBitmap(bmp);
                                 holder.ivPicture.setAdjustViewBounds(true);
+                                holder.ivPicture.setOnClickListener(v->{
+                                    Intent intent = new Intent(context, PicsViewerActivity.class);
+                                    intent.putExtra(ALL_PICS, new ArrayList(Collections.singleton(pic)));
+                                    intent.putExtra(CURRENT_PIC, pic);
+                                    context.startActivity(intent);
+                                });
                                 if (whoCallMe == REMARK_EDITOR)
                                     holder.ivPicture.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
                                         PopupMenu popup = new PopupMenu(v.getContext(), v, Gravity.RIGHT, R.attr.actionOverflowMenuStyle, 0);

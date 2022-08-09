@@ -68,6 +68,8 @@ public class StartActivity extends BaseActivity {
             ThisApplication.loadSettings();
         });
 
+        new AppPermissions(this).checkUp();
+
         new Thread(()->{  //Вход без нажатия на логотип
             try {
                 Thread.sleep(1000);
@@ -85,7 +87,6 @@ public class StartActivity extends BaseActivity {
 
 
     private void startRetrofit() {
-        checkForPermissions();
         //Константа принимает первоначальное значение
         DATA_BASE_URL = "http://" + getProp("IP") + ":" + getProp("PORT") + "/";
         Thread t = new Thread(() -> {
@@ -127,67 +128,72 @@ public class StartActivity extends BaseActivity {
 
     }
 
+//
+//    private void checkForPermissions() {
+//
+//        if (StartActivity.this.checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+//            requestPerms();
+//        }
+//        if (StartActivity.this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            requestPerms();
+//        }
+//        if (StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            requestPerms();
+//        }
+//        if(StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+//                StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+//            showPPP();
+//
+//    }
+//
+//    private void showPPP() {
+//        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                Manifest.permission.READ_EXTERNAL_STORAGE)) {
+//            new AlertDialog.Builder(this)
+//                    .setTitle("Ахтунг!")
+//                    .setMessage("Если Вы не подтвердите все разрешения, то\n" +
+//                            "Вы и ваши предки до 7го колена\n" +
+//                            "пудут подвергнуты анафеме,\n" +
+//                            "а Ваша яхта и домик в деревне\n" +
+//                            "будут изъяты в пользу ООО НТЦ ПИК")
+//                    .setPositiveButton("Я подумаю", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            checkForPermissions();
+//                        }
+//                    })
+//                    .setNegativeButton("Я гордый", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                            System.exit(0);
+//                        }
+//                    })
+//                    .create().show();
+//        }
+//    }
+//
+//    private void requestPerms(){
+//        String[] perm = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET};
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+//            ActivityCompat.requestPermissions(StartActivity.this,perm,123);
+//        }
+//    }
 
-    private void checkForPermissions() {
-
-        if (StartActivity.this.checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            requestPerms();
-        }
-        if (StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPerms();
-        }
-        if(StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            showPPP();
-
-    }
-
-    private void showPPP() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Ахтунг!")
-                    .setMessage("Если Вы не подтвердите все разрешения, то\n" +
-                            "Вы и ваши предки до 7го колена\n" +
-                            "пудут подвергнуты анафеме,\n" +
-                            "а Ваша яхта и домик в деревне\n" +
-                            "будут изъяты в пользу ООО НТЦ ПИК")
-                    .setPositiveButton("Я подумаю", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            checkForPermissions();
-                        }
-                    })
-                    .setNegativeButton("Я гордый", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            System.exit(0);
-                        }
-                    })
-                    .create().show();
-        }
-    }
-
-    private void requestPerms(){
-        String[] perm = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET};
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            ActivityCompat.requestPermissions(StartActivity.this,perm,123);
-        }
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == STORAGE_PERMISSION_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Храни Господь!}", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Гори в аду!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == STORAGE_PERMISSION_CODE) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Toast.makeText(this, "Храни Господь!}", Toast.LENGTH_SHORT).show();
+//            } else {
+//                Toast.makeText(this, "Гори в аду!", Toast.LENGTH_SHORT).show();
+//            }
+//        } else if(requestCode == STORAGE_PERMISSION_CODE){
+//
+//        }
+//    }
 
 }
 

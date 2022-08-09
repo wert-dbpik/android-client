@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
@@ -85,7 +86,7 @@ public class ThisApplication extends Application {
     public static List<Folder> ALL_FOLDERS;
     public static List<Draft> ALL_DRAFTS;
     public static List<Passport> ALL_PASSPORTS;
-
+    private final Consts consts = new Consts();//Чтобы класс не удалялся
 
     public static Context getAppContext(){
         return ThisApplication.appContext;
@@ -94,6 +95,7 @@ public class ThisApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
         editor = settings.edit();
         ThisApplication.appContext = this.getApplicationContext();
@@ -104,7 +106,7 @@ public class ThisApplication extends Application {
 
         switch(name){
             case "IP":
-                return settings.getString(name, "10.0.2.2");
+                return settings.getString(name, "192.168.2.132");
             case "PORT":
                 return settings.getString(name, "8080");
             case "USER_NAME":
