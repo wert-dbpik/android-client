@@ -48,10 +48,9 @@ public class PicsViewerActivity extends AppCompatActivity {
         Intent intent = getIntent();
         allPics = intent.getParcelableArrayListExtra(ALL_PICS);
         currentPic = intent.getParcelableExtra(CURRENT_PIC);
-
-        initIterator();
         //Получаем текущую позицию рисунка
-        iterator = allPics.indexOf(currentPic);
+        initIterator();
+
 
 
         btnShowPrevious.setOnClickListener(showPreviousDraft());
@@ -84,7 +83,6 @@ public class PicsViewerActivity extends AppCompatActivity {
         else
             switchOnButton(btnShowNext);
 
-//        new Thread(()->{
             String pathToPic = BASE_URL + "files/download/pics/" + currentPic.getId() + "." + currentPic.getExtension();
 
             Bundle bundle = new Bundle();
@@ -99,10 +97,6 @@ public class PicsViewerActivity extends AppCompatActivity {
                 ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
             ft.replace(R.id.pics_viewer_fragment_container, picsViewerFragment);
             ft.commit();
-//        }).start();
-
-
-
     }
 
     private void switchOnButton(ImageButton btn){
