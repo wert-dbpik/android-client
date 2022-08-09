@@ -1,6 +1,6 @@
 package ru.wert.bazapik_mobile.info;
 
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
+import static ru.wert.bazapik_mobile.organizer.passports.PassportsFragment.PASSPORT;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -36,8 +36,8 @@ import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
-import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarkMaster;
+import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarksEditor;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
@@ -93,8 +93,11 @@ public class InfoActivity extends BaseActivity  implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
+
         //Получаем Id пасспорта
-        passId = Long.parseLong(getIntent().getStringExtra("PASSPORT_ID"));
+//        passId = Long.parseLong(getIntent().getStringExtra("PASSPORT_ID"));
+        passport = getIntent().getParcelableExtra(PASSPORT);
+        passId = passport.getId();
 
         rm = new RemarkMaster(this, passId);
 
@@ -151,40 +154,22 @@ public class InfoActivity extends BaseActivity  implements
     }
 
     private void createRVDrafts() {
-        new Thread(()->{
+        decNum = passport.getPrefix() == null ?
+                passport.getNumber() :
+                passport.getPrefix().getName() + "." + passport.getNumber();
 
-            passport = ThisApplication.PASSPORT_SERVICE.findById(passId);
+        rm.setCountOfRemarks(passport.getRemarkIds().size());
+        createRecycleViewOfFoundDrafts();
 
-            if(passport != null) {
-                decNum = passport.getPrefix() == null ?
-                        passport.getNumber() :
-                        passport.getPrefix().getName() + "." + passport.getNumber();
+        if (passport.getRemarkIds().isEmpty())
+            rm.getLlCommentsContainer().setVisibility(View.GONE);
+        else
+            rm.showInfoInCommentsContainer();
 
-                rm.setCountOfRemarks(passport.getRemarkIds().size());
-                runOnUiThread(() -> {
-                    createRecycleViewOfFoundDrafts();
+        tvDecNumber.setText(decNum);
+        tvName.setText(passport.getName());
+        tvDrafts.setText("Доступные чертежи");
 
-                    if(passport.getRemarkIds().isEmpty())
-                        rm.getLlCommentsContainer().setVisibility(View.GONE);
-                    else
-                        rm.showInfoInCommentsContainer();
-
-                    tvDecNumber.setText(decNum);
-                    tvName.setText(passport.getName());
-                    tvDrafts.setText("Доступные чертежи");
-
-                });
-            } else {
-                Log.e(TAG, String.format("An error occur while trying to get Passport of id = %s, PASSPORT_SERVICE = %s"
-                        ,passId, ThisApplication.PASSPORT_SERVICE));
-                runOnUiThread(()->{
-                    new WarningDialog1().show(InfoActivity.this,
-                            "Ошибка!", "Что-то пошло не так, вероятно потереяна связь с сервером.");
-                    this.finish();
-                });
-
-            }
-        }).start();
     }
 
     @Override
