@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile.main;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import retrofit2.Call;
@@ -30,7 +32,6 @@ import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,5 +150,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return time;
     }
+
+
 
 }

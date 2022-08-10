@@ -48,9 +48,14 @@ import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
 
 public class ThisApplication extends Application {
 
+    //Версия приложения
     public static final String APPLICATION_VERSION = "1.2.1";
     public static boolean APP_VERSION_NOTIFICATION_SHOWN = false;
     public static String APPLICATION_VERSION_AVAILABLE;
+
+    //Разрешения
+    public static final int REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE = 0;
+    public static final int REQUEST_CODE_PERMISSION_CAMERA = 1;
 
     //Расширение
     public static List<String> PDF_EXTENSIONS = Collections.singletonList("pdf");

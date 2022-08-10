@@ -1,6 +1,8 @@
 package ru.wert.bazapik_mobile;
 
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
+import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_CAMERA;
+import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE;
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.constants.Consts.STORAGE_PERMISSION_CODE;
@@ -23,6 +25,7 @@ import androidx.core.app.ActivityCompat;
 
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,6 +35,7 @@ import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.servicesREST.UserService;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 /**
  * Отправная точка работы приложения
@@ -56,6 +60,7 @@ public class StartActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_start);
 
+
         Log.i(TAG, "onCreate: IP = " + getProp("IP"));
         Log.i(TAG, "onCreate: PORT = " + getProp("PORT"));
         Log.i(TAG, "onCreate: SHOW_SOLID_FILES = " + getProp("SHOW_SOLID_FILES"));
@@ -67,8 +72,6 @@ public class StartActivity extends BaseActivity {
             startRetrofit();
             ThisApplication.loadSettings();
         });
-
-        new AppPermissions(this).checkUp();
 
         new Thread(()->{  //Вход без нажатия на логотип
             try {
@@ -128,72 +131,7 @@ public class StartActivity extends BaseActivity {
 
     }
 
-//
-//    private void checkForPermissions() {
-//
-//        if (StartActivity.this.checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-//            requestPerms();
-//        }
-//        if (StartActivity.this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            requestPerms();
-//        }
-//        if (StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            requestPerms();
-//        }
-//        if(StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-//                StartActivity.this.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-//            showPPP();
-//
-//    }
-//
-//    private void showPPP() {
-//        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-//                Manifest.permission.READ_EXTERNAL_STORAGE)) {
-//            new AlertDialog.Builder(this)
-//                    .setTitle("Ахтунг!")
-//                    .setMessage("Если Вы не подтвердите все разрешения, то\n" +
-//                            "Вы и ваши предки до 7го колена\n" +
-//                            "пудут подвергнуты анафеме,\n" +
-//                            "а Ваша яхта и домик в деревне\n" +
-//                            "будут изъяты в пользу ООО НТЦ ПИК")
-//                    .setPositiveButton("Я подумаю", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            checkForPermissions();
-//                        }
-//                    })
-//                    .setNegativeButton("Я гордый", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.dismiss();
-//                            System.exit(0);
-//                        }
-//                    })
-//                    .create().show();
-//        }
-//    }
-//
-//    private void requestPerms(){
-//        String[] perm = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.INTERNET};
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-//            ActivityCompat.requestPermissions(StartActivity.this,perm,123);
-//        }
-//    }
 
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == STORAGE_PERMISSION_CODE) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(this, "Храни Господь!}", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(this, "Гори в аду!", Toast.LENGTH_SHORT).show();
-//            }
-//        } else if(requestCode == STORAGE_PERMISSION_CODE){
-//
-//        }
-//    }
 
 }
 

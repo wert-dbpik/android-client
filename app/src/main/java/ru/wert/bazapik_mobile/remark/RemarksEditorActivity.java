@@ -8,12 +8,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
@@ -28,7 +28,7 @@ import java.util.Objects;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -37,7 +37,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import lombok.Setter;
 import retrofit2.Response;
-import ru.wert.bazapik_mobile.BuildConfig;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Passport;
@@ -45,10 +44,11 @@ import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
+import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
 
 import static androidx.core.content.FileProvider.getUriForFile;
-import static ru.wert.bazapik_mobile.AppPermissions.MY_PERMISSIONS_REQUEST_CAMERA;
+import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_CAMERA;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.info.InfoActivity.ADD_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGING_REMARK;
@@ -56,7 +56,7 @@ import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.REMARK_PASSPORT;
 import static ru.wert.bazapik_mobile.info.InfoActivity.TYPE_OF_REMARK_OPERATION;
 
-public class RemarksEditorActivity extends AppCompatActivity implements
+public class RemarksEditorActivity extends BaseActivity implements
         FileRetrofitService.IFileUploader, PicRetrofitService.IPicCreator {
 
     private final String TAG = "RemarkFragment";
@@ -75,6 +75,9 @@ public class RemarksEditorActivity extends AppCompatActivity implements
     private EditText editText;
     private TextView tvTitle;
     private Button btnAdd;
+    private ImageButton btnAddPhoto, btnAddImage;
+    private LinearLayout llAddPicsButtons;
+
 
     private Bundle resumeBundle;
     private final String REMARK_TEXT = "remark_text";
@@ -113,7 +116,14 @@ public class RemarksEditorActivity extends AppCompatActivity implements
         tvTitle = findViewById(R.id.tvRemarkTitle);
         btnAdd = findViewById(R.id.btnAddRemark);
         rvEditorRemarkPics = findViewById(R.id.rvEditorRemarkPics);
+        llAddPicsButtons = findViewById(R.id.llAddPicsButtons);
+        btnAddPhoto = findViewById(R.id.btnAddPhoto);
+        btnAddImage = findViewById(R.id.btnAddImage);
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // разрешение не предоставлено
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSION_CAMERA);
+        }
 
         Intent intent = getIntent();
         typeOfRemarkOperation = intent.getIntExtra(TYPE_OF_REMARK_OPERATION, 1);
@@ -139,6 +149,8 @@ public class RemarksEditorActivity extends AppCompatActivity implements
             else
                 changeRemark();
         });
+
+
 
         pickUpPictureResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -196,7 +208,6 @@ public class RemarksEditorActivity extends AppCompatActivity implements
                     }
                 });
 
-        ImageButton btnAddImage = findViewById(R.id.btnAddImage);
         btnAddImage.setOnClickListener(v -> {
             Intent addImageIntent = new Intent();
             addImageIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -206,23 +217,17 @@ public class RemarksEditorActivity extends AppCompatActivity implements
             pickUpPictureResultLauncher.launch(addImageIntent);
         });
 
-        ImageButton btnTakePhoto = findViewById(R.id.btnAddPhoto);
-        btnTakePhoto.setOnClickListener(v -> {
-
-//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//                // разрешение не предоставлено
-//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
-//
-//            }
-//            else {
-                // разрешение предоставлено
-                Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                Uri imageUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", getFile());
-                takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                if (intent.resolveActivity(getPackageManager()) != null)
-                    takePhotoResultLauncher.launch(takePhoto);
-//            }
-
+        btnAddPhoto.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                // разрешение не предоставлено
+                showToast("Отсутствует разрешение на использование камеры");
+                return;
+            }
+            Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Uri imageUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", getFile());
+            takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            if (intent.resolveActivity(getPackageManager()) != null)
+                takePhotoResultLauncher.launch(takePhoto);
 
         });
 
@@ -336,5 +341,23 @@ public class RemarksEditorActivity extends AppCompatActivity implements
     protected void onStop() {
         super.onStop();
         createResumeBundle();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_CAMERA:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission granted
+                    showToast("Разрешение добавлять фото получено!");
+                } else {
+                    // permission denied
+                    showToast("Вы не сможете добавлять снимки!");
+                }
+                return;
+
+        }
     }
 }

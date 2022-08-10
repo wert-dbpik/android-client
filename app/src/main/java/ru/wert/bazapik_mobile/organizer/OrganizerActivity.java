@@ -3,9 +3,12 @@ package ru.wert.bazapik_mobile.organizer;
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
 import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
+import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,7 +21,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
@@ -83,6 +89,12 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer);
+
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // разрешение не предоставлено
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE);
+        }
 
         fm = getSupportFragmentManager();
         currentPassportsFragment = new PassportsFragment();
@@ -438,6 +450,25 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 exitApplication();
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission granted
+                    showToast("Доступ к внутреннему каталогу получен!");
+                } else {
+                    // permission denied
+                    new WarningDialog1().show(this, "Без доступа к внутреннему каталогу приложение не может работать", "Предоставьте необходимый доступ!");
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                }
+                return;
+
         }
     }
 
