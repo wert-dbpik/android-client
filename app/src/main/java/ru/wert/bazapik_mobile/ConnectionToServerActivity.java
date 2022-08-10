@@ -5,6 +5,7 @@ import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.ThisApplication.setProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +23,7 @@ import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
-public class ConnectionToServer extends BaseActivity {
+public class ConnectionToServerActivity extends BaseActivity {
 
     private static String TAG = "ConnectionToServer";
     private TextView mIpAddress;
@@ -90,7 +91,7 @@ public class ConnectionToServer extends BaseActivity {
                                 public void onFailure(Call<User> call, Throwable t) {
                                     if(t.getMessage().contains("Failed to connect")) {
                                         Log.d(TAG, "Проблемы с доступом к серверу: " + t.getMessage());
-                                        new WarningDialog1().show(ConnectionToServer.this, "Внимание", "Сервер не доступен, поробуйте позднее");
+                                        new WarningDialog1().show(ConnectionToServerActivity.this, "Внимание", "Сервер не доступен, поробуйте позднее");
                                     } else {
                                         Log.d(TAG, "Пользователь " + userName + " в базе не найден, переходим в LoginActivity");
                                         goLoginActivity();
@@ -106,10 +107,19 @@ public class ConnectionToServer extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    new WarningDialog1().show(ConnectionToServer.this, "Внимание! ",
-                            "Не удалось подключиться к серверу по указанному IP адресу\n" +
-                                    "Укажите верный адрес или попробуйте позже. " +
-                                    "Возможно, сервер сейчас не доступен.");
+                    if (!ifConnectedToWifi())
+                        new AlertDialog.Builder(ConnectionToServerActivity.this)
+                                .setTitle("Внимание!")
+                                .setMessage("Нет подключения к Wifi")
+                                .setPositiveButton("Сейчас включу!", null)
+                                .show();
+                    else {
+                        new WarningDialog1().show(ConnectionToServerActivity.this, "Внимание! ",
+                                "Не удалось подключиться к серверу\n" +
+                                        "Укажите верный IP адрес или попробуйте позже. " +
+                                        "Возможно, сервер сейчас не доступен.");
+                    }
+
                     mIpAddress.post(() -> mIpAddress.setText(getProp("IP")));
                 }
             });
@@ -120,14 +130,16 @@ public class ConnectionToServer extends BaseActivity {
     }
 
     private void goDataLoadActivity() {
-        Intent dataLoadIntent = new Intent(ConnectionToServer.this, DataLoadingActivity.class);
+        Intent dataLoadIntent = new Intent(ConnectionToServerActivity.this, DataLoadingActivity.class);
         startActivity(dataLoadIntent);
     }
 
     private void goLoginActivity() {
-        Intent loginIntent = new Intent(ConnectionToServer.this, LoginActivity.class);
+        Intent loginIntent = new Intent(ConnectionToServerActivity.this, LoginActivity.class);
         startActivity(loginIntent);
     }
+
+
 
 
 }

@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.view.animation.AlphaAnimation;
@@ -383,5 +385,7 @@ public class ThisApplication extends Application {
         return list;
 
     }
+
+
 
 }

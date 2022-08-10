@@ -1,31 +1,19 @@
 package ru.wert.bazapik_mobile;
 
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
-import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_CAMERA;
-import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE;
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
-import static ru.wert.bazapik_mobile.constants.Consts.STORAGE_PERMISSION_CODE;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 
 import java.util.List;
 
-import androidx.core.content.ContextCompat;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,7 +23,6 @@ import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.servicesREST.UserService;
-import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 /**
  * Отправная точка работы приложения
@@ -110,19 +97,34 @@ public class StartActivity extends BaseActivity {
                                     createLog(true, "Подключился к серверу");
                                 }
                             }
+                            runOnUiThread(() -> {
+                                Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
+                                startActivity(dataLoading);
+                            });
+                        }else {
+                            runOnUiThread(() -> {
+                                Intent loginIntent = new Intent(StartActivity.this, LoginActivity.class);
+                                startActivity(loginIntent);
+                            });
                         }
-                        runOnUiThread(() -> {
-                            Intent searchIntent = new Intent(StartActivity.this, DataLoadingActivity.class);
-                            startActivity(searchIntent);
-                        });
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<User>> call, Throwable t) {
-                    Intent intent = new Intent(StartActivity.this, ConnectionToServer.class);
-                    startActivity(intent);
-
+                    if (!ifConnectedToWifi())
+                        new AlertDialog.Builder(StartActivity.this)
+                                .setTitle("Внимание!")
+                                .setMessage("Нет подключения к Wifi")
+                                .setPositiveButton("Сейчас включу!", (dialog, which) -> {
+                                    Intent intent = new Intent(StartActivity.this, ConnectionToServerActivity.class);
+                                    startActivity(intent);
+                                })
+                                .show();
+                    else {
+                        Intent intent = new Intent(StartActivity.this, ConnectionToServerActivity.class);
+                        startActivity(intent);
+                    }
                 }
             });
 

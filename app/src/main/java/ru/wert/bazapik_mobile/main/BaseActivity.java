@@ -1,7 +1,10 @@
 package ru.wert.bazapik_mobile.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -151,6 +154,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         return time;
     }
 
-
+    protected boolean ifConnectedToWifi() {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return mWifi.isConnected();
+    }
 
 }
