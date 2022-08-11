@@ -77,7 +77,7 @@ public class RemarksEditorActivity extends BaseActivity implements
     private Button btnAdd;
     private ImageButton btnAddPhoto, btnAddImage;
     private LinearLayout llAddPicsButtons;
-
+    private Uri imageUri; //uri сделанной фотографии
 
     private Bundle resumeBundle;
     private final String REMARK_TEXT = "remark_text";
@@ -184,27 +184,8 @@ public class RemarksEditorActivity extends BaseActivity implements
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            List<Uri> chosenPics;
-                            ClipData clipData = data.getClipData();
-                            chosenPics = (clipData == null ?
-                                    Collections.singletonList(data.getData()) :
-                                    ThisApplication.clipDataToList(clipData));
-
-                            for (Uri uri : chosenPics) {
-                                String ext;
-                                String mimeType = getContentResolver().getType(uri);
-                                if (mimeType.startsWith("image")) {
-                                    String str = mimeType.split("/", -1)[1];
-                                    ext = str.equals("jpeg") ? "jpg" : str;
-                                } else
-                                    return;
-                                PicRetrofitService.create(RemarksEditorActivity.this, this, uri, ext);
-                                //Смотри doWhenPicIsCreated
-
-                            }
-                        }
+                        PicRetrofitService.create(RemarksEditorActivity.this, this, imageUri, "jpg");
+                        //Смотри doWhenPicIsCreated
                     }
                 });
 
@@ -224,7 +205,7 @@ public class RemarksEditorActivity extends BaseActivity implements
                 return;
             }
             Intent takePhoto = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Uri imageUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", getFile());
+            imageUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", getFile());
             takePhoto.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             if (intent.resolveActivity(getPackageManager()) != null)
                 takePhotoResultLauncher.launch(takePhoto);
