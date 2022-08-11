@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import ru.wert.bazapik_mobile.ConnectionToServerActivity;
 import ru.wert.bazapik_mobile.constants.StaticMethods;
 import ru.wert.bazapik_mobile.data.api_interfaces.AppLogApiInterface;
 import ru.wert.bazapik_mobile.data.models.AppLog;
@@ -154,9 +156,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         return time;
     }
 
-    protected boolean ifConnectedToWifi() {
+    protected boolean ifConnectedToWifi(boolean showMessage) {
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if(!mWifi.isConnected() && showMessage)
+            new AlertDialog.Builder(BaseActivity.this)
+                    .setTitle("Внимание!")
+                    .setMessage("Wifi не включен")
+                    .setPositiveButton("OK", null)
+                    .show();
+
         return mWifi.isConnected();
     }
 

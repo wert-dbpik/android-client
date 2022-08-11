@@ -90,12 +90,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer);
 
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // разрешение не предоставлено
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE);
-        }
-
         fm = getSupportFragmentManager();
         currentPassportsFragment = new PassportsFragment();
         currentFoldersFragment = new FoldersFragment();
@@ -450,25 +444,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 exitApplication();
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission granted
-                    showToast("Доступ к внутреннему каталогу получен!");
-                } else {
-                    // permission denied
-                    new WarningDialog1().show(this, "Без доступа к внутреннему каталогу приложение не может работать", "Предоставьте необходимый доступ!");
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE);
-                }
-                return;
-
         }
     }
 

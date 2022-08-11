@@ -112,10 +112,10 @@ public class StartActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<List<User>> call, Throwable t) {
-                    if (!ifConnectedToWifi())
+                    if (!ifConnectedToWifi(false))
                         new AlertDialog.Builder(StartActivity.this)
                                 .setTitle("Внимание!")
-                                .setMessage("Нет подключения к Wifi")
+                                .setMessage("Wifi не включен")
                                 .setPositiveButton("Сейчас включу!", (dialog, which) -> {
                                     Intent intent = new Intent(StartActivity.this, ConnectionToServerActivity.class);
                                     startActivity(intent);

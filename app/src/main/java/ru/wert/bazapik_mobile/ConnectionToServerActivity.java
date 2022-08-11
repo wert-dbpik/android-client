@@ -107,18 +107,11 @@ public class ConnectionToServerActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    if (!ifConnectedToWifi())
-                        new AlertDialog.Builder(ConnectionToServerActivity.this)
-                                .setTitle("Внимание!")
-                                .setMessage("Нет подключения к Wifi")
-                                .setPositiveButton("Сейчас включу!", null)
-                                .show();
-                    else {
+                    ifConnectedToWifi(true); //Если вифи работает
                         new WarningDialog1().show(ConnectionToServerActivity.this, "Внимание! ",
                                 "Не удалось подключиться к серверу\n" +
                                         "Укажите верный IP адрес или попробуйте позже. " +
                                         "Возможно, сервер сейчас не доступен.");
-                    }
 
                     mIpAddress.post(() -> mIpAddress.setText(getProp("IP")));
                 }
