@@ -45,6 +45,7 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.PicApiInterface;
+import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
@@ -375,15 +376,17 @@ public class RemarksEditorActivity extends BaseActivity implements
 
     private class SaveRemarkTask extends AsyncTask<List<Uri>, Void, Remark> {
 
-        Remark remark;
+        Remark savedRemark;
 
         @SafeVarargs
         @Override
         protected final Remark doInBackground(List<Uri>... uris) {
 
-            PicApiInterface api = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
+            PicApiInterface picApi = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
+            RemarkApiInterface remarkApi = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
             List<Pic> allPics = new ArrayList<>();
-            for (Uri uri : uris[0]) {
+            List<Uri> allUris = uris[0];
+            for (Uri uri : allUris) {
                 Pic newPic = null;
                 try {
                     newPic = new Pic();
@@ -401,24 +404,31 @@ public class RemarksEditorActivity extends BaseActivity implements
                     newPic.setUser(CURRENT_USER);
                     newPic.setTime(ThisApplication.getCurrentTime());
 
-                    Call<Pic> call = api.create(newPic);
+                    Call<Pic> call = picApi.create(newPic);
                     Pic pic = call.execute().body();
                     allPics.add(pic);
                 } catch (IOException e) {
                     Log.e(TAG, "Ошибка декодирования файла: " + e.getMessage());
                 }
 
-                remark = new Remark(
-                        passport,
-                        CURRENT_USER,
-                        editText.getText().toString(),
-                        ThisApplication.getCurrentTime(),
-                        allPics
-                );
-
             }
 
-            return remark;
+            Remark remark = new Remark(
+                    passport,
+                    CURRENT_USER,
+                    editText.getText().toString(),
+                    ThisApplication.getCurrentTime(),
+                    allPics
+            );
+
+            Call<Remark> call = remarkApi.create(remark);
+            try {
+                savedRemark = call.execute().body();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return savedRemark;
         }
 
         @Override

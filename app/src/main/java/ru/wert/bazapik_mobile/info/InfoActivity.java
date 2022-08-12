@@ -110,6 +110,7 @@ public class InfoActivity extends BaseActivity  implements
 
         createRVDrafts();
 
+
     }
 
     private void registerAddRemarkActivityForResultLauncher() {
@@ -124,6 +125,8 @@ public class InfoActivity extends BaseActivity  implements
                         } else {
 
                         }
+
+                        rm.createRecycleViewOfFoundRemarks();
 
                     } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
 
@@ -174,6 +177,11 @@ public class InfoActivity extends BaseActivity  implements
     @Override
     protected void onResume() {
         super.onResume();
+        deployResumBundle();
+
+    }
+
+    private void deployResumBundle() {
         if (resumeBundle != null) {
             Parcelable listDraftsState = resumeBundle.getParcelable(KEY_RECYCLER_DRAFTS_STATE);
             if (listDraftsState != null && rvDrafts != null)
@@ -185,7 +193,6 @@ public class InfoActivity extends BaseActivity  implements
 
             resumeBundle = null;
         }
-
     }
 
     @Override

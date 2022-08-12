@@ -138,8 +138,6 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
     }
 
 
-
-
     public void updateRemarkAdapter(){
         RemarkRetrofitService.findByPassportId(infoActivity, infoActivity, passId);
         //Смотри doWhenRemarkHasBeenFoundByPassportId
