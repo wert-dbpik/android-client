@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile.organizer;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
+import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
 import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
 import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE;
@@ -57,6 +58,7 @@ import ru.wert.bazapik_mobile.organizer.folders.FoldersRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
+import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
@@ -183,32 +185,18 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     private void checkUpNewVersion(){
         new Thread(()->{
             List<VersionAndroid> alVersions = VersionAndroidService.getInstance().findAll();
-            APPLICATION_VERSION_AVAILABLE = alVersions.get(alVersions.size()-1).getName();
-            if(APPLICATION_VERSION_AVAILABLE.compareTo(ThisApplication.APPLICATION_VERSION) > 0 &&
-                    !APP_VERSION_NOTIFICATION_SHOWN) {
+            if(alVersions != null && !alVersions.isEmpty()) {
 
-                APP_VERSION_NOTIFICATION_SHOWN = true;
-                runOnUiThread(() -> {
-                    new AlertDialog.Builder(OrganizerActivity.this)
-                            .setTitle("ВНИМАНИЕ!")
-                            .setMessage( String.format("Версия установленной программы - %s. Доступна новая версия 'BazaPIK-%s.apk'. " +
-                                            "Для обновления программы загрузите установочный файл apk и устновите программу самостоятельно. " +
-                                            "Загрузить новую версию в папку 'Загрузки'? "
-                                    , ThisApplication.APPLICATION_VERSION, APPLICATION_VERSION_AVAILABLE))
-                            .setNegativeButton(R.string.later, null)
-                            .setPositiveButton(R.string.download, (arg0, arg1) -> {
-                                String fileName = "BazaPIK-" + APPLICATION_VERSION_AVAILABLE + ".apk";
+                APPLICATION_VERSION_AVAILABLE = alVersions.get(alVersions.size() - 1).getName();
+                if (APPLICATION_VERSION_AVAILABLE.compareTo(ThisApplication.APPLICATION_VERSION) > 0 &&
+                        !APP_VERSION_NOTIFICATION_SHOWN) {
 
-                                File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-                                downloadTask = new DownloadFileTask(
-                                        this,
-                                        "apk",
-                                        destinationFolder.toString());
-                                downloadTask.execute(fileName);
-
-                            }).create().show();
-                });
+                    APP_VERSION_NOTIFICATION_SHOWN = true;
+                    runOnUiThread(()-> AppWarnings.showAlert_NewAppVersionAvailable(OrganizerActivity.this));
+                }
+            } else {
+                runOnUiThread(()-> AppWarnings.showAlert_NoAppVersionsAvailable(OrganizerActivity.this));
+                APPLICATION_VERSION_AVAILABLE = APPLICATION_VERSION;
             }
         }).start();
     }
