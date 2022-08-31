@@ -423,7 +423,9 @@ public class RemarksEditorActivity extends BaseActivity implements
 
             Call<Remark> call = remarkApi.create(remark);
             try {
-                savedRemark = call.execute().body();
+                Response<Remark> r = call.execute();
+                savedRemark = r.body();
+                Remark re = savedRemark;
             } catch (IOException e) {
                 e.printStackTrace();
             }
