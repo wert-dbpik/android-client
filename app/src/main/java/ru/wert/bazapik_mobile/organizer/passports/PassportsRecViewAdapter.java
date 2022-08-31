@@ -34,6 +34,7 @@ import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
+import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
@@ -148,7 +149,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
 
             @Override
             public void onFailure(Call<List<Draft>> call, Throwable t) {
-                new WarningDialog1().show(context, "Внимание!","Проблемы на линии!");
+                AppWarnings.showAlert_NoConnection(context);
             }
 
         });

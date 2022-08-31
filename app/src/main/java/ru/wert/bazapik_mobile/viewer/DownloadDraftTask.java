@@ -1,19 +1,8 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.PowerManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import ru.wert.bazapik_mobile.R;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import androidx.annotation.RequiresApi;
 
 public class DownloadDraftTask extends AsyncTask<String, Integer, String> {
     private static final String TAG = "Загрузка файла в фоне";

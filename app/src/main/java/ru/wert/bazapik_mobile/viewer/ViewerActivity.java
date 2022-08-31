@@ -34,6 +34,7 @@ import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
 import ru.wert.bazapik_mobile.utils.AnimationDest;
+import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static android.content.Intent.ACTION_VIEW;
@@ -275,6 +276,7 @@ public class ViewerActivity extends BaseActivity {
                                             ViewerActivity.this.finish(); //Закроет активити
                                         }
                                     }).create().show();
+
                         });
                     }
 
@@ -289,6 +291,7 @@ public class ViewerActivity extends BaseActivity {
                                         ViewerActivity.this.finish(); //Закроет активити
                                     }
                                 }).create().show();
+
                     });
                 }
             }

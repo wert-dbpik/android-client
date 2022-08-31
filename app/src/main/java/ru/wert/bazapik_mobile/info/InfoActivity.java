@@ -39,6 +39,7 @@ import ru.wert.bazapik_mobile.remark.RemarkMaster;
 import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
+import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 /**
@@ -120,8 +121,9 @@ public class InfoActivity extends BaseActivity  implements
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         if (data != null) {
-                            Remark newRemark = data.getParcelableExtra(NEW_REMARK);
-                            rm.createRemark(newRemark);
+
+//                            Remark newRemark = data.getParcelableExtra(NEW_REMARK);
+//                            rm.createRemark(newRemark);
                         } else {
 
                         }
@@ -249,7 +251,7 @@ public class InfoActivity extends BaseActivity  implements
 
             @Override
             public void onFailure(Call<List<Draft>> call, Throwable t) {
-                new WarningDialog1().show(InfoActivity.this, "Внимание!","Проблемы на линии!");
+                AppWarnings.showAlert_NoConnection(InfoActivity.this);
             }
             
         });

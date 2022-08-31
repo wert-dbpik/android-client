@@ -18,6 +18,7 @@ import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class RemarkRetrofitService {
@@ -41,7 +42,7 @@ public class RemarkRetrofitService {
 
             @Override
             public void onFailure(Call<List<Remark>> call, Throwable t) {
-                new WarningDialog1().show(context, "Внимание!", "Проблемы на линии!");
+                AppWarnings.showAlert_NoConnection(context);
             }
         });
     }
@@ -72,7 +73,7 @@ public class RemarkRetrofitService {
             @Override
             public void onFailure(Call<Remark> call, Throwable t) {
                 Log.d(TAG, String.format("Не удалось сохранить запись, %s", t.getMessage()));
-                new WarningDialog1().show(context, "Ошибка!", "Не удалось сохранить запись");
+                AppWarnings.showAlert_NoConnection(context);
             }
         });
     }
@@ -100,7 +101,7 @@ public class RemarkRetrofitService {
             @Override
             public void onFailure(Call<Remark> call, Throwable t) {
                 Log.d(TAG, String.format("Не удалось изменить запись, %s", t.getMessage()));
-                new WarningDialog1().show(context, "Ошибка!", "Не удалось сохранить запись");
+                AppWarnings.showAlert_NoConnection(context);
             }
         });
     }
@@ -128,7 +129,7 @@ public class RemarkRetrofitService {
             @Override
             public void onFailure(Call<Set<Pic>> call, Throwable t) {
                 Log.e(TAG, String.format("Не удалось добавить картинку в комментарий, %s", t.getMessage()));
-                new WarningDialog1().show(context, "Ошибка!", "Не удалось добавить картинку в комментарий");
+                AppWarnings.showAlert_NoConnection(context);
             }
         });
     }

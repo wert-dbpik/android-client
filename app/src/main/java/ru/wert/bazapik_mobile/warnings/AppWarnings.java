@@ -1,6 +1,8 @@
 package ru.wert.bazapik_mobile.warnings;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
 
@@ -16,6 +18,27 @@ import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILAB
 
 
 public class AppWarnings {
+
+    public static void showAlert_NoConnection(Context context){
+        String error;
+        String textOnBtn;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if(!info.isConnected()){
+            error = "WiFi отключен!";
+            textOnBtn = "Сейчас включу";
+        } else {
+            error = "Проблемы на линии!";
+            textOnBtn = "Понял";
+        }
+
+        new AlertDialog.Builder(context)
+                .setTitle("ОШИБКА!")
+                .setMessage(error)
+                .setPositiveButton(textOnBtn, (arg0, arg1) -> {
+                    //Просто ждать
+                }).create().show();
+    }
 
     public static void showAlert_NoAppVersionsAvailable(Context context){
         new AlertDialog.Builder(context)

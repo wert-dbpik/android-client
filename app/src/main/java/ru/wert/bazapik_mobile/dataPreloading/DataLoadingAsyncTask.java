@@ -18,6 +18,7 @@ import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
+import ru.wert.bazapik_mobile.warnings.AppWarnings;
 
 public class DataLoadingAsyncTask extends AsyncTask<Void, Void, Void> {
 
@@ -61,6 +62,7 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, Void, Void> {
             ThisApplication.ALL_FOLDERS = allFolders;
 
         } catch (Exception e) {
+            AppWarnings.showAlert_NoConnection(activity);
             e.printStackTrace();
         }
 

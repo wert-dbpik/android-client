@@ -40,10 +40,13 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import lombok.Setter;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.data.api_interfaces.FileApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.PicApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Passport;
@@ -51,10 +54,10 @@ import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
-import ru.wert.bazapik_mobile.data.serviceRETROFIT.PicRetrofitService;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.pics.PicsUriAdapter;
+import ru.wert.bazapik_mobile.warnings.AppWarnings;
 
 import static androidx.core.content.FileProvider.getUriForFile;
 import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_CAMERA;
@@ -406,6 +409,10 @@ public class RemarksEditorActivity extends BaseActivity implements
 
                     Call<Pic> call = picApi.create(newPic);
                     Pic pic = call.execute().body();
+
+
+                    uploadPicToDataBase(uri, pic);
+
                     allPics.add(pic);
                 } catch (IOException e) {
                     Log.e(TAG, "Ошибка декодирования файла: " + e.getMessage());
@@ -423,14 +430,33 @@ public class RemarksEditorActivity extends BaseActivity implements
 
             Call<Remark> call = remarkApi.create(remark);
             try {
-                Response<Remark> r = call.execute();
-                savedRemark = r.body();
-                Remark re = savedRemark;
+                savedRemark = call.execute().body();
             } catch (IOException e) {
+                AppWarnings.showAlert_NoConnection(RemarksEditorActivity.this);
                 e.printStackTrace();
             }
 
             return savedRemark;
+        }
+
+        private void uploadPicToDataBase(Uri uri, Pic pic) {
+            try {
+                String fileNewName = pic.getId() + "." + "jpg";
+
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                byte[] draftBytes = baos.toByteArray();
+
+                RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), draftBytes);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("file", fileNewName, requestBody);
+                FileApiInterface fileApi = RetrofitClient.getInstance().getRetrofit().create(FileApiInterface.class);
+                Call<Void> uploadCall = fileApi.upload("pics", body);
+                uploadCall.execute();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -441,5 +467,8 @@ public class RemarksEditorActivity extends BaseActivity implements
             setResult(RESULT_OK, data);
             finish();
         }
+
     }
+
+
 }

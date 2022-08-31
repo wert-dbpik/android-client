@@ -34,6 +34,7 @@ import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.info.InfoActivity;
+import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
@@ -265,7 +266,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                new WarningDialog1().show(infoActivity, "Внимание!", "Проблемы на линии!");
+                AppWarnings.showAlert_NoConnection(infoActivity);
             }
         });
     }
