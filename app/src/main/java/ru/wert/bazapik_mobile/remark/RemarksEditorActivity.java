@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -59,10 +60,10 @@ import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.pics.PicsUriAdapter;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
 
-import static androidx.core.content.FileProvider.getUriForFile;
 import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_CAMERA;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.info.InfoActivity.ADD_REMARK;
+import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGE_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGING_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.REMARK_PASSPORT;
@@ -153,8 +154,8 @@ public class RemarksEditorActivity extends BaseActivity implements
             tvTitle.setText("Изменение комментария");
             btnAdd.setText(sChange);
             editText.setText(changingRemark.getText());
-//            uriInAdapter = changingRemark.getPicsInRemark();
-            fillRecViewWithUris(uriInAdapter);
+            uriInAdapter = new ArrayList<>();
+            fillRecViewWithPics(changingRemark.getPicsInRemark());
         }
 
         btnAdd.setOnClickListener(v -> {
@@ -162,8 +163,15 @@ public class RemarksEditorActivity extends BaseActivity implements
                 AsyncTask<List<Uri>, Void, Remark> addRemark = new SaveRemarkTask();
                 addRemark.execute(uriInAdapter);
             }
-            else
-                changeRemark();
+            else {
+                changingRemark.setUser(CURRENT_USER);
+                changingRemark.setText(editText.getText().toString());
+                changingRemark.setCreationTime(ThisApplication.getCurrentTime());
+                changingRemark.setPicsInRemark(picsInAdapter);
+
+                AsyncTask<List<Uri>, Void, Remark> changeRemark = new ChangeRemarkTask();
+                changeRemark.execute(uriInAdapter);
+            }
         });
 
 
@@ -183,6 +191,8 @@ public class RemarksEditorActivity extends BaseActivity implements
 
 
                             uriInAdapter.addAll(chosenPics);
+                            if(typeOfRemarkOperation ==CHANGE_REMARK)
+                                fillRecViewWithPics(changingRemark.getPicsInRemark());
                             fillRecViewWithUris(uriInAdapter);
 
                         }
@@ -268,19 +278,6 @@ public class RemarksEditorActivity extends BaseActivity implements
                 DividerItemDecoration.VERTICAL));
     }
 
-//    private void saveUriInAdapter(){
-//        for (Uri uri : uriInAdapter) {
-//            String ext;
-//            String mimeType = getContentResolver().getType(uri);
-//            if (mimeType.startsWith("image")) {
-//                String str = mimeType.split("/", -1)[1];
-//                ext = str.equals("jpeg") ? "jpg" : str;
-//            } else
-//                return;
-//            Pic pic = PicRetrofitService.create(RemarksEditorActivity.this, this, uri, ext);
-//            //Смотри doWhenPicIsCreated
-//        }
-//    }
 
 //    @Override//IPicCreator
 //    public void doWhenPicHasBeenCreated(Response<Pic> response, Uri uri) {
@@ -300,22 +297,6 @@ public class RemarksEditorActivity extends BaseActivity implements
 //        }
 //    }
 
-//    private void addRemark() {
-//        saveUriInAdapter();
-//
-//        Remark remark = new Remark(
-//                passport,
-//                CURRENT_USER,
-//                editText.getText().toString(),
-//                ThisApplication.getCurrentTime(),
-//                picsInAdapter
-//        );
-//
-//        Intent data = new Intent();
-//        data.putExtra(NEW_REMARK, remark);
-//        setResult(RESULT_OK, data);
-//        finish();
-//    }
 
 
     private void changeRemark() {
@@ -376,6 +357,7 @@ public class RemarksEditorActivity extends BaseActivity implements
 
         }
     }
+
 
     private class SaveRemarkTask extends AsyncTask<List<Uri>, Void, Remark> {
 
@@ -439,26 +421,6 @@ public class RemarksEditorActivity extends BaseActivity implements
             return savedRemark;
         }
 
-        private void uploadPicToDataBase(Uri uri, Pic pic) {
-            try {
-                String fileNewName = pic.getId() + "." + "jpg";
-
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-                byte[] draftBytes = baos.toByteArray();
-
-                RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), draftBytes);
-                MultipartBody.Part body = MultipartBody.Part.createFormData("file", fileNewName, requestBody);
-                FileApiInterface fileApi = RetrofitClient.getInstance().getRetrofit().create(FileApiInterface.class);
-                Call<Void> uploadCall = fileApi.upload("pics", body);
-                uploadCall.execute();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         @Override
         protected void onPostExecute(Remark savedRemark) {
             super.onPostExecute(savedRemark);
@@ -467,7 +429,103 @@ public class RemarksEditorActivity extends BaseActivity implements
             setResult(RESULT_OK, data);
             finish();
         }
+    }
 
+    private class ChangeRemarkTask extends AsyncTask<List<Uri>, Void, Remark> {
+
+        Remark changedRemark;
+
+        @SafeVarargs
+        @Override
+        protected final Remark doInBackground(List<Uri>... uris) {
+
+            //Сохраняем и добавляем новые картинки
+            PicApiInterface picApi = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
+            RemarkApiInterface remarkApi = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+            List<Pic> newPics = new ArrayList<>();
+            List<Uri> allUris = uris[0];
+            for (Uri uri : allUris) {
+                Pic newPic = null;
+                try {
+                    newPic = new Pic();
+                    Bitmap bmp = Picasso.get().load(uri).get(); //Здесь может быть ошибка
+                    String ext;
+                    String mimeType = getContentResolver().getType(uri);
+                    if (mimeType.startsWith("image")) {
+                        String str = mimeType.split("/", -1)[1];
+                        ext = str.equals("jpeg") ? "jpg" : str;
+                    } else
+                        break; //Если картинка не картинка, то переходим к следующему uri
+                    newPic.setExtension(ext);
+                    newPic.setWidth(bmp.getWidth());
+                    newPic.setHeight(bmp.getHeight());
+                    newPic.setUser(CURRENT_USER);
+                    newPic.setTime(ThisApplication.getCurrentTime());
+
+                    Call<Pic> call = picApi.create(newPic);
+                    Pic pic = call.execute().body();
+
+
+                    uploadPicToDataBase(uri, pic);
+
+                    newPics.add(pic);
+                } catch (IOException e) {
+                    Log.e(TAG, "Ошибка декодирования файла: " + e.getMessage());
+                }
+
+            }
+
+            List<Pic> allPics = new ArrayList<>();
+            allPics.addAll(picsInAdapter);
+            allPics.addAll(newPics);
+
+            Remark remark = new Remark(
+                    passport,
+                    CURRENT_USER,
+                    editText.getText().toString(),
+                    ThisApplication.getCurrentTime(),
+                    allPics
+            );
+
+            Call<Remark> call = remarkApi.create(remark);
+            try {
+                changedRemark = call.execute().body();
+            } catch (IOException e) {
+                AppWarnings.showAlert_NoConnection(RemarksEditorActivity.this);
+                e.printStackTrace();
+            }
+
+            return changedRemark;
+        }
+
+        @Override
+        protected void onPostExecute(Remark changedRemark) {
+            super.onPostExecute(changedRemark);
+            Intent data = new Intent();
+            data.putExtra(NEW_REMARK, changedRemark);
+            setResult(RESULT_OK, data);
+            finish();
+        }
+    }
+
+    private void uploadPicToDataBase(Uri uri, Pic pic) {
+        try {
+            String fileNewName = pic.getId() + "." + "jpg";
+
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+            byte[] draftBytes = baos.toByteArray();
+
+            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), draftBytes);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("file", fileNewName, requestBody);
+            FileApiInterface fileApi = RetrofitClient.getInstance().getRetrofit().create(FileApiInterface.class);
+            Call<Void> uploadCall = fileApi.upload("pics", body);
+            uploadCall.execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

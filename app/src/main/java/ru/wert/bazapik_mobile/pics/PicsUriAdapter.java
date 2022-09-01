@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
@@ -25,13 +24,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.data.api_interfaces.FileApiInterface;
-import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
 import ru.wert.bazapik_mobile.viewer.PicsViewerActivity;
 
@@ -106,7 +99,7 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
                             popup.setOnMenuItemClickListener(item1 -> {
                                 Uri picture = (Uri) data.get(position);
                                 switch (item1.getItemId()) {
-                                    case R.id.deletPicture:
+                                    case R.id.deletePicture:
                                         deletePicture(picture, position);
                                         break;
                                 }

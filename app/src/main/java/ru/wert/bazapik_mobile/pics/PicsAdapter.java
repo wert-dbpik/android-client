@@ -120,7 +120,7 @@ public class PicsAdapter extends RecyclerView.Adapter<PicsAdapter.ViewHolder>{
                                         popup.setOnMenuItemClickListener(item1 -> {
                                             Pic picture = (Pic) data.get(position);
                                             switch (item1.getItemId()) {
-                                                case R.id.deletPicture:
+                                                case R.id.deletePicture:
                                                     deletePicture(picture, position);
                                                     break;
                                             }

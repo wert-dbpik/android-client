@@ -114,46 +114,26 @@ public class InfoActivity extends BaseActivity  implements
 
     }
 
+    //ПОСЛЕ ДОБАВЛЕНИЯ КОММЕНТАРИЯ
     private void registerAddRemarkActivityForResultLauncher() {
         addRemarkActivityForResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-
-//                            Remark newRemark = data.getParcelableExtra(NEW_REMARK);
-//                            rm.createRemark(newRemark);
-                        } else {
-
-                        }
-
                         rm.createRecycleViewOfFoundRemarks();
-
-                    } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
-
+                        rm.increaseCountOfRemarks();
                     }
-
                 });
     }
 
+    //ПОСЛЕ ИЗМЕНЕНИЯ КОММЕНТАРИЯ
     private void registerChangeRemarkActivityForResultLauncher() {
         changeRemarkActivityForResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            Remark changedRemark = data.getParcelableExtra(CHANGING_REMARK);
-                            rm.changeRemark(changedRemark);
-                        } else {
-
+                            rm.createRecycleViewOfFoundRemarks();
                         }
-
-                    } else if (result.getResultCode() == Activity.RESULT_CANCELED) {
-
-                    }
-
                 });
     }
 
@@ -179,11 +159,11 @@ public class InfoActivity extends BaseActivity  implements
     @Override
     protected void onResume() {
         super.onResume();
-        deployResumBundle();
+        deployResumeBundle();
 
     }
 
-    private void deployResumBundle() {
+    private void deployResumeBundle() {
         if (resumeBundle != null) {
             Parcelable listDraftsState = resumeBundle.getParcelable(KEY_RECYCLER_DRAFTS_STATE);
             if (listDraftsState != null && rvDrafts != null)
