@@ -34,7 +34,6 @@ import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
 import ru.wert.bazapik_mobile.utils.AnimationDest;
-import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static android.content.Intent.ACTION_VIEW;
@@ -260,7 +259,7 @@ public class ViewerActivity extends BaseActivity {
             } else {
                 try {
                     //Запускаем асинхронную задачу по загрузке файла чертежа
-                    String res = new DownloadDraftTask().execute(remoteFileString, localFileString).get();
+                    String res = new DownloadFileTask().execute(remoteFileString, localFileString).get();
                     if (res.equals("OK")) {
                         Log.d(TAG, String.format("File '%s' was downloaded with OK message", currentDraft.toUsefulString()));
                         runOnUiThread(this::showDraftInViewer);

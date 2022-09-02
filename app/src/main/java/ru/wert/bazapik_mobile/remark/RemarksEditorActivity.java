@@ -27,9 +27,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -54,37 +55,36 @@ import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.data.serviceRETROFIT.FileRetrofitService;
 import ru.wert.bazapik_mobile.main.BaseActivity;
-import ru.wert.bazapik_mobile.pics.PicsAdapter;
 import ru.wert.bazapik_mobile.pics.PicsUriAdapter;
+import ru.wert.bazapik_mobile.pics.RemarkImage;
+import ru.wert.bazapik_mobile.viewer.DownloadFileTask;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
 
+import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_CAMERA;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.info.InfoActivity.ADD_REMARK;
-import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGE_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGING_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.REMARK_PASSPORT;
 import static ru.wert.bazapik_mobile.info.InfoActivity.TYPE_OF_REMARK_OPERATION;
 
-public class RemarksEditorActivity extends BaseActivity implements
-        FileRetrofitService.IFileUploader {
+public class RemarksEditorActivity extends BaseActivity {
 
     private final String TAG = "RemarkFragment";
+
+    //Картинки в ресайклере как сохраненные, так и несохраненные
+    @Setter private List<RemarkImage> imagesInAdapter;
 
     private Passport passport;
     private String text;
     private List<Pic> pics;
-    @Setter private List<Uri> uriInAdapter; //Претенденты на добавление
     private RecyclerView rvEditorRemarkPics;
-    @Setter private List<Pic> picsInAdapter;
     private ActivityResultLauncher<Intent> pickUpPictureResultLauncher;
     private ActivityResultLauncher<Intent> takePhotoResultLauncher;
     public static final String sAdd = "добавить";
     public static final String sChange = "изменить";
-    private PicsAdapter picsAdapter;
     private PicsUriAdapter picsUriAdapter;
 
     private EditText editText;
@@ -135,11 +135,13 @@ public class RemarksEditorActivity extends BaseActivity implements
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
         btnAddImage = findViewById(R.id.btnAddImage);
 
+        //Проверка на предоставленное разрешение пользоваться камерой
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // разрешение не предоставлено
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_PERMISSION_CAMERA);
         }
 
+        //Инициализация состояния в зависимости от проводимой операции
         Intent intent = getIntent();
         typeOfRemarkOperation = intent.getIntExtra(TYPE_OF_REMARK_OPERATION, 1);
         passport = intent.getParcelableExtra(REMARK_PASSPORT);
@@ -147,35 +149,24 @@ public class RemarksEditorActivity extends BaseActivity implements
         if (typeOfRemarkOperation == ADD_REMARK) {
             tvTitle.setText("Добавление комментария");
             btnAdd.setText(sAdd);
-            uriInAdapter = new ArrayList<>();
-            fillRecViewWithUris(uriInAdapter);
+            imagesInAdapter = new ArrayList<>();
+            fillRecViewWithImages();
         } else { //CHANGE_REMARK
             changingRemark = intent.getParcelableExtra(CHANGING_REMARK);
             tvTitle.setText("Изменение комментария");
             btnAdd.setText(sChange);
             editText.setText(changingRemark.getText());
-            uriInAdapter = new ArrayList<>();
-            fillRecViewWithPics(changingRemark.getPicsInRemark());
+            imagesInAdapter = new ArrayList<>();
+            fillRecViewWithCashedPics(changingRemark.getPicsInRemark());
         }
 
+        //ДОБАВИТЬ или ИЗМЕНИТЬ КОММЕНТАРИЙ
         btnAdd.setOnClickListener(v -> {
-            if (btnAdd.getText().equals(sAdd)){
-                AsyncTask<List<Uri>, Void, Remark> addRemark = new SaveRemarkTask();
-                addRemark.execute(uriInAdapter);
-            }
-            else {
-                changingRemark.setUser(CURRENT_USER);
-                changingRemark.setText(editText.getText().toString());
-                changingRemark.setCreationTime(ThisApplication.getCurrentTime());
-                changingRemark.setPicsInRemark(picsInAdapter);
-
-                AsyncTask<List<Uri>, Void, Remark> changeRemark = new ChangeRemarkTask();
-                changeRemark.execute(uriInAdapter);
-            }
+            AsyncTask<List<RemarkImage>, Void, Remark> addRemark = new SaveRemarkTask();
+            addRemark.execute(imagesInAdapter);
         });
 
-
-
+        //ДОБАВИТЬ КАРТИНКУ ИЗ ГАЛЕРЕЙ -------------------------------------------------------
         pickUpPictureResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -187,28 +178,14 @@ public class RemarksEditorActivity extends BaseActivity implements
                             chosenPics = (clipData == null ?
                                     Collections.singletonList(data.getData()) :
                                     ThisApplication.clipDataToList(clipData));
-
-
-
-                            uriInAdapter.addAll(chosenPics);
-                            if(typeOfRemarkOperation ==CHANGE_REMARK)
-                                fillRecViewWithPics(changingRemark.getPicsInRemark());
-                            fillRecViewWithUris(uriInAdapter);
-
+                            for(Uri u : chosenPics) {
+                                imagesInAdapter.add(new RemarkImage(u, null));
+                            }
+                            fillRecViewWithImages();
                         }
                     }
                 });
 
-        takePhotoResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        uriInAdapter.add(imageUri);
-                        fillRecViewWithUris(uriInAdapter);
-//                        PicRetrofitService.create(RemarksEditorActivity.this, this, imageUri, "jpg");
-                        //Смотри doWhenPicIsCreated
-                    }
-                });
 
         btnAddImage.setOnClickListener(v -> {
             Intent addImageIntent = new Intent();
@@ -218,6 +195,17 @@ public class RemarksEditorActivity extends BaseActivity implements
 
             pickUpPictureResultLauncher.launch(addImageIntent);
         });
+
+        //ДОБАВИТЬ ФОТО ----------------------------------------------------------------------
+
+        takePhotoResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        imagesInAdapter.add(new RemarkImage(imageUri, null));
+                        fillRecViewWithImages();
+                    }
+                });
 
         btnAddPhoto.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -235,8 +223,39 @@ public class RemarksEditorActivity extends BaseActivity implements
 
     }
 
-    private File getFile() {
+    /**
+     * Метод, получив сохраненные картинки, загружает их в кэш и полученный Uri файлов добавляет в imagesInAdapter.
+     * Метод вызывается при изменении комментария только в начале
+     * После вызывается fillRecViewWithImages, куда передаются полученные результаты.
+     * @param picsInRemark, List<Pic>
+     */
+    private void fillRecViewWithCashedPics(List<Pic> picsInRemark) {
+        for(Pic pic: picsInRemark){
+            try {
+                //Путь к удаленному файлу
+                String remoteFileString = DATA_BASE_URL + "drafts/download/pics/" + pic.getName();
+                // временная папка
+                File outputDir = RemarksEditorActivity.this.getCacheDir();
+                //Создание временного файла
+                File outputFile = File.createTempFile("remark_pic_" + pic.getId(), pic.getExtension(), outputDir);
+                //Загружаем изображение из БД во временную папку
+                String res = new DownloadFileTask().execute(remoteFileString, outputFile.toString()).get();
+                if(res.equals("OK"))
+                    //Добавляем итоговый Uri в список изображений
+                    imagesInAdapter.add(new RemarkImage(Uri.fromFile(outputFile), pic));
 
+            } catch (IOException | ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        fillRecViewWithImages();
+    }
+
+    /**
+     * В методе создает файл, куда будет сохранена фотография, полученная с камеры телефона
+     * @return image_file, File
+     */
+    private File getFile() {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File image_file = null;
@@ -248,67 +267,18 @@ public class RemarksEditorActivity extends BaseActivity implements
             e.printStackTrace();
         }
 
-//        String mCurrentPhotoPath = image_file.getAbsolutePath();
         return image_file;
     }
 
-
-
-    @Override //FileRetrofitService.IFileUploader
-    public void doWhenFileHasBeenUploaded() {
-
-        picsAdapter.changeListOfItems(new ArrayList<>(picsInAdapter));
-
-//        viewInteraction.updateRemarkAdapter();
-    }
-
-    private void fillRecViewWithPics(List<Pic> pics) {
+    /**
+     * Метод устанавливает адаптер со списком изображений imagesInAdapter
+     */
+    private void fillRecViewWithImages() {
         rvEditorRemarkPics.setLayoutManager(new LinearLayoutManager(this));
-        picsAdapter = new PicsAdapter(this, pics, PicsAdapter.REMARK_EDITOR, this);
-        rvEditorRemarkPics.setAdapter(picsAdapter);
-        rvEditorRemarkPics.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL));
-    }
-
-    private void fillRecViewWithUris(List<Uri> pics) {
-        rvEditorRemarkPics.setLayoutManager(new LinearLayoutManager(this));
-        picsUriAdapter = new PicsUriAdapter(this, pics, PicsUriAdapter.REMARK_EDITOR, this);
+        picsUriAdapter = new PicsUriAdapter(this, imagesInAdapter, PicsUriAdapter.REMARK_EDITOR, this);
         rvEditorRemarkPics.setAdapter(picsUriAdapter);
         rvEditorRemarkPics.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
-    }
-
-
-//    @Override//IPicCreator
-//    public void doWhenPicHasBeenCreated(Response<Pic> response, Uri uri) {
-//        try {
-//            Pic savedPic = response.body();
-//            String fileNewName = savedPic.getId() + "." + "jpg";
-//
-//            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-//            byte[] draftBytes = baos.toByteArray();
-//
-//            FileRetrofitService.uploadFile(RemarksEditorActivity.this, this, "pics", fileNewName, draftBytes);
-//            //doWhenFileHasBeenUploaded
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
-
-    private void changeRemark() {
-        changingRemark.setUser(CURRENT_USER);
-        changingRemark.setText(editText.getText().toString());
-        changingRemark.setCreationTime(ThisApplication.getCurrentTime());
-        changingRemark.setPicsInRemark(picsInAdapter);
-
-        Intent data = new Intent();
-        data.putExtra(CHANGING_REMARK, changingRemark);
-        setResult(RESULT_OK, data);
-        finish();
     }
 
 
@@ -358,92 +328,27 @@ public class RemarksEditorActivity extends BaseActivity implements
         }
     }
 
+    /**
+     * Класс - Задача на сохранение как нового комментария, так и на изменение старого
+     */
+    private class SaveRemarkTask extends AsyncTask<List<RemarkImage>, Void, Remark> {
 
-    private class SaveRemarkTask extends AsyncTask<List<Uri>, Void, Remark> {
-
-        Remark savedRemark;
-
-        @SafeVarargs
-        @Override
-        protected final Remark doInBackground(List<Uri>... uris) {
-
-            PicApiInterface picApi = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
-            RemarkApiInterface remarkApi = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-            List<Pic> allPics = new ArrayList<>();
-            List<Uri> allUris = uris[0];
-            for (Uri uri : allUris) {
-                Pic newPic = null;
-                try {
-                    newPic = new Pic();
-                    Bitmap bmp = Picasso.get().load(uri).get(); //Здесь может быть ошибка
-                    String ext;
-                    String mimeType = getContentResolver().getType(uri);
-                    if (mimeType.startsWith("image")) {
-                        String str = mimeType.split("/", -1)[1];
-                        ext = str.equals("jpeg") ? "jpg" : str;
-                    } else
-                        break; //Если картинка не картинка, то переходим к следующему uri
-                    newPic.setExtension(ext);
-                    newPic.setWidth(bmp.getWidth());
-                    newPic.setHeight(bmp.getHeight());
-                    newPic.setUser(CURRENT_USER);
-                    newPic.setTime(ThisApplication.getCurrentTime());
-
-                    Call<Pic> call = picApi.create(newPic);
-                    Pic pic = call.execute().body();
-
-
-                    uploadPicToDataBase(uri, pic);
-
-                    allPics.add(pic);
-                } catch (IOException e) {
-                    Log.e(TAG, "Ошибка декодирования файла: " + e.getMessage());
-                }
-
-            }
-
-            Remark remark = new Remark(
-                    passport,
-                    CURRENT_USER,
-                    editText.getText().toString(),
-                    ThisApplication.getCurrentTime(),
-                    allPics
-            );
-
-            Call<Remark> call = remarkApi.create(remark);
-            try {
-                savedRemark = call.execute().body();
-            } catch (IOException e) {
-                AppWarnings.showAlert_NoConnection(RemarksEditorActivity.this);
-                e.printStackTrace();
-            }
-
-            return savedRemark;
-        }
-
-        @Override
-        protected void onPostExecute(Remark savedRemark) {
-            super.onPostExecute(savedRemark);
-            Intent data = new Intent();
-            data.putExtra(NEW_REMARK, savedRemark);
-            setResult(RESULT_OK, data);
-            finish();
-        }
-    }
-
-    private class ChangeRemarkTask extends AsyncTask<List<Uri>, Void, Remark> {
-
-        Remark changedRemark;
+        Remark targetRemark;
 
         @SafeVarargs
         @Override
-        protected final Remark doInBackground(List<Uri>... uris) {
+        protected final Remark doInBackground(List<RemarkImage>... images) {
 
             //Сохраняем и добавляем новые картинки
             PicApiInterface picApi = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
-            RemarkApiInterface remarkApi = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+
             List<Pic> newPics = new ArrayList<>();
-            List<Uri> allUris = uris[0];
+            List<RemarkImage> allImages = images[0];
+            //Выбираем из картинок ранее сохраненные
+            List<Pic> allPics = allImages.stream().map(RemarkImage::getPic).filter(Objects::nonNull).collect(Collectors.toList());
+            //Выбираем из картинок только новые
+            List<Uri> allUris = allImages.stream().filter(image -> image.getPic() == null).map(RemarkImage::getUri).collect(Collectors.toList());
+
             for (Uri uri : allUris) {
                 Pic newPic = null;
                 try {
@@ -464,7 +369,6 @@ public class RemarksEditorActivity extends BaseActivity implements
 
                     Call<Pic> call = picApi.create(newPic);
                     Pic pic = call.execute().body();
-
 
                     uploadPicToDataBase(uri, pic);
 
@@ -475,10 +379,21 @@ public class RemarksEditorActivity extends BaseActivity implements
 
             }
 
-            List<Pic> allPics = new ArrayList<>();
-            allPics.addAll(picsInAdapter);
             allPics.addAll(newPics);
 
+            if(typeOfRemarkOperation == ADD_REMARK)
+                addRemark(allPics);
+            else
+                changeRemark(allPics);
+
+            return targetRemark;
+        }
+
+        /**
+         * Метод сохраняет изображение в БД
+         * @param allPics
+         */
+        private void addRemark(List<Pic> allPics) {
             Remark remark = new Remark(
                     passport,
                     CURRENT_USER,
@@ -487,15 +402,35 @@ public class RemarksEditorActivity extends BaseActivity implements
                     allPics
             );
 
+            RemarkApiInterface remarkApi = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
             Call<Remark> call = remarkApi.create(remark);
             try {
-                changedRemark = call.execute().body();
+                targetRemark = call.execute().body();
             } catch (IOException e) {
                 AppWarnings.showAlert_NoConnection(RemarksEditorActivity.this);
                 e.printStackTrace();
             }
+        }
 
-            return changedRemark;
+        /**
+         * Метод изменяет изображение в БД
+         * @param allPics
+         */
+        private void changeRemark(List<Pic> allPics) {
+            changingRemark.setUser(CURRENT_USER);
+            changingRemark.setText(editText.getText().toString());
+            changingRemark.setCreationTime(ThisApplication.getCurrentTime());
+            changingRemark.setPicsInRemark(allPics);
+
+            RemarkApiInterface remarkApi = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+            Call<Remark> call = remarkApi.update(changingRemark);
+
+            try {
+                targetRemark = call.execute().body();
+            } catch (IOException e) {
+                AppWarnings.showAlert_NoConnection(RemarksEditorActivity.this);
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -508,6 +443,11 @@ public class RemarksEditorActivity extends BaseActivity implements
         }
     }
 
+    /**
+     * Метод после создания записи Pic в БД загружает само изображение
+     * @param uri
+     * @param pic
+     */
     private void uploadPicToDataBase(Uri uri, Pic pic) {
         try {
             String fileNewName = pic.getId() + "." + "jpg";

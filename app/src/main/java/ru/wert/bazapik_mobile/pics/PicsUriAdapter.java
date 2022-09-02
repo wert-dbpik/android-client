@@ -35,7 +35,7 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
 
     private final String TAG = "PicsAdapter";
     private final LayoutInflater inflater;
-    private List<Uri> data;
+    private List<RemarkImage> data;
     private final Context context;
     private final Activity activity;
 
@@ -43,17 +43,13 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
     public static final int INFO_ACTIVITY = 0;
     public static final int REMARK_EDITOR = 1;
 
-    RemarksEditorActivity editor;
+    private RemarksEditorActivity editor;
 
-    public PicsUriAdapter(Context context, List<Uri> data, int whoCallMe, RemarksEditorActivity editor) {
-        this(context, data, whoCallMe);
-        this.editor = editor;
-    }
-
-    public PicsUriAdapter(Context context, List<Uri> data, int whoCallMe) {
+    public PicsUriAdapter(Context context, List<RemarkImage> data, int whoCallMe, RemarksEditorActivity editor) {
         this.context = context;
         this.data = new ArrayList<>(data);
         this.whoCallMe = whoCallMe;
+        this.editor = editor;
 
         this.inflater = LayoutInflater.from(context);
         this.activity = (Activity) context;
@@ -68,7 +64,8 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        Uri uri = data.get(position);
+        RemarkImage image = data.get(position);
+        Uri uri = image.getUri();
         new Thread(() -> {
             try {
                 Bitmap bmp = Picasso.get().load(uri).get();
@@ -97,7 +94,7 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
                             PopupMenu popup = new PopupMenu(v.getContext(), v, Gravity.RIGHT, R.attr.actionOverflowMenuStyle, 0);
                             popup.getMenuInflater().inflate(R.menu.picture_context_menu, popup.getMenu());
                             popup.setOnMenuItemClickListener(item1 -> {
-                                Uri picture = (Uri) data.get(position);
+                                RemarkImage picture = (RemarkImage) data.get(position);
                                 switch (item1.getItemId()) {
                                     case R.id.deletePicture:
                                         deletePicture(picture, position);
@@ -117,10 +114,10 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
 
     }
 
-    private void deletePicture(Uri picture, int position){
+    private void deletePicture(RemarkImage picture, int position){
         data.remove(picture);
         changeListOfItems(data);
-        editor.setUriInAdapter(new ArrayList<>(data));
+        editor.setImagesInAdapter(new ArrayList<>(data));
         notifyItemRemoved(position);
     }
 
@@ -148,7 +145,8 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
      * @param items List<P>
      */
     public void changeListOfItems(List items) {
-        data = new ArrayList<Uri>(items);
+        data = new ArrayList<RemarkImage>(items);
         notifyDataSetChanged();
     }
+
 }

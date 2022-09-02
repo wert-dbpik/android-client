@@ -13,7 +13,7 @@ import java.net.URL;
 
 import androidx.annotation.RequiresApi;
 
-public class DownloadDraftTask extends AsyncTask<String, Integer, String> {
+public class DownloadFileTask extends AsyncTask<String, Integer, String> {
     private static final String TAG = "Загрузка файла в фоне";
 
 

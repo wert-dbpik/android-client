@@ -24,7 +24,7 @@ public class Pic extends _BaseEntity implements Item, Parcelable {
 
     @Override
     public String getName() {
-        return "";
+        return getId() + "." + getExtension();
     }
 
     @Override
