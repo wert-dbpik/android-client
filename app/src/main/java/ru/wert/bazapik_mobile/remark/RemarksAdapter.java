@@ -118,7 +118,10 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
             }
         }
 
+        holder.llRecViewRemark.setBackgroundColor(context.getColor(R.color.colorPrimaryDark));
+
         if(context instanceof ViewerActivity){
+            holder.llRecViewRemark.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
             holder.tvRemarkUser.setTextColor(context.getColor(R.color.colorWhite));
             holder.tvRemarkUser.setBackgroundColor(context.getColor(R.color.colorMyDarkerGray));
             holder.tvRemarkTime.setTextColor(context.getColor(R.color.colorWhite));
@@ -185,9 +188,6 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-
-
-
     /**
      * Вложенный класс, описывающий и создающий ограниченной количество ViewHolder
      *
@@ -196,7 +196,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         TextView tvRemarkUser;
         TextView tvRemarkTime;
         TextView tvRemarkText;
-        LinearLayout llPictures;
+        LinearLayout llRecViewRemark;
         RecyclerView rvRemarkPics;
         ImageButton btnShowRemarkMenu;
         LinearLayout iv;
@@ -210,7 +210,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
             tvRemarkText = itemView.findViewById(R.id.tvRemarkText);
             iv = itemView.findViewById(R.id.selectedLinearLayout);
 //            rvRemarkPics = itemView.findViewById(R.id.rvRemarkPics);
-//            llPictures = itemView.findViewById(R.id.llPictures);
+            llRecViewRemark = itemView.findViewById(R.id.llRecViewRemark);
             btnShowRemarkMenu = itemView.findViewById(R.id.btnShowRemarkMenu);
             btnShowRemarkMenu = itemView.findViewById(R.id.btnShowRemarkMenu);
             llRemark = itemView.findViewById(R.id.llRemark);

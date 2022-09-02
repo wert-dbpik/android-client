@@ -257,7 +257,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
                     remarksAdapter.getData().remove(pos);
                     remarksAdapter.notifyItemRemoved(pos);
                     remarksAdapter.notifyItemRangeChanged(pos, remarksAdapter.getData().size());
-//                    updateRemarkAdapter();
+
                     decreaseCountOfRemarks();
                 } else {
                     Log.e(TAG + " : deleteRemark", "Не удалось удалить комментарий");
