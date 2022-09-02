@@ -254,8 +254,9 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     findPassportById(passId).getRemarkIds().remove(remark.getId());
-
+                    remarksAdapter.getData().remove(pos);
                     remarksAdapter.notifyItemRemoved(pos);
+                    remarksAdapter.notifyItemRangeChanged(pos, remarksAdapter.getData().size());
 //                    updateRemarkAdapter();
                     decreaseCountOfRemarks();
                 } else {

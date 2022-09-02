@@ -21,6 +21,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
+import lombok.Getter;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Pic;
@@ -35,7 +36,8 @@ import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.CURRENT_PIC;
 
 public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHolder> {
 
-    private final List<Remark> data;
+
+    @Getter private final List<Remark> data;
     private final LayoutInflater mInflater;
     private InfoRemarkClickListener mClickListener;
     private final Context context;
