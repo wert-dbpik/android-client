@@ -80,6 +80,7 @@ public class RemarksEditorActivity extends BaseActivity {
     private Passport passport;
     private String text;
     private List<Pic> pics;
+    private List<Pic> initialPics;//Картинки бывшие изначально
     private RecyclerView rvEditorRemarkPics;
     private ActivityResultLauncher<Intent> pickUpPictureResultLauncher;
     private ActivityResultLauncher<Intent> takePhotoResultLauncher;
@@ -153,6 +154,7 @@ public class RemarksEditorActivity extends BaseActivity {
             fillRecViewWithImages();
         } else { //CHANGE_REMARK
             changingRemark = intent.getParcelableExtra(CHANGING_REMARK);
+            initialPics = changingRemark.getPicsInRemark();
             tvTitle.setText("Изменение комментария");
             btnAdd.setText(sChange);
             editText.setText(changingRemark.getText());
@@ -346,6 +348,8 @@ public class RemarksEditorActivity extends BaseActivity {
             List<RemarkImage> allImages = images[0];
             //Выбираем из картинок ранее сохраненные
             List<Pic> allPics = allImages.stream().map(RemarkImage::getPic).filter(Objects::nonNull).collect(Collectors.toList());
+            //Сравниваем список изначальных изображений и оставшихся
+            removeDeletedPicsFromDB(initialPics, allPics);
             //Выбираем из картинок только новые
             List<Uri> allUris = allImages.stream().filter(image -> image.getPic() == null).map(RemarkImage::getUri).collect(Collectors.toList());
 
@@ -388,6 +392,8 @@ public class RemarksEditorActivity extends BaseActivity {
 
             return targetRemark;
         }
+
+
 
         /**
          * Метод сохраняет изображение в БД
@@ -434,14 +440,15 @@ public class RemarksEditorActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(Remark changedRemark) {
-            super.onPostExecute(changedRemark);
+        protected void onPostExecute(Remark remark) {
+            super.onPostExecute(remark);
             Intent data = new Intent();
-            data.putExtra(NEW_REMARK, changedRemark);
+            data.putExtra(NEW_REMARK, remark);
             setResult(RESULT_OK, data);
             finish();
         }
     }
+
 
     /**
      * Метод после создания записи Pic в БД загружает само изображение
@@ -466,6 +473,29 @@ public class RemarksEditorActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * В методе сравниваются два списка изображений - начальный initialPics и оставшийся allPics
+     * Выбывшие из начального списка изображения удаляются из БД
+     * @param initialPics List<Pic> , начальный список
+     * @param allPics List<Pic>, оставшийся список
+     */
+    private void removeDeletedPicsFromDB(List<Pic> initialPics, List<Pic> allPics) {
+        if(initialPics == null || initialPics.isEmpty()) return;
+        PicApiInterface api = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
+
+        for(Pic pic : initialPics){
+            //если конечный лист не содержит изображение из начального, то изображение удаляется
+            if(!allPics.contains(pic)) {
+                try {
+                    api.deleteById(pic.getId()).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 
 
