@@ -28,8 +28,8 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
 import ru.wert.bazapik_mobile.viewer.PicsViewerActivity;
 
-import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.ALL_PICS;
-import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.CURRENT_PIC;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.CURRENT_URI;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.ZHABA;
 
 public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHolder> {
 
@@ -85,8 +85,8 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
                     holder.ivPicture.setAdjustViewBounds(true);
                     holder.ivPicture.setOnClickListener(v -> {
                         Intent intent = new Intent(context, PicsViewerActivity.class);
-                        intent.putExtra(ALL_PICS, new ArrayList(Collections.singleton(uri)));
-                        intent.putExtra(CURRENT_PIC, uri);
+                        intent.putExtra(ZHABA, "editor");
+                        intent.putExtra(CURRENT_URI, new ArrayList(Collections.singleton(uri)));
                         context.startActivity(intent);
                     });
                     if (whoCallMe == REMARK_EDITOR)

@@ -26,6 +26,8 @@ public class PicsViewerActivity extends AppCompatActivity {
 
     public static final String ALL_PICS = "all_pics";
     public static final String CURRENT_PIC = "current_pic";
+    public static final String ZHABA = "resource";
+    public static final String CURRENT_URI = "current_uri";
 
     private List<Pic> allPics;
     private Pic currentPic;
@@ -34,6 +36,8 @@ public class PicsViewerActivity extends AppCompatActivity {
     private Button btnTapLeft, btnTapRight;
     private ImageButton btnShowPrevious, btnShowNext;
     private final FragmentManager fm = getSupportFragmentManager();
+    private String source;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,19 +49,22 @@ public class PicsViewerActivity extends AppCompatActivity {
         btnTapLeft = findViewById(R.id.btnTapLeft);
         btnTapRight = findViewById(R.id.btnTapRight);
 
-        Intent intent = getIntent();
+        intent = getIntent();
         allPics = intent.getParcelableArrayListExtra(ALL_PICS);
-        currentPic = intent.getParcelableExtra(CURRENT_PIC);
+        source = intent.getStringExtra(ZHABA);
+        if(!source.equals("editor")) {
+            currentPic = intent.getParcelableExtra(CURRENT_PIC);
 
-        //Получаем текущую позицию рисунка
-        initIterator();
+            //Получаем текущую позицию рисунка
+            initIterator();
 
-        btnShowPrevious.setOnClickListener(showPreviousDraft());
-        btnShowNext.setOnClickListener(showNextDraft());
-        btnTapLeft.setOnTouchListener(createOnSwipeTouchListener());
-        btnTapRight.setOnTouchListener(createOnSwipeTouchListener());
+            btnShowPrevious.setOnClickListener(showPreviousDraft());
+            btnShowNext.setOnClickListener(showNextDraft());
+            btnTapLeft.setOnTouchListener(createOnSwipeTouchListener());
+            btnTapRight.setOnTouchListener(createOnSwipeTouchListener());
+        }
 
-
+        String currentUri = intent.getStringExtra(CURRENT_URI);
         openFragment();
     }
 
@@ -72,30 +79,38 @@ public class PicsViewerActivity extends AppCompatActivity {
     }
 
     private void openFragment() {
-        if (iterator.equals(0))
-            switchOffButton(btnShowPrevious);
-        else
-            switchOnButton(btnShowPrevious);
-
-        if (iterator.equals(allPics.size() - 1))
-            switchOffButton(btnShowNext);
-        else
-            switchOnButton(btnShowNext);
-
-            String pathToPic = BASE_URL + "files/download/pics/" + currentPic.getId() + "." + currentPic.getExtension();
-
-            Bundle bundle = new Bundle();
-            bundle.putString(PATH_TO_PIC, pathToPic);
-
-            Fragment picsViewerFragment = new PicsViewerFragment();
-            picsViewerFragment.setArguments(bundle);
-            FragmentTransaction ft = fm.beginTransaction();
-            if (destination.equals(AnimationDest.ANIMATE_NEXT))
-                ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+        String pathToPic;
+        if(!source.equals("editor")) {
+            if (iterator.equals(0))
+                switchOffButton(btnShowPrevious);
             else
-                ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-            ft.replace(R.id.pics_viewer_fragment_container, picsViewerFragment);
-            ft.commit();
+                switchOnButton(btnShowPrevious);
+
+            if (iterator.equals(allPics.size() - 1))
+                switchOffButton(btnShowNext);
+            else
+                switchOnButton(btnShowNext);
+
+            pathToPic = BASE_URL + "files/download/pics/" + currentPic.getId() + "." + currentPic.getExtension();
+        } else {
+            switchOffButton(btnShowPrevious);
+            switchOffButton(btnShowNext);
+            pathToPic = intent.getStringExtra(CURRENT_URI);
+        }
+
+
+        Bundle bundle = new Bundle();
+        bundle.putString(PATH_TO_PIC, pathToPic);
+
+        Fragment picsViewerFragment = new PicsViewerFragment();
+        picsViewerFragment.setArguments(bundle);
+        FragmentTransaction ft = fm.beginTransaction();
+        if (destination.equals(AnimationDest.ANIMATE_NEXT))
+            ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+        else
+            ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+        ft.replace(R.id.pics_viewer_fragment_container, picsViewerFragment);
+        ft.commit();
     }
 
     private void switchOnButton(ImageButton btn){
