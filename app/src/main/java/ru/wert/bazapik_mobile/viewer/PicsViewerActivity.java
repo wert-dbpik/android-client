@@ -26,8 +26,8 @@ public class PicsViewerActivity extends AppCompatActivity {
 
     public static final String ALL_PICS = "all_pics";
     public static final String CURRENT_PIC = "current_pic";
-    public static final String ZHABA = "resource";
-    public static final String CURRENT_URI = "current_uri";
+    public static final String WHO_CALL_ME = "resource";
+    public static final String SINGLE_URI = "single_uri";
 
     private List<Pic> allPics;
     private Pic currentPic;
@@ -51,8 +51,11 @@ public class PicsViewerActivity extends AppCompatActivity {
 
         intent = getIntent();
         allPics = intent.getParcelableArrayListExtra(ALL_PICS);
-        source = intent.getStringExtra(ZHABA);
-        if(!source.equals("editor")) {
+        source = intent.getStringExtra(WHO_CALL_ME);
+
+        //Из редактора открывается только одна картинка за раз,
+        //поэтому не нужен итератор и не нужны кнопки навигации
+        if(source == null || !source.equals("editor")) {
             currentPic = intent.getParcelableExtra(CURRENT_PIC);
 
             //Получаем текущую позицию рисунка
@@ -64,7 +67,6 @@ public class PicsViewerActivity extends AppCompatActivity {
             btnTapRight.setOnTouchListener(createOnSwipeTouchListener());
         }
 
-        String currentUri = intent.getStringExtra(CURRENT_URI);
         openFragment();
     }
 
@@ -80,7 +82,7 @@ public class PicsViewerActivity extends AppCompatActivity {
 
     private void openFragment() {
         String pathToPic;
-        if(!source.equals("editor")) {
+        if(source == null || !source.equals("editor")) {
             if (iterator.equals(0))
                 switchOffButton(btnShowPrevious);
             else
@@ -95,9 +97,8 @@ public class PicsViewerActivity extends AppCompatActivity {
         } else {
             switchOffButton(btnShowPrevious);
             switchOffButton(btnShowNext);
-            pathToPic = intent.getStringExtra(CURRENT_URI);
+            pathToPic = intent.getStringExtra(SINGLE_URI);
         }
-
 
         Bundle bundle = new Bundle();
         bundle.putString(PATH_TO_PIC, pathToPic);
