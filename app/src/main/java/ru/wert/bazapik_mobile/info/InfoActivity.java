@@ -137,6 +137,9 @@ public class InfoActivity extends BaseActivity  implements
                 });
     }
 
+    /**
+     * Метод создает ресайклер с перечнем доступных чертежей
+     */
     private void createRVDrafts() {
         decNum = passport.getPrefix() == null ?
                 passport.getNumber() :
@@ -176,20 +179,20 @@ public class InfoActivity extends BaseActivity  implements
             resumeBundle = null;
         }
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        createResumeBundle();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        createResumeBundle();
-
-    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        createResumeBundle();
+//
+//    }
+//
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        createResumeBundle();
+//
+//    }
 
     private void createResumeBundle(){
         resumeBundle = new Bundle();
@@ -206,7 +209,7 @@ public class InfoActivity extends BaseActivity  implements
     }
 
     /**
-     * Создаем список состоящий из найденных элементов
+     * Создаем список состоящий из найденных чертежей
      */
     private void createRecycleViewOfFoundDrafts() {
 
