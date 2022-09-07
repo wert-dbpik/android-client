@@ -164,6 +164,7 @@ public class RemarksEditorActivity extends BaseActivity {
 
         //ДОБАВИТЬ или ИЗМЕНИТЬ КОММЕНТАРИЙ
         btnAdd.setOnClickListener(v -> {
+            btnAdd.setEnabled(false);//Исключить повторное нажатие кнопки
             AsyncTask<List<RemarkImage>, Void, Remark> addRemark = new SaveRemarkTask();
             addRemark.execute(imagesInAdapter);
         });
