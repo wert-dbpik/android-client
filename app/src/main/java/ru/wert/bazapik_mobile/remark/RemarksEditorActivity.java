@@ -65,10 +65,12 @@ import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_CAMERA;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.info.InfoActivity.ADD_REMARK;
+import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGE_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.CHANGING_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 import static ru.wert.bazapik_mobile.info.InfoActivity.REMARK_PASSPORT;
 import static ru.wert.bazapik_mobile.info.InfoActivity.TYPE_OF_REMARK_OPERATION;
+import static ru.wert.bazapik_mobile.remark.RemarksAdapter.REMARK_POSITION;
 
 public class RemarksEditorActivity extends BaseActivity {
 
@@ -100,8 +102,10 @@ public class RemarksEditorActivity extends BaseActivity {
     private final String REMARK_PICS = "remark_pics";
     private final String KEY_RECYCLER_STATE = "recycler_state";
 
+
     private int typeOfRemarkOperation;
     private Remark changingRemark;
+    private int remarkPosition;
 
     private Bundle createResumeBundle() {
         Bundle bundle = new Bundle();
@@ -154,6 +158,7 @@ public class RemarksEditorActivity extends BaseActivity {
             fillRecViewWithImages();
         } else { //CHANGE_REMARK
             changingRemark = intent.getParcelableExtra(CHANGING_REMARK);
+            remarkPosition = intent.getIntExtra(REMARK_POSITION, 0);
             initialPics = changingRemark.getPicsInRemark();
             tvTitle.setText("Изменение комментария");
             btnAdd.setText(sChange);
@@ -445,6 +450,8 @@ public class RemarksEditorActivity extends BaseActivity {
             super.onPostExecute(remark);
             Intent data = new Intent();
             data.putExtra(NEW_REMARK, remark);
+            if(typeOfRemarkOperation == CHANGE_REMARK)
+                data.putExtra(REMARK_POSITION, remarkPosition);
             setResult(RESULT_OK, data);
             finish();
         }

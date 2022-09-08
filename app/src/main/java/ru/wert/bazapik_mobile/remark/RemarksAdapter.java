@@ -42,7 +42,7 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
     private InfoRemarkClickListener mClickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
-
+    public static String REMARK_POSITION = "remark_position";
 
     /**
      * Конструктор получает на входе список элементов List<P>
@@ -96,10 +96,10 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
             popup.setOnMenuItemClickListener(item1 -> {
                 switch (item1.getItemId()) {
                     case R.id.changeRemark:
-                        ((InfoActivity)context).openChangeRemarkActivity(remark);
+                        ((InfoActivity)context).openChangeRemarkActivity(remark, position);
                         break;
                     case R.id.deleteRemark:
-                        ((InfoActivity)context).getRm().deleteRemark(remark, position);
+                        ((InfoActivity)context).deleteRemark(remark, position);
                         break;
                 }
                 return true;

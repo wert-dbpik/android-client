@@ -246,31 +246,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
 
     // =======================   УДАЛЕНИЕ КОММЕНТАРИЯ ================
 
-    public void deleteRemark(Remark remark, int pos) {
-        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<Void> call =  api.deleteById(remark.getId());
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    findPassportById(passId).getRemarkIds().remove(remark.getId());
-                    remarksAdapter.getData().remove(pos);
-                    remarksAdapter.notifyItemRemoved(pos);
-                    remarksAdapter.notifyItemRangeChanged(pos, remarksAdapter.getData().size());
 
-                    decreaseCountOfRemarks();
-                } else {
-                    Log.e(TAG + " : deleteRemark", "Не удалось удалить комментарий");
-                    new WarningDialog1().show(infoActivity, "Внимание!", "Не удалось удалить комментарий!");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                AppWarnings.showAlert_NoConnection(infoActivity);
-            }
-        });
-    }
 
     /**
      * Метод уменьшает количество комментариев на -1
