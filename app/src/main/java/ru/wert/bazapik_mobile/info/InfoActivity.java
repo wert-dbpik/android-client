@@ -24,8 +24,6 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import lombok.Getter;
-import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,6 +44,7 @@ import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
+import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.organizer.passports.PassportsFragment.PASSPORT;
 import static ru.wert.bazapik_mobile.remark.RemarksAdapter.REMARK_POSITION;
 
@@ -130,6 +129,37 @@ public class InfoActivity extends BaseActivity  implements
         AsyncTask<Void, Void, Void> fillInfoActivityTask = new FillInfoActivityTask();
         fillInfoActivityTask.execute();
 
+    }
+
+    /**
+     * Перемещает комментарии в самый верх списка
+     * @param remark, Remark
+     * @param pos, int
+     */
+    public void putRemarkInTheTop(Remark remark, int pos) {
+        //Изменяем пользователя и время создания
+        remark.setUser(CURRENT_USER);
+        remark.setCreationTime(ThisApplication.getCurrentTime());
+        //Меняем комментарий в БД
+        RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+        api.update(remark);
+        Call<Remark> call = api.update(remark);
+        call.enqueue(new Callback<Remark>() {
+            @Override
+            public void onResponse(Call<Remark> call, Response<Remark> response) {
+                if (response.isSuccessful()) {
+                    swapRemarks(remark, pos);
+                } else {
+                    Log.e(TAG + " : deleteRemark", "Не удалось переместить комментарий в верх списка");
+                    new WarningDialog1().show(InfoActivity.this, "Внимание!", "Не удалось переместить комментарий в верх списка!");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Remark> call, Throwable t) {
+                AppWarnings.showAlert_NoConnection(InfoActivity.this);
+            }
+        });
     }
 
     private class FillInfoActivityTask extends AsyncTask<Void, Void, Void> {
@@ -244,21 +274,31 @@ public class InfoActivity extends BaseActivity  implements
                         Intent data = result.getData();
                         Remark changedRemark = data.getParcelableExtra(NEW_REMARK);
                         int changedRemarkPosition = data.getIntExtra(REMARK_POSITION, 0);
-                        List<Remark> remarks = remarksAdapter.getData();
-                        if (changedRemarkPosition != 0) {
-                            remarks.remove(changedRemarkPosition);
-                            remarks.add(0, changedRemark);
-                            remarksAdapter.notifyDataSetChanged();
-                        } else {
-                            remarks.set(0, changedRemark);
-                            remarksAdapter.notifyItemChanged(changedRemarkPosition);
-                        }
-                        showRemarks = true;
-                        tuneRemarksView();
-                        infoScrollView.scrollTo(0, 0);
-                        rvRemarks.scrollTo(0, 0);
+
+                        swapRemarks(changedRemark, changedRemarkPosition);
                     }
                 });
+    }
+
+    /**
+     * Перемещает remark из позиции position в самый верх списка
+     * @param remark
+     * @param position
+     */
+    private void swapRemarks(Remark remark, int position) {
+        List<Remark> remarks = remarksAdapter.getData();
+        if (position != 0) {
+            remarks.remove(position);
+            remarks.add(0, remark);
+            remarksAdapter.notifyDataSetChanged();
+        } else {
+            remarks.set(0, remark);
+            remarksAdapter.notifyItemChanged(position);
+        }
+        showRemarks = true;
+        tuneRemarksView();
+        infoScrollView.scrollTo(0, 0);
+        rvRemarks.scrollTo(0, 0);
     }
 
     @Override

@@ -95,6 +95,9 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
             popup.getMenuInflater().inflate(R.menu.remark_context_menu, popup.getMenu());
             popup.setOnMenuItemClickListener(item1 -> {
                 switch (item1.getItemId()) {
+                    case R.id.putRemarkInTheTop:
+                        ((InfoActivity)context).putRemarkInTheTop(remark, position);
+                        break;
                     case R.id.changeRemark:
                         ((InfoActivity)context).openChangeRemarkActivity(remark, position);
                         break;
