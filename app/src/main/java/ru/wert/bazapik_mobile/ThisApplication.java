@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.ClipData;
@@ -10,8 +11,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.LinearLayout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -385,7 +388,5 @@ public class ThisApplication extends Application {
         return list;
 
     }
-
-
 
 }

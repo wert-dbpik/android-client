@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -89,12 +90,13 @@ public class RemarksEditorActivity extends BaseActivity {
     public static final String sAdd = "добавить";
     public static final String sChange = "изменить";
     private PicsUriAdapter picsUriAdapter;
+    private LinearLayout awaitingPlate;
+    private boolean done;
 
     private EditText editText;
     private TextView tvTitle;
     private Button btnAdd;
     private ImageButton btnAddPhoto, btnAddImage;
-    private LinearLayout llAddPicsButtons;
     private Uri imageUri; //uri сделанной фотографии
 
     private Bundle resumeBundle;
@@ -132,11 +134,14 @@ public class RemarksEditorActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_remarks_editor);
 
+        awaitingPlate = findViewById(R.id.llAwaitingPlate);
+        awaitingPlate.setVisibility(View.INVISIBLE);
+
         editText = findViewById(R.id.etTextRemark);
         tvTitle = findViewById(R.id.tvRemarkTitle);
         btnAdd = findViewById(R.id.btnAddRemark);
         rvEditorRemarkPics = findViewById(R.id.rvEditorRemarkPics);
-        llAddPicsButtons = findViewById(R.id.llAddPicsButtons);
+        LinearLayout llAddPicsButtons = findViewById(R.id.llAddPicsButtons);
         btnAddPhoto = findViewById(R.id.btnAddPhoto);
         btnAddImage = findViewById(R.id.btnAddImage);
 
@@ -170,6 +175,7 @@ public class RemarksEditorActivity extends BaseActivity {
         //ДОБАВИТЬ или ИЗМЕНИТЬ КОММЕНТАРИЙ
         btnAdd.setOnClickListener(v -> {
             btnAdd.setEnabled(false);//Исключить повторное нажатие кнопки
+            awaitingPlate.setVisibility(View.VISIBLE);
             AsyncTask<List<RemarkImage>, Void, Remark> addRemark = new SaveRemarkTask();
             addRemark.execute(imagesInAdapter);
         });
@@ -346,7 +352,8 @@ public class RemarksEditorActivity extends BaseActivity {
         @SafeVarargs
         @Override
         protected final Remark doInBackground(List<RemarkImage>... images) {
-
+            done = false;
+            showAwaitingPlateLater();
             //Сохраняем и добавляем новые картинки
             PicApiInterface picApi = RetrofitClient.getInstance().getRetrofit().create(PicApiInterface.class);
 
@@ -448,6 +455,8 @@ public class RemarksEditorActivity extends BaseActivity {
         @Override
         protected void onPostExecute(Remark remark) {
             super.onPostExecute(remark);
+            done = true;
+            awaitingPlate.setVisibility(View.INVISIBLE);
             Intent data = new Intent();
             data.putExtra(NEW_REMARK, remark);
             if(typeOfRemarkOperation == CHANGE_REMARK)
@@ -455,6 +464,21 @@ public class RemarksEditorActivity extends BaseActivity {
             setResult(RESULT_OK, data);
             finish();
         }
+    }
+
+    /**
+     * Метод через паузу показывает просьбу подождать
+     */
+    private void showAwaitingPlateLater() {
+        new Thread(()->{
+            try {
+                Thread.sleep(500);
+                if(!done)
+                    runOnUiThread(()-> awaitingPlate.setVisibility(View.VISIBLE));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 

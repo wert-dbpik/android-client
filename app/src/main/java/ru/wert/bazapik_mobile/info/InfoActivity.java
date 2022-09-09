@@ -21,9 +21,6 @@ import java.util.stream.Collectors;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,8 +40,6 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
 import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
-import ru.wert.bazapik_mobile.utils.AnimationDest;
-import ru.wert.bazapik_mobile.viewer.PicsViewerFragment;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
@@ -74,7 +69,9 @@ public class InfoActivity extends BaseActivity  implements
     private RemarksAdapter remarksAdapter;
     private ImageButton btnOpenAllRemarks;
     private ScrollView infoScrollView;
-    private LinearLayout llAwaitingCurtain;
+    private LinearLayout llAwaitingCurtain;//Надпись Минуточку ..., закрывающая весь экран
+    private LinearLayout awaitingPlate; //Надпись Минуточку ...
+    private boolean done; //Флаг окончания процесса, исп-ся для появления надписи Минуточку ...
 
     private Passport passport;
     private String decNum;
@@ -107,7 +104,12 @@ public class InfoActivity extends BaseActivity  implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-        llAwaitingCurtain = findViewById(R.id.awaitingCurtain);
+        done = false; //
+        showAwaitingPlateLater(llAwaitingCurtain);
+
+        llAwaitingCurtain = findViewById(R.id.awaitingWithCurtain);
+        awaitingPlate = findViewById(R.id.llAwaitingPlate);
+        awaitingPlate.setVisibility(View.INVISIBLE);
 
         passport = getIntent().getParcelableExtra(PASSPORT);
 
@@ -202,6 +204,8 @@ public class InfoActivity extends BaseActivity  implements
             initTitle();
             initDrafts();
             initRemarks();
+
+            done = true;
             llAwaitingCurtain.setVisibility(View.GONE);
         }
         private void initTitle(){
@@ -264,6 +268,7 @@ public class InfoActivity extends BaseActivity  implements
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         Remark addedRemark = data.getParcelableExtra(NEW_REMARK);
+                        createLog(false, String.format("Добавил комментарий id=%s для '%s'", addedRemark.getId(), passport.toUsefulString()));
                         remarksAdapter.getData().add(0, addedRemark);
                         remarksAdapter.notifyItemInserted(0);
                         remarksAdapter.notifyItemRangeChanged(0, remarksAdapter.getData().size());
@@ -282,6 +287,7 @@ public class InfoActivity extends BaseActivity  implements
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         Remark changedRemark = data.getParcelableExtra(NEW_REMARK);
+                        createLog(false, String.format("Изменил комментарий id=%s для '%s'", changedRemark.getId(), passport.toUsefulString()));
                         int changedRemarkPosition = data.getIntExtra(REMARK_POSITION, 0);
 
                         swapRemarks(changedRemark, changedRemarkPosition);
@@ -331,12 +337,18 @@ public class InfoActivity extends BaseActivity  implements
     }
 
     public void deleteRemark(Remark remark, int pos) {
+        done = false;
+        showAwaitingPlateLater(awaitingPlate);
+
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
         Call<Void> call =  api.deleteById(remark.getId());
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
+                    createLog(false, String.format("Удалил комментарий id=%s для '%s'", remark.getId(), passport.toUsefulString()));
+                    done = true;
+                    awaitingPlate.setVisibility(View.INVISIBLE);
                     remarksAdapter.getData().remove(pos);
                     remarksAdapter.notifyItemRemoved(pos);
                     remarksAdapter.notifyItemRangeChanged(pos, remarksAdapter.getData().size());
@@ -354,6 +366,21 @@ public class InfoActivity extends BaseActivity  implements
                 AppWarnings.showAlert_NoConnection(InfoActivity.this);
             }
         });
+    }
+
+    /**
+     * Метод через паузу показывает просьбу подождать
+     */
+    private void showAwaitingPlateLater(LinearLayout awaitingLayout) {
+        new Thread(()->{
+            try {
+                Thread.sleep(500);
+                if(!done)
+                    runOnUiThread(()-> awaitingLayout.setVisibility(View.VISIBLE));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override
