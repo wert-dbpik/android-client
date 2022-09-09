@@ -71,9 +71,7 @@ public class InfoActivity extends BaseActivity  implements
     private ImageButton btnOpenAllRemarks;
     private ScrollView infoScrollView;
 
-    private Long passId;
-
-    @Getter private Passport passport;
+    private Passport passport;
     private String decNum;
 
     public static final String REMARK_PASSPORT = "remark_passport";
@@ -89,8 +87,6 @@ public class InfoActivity extends BaseActivity  implements
     private List<Draft> foundDrafts;
     private List<Remark> foundRemarks;
     private ArrayList<String> foundDraftIdsForIntent;
-    private ArrayList<String> foundRemarksIdsForIntent;
-    @Getter@Setter
     private boolean showRemarks;
     private int countOfRemarks; //Числовое значение количества коментариев, меняется при добавлени и удалении комментариев
     private LinearLayout llCommentsContainer; //Контейенер содержащий Надпись, количество комментариев и кнопку свернуть/развернуть
@@ -106,11 +102,7 @@ public class InfoActivity extends BaseActivity  implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-        //Получаем Id пасспорта
         passport = getIntent().getParcelableExtra(PASSPORT);
-        passId = passport.getId();
-
-//        rm = new RemarkMaster(this, passId);
 
         btnOpenAllRemarks = findViewById(R.id.btnOpenAllRemarks); //RecycleView
 
@@ -139,14 +131,6 @@ public class InfoActivity extends BaseActivity  implements
         fillInfoActivityTask.execute();
 
     }
-
-
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        AsyncTask<Void, Void, Void> fillInfoActivityTask = new FillInfoActivityTask();
-//        fillInfoActivityTask.execute();
-//    }
 
     private class FillInfoActivityTask extends AsyncTask<Void, Void, Void> {
 
@@ -207,7 +191,6 @@ public class InfoActivity extends BaseActivity  implements
         private void initRemarks(){
             rvRemarks.setLayoutManager(new LinearLayoutManager(InfoActivity.this));
 
-            foundRemarksIdsForIntent = ThisApplication.convertToStringArray(new ArrayList<>(foundRemarks)); //Для
             remarksAdapter = new RemarksAdapter(InfoActivity.this, foundRemarks);
             rvRemarks.setAdapter(remarksAdapter);
             rvRemarks.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
@@ -282,7 +265,6 @@ public class InfoActivity extends BaseActivity  implements
     protected void onResume() {
         super.onResume();
         deployResumeBundle();
-
     }
 
     private void deployResumeBundle() {
@@ -323,6 +305,12 @@ public class InfoActivity extends BaseActivity  implements
                 AppWarnings.showAlert_NoConnection(InfoActivity.this);
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(resumeBundle == null) createResumeBundle();
     }
 
     private void createResumeBundle(){
