@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +43,8 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
 import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
+import ru.wert.bazapik_mobile.utils.AnimationDest;
+import ru.wert.bazapik_mobile.viewer.PicsViewerFragment;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
@@ -69,6 +74,7 @@ public class InfoActivity extends BaseActivity  implements
     private RemarksAdapter remarksAdapter;
     private ImageButton btnOpenAllRemarks;
     private ScrollView infoScrollView;
+    private LinearLayout llAwaitingCurtain;
 
     private Passport passport;
     private String decNum;
@@ -100,6 +106,8 @@ public class InfoActivity extends BaseActivity  implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
+
+        llAwaitingCurtain = findViewById(R.id.awaitingCurtain);
 
         passport = getIntent().getParcelableExtra(PASSPORT);
 
@@ -194,6 +202,7 @@ public class InfoActivity extends BaseActivity  implements
             initTitle();
             initDrafts();
             initRemarks();
+            llAwaitingCurtain.setVisibility(View.GONE);
         }
         private void initTitle(){
             decNum = passport.getPrefix() == null ?
