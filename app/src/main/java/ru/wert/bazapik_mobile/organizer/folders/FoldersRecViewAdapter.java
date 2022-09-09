@@ -30,6 +30,7 @@ import ru.wert.bazapik_mobile.data.models.ProductGroup;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
+import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
 
@@ -142,6 +143,11 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
             if (d.getFolder().equals(folder))
                 foundDrafts.add(d);
         }
+        if(foundDrafts.isEmpty()) {
+            new WarningDialog1().show(context, "Упс!", "Чертежей в комплекте не найдено");
+            return;
+        };
+
         ThisApplication.filterList(foundDrafts); //Фильтруем
         if (assemblesFirst)
             foundDrafts.sort(ThisApplication.draftsComparatorAssemblesFirst());

@@ -104,12 +104,13 @@ public class InfoActivity extends BaseActivity  implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-        done = false; //
-        showAwaitingPlateLater(llAwaitingCurtain);
-
         llAwaitingCurtain = findViewById(R.id.awaitingWithCurtain);
+        llAwaitingCurtain.setVisibility(View.INVISIBLE);
         awaitingPlate = findViewById(R.id.llAwaitingPlate);
         awaitingPlate.setVisibility(View.INVISIBLE);
+
+        done = false; //
+        showAwaitingPlateLater(llAwaitingCurtain);
 
         passport = getIntent().getParcelableExtra(PASSPORT);
 
@@ -341,7 +342,7 @@ public class InfoActivity extends BaseActivity  implements
         showAwaitingPlateLater(awaitingPlate);
 
         RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-        Call<Void> call =  api.deleteById(remark.getId());
+        Call<Void> call = api.deleteById(remark.getId());
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -366,6 +367,8 @@ public class InfoActivity extends BaseActivity  implements
                 AppWarnings.showAlert_NoConnection(InfoActivity.this);
             }
         });
+
+
     }
 
     /**
