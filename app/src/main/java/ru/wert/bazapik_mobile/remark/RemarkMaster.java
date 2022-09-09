@@ -1,22 +1,14 @@
 package ru.wert.bazapik_mobile.remark;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import androidx.fragment.app.FragmentContainerView;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,20 +18,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.models.Passport;
-import ru.wert.bazapik_mobile.data.models.Pic;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.info.InfoActivity;
-import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
-import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
-import static ru.wert.bazapik_mobile.info.InfoActivity.NEW_REMARK;
 
 public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, RemarkRetrofitService.IRemarkCreate{
 
@@ -68,7 +55,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
         this.infoActivity = activity;
         this.passId = passId;
 
-        llCommentsContainer = activity.findViewById(R.id.llCommentsContainer);
+        llCommentsContainer = activity.findViewById(R.id.llRemarksTitle);
         tvCountOfRemarks = activity.findViewById(R.id.tvCountOfRemarks);
 
         tvRemarks = activity.findViewById(R.id.tvNewComment); //Текст Новый комментарий
@@ -139,11 +126,11 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
     }
 
 
-    public void updateRemarkAdapter(){
-        RemarkRetrofitService.findByPassportId(infoActivity, infoActivity, passId);
-        //Смотри doWhenRemarkHasBeenFoundByPassportId
-        //Происходит перестроение RecyclerView
-    }
+//    public void updateRemarkAdapter(){
+//        RemarkRetrofitService.findByPassportId(infoActivity, infoActivity, passId);
+//        //Смотри doWhenRemarkHasBeenFoundByPassportId
+//        //Происходит перестроение RecyclerView
+//    }
 
     public void doWhenRemarkHasBeenFoundByPassportId(Response<List<Remark>> response) {
         ArrayList<Remark> foundRemarks  = new ArrayList<>();
@@ -215,7 +202,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
     @Override
     public void doWhenRemarkHasBeenCreated(Response<Remark> response) {
         increaseCountOfRemarks();
-        updateRemarkAdapter();
+//        updateRemarkAdapter();
     }
 
     /**
@@ -241,7 +228,7 @@ public class RemarkMaster implements RemarkRetrofitService.IRemarkChange, Remark
 
     @Override//RemarkRetrofitService.IRemarkChanger
     public void doWhenRemarkHasBeenChanged(Response<Remark> response) {
-        updateRemarkAdapter();
+//        updateRemarkAdapter();
     }
 
     // =======================   УДАЛЕНИЕ КОММЕНТАРИЯ ================

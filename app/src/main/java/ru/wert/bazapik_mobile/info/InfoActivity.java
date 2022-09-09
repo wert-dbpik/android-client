@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -36,11 +37,9 @@ import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.data.serviceRETROFIT.RemarkRetrofitService;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.FilterDialog;
-import ru.wert.bazapik_mobile.remark.RemarkMaster;
 import ru.wert.bazapik_mobile.remark.RemarksAdapter;
 import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
@@ -57,7 +56,6 @@ import static ru.wert.bazapik_mobile.remark.RemarksAdapter.REMARK_POSITION;
  * для каждого чертежа представлен его тип, стр, статус
  */
 public class InfoActivity extends BaseActivity  implements
-        RemarkRetrofitService.IRemarkFindByPassportId,
         InfoDraftsViewAdapter.InfoDraftClickListener,
         RemarksAdapter.InfoRemarkClickListener
 {
@@ -100,7 +98,6 @@ public class InfoActivity extends BaseActivity  implements
     private ActivityResultLauncher<Intent> addRemarkActivityForResultLauncher;
     private ActivityResultLauncher<Intent> changeRemarkActivityForResultLauncher;
 
-    @Getter private RemarkMaster rm;
     public static final Integer ADD_REMARK = 1;
     public static final Integer CHANGE_REMARK = 2;
 
@@ -118,7 +115,7 @@ public class InfoActivity extends BaseActivity  implements
         btnOpenAllRemarks = findViewById(R.id.btnOpenAllRemarks); //RecycleView
 
         infoScrollView = findViewById(R.id.infoScrollView);
-        llCommentsContainer = findViewById(R.id.llCommentsContainer);
+        llCommentsContainer = findViewById(R.id.llRemarksTitle);
 
         tvDecNumber = findViewById(R.id.tvDecNumber);//Децимальный номер пасспорта
         tvName = findViewById(R.id.tvName); //Наименование пасспорта
@@ -128,14 +125,8 @@ public class InfoActivity extends BaseActivity  implements
         tvCountOfRemarks = findViewById(R.id.tvCountOfRemarks);
 
         btnOpenAllRemarks.setOnClickListener(v->{
-            if(!showRemarks) {
-                rvRemarks.setVisibility(View.VISIBLE);
-                btnOpenAllRemarks.setImageResource(R.drawable.shevron_up_white);
-            }else {
-                rvRemarks.setVisibility(View.GONE);
-                btnOpenAllRemarks.setImageResource(R.drawable.shevron_down_white);
-            }
             showRemarks = !showRemarks;
+            tuneRemarksView();
         });
 
         registerAddRemarkActivityForResultLauncher();
@@ -171,6 +162,11 @@ public class InfoActivity extends BaseActivity  implements
                 Call<List<Remark>> findRemarksCall = remarkApi.getAllByPassportId(passport.getId());
                 foundRemarks = findRemarksCall.execute().body();
                 countOfRemarks = foundRemarks.size();
+                if (foundRemarks.size() > 1)
+                    foundRemarks =
+                            new ArrayList<>(foundRemarks.stream()
+                                    .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+                                    .collect(Collectors.toList()));
             } catch (IOException e) {
                 AppWarnings.showAlert_NoConnection(InfoActivity.this);
             }
@@ -217,31 +213,26 @@ public class InfoActivity extends BaseActivity  implements
             rvRemarks.addItemDecoration(new DividerItemDecoration(getApplicationContext(),
                     DividerItemDecoration.VERTICAL));
 
-            showRemarksTitleIfNeeded();
-            rvRemarks.setVisibility(View.GONE);;
+            tuneRemarksView();
         }
 
     }
 
-    private void showRemarksTitleIfNeeded(){
+    private void tuneRemarksView(){
         tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
         if (foundRemarks.isEmpty())
             llCommentsContainer.setVisibility(View.GONE);
-        else
-            showInfoInCommentsContainer();
+        else {
+            llCommentsContainer.setVisibility(View.VISIBLE);
+            if(showRemarks){
+                rvRemarks.setVisibility(View.VISIBLE);
+                btnOpenAllRemarks.setImageResource(R.drawable.shevron_up_white);
+            } else {
+                rvRemarks.setVisibility(View.GONE);
+                btnOpenAllRemarks.setImageResource(R.drawable.shevron_down_white);
+            }
+        }
     }
-
-//    private void showRemarks(){
-//        if(showRemarks) {
-//            btnOpenAllRemarks.setImageResource(R.drawable.shevron_down_white);
-//        }else {
-//            btnOpenAllRemarks.setImageResource(R.drawable.shevron_up_white);
-//        }
-//        rm.setCountOfRemarks(foundRemarks.size());
-//
-//
-//        //
-//    }
 
     //ПОСЛЕ ДОБАВЛЕНИЯ КОММЕНТАРИЯ
     private void registerAddRemarkActivityForResultLauncher() {
@@ -251,11 +242,12 @@ public class InfoActivity extends BaseActivity  implements
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
                         Remark addedRemark = data.getParcelableExtra(NEW_REMARK);
-                        showRemarks = true;
                         remarksAdapter.getData().add(0, addedRemark);
                         remarksAdapter.notifyItemInserted(0);
                         remarksAdapter.notifyItemRangeChanged(0, remarksAdapter.getData().size());
-                        rm.increaseCountOfRemarks();
+                        countOfRemarks++;
+                        showRemarks = true;
+                        tuneRemarksView();
                     }
                 });
     }
@@ -267,7 +259,6 @@ public class InfoActivity extends BaseActivity  implements
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        showRemarks = true;
                         Remark changedRemark = data.getParcelableExtra(NEW_REMARK);
                         int changedRemarkPosition = data.getIntExtra(REMARK_POSITION, 0);
                         List<Remark> remarks = remarksAdapter.getData();
@@ -279,6 +270,8 @@ public class InfoActivity extends BaseActivity  implements
                             remarks.set(0, changedRemark);
                             remarksAdapter.notifyItemChanged(changedRemarkPosition);
                         }
+                        showRemarks = true;
+                        tuneRemarksView();
                         infoScrollView.scrollTo(0, 0);
                         rvRemarks.scrollTo(0, 0);
                     }
@@ -299,8 +292,8 @@ public class InfoActivity extends BaseActivity  implements
                 rvDrafts.getLayoutManager().onRestoreInstanceState(listDraftsState);
 
             Parcelable listRemarksState = resumeBundle.getParcelable(KEY_RECYCLER_REMARKS_STATE);
-            if (listRemarksState != null && rm.getRvRemarks() != null)
-                rm.getRvRemarks().getLayoutManager().onRestoreInstanceState(listRemarksState);
+            if (listRemarksState != null && rvRemarks != null)
+                rvRemarks.getLayoutManager().onRestoreInstanceState(listRemarksState);
 
             resumeBundle = null;
         }
@@ -317,7 +310,8 @@ public class InfoActivity extends BaseActivity  implements
                     remarksAdapter.notifyItemRemoved(pos);
                     remarksAdapter.notifyItemRangeChanged(pos, remarksAdapter.getData().size());
 
-                    rm.decreaseCountOfRemarks();
+                    countOfRemarks--;
+                    tuneRemarksView();
                 } else {
                     Log.e(TAG + " : deleteRemark", "Не удалось удалить комментарий");
                     new WarningDialog1().show(InfoActivity.this, "Внимание!", "Не удалось удалить комментарий!");
@@ -331,60 +325,6 @@ public class InfoActivity extends BaseActivity  implements
         });
     }
 
-    /**
-     * Метод увеличиват количество комментариев на +1
-     * И обновляет textView c количеством Комментариев
-     */
-    public void increaseCountOfRemarks() {
-        countOfRemarks++;
-        if(llCommentsContainer.getVisibility() == View.GONE) showInfoInCommentsContainer();
-        tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
-    }
-
-    /**
-     * Метод уменьшает количество комментариев на -1
-     * И обновляет textView c количеством Комментариев
-     */
-    public void decreaseCountOfRemarks() {
-        countOfRemarks--;
-        if(countOfRemarks == 0) hideInfoInCommentsContainer();
-        tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
-    }
-
-    /**
-     * Метод делает видимым контенер LinearLayout Комментарии и меняет количество комментариев
-     * Вызывается после добавления или удаления комментариев
-     */
-    public void showInfoInCommentsContainer() {
-        llCommentsContainer.setVisibility(View.VISIBLE);
-        tvCountOfRemarks.setText(String.valueOf(countOfRemarks));
-    }
-
-    /**
-     * Метод скрывает контенер LinearLayout Комментарии и скрывает количество комментариев
-     * Вызывается после удаления комментариев, когда их количество становится = 0
-     */
-    public void hideInfoInCommentsContainer() {
-        llCommentsContainer.setVisibility(View.GONE);
-        tvCountOfRemarks.setText("");
-    }
-
-
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        createResumeBundle();
-//
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        createResumeBundle();
-//
-//    }
-
     private void createResumeBundle(){
         resumeBundle = new Bundle();
 
@@ -393,8 +333,8 @@ public class InfoActivity extends BaseActivity  implements
             resumeBundle.putParcelable(KEY_RECYCLER_DRAFTS_STATE, listDraftsState);
         }
 
-        if(rm.getRvRemarks() != null && rm.getRvRemarks().getLayoutManager() != null) {
-            Parcelable listRemarksState = rm.getRvRemarks().getLayoutManager().onSaveInstanceState();
+        if(rvRemarks != null && rvRemarks.getLayoutManager() != null) {
+            Parcelable listRemarksState = rvRemarks.getLayoutManager().onSaveInstanceState();
             resumeBundle.putParcelable(KEY_RECYCLER_REMARKS_STATE, listRemarksState);
         }
     }
@@ -474,12 +414,5 @@ public class InfoActivity extends BaseActivity  implements
         changeRemarkActivityForResultLauncher.launch(remarksEditor);
 
     }
-
-    @Override
-    public void doWhenRemarkHasBeenFoundByPassportId(Response<List<Remark>> response) {
-        rm.doWhenRemarkHasBeenFoundByPassportId(response);
-    }
-
-
 
 }
