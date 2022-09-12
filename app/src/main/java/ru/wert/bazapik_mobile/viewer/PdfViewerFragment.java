@@ -1,7 +1,5 @@
 package ru.wert.bazapik_mobile.viewer;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -28,7 +25,7 @@ public class PdfViewerFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_pdf_viewer, container, false);
 
-        TextView warning = v.findViewById(R.id.tvStatusWarning);
+        TextView warning = v.findViewById(R.id.tvPdfStatusWarning);
         ((ViewerActivity)getActivity()).showStatusWarningIfNeeded(warning);
 
         File localFile = null;

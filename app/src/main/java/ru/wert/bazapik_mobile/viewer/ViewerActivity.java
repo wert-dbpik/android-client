@@ -31,7 +31,6 @@ import androidx.fragment.app.FragmentTransaction;
 import lombok.Getter;
 import retrofit2.Call;
 import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.data.api_interfaces.PassportApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
@@ -39,7 +38,6 @@ import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.Remark;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
 import ru.wert.bazapik_mobile.utils.AnimationDest;
@@ -47,8 +45,6 @@ import ru.wert.bazapik_mobile.warnings.AppWarnings;
 import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 import static android.content.Intent.ACTION_VIEW;
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
 import static ru.wert.bazapik_mobile.ThisApplication.IMAGE_EXTENSIONS;
 import static ru.wert.bazapik_mobile.ThisApplication.PDF_EXTENSIONS;
@@ -66,9 +62,8 @@ public class ViewerActivity extends BaseActivity {
     private String dbdir = DATA_BASE_URL + "drafts/download/drafts/";
     private String remoteFileString, localFileString;
     private File fileOnScreen;
-    private ArrayList<Long> allDraftsIds = new ArrayList<>(); //Лист с id чертежей в PassportInfoActivity
+    private ArrayList<Draft> allDrafts = new ArrayList<>(); //Лист с id чертежей в PassportInfoActivity
     private Integer iterator; //Текущая позиция
-    private Long currentDraftId; //id текущего чертежа на экране
     @Getter private Long currentPassportId;
     @Getter private Draft currentDraft;
     private Passport currentPassport; //инициализируется поздно
@@ -85,6 +80,7 @@ public class ViewerActivity extends BaseActivity {
 
     public static final String CURRENT_DRAFT = "CURRENT_DRAFT";
     public static final String CURRENT_PASSPORT = "CURRENT_PASSPORT";
+    public static final String ALL_DRAFTS = "ALL_DRAFTS";
 
 
     @Override
@@ -94,7 +90,7 @@ public class ViewerActivity extends BaseActivity {
 
         //Из интента получаем id чертежа
         currentDraft = getIntent().getParcelableExtra(CURRENT_DRAFT);
-        currentDraftId = currentDraft.getId();
+
         currentPassport = getIntent().getParcelableExtra(CURRENT_PASSPORT);
         currentPassportId = currentPassport.getId();
 
@@ -149,13 +145,13 @@ public class ViewerActivity extends BaseActivity {
         return new AppOnSwipeTouchListener(ViewerActivity.this){
             public void onSwipeRight() {
                 if(iterator - 1 < 0) return;
-                currentDraftId = (allDraftsIds.get(--iterator));
+                currentDraft = (allDrafts.get(--iterator));
                 destination = AnimationDest.ANIMATE_PREV;
                 openFragment();
             }
             public void onSwipeLeft() {
-                if(iterator + 1 > allDraftsIds.size()-1) return;
-                currentDraftId = allDraftsIds.get(++iterator);
+                if(iterator + 1 > allDrafts.size()-1) return;
+                currentDraft = allDrafts.get(++iterator);
                 destination = AnimationDest.ANIMATE_NEXT;
                 openFragment();
             }
@@ -164,7 +160,7 @@ public class ViewerActivity extends BaseActivity {
 
     private View.OnClickListener showNextDraft() {
         return v -> {
-            currentDraftId = allDraftsIds.get(++iterator);
+            currentDraft = allDrafts.get(++iterator);
             destination = AnimationDest.ANIMATE_NEXT;
             openFragment();
         };
@@ -172,19 +168,20 @@ public class ViewerActivity extends BaseActivity {
 
     private View.OnClickListener showPreviousDraft() {
         return v -> {
-            currentDraftId = (allDraftsIds.get(--iterator));
+            currentDraft = (allDrafts.get(--iterator));
             destination = AnimationDest.ANIMATE_PREV;
             openFragment();
         };
     }
 
+    /**
+     * ПЕРЕДЕЛАТЬ!!!!!!
+     * @return
+     */
     private Integer findInitPosition() {
-        ArrayList<String> foundDrafts = (ArrayList<String>) getIntent().getStringArrayListExtra("DRAFTS");
-        for (String s : foundDrafts) {
-            allDraftsIds.add(Long.parseLong(s));
-        }
-        for(int iterator = 0; iterator < allDraftsIds.size(); iterator++){
-            if (allDraftsIds.get(iterator).equals(currentDraftId))
+        allDrafts = getIntent().getParcelableArrayListExtra(ALL_DRAFTS);
+        for(int iterator = 0; iterator < allDrafts.size(); iterator++){
+            if (allDrafts.get(iterator).equals(currentDraft))
                 return iterator;
         }
         return null;
@@ -234,7 +231,7 @@ public class ViewerActivity extends BaseActivity {
         else
             switchOnButton(btnShowPrevious);
 
-        if(iterator.equals(allDraftsIds.size()-1))
+        if(iterator.equals(allDrafts.size()-1))
             switchOffButton(btnShowNext);
         else
             switchOnButton(btnShowNext);
@@ -262,9 +259,9 @@ public class ViewerActivity extends BaseActivity {
 
             if (currentDraft == null) return;
             //Формируем конечный путь до удаленного файла
-            remoteFileString = dbdir + currentDraftId + "." + currentDraft.getExtension();
+            remoteFileString = dbdir + currentDraft.getId() + "." + currentDraft.getExtension();
             //Формируем локальный до файла временного хранения
-            localFileString = TEMP_DIR + "/" + currentDraftId + "." + currentDraft.getExtension();
+            localFileString = TEMP_DIR + "/" + currentDraft.getId() + "." + currentDraft.getExtension();
 
             //Проверяем файл в кэше
             fileOnScreen = new File(localFileString);

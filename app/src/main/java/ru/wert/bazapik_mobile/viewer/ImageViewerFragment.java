@@ -32,7 +32,7 @@ public class ImageViewerFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_image_viewer, container, false);
         mDraftImageView = v.findViewById(R.id.draftImageView);
 
-        TextView warning = v.findViewById(R.id.tvStatusWarning);
+        TextView warning = v.findViewById(R.id.tvImageStatusWarning);
         ((ViewerActivity)getActivity()).showStatusWarningIfNeeded(warning);
 
         Bundle bundle = this.getArguments();
