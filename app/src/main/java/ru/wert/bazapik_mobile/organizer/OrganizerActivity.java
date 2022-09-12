@@ -252,8 +252,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     private void showAlertDialogAndExit(){
         new AlertDialog.Builder(this)
-                .setTitle("Выход тут!")
-                .setMessage("Хотите выйти?")
+                .setMessage("Хотите закрыть приложение?")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
