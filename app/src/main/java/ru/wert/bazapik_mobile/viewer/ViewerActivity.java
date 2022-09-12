@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import org.apache.commons.io.FileUtils;
 
@@ -78,6 +79,7 @@ public class ViewerActivity extends BaseActivity {
     private Fragment draftFragment;
     private Button btnTapLeft, btnTapRight;
     private ImageButton btnShowRemarks;
+    private TextView tvStatusWarning;
 
     private FragmentContainerView allRemarksContainer;
 
@@ -91,11 +93,10 @@ public class ViewerActivity extends BaseActivity {
         setContentView(R.layout.activity_viewer);
 
         //Из интента получаем id чертежа
-        Draft currentDraft = getIntent().getParcelableExtra(CURRENT_DRAFT);
+        currentDraft = getIntent().getParcelableExtra(CURRENT_DRAFT);
         currentDraftId = currentDraft.getId();
-        Passport currentPassport = getIntent().getParcelableExtra(CURRENT_PASSPORT);
+        currentPassport = getIntent().getParcelableExtra(CURRENT_PASSPORT);
         currentPassportId = currentPassport.getId();
-
 
         //Инициализируем список чертежей и итератор с текущей позицей
         iterator = findInitPosition();
@@ -123,6 +124,8 @@ public class ViewerActivity extends BaseActivity {
         btnShowRemarks.setOnClickListener(view -> {
             allRemarksContainer.setVisibility(View.VISIBLE);
         });
+
+
 
     }
 
@@ -225,6 +228,7 @@ public class ViewerActivity extends BaseActivity {
     }
 
     private void openFragment(){
+
         if (iterator.equals(0))
             switchOffButton(btnShowPrevious);
         else
@@ -238,33 +242,24 @@ public class ViewerActivity extends BaseActivity {
 //        showProgressIndicator();
         //Этот поток позволяет показать ProgressIndicator
         new Thread(()->{
-            //Достаем запись чертежа из БД
-            for (Draft d : ALL_DRAFTS) {
-                if (d.getId().equals(currentDraftId)) {
-                    currentDraft = d;
-                    for(Passport p: ALL_PASSPORTS){
-                        if (p.getId().equals(currentPassportId)) {
-                            currentPassport = p;
-                            List<Remark> remarks;
-                            RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
-                            Call<List<Remark>> findRemarksByPassId = api.getAllByPassportId(currentPassport.getId());
-                            try {
-                                remarks = findRemarksByPassId.execute().body();
-                                if(remarks != null && remarks.isEmpty()) {
-                                    btnShowRemarks.setVisibility(View.INVISIBLE);
-                                    btnShowRemarks.setClickable(false);
-                                }
-                            } catch (IOException e) {
-                                AppWarnings.showAlert_NoConnection(ViewerActivity.this);
-                                e.printStackTrace();
-                            }
-                        }
-                    }
 
-                    createLog(true, String.format("Открыл чертеж '%s' из комплекта '%s'", d.toUsefulString(), d.getFolder().toUsefulString()));
-                    break;
+            List<Remark> remarks;
+            RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+            Call<List<Remark>> findRemarksByPassId = api.getAllByPassportId(currentPassport.getId());
+            try {
+                remarks = findRemarksByPassId.execute().body();
+                if (remarks != null && remarks.isEmpty()) {
+                    btnShowRemarks.setVisibility(View.INVISIBLE);
+                    btnShowRemarks.setClickable(false);
                 }
+            } catch (IOException e) {
+                AppWarnings.showAlert_NoConnection(ViewerActivity.this);
+                e.printStackTrace();
             }
+
+            createLog(true, String.format("Открыл чертеж '%s' из комплекта '%s'",
+                    currentDraft.toUsefulString(), currentDraft.getFolder().toUsefulString()));
+
             if (currentDraft == null) return;
             //Формируем конечный путь до удаленного файла
             remoteFileString = dbdir + currentDraftId + "." + currentDraft.getExtension();
@@ -311,12 +306,28 @@ public class ViewerActivity extends BaseActivity {
                                         ViewerActivity.this.finish(); //Закроет активити
                                     }
                                 }).create().show();
-
                     });
                 }
             }
         }).start();
     }
+
+    public void showStatusWarningIfNeeded(TextView warning){
+        EDraftStatus status = EDraftStatus.getStatusById(currentDraft.getStatus());
+        switch(status){
+            case CHANGED:
+                warning.setText("ЗАМЕНЕН");
+                warning.setVisibility(View.VISIBLE);
+                break;
+            case ANNULLED:
+                warning.setText("АННУЛИРОВАН");
+                warning.setVisibility(View.VISIBLE);
+            default:
+                warning.setText("");
+                warning.setVisibility(View.INVISIBLE);
+        }
+    }
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {

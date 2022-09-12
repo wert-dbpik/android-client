@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import org.apache.commons.io.FileUtils;
 
@@ -30,6 +31,9 @@ public class ImageViewerFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_image_viewer, container, false);
         mDraftImageView = v.findViewById(R.id.draftImageView);
+
+        TextView warning = v.findViewById(R.id.tvStatusWarning);
+        ((ViewerActivity)getActivity()).showStatusWarningIfNeeded(warning);
 
         Bundle bundle = this.getArguments();
         File localFile;

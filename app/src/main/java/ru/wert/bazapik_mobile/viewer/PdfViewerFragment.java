@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.util.FitPolicy;
@@ -27,6 +28,9 @@ public class PdfViewerFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_pdf_viewer, container, false);
 
+        TextView warning = v.findViewById(R.id.tvStatusWarning);
+        ((ViewerActivity)getActivity()).showStatusWarningIfNeeded(warning);
+
         File localFile = null;
         Bundle bundle = this.getArguments();
         if(bundle != null)
@@ -40,13 +44,6 @@ public class PdfViewerFragment extends Fragment {
                 .fitEachPage(true)
                 .defaultPage(0)
                 .load();
-
-        pdfView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-
-            }
-        });
 
         return v;
     }

@@ -41,8 +41,6 @@
 
     </LinearLayout>
 
-
-
     <Button
         android:id="@+id/btnTapLeft"
         android:layout_width="40dp"
