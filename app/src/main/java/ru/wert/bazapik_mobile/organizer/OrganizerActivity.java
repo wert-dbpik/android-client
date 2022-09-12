@@ -226,16 +226,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             }
         });
 
-//        editTextSearch.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                String text = editTextSearch.getText().toString();
-//                if(!text.isEmpty())
-//                    searchByText(text);
-//                return false;
-//            }
-//        });
-
     }
 
     @Override

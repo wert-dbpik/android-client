@@ -1,12 +1,14 @@
 package ru.wert.bazapik_mobile.info;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -65,7 +67,10 @@ public class InfoDraftsViewAdapter extends RecyclerView.Adapter<InfoDraftsViewAd
         Draft item = mData.get(position);
         String draftType = EDraftType.getDraftTypeById(item.getDraftType()).getTypeName() + " - " + item.getPageNumber();
         holder.tvDraft.setText(draftType);
-        holder.tvStatus.setText(EDraftStatus.getStatusById(item.getStatus()).getStatusName());
+        EDraftStatus status = EDraftStatus.getStatusById(item.getStatus());
+        holder.tvStatus.setText(status.getStatusName());
+        if(status.equals(EDraftStatus.CHANGED) || status.equals(EDraftStatus.ANNULLED))
+            holder.tvStatus.setTextColor(ContextCompat.getColor(context, R.color.colorMyRed));
     }
 
     /**

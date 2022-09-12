@@ -74,7 +74,6 @@ public class ViewerActivity extends BaseActivity {
     private Fragment draftFragment;
     private Button btnTapLeft, btnTapRight;
     private ImageButton btnShowRemarks;
-    private TextView tvStatusWarning;
 
     private FragmentContainerView allRemarksContainer;
 
