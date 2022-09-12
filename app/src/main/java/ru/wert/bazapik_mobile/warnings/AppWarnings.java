@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.warnings;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -32,12 +33,15 @@ public class AppWarnings {
             textOnBtn = "Понял";
         }
 
-        new AlertDialog.Builder(context)
-                .setTitle("ОШИБКА!")
-                .setMessage(error)
-                .setPositiveButton(textOnBtn, (arg0, arg1) -> {
-                    //Просто ждать
-                }).create().show();
+        ((Activity)context).runOnUiThread(()->{
+            new AlertDialog.Builder(context)
+                    .setTitle("ОШИБКА!")
+                    .setMessage(error)
+                    .setPositiveButton(textOnBtn, (arg0, arg1) -> {
+                        //Просто ждать
+                    }).create().show();
+        });
+
     }
 
     public static void showAlert_NoAppVersionsAvailable(Context context){

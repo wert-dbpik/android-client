@@ -54,7 +54,7 @@ import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
 public class ThisApplication extends Application {
 
     //Версия приложения
-    public static final String APPLICATION_VERSION = "1.2.1";
+    public static final String APPLICATION_VERSION = "1.3.0";
     public static boolean APP_VERSION_NOTIFICATION_SHOWN = false;
     public static String APPLICATION_VERSION_AVAILABLE;
 
