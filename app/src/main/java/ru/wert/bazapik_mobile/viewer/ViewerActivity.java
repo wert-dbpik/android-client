@@ -174,14 +174,11 @@ public class ViewerActivity extends BaseActivity {
         };
     }
 
-    /**
-     * ПЕРЕДЕЛАТЬ!!!!!!
-     * @return
-     */
+
     private Integer findInitPosition() {
         allDrafts = getIntent().getParcelableArrayListExtra(ALL_DRAFTS);
         for(int iterator = 0; iterator < allDrafts.size(); iterator++){
-            if (allDrafts.get(iterator).equals(currentDraft))
+            if (allDrafts.get(iterator).getId().equals(currentDraft.getId()))
                 return iterator;
         }
         return null;
