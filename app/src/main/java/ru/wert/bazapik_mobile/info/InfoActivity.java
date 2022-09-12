@@ -47,6 +47,8 @@ import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 import static ru.wert.bazapik_mobile.organizer.passports.PassportsFragment.PASSPORT;
 import static ru.wert.bazapik_mobile.remark.RemarksAdapter.REMARK_POSITION;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_DRAFT;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_PASSPORT;
 
 /**
  * Окно отображает свойства выбранного элемента (Passport)
@@ -410,8 +412,8 @@ public class InfoActivity extends BaseActivity  implements
     public void onDraftRowClick(View view, int position) {
         Intent intent = new Intent(InfoActivity.this, ViewerActivity.class);
         intent.putStringArrayListExtra("DRAFTS", foundDraftIdsForIntent);
-        intent.putExtra("DRAFT_ID", String.valueOf(draftsAdapter.getItem(position).getId()));
-        intent.putExtra("PASSPORT_ID", String.valueOf(draftsAdapter.getItem(position).getPassport().getId()));
+        intent.putExtra(CURRENT_DRAFT, draftsAdapter.getItem(position));
+        intent.putExtra(CURRENT_PASSPORT, draftsAdapter.getItem(position).getPassport());
         startActivity(intent);
     }
 

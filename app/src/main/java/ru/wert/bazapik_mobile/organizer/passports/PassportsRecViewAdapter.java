@@ -1,10 +1,13 @@
 package ru.wert.bazapik_mobile.organizer.passports;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_DRAFT;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_PASSPORT;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,8 +144,8 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
 
                     Intent intent = new Intent(context, ViewerActivity.class);
                     intent.putStringArrayListExtra("DRAFTS", stringList);
-                    intent.putExtra("DRAFT_ID", String.valueOf(foundDrafts.get(0).getId()));
-                    intent.putExtra("PASSPORT_ID", String.valueOf(passport.getId()));
+                    intent.putExtra(CURRENT_DRAFT, foundDrafts.get(0));
+                    intent.putExtra(CURRENT_PASSPORT, passport);
                     context.startActivity(intent);
                 }
             }

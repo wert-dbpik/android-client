@@ -1,6 +1,8 @@
 package ru.wert.bazapik_mobile.organizer.folders;
 
 import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_DRAFT;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_PASSPORT;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -157,7 +159,8 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
         Intent intent = new Intent(context, ViewerActivity.class);
         ArrayList<String> stringList = ThisApplication.convertToStringArray(foundDrafts);
         intent.putStringArrayListExtra("DRAFTS", stringList);
-        intent.putExtra("DRAFT_ID", String.valueOf(foundDrafts.get(0).getId()));
+        intent.putExtra(CURRENT_DRAFT, foundDrafts.get(0));
+        intent.putExtra(CURRENT_PASSPORT, foundDrafts.get(0).getPassport());
         context.startActivity(intent);
     }
 

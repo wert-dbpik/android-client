@@ -1,5 +1,8 @@
 package ru.wert.bazapik_mobile.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +22,7 @@ import ru.wert.bazapik_mobile.data.interfaces.TreeBuildingItem;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"name"}, callSuper = false)
-public class ProductGroup extends _BaseEntity implements TreeBuildingItem, Serializable {
+public class ProductGroup extends _BaseEntity implements TreeBuildingItem, Serializable, Parcelable {
 
     private String name;
     private Long parentId;
@@ -39,5 +42,42 @@ public class ProductGroup extends _BaseEntity implements TreeBuildingItem, Seria
         this.name = name;
     }
 
+// Parcelable
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.name);
+        dest.writeValue(this.parentId);
+    }
+
+    public void readFromParcel(Parcel source) {
+        this.id = (Long) source.readValue(Long.class.getClassLoader());
+        this.name = source.readString();
+        this.parentId = (Long) source.readValue(Long.class.getClassLoader());
+    }
+
+    protected ProductGroup(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.name = in.readString();
+        this.parentId = (Long) in.readValue(Long.class.getClassLoader());
+    }
+
+    public static final Creator<ProductGroup> CREATOR = new Creator<ProductGroup>() {
+        @Override
+        public ProductGroup createFromParcel(Parcel source) {
+            return new ProductGroup(source);
+        }
+
+        @Override
+        public ProductGroup[] newArray(int size) {
+            return new ProductGroup[size];
+        }
+    };
 }

@@ -15,7 +15,9 @@ import android.widget.ImageButton;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
@@ -26,11 +28,16 @@ import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import lombok.Getter;
+import retrofit2.Call;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.data.api_interfaces.PassportApiInterface;
+import ru.wert.bazapik_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.enums.EDraftType;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Passport;
+import ru.wert.bazapik_mobile.data.models.Remark;
+import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.main.BaseActivity;
 import ru.wert.bazapik_mobile.organizer.AppOnSwipeTouchListener;
 import ru.wert.bazapik_mobile.utils.AnimationDest;
@@ -72,7 +79,8 @@ public class ViewerActivity extends BaseActivity {
 
     private FragmentContainerView allRemarksContainer;
 
-
+    public static final String CURRENT_DRAFT = "CURRENT_DRAFT";
+    public static final String CURRENT_PASSPORT = "CURRENT_PASSPORT";
 
 
     @Override
@@ -81,8 +89,10 @@ public class ViewerActivity extends BaseActivity {
         setContentView(R.layout.activity_viewer);
 
         //Из интента получаем id чертежа
-        currentDraftId = Long.parseLong(getIntent().getStringExtra("DRAFT_ID"));
-        currentPassportId = Long.parseLong(getIntent().getStringExtra("PASSPORT_ID"));
+        Draft currentDraft = getIntent().getParcelableExtra(CURRENT_DRAFT);
+        currentDraftId = currentDraft.getId();
+        Passport currentPassport = getIntent().getParcelableExtra(CURRENT_PASSPORT);
+        currentPassportId = currentPassport.getId();
 
 
         //Инициализируем список чертежей и итератор с текущей позицей
@@ -233,9 +243,17 @@ public class ViewerActivity extends BaseActivity {
                     for(Passport p: ALL_PASSPORTS){
                         if (p.getId().equals(currentPassportId)) {
                             currentPassport = p;
-                            if(currentPassport.getRemarkIds().isEmpty()) {
-                                btnShowRemarks.setVisibility(View.INVISIBLE);
-                                btnShowRemarks.setClickable(false);
+                            List<Remark> remarks;
+                            RemarkApiInterface api = RetrofitClient.getInstance().getRetrofit().create(RemarkApiInterface.class);
+                            Call<List<Remark>> findRemarksByPassId = api.getAllByPassportId(currentPassport.getId());
+                            try {
+                                remarks = findRemarksByPassId.execute().body();
+                                if(remarks != null && remarks.isEmpty()) {
+                                    btnShowRemarks.setVisibility(View.INVISIBLE);
+                                    btnShowRemarks.setClickable(false);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
                     }
