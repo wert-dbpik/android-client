@@ -1,18 +1,14 @@
 package ru.wert.bazapik_mobile.organizer;
 
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
+import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_PASSPORTS;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
 import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
-import static ru.wert.bazapik_mobile.ThisApplication.REQUEST_CODE_PERMISSION_WRITE_EXTERNAL_STORAGE;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -22,16 +18,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +37,6 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.VersionAndroid;
 import ru.wert.bazapik_mobile.data.servicesREST.VersionAndroidService;
-import ru.wert.bazapik_mobile.data.util.DownloadFileTask;
 import ru.wert.bazapik_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.bazapik_mobile.keyboards.EngKeyboard;
 import ru.wert.bazapik_mobile.keyboards.KeyboardSwitcher;
@@ -59,7 +50,6 @@ import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.bazapik_mobile.settings.SettingsActivity;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
-import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         OrgActivityAndFoldersFragmentInteraction, OrgActivityAndPassportsFragmentInteraction {
@@ -112,7 +102,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             if(adapter == null) {
                 openPassportFragment();
             } else {
-                adapter.changeListOfItems(new ArrayList<>(ALL_PASSPORTS));
+                adapter.changeListOfItems(new ArrayList<>(LIST_OF_ALL_PASSPORTS));
                 currentPassportsFragment.setCurrentData(new ArrayList<>(currentPassportsFragment.getAdapter().getData()));
             }
             return false;

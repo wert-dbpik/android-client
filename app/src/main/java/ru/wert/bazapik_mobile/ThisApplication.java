@@ -75,10 +75,10 @@ public class ThisApplication extends Application {
     static SharedPreferences.Editor editor;
     private static Context appContext;
 
-    public static List<ProductGroup> ALL_PRODUCT_GROUPS;
-    public static List<Folder> ALL_FOLDERS;
-    public static List<Draft> ALL_DRAFTS;
-    public static List<Passport> ALL_PASSPORTS;
+    public static List<ProductGroup> LIST_OF_ALL_PRODUCT_GROUPS;
+    public static List<Folder> LIST_OF_ALL_FOLDERS;
+    public static List<Draft> LIST_OF_ALL_DRAFTS;
+    public static List<Passport> LIST_OF_ALL_PASSPORTS;
 
     public static Context getAppContext(){
         return ThisApplication.appContext;

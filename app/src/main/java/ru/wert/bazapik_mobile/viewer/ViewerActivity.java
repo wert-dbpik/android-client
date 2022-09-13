@@ -77,9 +77,9 @@ public class ViewerActivity extends BaseActivity {
 
     private FragmentContainerView allRemarksContainer;
 
-    public static final String CURRENT_DRAFT = "CURRENT_DRAFT";
-    public static final String CURRENT_PASSPORT = "CURRENT_PASSPORT";
-    public static final String ALL_DRAFTS = "ALL_DRAFTS";
+    public static final String $CURRENT_DRAFT = "current_draft";
+    public static final String $CURRENT_PASSPORT = "current_passport";
+    public static final String $ALL_DRAFTS = "all_drafts";
 
 
     @Override
@@ -88,9 +88,9 @@ public class ViewerActivity extends BaseActivity {
         setContentView(R.layout.activity_viewer);
 
         //Из интента получаем id чертежа
-        currentDraft = getIntent().getParcelableExtra(CURRENT_DRAFT);
+        currentDraft = getIntent().getParcelableExtra($CURRENT_DRAFT);
 
-        currentPassport = getIntent().getParcelableExtra(CURRENT_PASSPORT);
+        currentPassport = getIntent().getParcelableExtra($CURRENT_PASSPORT);
         currentPassportId = currentPassport.getId();
 
         //Инициализируем список чертежей и итератор с текущей позицей
@@ -175,7 +175,7 @@ public class ViewerActivity extends BaseActivity {
 
 
     private Integer findInitPosition() {
-        allDrafts = getIntent().getParcelableArrayListExtra(ALL_DRAFTS);
+        allDrafts = getIntent().getParcelableArrayListExtra($ALL_DRAFTS);
         for(int iterator = 0; iterator < allDrafts.size(); iterator++){
             if (allDrafts.get(iterator).getId().equals(currentDraft.getId()))
                 return iterator;

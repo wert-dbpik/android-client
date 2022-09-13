@@ -1,7 +1,7 @@
 package ru.wert.bazapik_mobile.organizer.passports;
 
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
+import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_DRAFTS;
+import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_PASSPORTS;
 
 import android.app.Activity;
 import android.content.Context;
@@ -165,7 +165,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     private List<Item> findPassports(Folder selectedFolder){
         List<Item> foundPassports = null;
         if(selectedFolder == null) {
-            foundPassports = new ArrayList<>(ALL_PASSPORTS);
+            foundPassports = new ArrayList<>(LIST_OF_ALL_PASSPORTS);
             global = true;
         } else {
             foundPassports = findPassportsInFolder(selectedFolder);
@@ -177,7 +177,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
 
     public List<Item> findPassportsInFolder(Folder folder){
         Set<Passport> foundPassports = new HashSet<>();
-        for(Draft d: ALL_DRAFTS){
+        for(Draft d: LIST_OF_ALL_DRAFTS){
             if(d.getFolder().equals(folder))
                 foundPassports.add(d.getPassport());
         }

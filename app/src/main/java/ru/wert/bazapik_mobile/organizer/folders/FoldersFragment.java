@@ -37,8 +37,8 @@ import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsFragment;
 
 import static androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY;
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_FOLDERS;
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_PRODUCT_GROUPS;
+import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_FOLDERS;
+import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_PRODUCT_GROUPS;
 
 public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.ItemFolderClickListener, OrganizerFragment<Item> {
 
@@ -310,7 +310,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     @Override //OrganizerFragment
     public List<Item> findProperItems(String searchText) {
         List<Item> foundItems = new ArrayList<>();
-        for (Folder f : ALL_FOLDERS) {
+        for (Folder f : LIST_OF_ALL_FOLDERS) {
             if (f.toUsefulString().toLowerCase().contains(searchText.toLowerCase()))
                 foundItems.add(f);
         }
@@ -319,7 +319,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
 
     private ProductGroup findProductGroupById(Long id){
-        for(ProductGroup pg: ALL_PRODUCT_GROUPS){
+        for(ProductGroup pg: LIST_OF_ALL_PRODUCT_GROUPS){
             if(pg.getId().equals(id))
                 return pg;
         }
@@ -328,7 +328,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
     private List<ProductGroup> findProductGroupChildren(Long productGroupId){
         List<ProductGroup> foundGroups = new ArrayList<>();
-        for(ProductGroup pg: ALL_PRODUCT_GROUPS){
+        for(ProductGroup pg: LIST_OF_ALL_PRODUCT_GROUPS){
             if(pg.getParentId().equals(productGroupId))
             foundGroups.add(pg);
         }
@@ -338,7 +338,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
     private List<Folder> findFoldersInProductGroup(ProductGroup productGroup){
 
         List<Folder> foundFolders = new ArrayList<>();
-        for(Folder f: ALL_FOLDERS){
+        for(Folder f: LIST_OF_ALL_FOLDERS){
             if(f.getProductGroup().equals(productGroup))
                 foundFolders.add(f);
         }

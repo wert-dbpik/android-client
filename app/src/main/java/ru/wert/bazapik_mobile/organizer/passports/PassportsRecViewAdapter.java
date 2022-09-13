@@ -1,13 +1,13 @@
 package ru.wert.bazapik_mobile.organizer.passports;
 
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_PASSPORTS;
-import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_DRAFT;
-import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_PASSPORT;
+import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_PASSPORTS;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.$ALL_DRAFTS;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.$CURRENT_DRAFT;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.$CURRENT_PASSPORT;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +38,6 @@ import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
-import ru.wert.bazapik_mobile.warnings.WarningDialog1;
 
 public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
 
@@ -111,7 +110,7 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
         holder.mShowDraft.setImageDrawable(
                 ContextCompat.getDrawable(this.inflater.getContext(), R.drawable.draft));
         //Через жопу, потомучто draftIds не сереализуется вместе с Passport в списке Folder
-        if (ALL_PASSPORTS.get(ALL_PASSPORTS.indexOf(passport)).getDraftIds().isEmpty())
+        if (LIST_OF_ALL_PASSPORTS.get(LIST_OF_ALL_PASSPORTS.indexOf(passport)).getDraftIds().isEmpty())
 //        if(passport.getDraftIds().isEmpty())
             holder.mShowDraft.setBackgroundColor(Color.BLACK);
         else {
@@ -140,12 +139,11 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
                 if(response.isSuccessful() && response.body() != null) {
                     ArrayList<Draft> foundDrafts = new ArrayList<>(response.body());
                     ThisApplication.filterList(foundDrafts); //Фильтруем
-                    ArrayList<String> stringList = ThisApplication.convertToStringArray(foundDrafts);
 
                     Intent intent = new Intent(context, ViewerActivity.class);
-                    intent.putStringArrayListExtra("DRAFTS", stringList);
-                    intent.putExtra(CURRENT_DRAFT, foundDrafts.get(0));
-                    intent.putExtra(CURRENT_PASSPORT, passport);
+                    intent.putExtra($ALL_DRAFTS, foundDrafts);
+                    intent.putExtra($CURRENT_DRAFT, foundDrafts.get(0));
+                    intent.putExtra($CURRENT_PASSPORT, passport);
                     context.startActivity(intent);
                 }
             }

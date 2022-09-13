@@ -38,28 +38,28 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, Void, Void> {
             Call<List<Draft>> draftCall = draftApi.getAll();
             List<Draft> allDrafts = draftCall.execute().body();
             allDrafts.sort(ThisApplication.usefulStringComparator());
-            ThisApplication.ALL_DRAFTS = allDrafts;
+            ThisApplication.LIST_OF_ALL_DRAFTS = allDrafts;
 
             //ПАССПОРТА
             PassportApiInterface pasApi = RetrofitClient.getInstance().getRetrofit().create(PassportApiInterface.class);
             Call<List<Passport>> passCall = pasApi.getAll();
             List<Passport> allPassports = passCall.execute().body();
             allPassports.sort(ThisApplication.passportsComparatorDetailFirst());
-            ThisApplication.ALL_PASSPORTS = allPassports;
+            ThisApplication.LIST_OF_ALL_PASSPORTS = allPassports;
 
             //ГРУППЫ ИЗДЕЛИЙ
             ProductGroupApiInterface pgApi = RetrofitClient.getInstance().getRetrofit().create(ProductGroupApiInterface.class);
             Call<List<ProductGroup>> pgCall = pgApi.getAll();
             List<ProductGroup> allProductGroups = pgCall.execute().body();
             allProductGroups.sort(ThisApplication.usefulStringComparator());
-            ThisApplication.ALL_PRODUCT_GROUPS = allProductGroups;
+            ThisApplication.LIST_OF_ALL_PRODUCT_GROUPS = allProductGroups;
 
             //КОМПЛЕКТЫ
             FolderApiInterface folderApi = RetrofitClient.getInstance().getRetrofit().create(FolderApiInterface.class);
             Call<List<Folder>> folderCall = folderApi.getAll();
             List<Folder> allFolders = folderCall.execute().body();
             allFolders.sort(ThisApplication.usefulStringComparator());
-            ThisApplication.ALL_FOLDERS = allFolders;
+            ThisApplication.LIST_OF_ALL_FOLDERS = allFolders;
 
         } catch (Exception e) {
             AppWarnings.showAlert_NoConnection(activity);

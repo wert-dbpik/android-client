@@ -1,13 +1,13 @@
 package ru.wert.bazapik_mobile.organizer.folders;
 
-import static ru.wert.bazapik_mobile.ThisApplication.ALL_DRAFTS;
-import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_DRAFT;
-import static ru.wert.bazapik_mobile.viewer.ViewerActivity.CURRENT_PASSPORT;
+import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_DRAFTS;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.$ALL_DRAFTS;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.$CURRENT_DRAFT;
+import static ru.wert.bazapik_mobile.viewer.ViewerActivity.$CURRENT_PASSPORT;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -141,7 +141,7 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
 
     private void openDraftsInFolder(Folder folder, boolean assemblesFirst) {
         ArrayList<Draft> foundDrafts = new ArrayList<>();
-        for (Draft d : ALL_DRAFTS) {
+        for (Draft d : LIST_OF_ALL_DRAFTS) {
             if (d.getFolder().equals(folder))
                 foundDrafts.add(d);
         }
@@ -157,10 +157,9 @@ public class FoldersRecViewAdapter extends RecyclerView.Adapter<FoldersRecViewAd
             foundDrafts.sort(ThisApplication.draftsComparatorDetailFirst());
 
         Intent intent = new Intent(context, ViewerActivity.class);
-        ArrayList<String> stringList = ThisApplication.convertToStringArray(foundDrafts);
-        intent.putStringArrayListExtra("DRAFTS", stringList);
-        intent.putExtra(CURRENT_DRAFT, foundDrafts.get(0));
-        intent.putExtra(CURRENT_PASSPORT, foundDrafts.get(0).getPassport());
+        intent.putExtra($ALL_DRAFTS, foundDrafts);
+        intent.putExtra($CURRENT_DRAFT, foundDrafts.get(0));
+        intent.putExtra($CURRENT_PASSPORT, foundDrafts.get(0).getPassport());
         context.startActivity(intent);
     }
 
