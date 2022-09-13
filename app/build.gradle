@@ -27,6 +27,7 @@ android {
 
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/gradle/incremental.annotation.processors'
     }
 
 }
@@ -86,5 +87,10 @@ dependencies {
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //ACRA - sends on my e-mail when application crashes
+
+    implementation 'ch.acra:acra-mail:5.9.6'
+    implementation 'ch.acra:acra-toast:5.9.6'
 
 }

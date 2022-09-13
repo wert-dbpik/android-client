@@ -16,6 +16,11 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.LinearLayout;
 
+import org.acra.ACRA;
+import org.acra.config.CoreConfigurationBuilder;
+import org.acra.config.ToastConfigurationBuilder;
+import org.acra.data.StringFormat;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +56,9 @@ import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
 import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
 
+//@ReportsCrashes(mailTo = "wert001@yandex.ru",
+//        mode = ReportingInteractionMode.TOAST,
+//        resToastText = R.string.crash_toast_text)
 public class ThisApplication extends Application {
 
     //Версия приложения
@@ -98,8 +106,26 @@ public class ThisApplication extends Application {
     public static List<Passport> ALL_PASSPORTS;
     private final Consts consts = new Consts();//Чтобы класс не удалялся
 
+
     public static Context getAppContext(){
         return ThisApplication.appContext;
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+
+        ACRA.init(this, new CoreConfigurationBuilder()
+                //core configuration:
+                .withBuildConfigClass(BuildConfig.class)
+                .withReportFormat(StringFormat.JSON)
+                .withPluginConfigurations(
+                        //each plugin you chose above can be configured with its builder like this:
+                        new ToastConfigurationBuilder()
+                                .withText(getString(R.string.crash_toast_text))
+                                .build()
+                )
+        );
     }
 
     @Override
