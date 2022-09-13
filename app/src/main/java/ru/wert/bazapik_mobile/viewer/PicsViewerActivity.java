@@ -24,10 +24,10 @@ public class PicsViewerActivity extends AppCompatActivity {
 
     private final String TAG = "PicsViewer";
 
-    public static final String ALL_PICS = "all_pics";
-    public static final String CURRENT_PIC = "current_pic";
-    public static final String WHO_CALL_ME = "resource";
-    public static final String SINGLE_URI = "single_uri";
+    public static final String $ALL_PICS = "all_pics";
+    public static final String $CURRENT_PIC = "current_pic";
+    public static final String $WHO_CALL_ME = "resource";
+    public static final String $SINGLE_URI = "single_uri";
 
     private List<Pic> allPics;
     private Pic currentPic;
@@ -50,13 +50,13 @@ public class PicsViewerActivity extends AppCompatActivity {
         btnTapRight = findViewById(R.id.btnTapRight);
 
         intent = getIntent();
-        allPics = intent.getParcelableArrayListExtra(ALL_PICS);
-        source = intent.getStringExtra(WHO_CALL_ME);
+        allPics = intent.getParcelableArrayListExtra($ALL_PICS);
+        source = intent.getStringExtra($WHO_CALL_ME);
 
         //Из редактора открывается только одна картинка за раз,
         //поэтому не нужен итератор и не нужны кнопки навигации
         if(source == null || !source.equals("editor")) {
-            currentPic = intent.getParcelableExtra(CURRENT_PIC);
+            currentPic = intent.getParcelableExtra($CURRENT_PIC);
 
             //Получаем текущую позицию рисунка
             initIterator();
@@ -97,7 +97,7 @@ public class PicsViewerActivity extends AppCompatActivity {
         } else {
             switchOffButton(btnShowPrevious);
             switchOffButton(btnShowNext);
-            pathToPic = intent.getStringExtra(SINGLE_URI);
+            pathToPic = intent.getStringExtra($SINGLE_URI);
         }
 
         Bundle bundle = new Bundle();

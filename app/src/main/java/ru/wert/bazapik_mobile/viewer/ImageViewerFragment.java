@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ public class ImageViewerFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_image_viewer, container, false);
         mDraftImageView = v.findViewById(R.id.draftImageView);
+
+//        ((Activity) inflater.getContext()).getWindow().setNavigationBarColor(getResources().getColor(R.color.colorWhite, null));
 
         TextView warning = v.findViewById(R.id.tvImageStatusWarning);
         ((ViewerActivity)getActivity()).showStatusWarningIfNeeded(warning);

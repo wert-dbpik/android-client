@@ -34,6 +34,8 @@ public class PicsViewerFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_pics_viewer, container, false);
         ZoomableImageView mDraftImageView = v.findViewById(R.id.picsView);
 
+//        ((Activity) inflater.getContext()).getWindow().setNavigationBarColor(getResources().getColor(R.color.colorWhite, null));
+
         new Thread(() -> {
             Bundle bundle = this.getArguments();
             if (bundle != null) {

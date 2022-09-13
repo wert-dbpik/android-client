@@ -87,6 +87,7 @@ public class ViewerActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewer);
 
+
         //Из интента получаем id чертежа
         currentDraft = getIntent().getParcelableExtra($CURRENT_DRAFT);
 

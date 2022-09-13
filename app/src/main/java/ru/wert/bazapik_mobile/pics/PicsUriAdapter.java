@@ -18,7 +18,6 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -28,8 +27,8 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.remark.RemarksEditorActivity;
 import ru.wert.bazapik_mobile.viewer.PicsViewerActivity;
 
-import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.SINGLE_URI;
-import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.WHO_CALL_ME;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.$SINGLE_URI;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.$WHO_CALL_ME;
 
 public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHolder> {
 
@@ -85,9 +84,9 @@ public class PicsUriAdapter extends RecyclerView.Adapter<PicsUriAdapter.ViewHold
                     holder.ivPicture.setAdjustViewBounds(true);
                     holder.ivPicture.setOnClickListener(v -> {
                         Intent intent = new Intent(context, PicsViewerActivity.class);
-                        intent.putExtra(WHO_CALL_ME, "editor");
+                        intent.putExtra($WHO_CALL_ME, "editor");
                         //Из адаптера открывается только одна картинка за раз
-                        intent.putExtra(SINGLE_URI, uri.toString());
+                        intent.putExtra($SINGLE_URI, uri.toString());
                         context.startActivity(intent);
                     });
                     if (whoCallMe == REMARK_EDITOR)

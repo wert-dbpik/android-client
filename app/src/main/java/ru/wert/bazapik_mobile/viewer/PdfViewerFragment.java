@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,8 @@ public class PdfViewerFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_pdf_viewer, container, false);
+
+//        ((Activity) inflater.getContext()).getWindow().setNavigationBarColor(getResources().getColor(R.color.colorWhite, null));
 
         TextView warning = v.findViewById(R.id.tvPdfStatusWarning);
         ((ViewerActivity)getActivity()).showStatusWarningIfNeeded(warning);

@@ -31,8 +31,8 @@ import ru.wert.bazapik_mobile.viewer.PicsViewerActivity;
 import ru.wert.bazapik_mobile.viewer.ViewerActivity;
 
 import static ru.wert.bazapik_mobile.data.retrofit.RetrofitClient.BASE_URL;
-import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.ALL_PICS;
-import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.CURRENT_PIC;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.$ALL_PICS;
+import static ru.wert.bazapik_mobile.viewer.PicsViewerActivity.$CURRENT_PIC;
 
 public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHolder> {
 
@@ -163,8 +163,8 @@ public class RemarksAdapter extends RecyclerView.Adapter<RemarksAdapter.ViewHold
         imageView.setPadding(0, 20, 0, 20);
         imageView.setOnClickListener(v -> {
             Intent intent = new Intent(context, PicsViewerActivity.class);
-            intent.putParcelableArrayListExtra(ALL_PICS, (ArrayList<? extends Parcelable>) picsInRemark);
-            intent.putExtra(CURRENT_PIC, pic);
+            intent.putParcelableArrayListExtra($ALL_PICS, (ArrayList<? extends Parcelable>) picsInRemark);
+            intent.putExtra($CURRENT_PIC, pic);
             context.startActivity(intent);
         });
 

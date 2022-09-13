@@ -1,5 +1,6 @@
 package ru.wert.bazapik_mobile.viewer;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,6 +16,10 @@ public class ProgressIndicatorFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_progress_indicator, container, false);
+        View v = inflater.inflate(R.layout.fragment_progress_indicator, container, false);
+
+//        ((Activity) inflater.getContext()).getWindow().setNavigationBarColor(getResources().getColor(R.color.colorPrimaryDark, null));
+
+        return v;
     }
 }

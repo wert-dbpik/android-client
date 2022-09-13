@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:visibility="invisible"
         android:layout_marginTop="20dp"
-        android:textColor="#E30C0C"
+        android:textColor="@color/colorMyRed"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_gravity="center_horizontal"/>
