@@ -55,9 +55,6 @@ public class StartActivity extends BaseActivity {
 
         ImageView logo = findViewById(R.id.imageViewLogo);
         logo.setOnClickListener(v -> {
-
-            int i = 10/0;
-
             logoTapped = true;
             startRetrofit();
             ThisApplication.loadSettings();

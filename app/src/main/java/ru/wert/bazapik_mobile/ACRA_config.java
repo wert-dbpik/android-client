@@ -1,8 +1,5 @@
 package ru.wert.bazapik_mobile;
 
-import static ru.wert.bazapik_mobile.ThisApplication.getProp;
-import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
-
 import android.app.Application;
 
 import org.acra.ACRA;
@@ -11,12 +8,9 @@ import org.acra.config.DialogConfigurationBuilder;
 import org.acra.config.MailSenderConfigurationBuilder;
 import org.acra.data.StringFormat;
 
-import ru.wert.bazapik_mobile.data.models.User;
-import ru.wert.bazapik_mobile.main.BaseActivity;
-
 public class ACRA_config {
 
-    public static void create(Application application){
+    public static void create(Application application) {
 
         String user = ThisApplication.getProp("USER_NAME");
 

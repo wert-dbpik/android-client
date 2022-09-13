@@ -65,18 +65,10 @@ public class ThisApplication extends Application {
     public static boolean showAnnulled;
 
     public static FileService FILE_SERVICE;
-
     public static FolderService FOLDER_SERVICE;
-//    public static FolderQuickService FOLDER_QUICK_SERVICE;
-
     public static PassportService PASSPORT_SERVICE;
-//    public static PassportQuickService PASSPORT_QUICK_SERVICE;
-
     public static DraftService DRAFT_SERVICE;
-//    public static DraftQuickService DRAFT_QUICK_SERVICE;
 
-    public static String SEARCH_TEXT = "";
-    public static PassportsRecViewAdapter ADAPTER;
     public static String DATA_BASE_URL;
 
     static SharedPreferences settings;
@@ -87,8 +79,6 @@ public class ThisApplication extends Application {
     public static List<Folder> ALL_FOLDERS;
     public static List<Draft> ALL_DRAFTS;
     public static List<Passport> ALL_PASSPORTS;
-    private final Consts consts = new Consts();//Чтобы класс не удалялся
-
 
     public static Context getAppContext(){
         return ThisApplication.appContext;
