@@ -1,25 +1,17 @@
 package ru.wert.bazapik_mobile;
 
+import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
+import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
+
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.util.DisplayMetrics;
-import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.LinearLayout;
-
-import org.acra.ACRA;
-import org.acra.config.CoreConfigurationBuilder;
-import org.acra.config.ToastConfigurationBuilder;
-import org.acra.data.StringFormat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,21 +36,12 @@ import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
-import ru.wert.bazapik_mobile.data.serviceQUICK.DraftQuickService;
-import ru.wert.bazapik_mobile.data.serviceQUICK.FolderQuickService;
-import ru.wert.bazapik_mobile.data.serviceQUICK.PassportQuickService;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.servicesREST.FileService;
 import ru.wert.bazapik_mobile.data.servicesREST.FolderService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 
-import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
-import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
-
-//@ReportsCrashes(mailTo = "wert001@yandex.ru",
-//        mode = ReportingInteractionMode.TOAST,
-//        resToastText = R.string.crash_toast_text)
 public class ThisApplication extends Application {
 
     //Версия приложения
@@ -114,25 +97,14 @@ public class ThisApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-
-        ACRA.init(this, new CoreConfigurationBuilder()
-                //core configuration:
-                .withBuildConfigClass(BuildConfig.class)
-                .withReportFormat(StringFormat.JSON)
-                .withPluginConfigurations(
-                        //each plugin you chose above can be configured with its builder like this:
-                        new ToastConfigurationBuilder()
-                                .withText(getString(R.string.crash_toast_text))
-                                .build()
-                )
-        );
+        settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
+        ACRA_config.create(this);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
         editor = settings.edit();
         ThisApplication.appContext = this.getApplicationContext();
 
