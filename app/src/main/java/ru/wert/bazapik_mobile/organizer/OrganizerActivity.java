@@ -1,9 +1,9 @@
 package ru.wert.bazapik_mobile.organizer;
 
-import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_PASSPORTS;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
 import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
+import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_PASSPORTS;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -221,6 +221,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     @Override
     public void onBackPressed() {
         OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
+
         if(keyboardContainer.getVisibility() == View.VISIBLE) {
             editTextSearch.clearFocus();
             keyboardContainer.setVisibility(View.GONE);
@@ -351,6 +352,9 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
 //        ft.addToBackStack(null);
         ft.commit();
+        //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
+        if (currentFoldersFragment.getUpperProductGroupId().equals(1L))
+            getFm().getFragments().clear();
     }
 
     //=======================  M E N U  ================================
