@@ -13,8 +13,13 @@
         android:orderInCategory="3"
         app:showAsAction="never"/>
 
-    <item
+    <item android:title="Чат"
+        android:id="@+id/action_showChat"
         android:orderInCategory="4"
+        app:showAsAction="always"/>
+
+    <item
+        android:orderInCategory="5"
         android:title="Сервис">
         <menu>
             <item
@@ -39,6 +44,6 @@
     <item
         android:title="@string/menuExit"
         android:id="@+id/action_exit"
-        android:orderInCategory="5"
+        android:orderInCategory="6"
         app:showAsAction="never"/>
 </menu>

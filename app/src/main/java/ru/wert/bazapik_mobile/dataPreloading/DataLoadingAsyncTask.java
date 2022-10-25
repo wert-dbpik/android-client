@@ -12,10 +12,12 @@ import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.PassportApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.ProductGroupApiInterface;
+import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
+import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
@@ -32,6 +34,13 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
 
         try {
+
+            //ПОЛЬЗОВАТЕЛИ
+            UserApiInterface userApi = RetrofitClient.getInstance().getRetrofit().create(UserApiInterface.class);
+            Call<List<User>> userCall = userApi.getAll();
+            List<User> allUsers = userCall.execute().body();
+            allUsers.sort(ThisApplication.usefulStringComparator());
+            ThisApplication.LIST_OF_ALL_USERS = allUsers;
 
             //ЧЕРТЕЖИ
             DraftApiInterface draftApi = RetrofitClient.getInstance().getRetrofit().create(DraftApiInterface.class);

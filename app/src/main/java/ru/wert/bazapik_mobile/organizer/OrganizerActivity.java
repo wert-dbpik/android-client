@@ -33,6 +33,7 @@ import ru.wert.bazapik_mobile.ChangePassActivity;
 import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.chat.ChatActivity;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.VersionAndroid;
@@ -392,6 +393,12 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 editTextSearch.setText("");
                 Intent updateView = new Intent(OrganizerActivity.this, DataLoadingActivity.class);
                 startActivity(updateView);
+                return true;
+
+            case R.id.action_showChat:
+                editTextSearch.setText("");
+                Intent chatView = new Intent(OrganizerActivity.this, ChatActivity.class);
+                startActivity(chatView);
                 return true;
 
             case R.id.action_changeUser:

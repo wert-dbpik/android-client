@@ -2,12 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.wert.bazapik_mobile">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:name=".ThisApplication"
         android:allowBackup="true"
@@ -18,7 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.AppCompat"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".chat.ChatActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:theme="@style/AppTheme"  />
         <activity
             android:name=".remark.RemarksEditorActivity"
             android:exported="false" />
@@ -76,9 +74,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths" />
         </provider>
-
     </application>
-
     <queries>
         <intent>
             <action android:name="android.intent.action.VIEW" />
@@ -88,9 +84,12 @@
 
         <package android:name="com.solidworks.eDrawingsProAndroid" />
     </queries>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
 
-
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>
