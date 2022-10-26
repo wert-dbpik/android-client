@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="Пользователи"
+        android:id="@+id/action_users"
+        android:orderInCategory="1"
+        app:showAsAction="never"/>
+
+<!--    <item-->
+<!--        android:title="Выйти"-->
+<!--        android:id="@+id/action_quit"-->
+<!--        android:orderInCategory="1"-->
+<!--        app:showAsAction="never"/>-->
+
+</menu>

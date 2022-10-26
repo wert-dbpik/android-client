@@ -25,6 +25,7 @@ public class ChatActivity extends AppCompatActivity {
     private FragmentManager fm;
     private ChatRoomsFragment chatRoomsFragment;
     private ChatPeopleFragment chatPeopleFragment;
+    private ChatTabPaneFragment chatTabPaneFragment;
 
 
     @Override
@@ -36,6 +37,7 @@ public class ChatActivity extends AppCompatActivity {
 
         chatPeopleFragment = new ChatPeopleFragment();
         chatRoomsFragment = new ChatRoomsFragment();
+        chatTabPaneFragment = new ChatTabPaneFragment();
 
     }
 
