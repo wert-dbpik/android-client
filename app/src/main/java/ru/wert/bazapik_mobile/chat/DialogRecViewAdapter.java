@@ -2,11 +2,9 @@ package ru.wert.bazapik_mobile.chat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -14,24 +12,22 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
-import ru.wert.bazapik_mobile.data.models.Room;
-import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
+import ru.wert.bazapik_mobile.data.models.Message;
 
-public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapter.ViewHolder> {
+public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdapter.ViewHolder> {
 
-    private final List<Room> data;
+    private final List<Message> data;
     private final LayoutInflater inflater;
-    private RoomsClickListener clickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
-    private ChatRoomsFragment fragment;
+    private ChatDialogFragment fragment;
 
     /**
      * Конструктор получает на входе список элементов List<P>
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public RoomsRecViewAdapter(ChatRoomsFragment fragment, Context context, List<Room> items) {
+    public DialogRecViewAdapter(ChatDialogFragment fragment, Context context, List<Message> items) {
         this.fragment = fragment;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
@@ -47,7 +43,7 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.recview_room_row, parent, false);
+        View view = inflater.inflate(R.layout.recview_message_row, parent, false);
         return new ViewHolder(view);
     }
 
@@ -64,10 +60,10 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
                 context.getColor(R.color.colorPrimary) : //Цвет выделения
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
-        Room room = (Room) data.get(position);
+        Message message = (Message) data.get(position);
         //Наименование
-        holder.mName.setText(((ChatActivity)fragment.getActivity()).getRoomName(room.getName()));
-        holder.ivUserImage.setImageDrawable(((ChatActivity)fragment.getActivity()).getResources().getDrawable(Drawable..id.)getRimageview.setImageResource(id););
+        holder.message.setText(message.getText());
+
     }
 
     /**
@@ -85,13 +81,11 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
      */
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView mName;
-        ImageView ivUserImage;
+        TextView message;
 
         ViewHolder(View itemView) {
             super(itemView);
-            mName = itemView.findViewById(R.id.room_name);
-            ivUserImage = itemView.findViewById(R.id.ivUserImage);
+            message = itemView.findViewById(R.id.message);
             itemView.setOnClickListener(this);
         }
 
@@ -103,8 +97,6 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
             view.findViewById(R.id.selectedLinearLayout)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
-            if (clickListener != null)
-                clickListener.onItemClick(view, getBindingAdapterPosition());
 
             notifyDataSetChanged();
 
@@ -112,20 +104,12 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
     }
 
     /**
-     * Возвращает Room в позиции клика int
+     * Возвращает Message в позиции клика int
      * @param index int
-     * @return P extends Room
+     * @return P extends Message
      */
-    public Room getItem(int index) {
-        return (Room) data.get(index);
-    }
-
-    public void setClickListener(RoomsClickListener roomsClickListener) {
-        this.clickListener = roomsClickListener;
-    }
-
-    public interface RoomsClickListener {
-        void onItemClick(View view, int position);
+    public Message getItem(int index) {
+        return (Message) data.get(index);
     }
 
 }

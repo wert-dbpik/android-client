@@ -8,6 +8,10 @@ import org.acra.config.DialogConfigurationBuilder;
 import org.acra.config.MailSenderConfigurationBuilder;
 import org.acra.data.StringFormat;
 
+/**
+ * ACRA предоставляет возможность перехватывать сбой, произошедший в программе во время выполнения
+ * и отправлять разработчику письмо на почту с логами и описанием произошедшей ошибки
+ */
 public class ACRA_config {
 
     public static void create(Application application) {

@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ПОЛЬЗОВАТЕЛИ"
+            android:text="КОЛЛЕГИ"
             android:background="@color/colorPrimaryDark"
             android:textSize="20sp"
             android:paddingVertical="5dp"

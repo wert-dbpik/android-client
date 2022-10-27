@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 
-public class PeopleRecViewAdapter extends RecyclerView.Adapter<PeopleRecViewAdapter.ViewHolder> implements OrganizerRecViewAdapter {
+public class PeopleRecViewAdapter extends RecyclerView.Adapter<PeopleRecViewAdapter.ViewHolder> {
 
     private final List<User> data;
     private final LayoutInflater inflater;
@@ -78,17 +79,6 @@ public class PeopleRecViewAdapter extends RecyclerView.Adapter<PeopleRecViewAdap
     }
 
     /**
-     * Обновляет отображаемые данные
-     * @param items List<P>
-     */
-    public void changeListOfItems(List items){
-        selectedPosition = RecyclerView.NO_POSITION;
-        data.clear();
-        data.addAll(items);
-        notifyDataSetChanged();
-    }
-
-    /**
      * Вложенный класс, описывающий и создающий ограниченной количество ViewHolder
      *
      */
@@ -98,6 +88,7 @@ public class PeopleRecViewAdapter extends RecyclerView.Adapter<PeopleRecViewAdap
 
         ViewHolder(View itemView) {
             super(itemView);
+
             mName = itemView.findViewById(R.id.user_name);
             itemView.setOnClickListener(this);
         }

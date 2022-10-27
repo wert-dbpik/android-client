@@ -36,6 +36,7 @@ import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
+import ru.wert.bazapik_mobile.data.models.Room;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.servicesREST.FileService;
@@ -77,6 +78,7 @@ public class ThisApplication extends Application {
     private static Context appContext;
 
     public static List<User> LIST_OF_ALL_USERS;
+    public static List<Room> LIST_OF_ALL_ROOMS;
     public static List<ProductGroup> LIST_OF_ALL_PRODUCT_GROUPS;
     public static List<Folder> LIST_OF_ALL_FOLDERS;
     public static List<Draft> LIST_OF_ALL_DRAFTS;

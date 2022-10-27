@@ -3,8 +3,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:title="БАЗА"
+        android:id="@+id/action_organiser"
+        android:orderInCategory="0"
+        app:showAsAction="always"/>
+
+    <item
         android:title="Пользователи"
-        android:id="@+id/action_users"
+        android:id="@+id/action_people"
         android:orderInCategory="1"
         app:showAsAction="never"/>
 

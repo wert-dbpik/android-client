@@ -52,6 +52,7 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
     public static final String PASSPORT = "passport";
 
+    //В ресайклере отображаются все паспорта в базе
     @Getter@Setter private boolean global = true;
     @Setter@Getter private Integer localSelectedPosition;
 

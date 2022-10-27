@@ -109,6 +109,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             return false;
         });
 
+        // Слушатель на изменение активного фрагмента меняет содержимое строки поиска
         fm.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
             @Override
             public void onFragmentResumed(FragmentManager manager, Fragment fragment) {
@@ -362,8 +363,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     /**
      * Создаем меню для окна с поиском
-     * @param menu
-     * @return
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

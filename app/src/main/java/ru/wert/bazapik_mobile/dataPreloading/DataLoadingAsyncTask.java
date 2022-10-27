@@ -12,11 +12,13 @@ import ru.wert.bazapik_mobile.data.api_interfaces.DraftApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.FolderApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.PassportApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.ProductGroupApiInterface;
+import ru.wert.bazapik_mobile.data.api_interfaces.RoomApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
 import ru.wert.bazapik_mobile.data.models.Draft;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Passport;
 import ru.wert.bazapik_mobile.data.models.ProductGroup;
+import ru.wert.bazapik_mobile.data.models.Room;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
@@ -41,6 +43,13 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, Void, Void> {
             List<User> allUsers = userCall.execute().body();
             allUsers.sort(ThisApplication.usefulStringComparator());
             ThisApplication.LIST_OF_ALL_USERS = allUsers;
+
+            //КОМНАТЫ
+            RoomApiInterface roomApi = RetrofitClient.getInstance().getRetrofit().create(RoomApiInterface.class);
+            Call<List<Room>> roomCall = roomApi.getAll();
+            List<Room> allRooms = roomCall.execute().body();
+            allRooms.sort(ThisApplication.usefulStringComparator());
+            ThisApplication.LIST_OF_ALL_ROOMS = allRooms;
 
             //ЧЕРТЕЖИ
             DraftApiInterface draftApi = RetrofitClient.getInstance().getRetrofit().create(DraftApiInterface.class);
