@@ -7,7 +7,6 @@
     android:padding="2dp">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -15,50 +14,22 @@
             android:id="@+id/selectedLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="5dp"
             android:background="@color/colorPrimaryDark"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/ivUserImage"
-                android:layout_width="34sp"
-                android:layout_height="34sp"
-                android:padding="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:scaleType="fitXY"
-                android:backgroundTint="@color/colorPrimaryDark"/>
 
-            <LinearLayout
-                android:id="@+id/llFolder"
+            <TextView
+                android:id="@+id/user_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
-                <TextView
-                    android:id="@+id/user_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"
-                    android:layout_weight="@integer/material_motion_duration_long_1"
-                    android:textColor="#FFFF00"
-                    android:textSize="20sp" />
 
-                <ImageButton
-                    android:id="@+id/btnNewMessages"
-                    app:srcCompat="@drawable/menu_vert_dots"
-                    android:layout_width="22sp"
-                    android:layout_height="22sp"
-                    android:layout_marginStart="8dp"
-                    android:padding="0dp"
-                    android:layout_weight="1"
-                    android:layout_gravity="center_vertical"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY" />
-
-            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

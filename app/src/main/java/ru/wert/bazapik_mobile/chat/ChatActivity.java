@@ -94,6 +94,9 @@ public class ChatActivity extends AppCompatActivity implements
                 }
 
             }
+        } else if(roomNameDB.startsWith("group:")){
+            roomNameDB = roomNameDB.replace("group:", "");
+            finalName = roomNameDB;
         } else
             finalName = roomNameDB;
 

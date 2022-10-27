@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -39,6 +40,7 @@ public class ChatRoomsFragment extends Fragment implements ChatFragment, RoomsRe
     private RecyclerView rv;
     private RoomsRecViewAdapter adapter;
 
+    public static final String COMMON_CHAT = "Общий чат";
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
 
@@ -106,6 +108,16 @@ public class ChatRoomsFragment extends Fragment implements ChatFragment, RoomsRe
                         if(room.getRoommates().contains(CURRENT_USER))
                             foundRooms.add(room);
                     }
+                    foundRooms = foundRooms.stream().sorted((o1, o2)->{
+                        String name1 = chatActivity.getRoomName(o1.getName());
+                        String name2 = chatActivity.getRoomName(o2.getName());
+                        if(o1.getName().startsWith("group")) name1 = "0".concat(name1);
+                        if(o2.getName().startsWith("group")) name2 = "0".concat(name2);
+                        if(name1.equals(COMMON_CHAT)) name1 = "_".concat(name1);
+                        if(name2.equals(COMMON_CHAT)) name2 = "_".concat(name2);
+
+                        return name1.compareTo(name2);
+                    }).collect(Collectors.toList());
                     fillRecViewWithItems(foundRooms);
                 }
             }

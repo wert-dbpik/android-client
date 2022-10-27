@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.chat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.data.models.Room;
@@ -67,7 +71,13 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
         Room room = (Room) data.get(position);
         //Наименование
         holder.mName.setText(((ChatActivity)fragment.getActivity()).getRoomName(room.getName()));
-        holder.ivUserImage.setImageDrawable(((ChatActivity)fragment.getActivity()).getResources().getDrawable(Drawable..id.)getRimageview.setImageResource(id););
+        if(room.getName().startsWith("one-to-one")) {
+            holder.ivUserImage.setImageDrawable(context.getDrawable(R.drawable.one_of_group));
+            holder.mName.setTextColor(Color.YELLOW);
+        }else if(room.getName().startsWith("group")) {
+            holder.ivUserImage.setImageDrawable(context.getDrawable(R.drawable.group));
+            holder.mName.setTextColor(Color.CYAN);
+        }
     }
 
     /**
