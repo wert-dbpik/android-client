@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.chat;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,7 @@ public class PeopleRecViewAdapter extends RecyclerView.Adapter<PeopleRecViewAdap
         User user = (User) data.get(position);
         //Наименование
         holder.mName.setText(user.getName());
+        holder.mName.setTextColor(Color.YELLOW);
 
     }
 

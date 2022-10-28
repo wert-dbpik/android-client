@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.chat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -107,6 +108,8 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         ibtnSend = view.findViewById(R.id.ibtnSend);
 
         tvChatName.setText(chatActivity.getRoomName(room.getName()));
+        if(room.getName().startsWith("one-to-one")) tvChatName.setTextColor(Color.YELLOW);
+        else if (room.getName().startsWith("group")) tvChatName.setTextColor(Color.CYAN);
 
         createRecViewOfFoundMessages();
 
