@@ -1,10 +1,13 @@
 package ru.wert.bazapik_mobile.data.servicesREST;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import ru.wert.bazapik_mobile.data.api_interfaces.UserApiInterface;
+import ru.wert.bazapik_mobile.data.models.Room;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
 import ru.wert.bazapik_mobile.data.interfaces.ItemService;
 import ru.wert.bazapik_mobile.data.service_interfaces.IUserService;
@@ -117,6 +120,28 @@ public class UserService implements IUserService, ItemService<User> {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public List<Room> subscribeRoom(User user, Room room) {
+        try {
+            Call<Set<Room>> call = api.subscribeRoom(user.getId(), room.getId());
+            return new ArrayList<Room>(call.execute().body());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public List<Room> unsubscribeRoom(User user, Room room) {
+        try {
+            Call<Set<Room>> call = api.unsubscribeRoom(user.getId(), room.getId());
+            return new ArrayList<Room>(call.execute().body());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

@@ -21,7 +21,7 @@ public class User extends _BaseEntity implements Item, Parcelable {
     private String password;
     private UserGroup userGroup;
     private boolean logging; //следует ли пользователя логировать
-
+    private boolean active; //активный ли пользователь
     @Override
     public String toUsefulString() {
         return name;

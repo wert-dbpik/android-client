@@ -26,4 +26,10 @@ public interface RoomApiInterface {
     @DELETE("rooms/delete/{id}")
     Call<Void> deleteById(@Path("id") Long id);
 
+    @PUT("users/add-roommate/{roomId}")
+    Call<Room> addRoommates(@Body List<String> userIds, @Path("roomId") Long roomId);
+
+    @PUT("users/remove-roommate/{roomId}")
+    Call<Room> removeRoommates(@Body List<String> userIds, @Path("roomId") Long roomId);
+
 }

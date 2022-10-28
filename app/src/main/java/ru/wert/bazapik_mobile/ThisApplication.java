@@ -338,6 +338,20 @@ public class ThisApplication extends Application {
     }
 
     /**
+     * Метод парсит строку формата "yyyy-MM-dd'T'HH:mm:ss" в HH:mm
+     */
+    public static  String parseStringToTime(String dateString){
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+        try {
+            Date date = format.parse(dateString);
+            SimpleDateFormat myFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            return myFormat.format(date);
+        } catch (ParseException e) {
+            return dateString;
+        }
+    }
+
+    /**
      * Метод парсит строку формата "yyyy-MM-dd'T'HH:mm:ss" в необходимый фотрмат
      */
     public static  String parseStringToDateAndTime(String dateString){

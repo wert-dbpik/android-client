@@ -2,9 +2,11 @@ package ru.wert.bazapik_mobile.data.api_interfaces;
 
 import retrofit2.Call;
 import retrofit2.http.*;
+import ru.wert.bazapik_mobile.data.models.Room;
 import ru.wert.bazapik_mobile.data.models.User;
 
 import java.util.List;
+import java.util.Set;
 
 public interface UserApiInterface {
 
@@ -31,5 +33,11 @@ public interface UserApiInterface {
 
     @DELETE("users/delete/{id}")
     Call<Void> deleteById(@Path("id") Long id);
+
+    @PUT("users/subscribe_room/{userId}/{roomId}")
+    Call<Set<Room>> subscribeRoom(@Path("userId") Long userId, @Path("roomId") Long roomId);
+
+    @PUT("users/unsubscribe_room/{userId}/{roomId}")
+    Call<Set<Room>> unsubscribeRoom(@Path("userId") Long userId, @Path("roomId") Long roomId);
 
 }

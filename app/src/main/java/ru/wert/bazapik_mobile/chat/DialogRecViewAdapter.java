@@ -5,18 +5,21 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import lombok.Getter;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.models.Message;
 
 public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdapter.ViewHolder> {
 
-    private final List<Message> data;
+    @Getter private final List<Message> data;
     private final LayoutInflater inflater;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
@@ -62,7 +65,14 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdap
 
         Message message = (Message) data.get(position);
         //Наименование
-        holder.message.setText(message.getText());
+        holder.sender.setText(message.getSender().getName());
+        holder.date.setText(ThisApplication.parseStringToDate(message.getCreationTime()));
+        holder.time.setText(ThisApplication.parseStringToTime(message.getCreationTime()));
+
+
+
+
+        new ChatCards().create(context, holder.llMessage, message.getText());
 
     }
 
@@ -79,28 +89,21 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdap
      * Вложенный класс, описывающий и создающий ограниченной количество ViewHolder
      *
      */
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
-        TextView message;
+        TextView sender;
+        TextView date;
+        LinearLayout llMessage;
+        TextView time;
 
         ViewHolder(View itemView) {
             super(itemView);
-            message = itemView.findViewById(R.id.message);
-            itemView.setOnClickListener(this);
+            sender = itemView.findViewById(R.id.tvMessageSender);
+            date = itemView.findViewById(R.id.tvMessageDate);
+            llMessage = itemView.findViewById(R.id.llMessage);
+            time = itemView.findViewById(R.id.tvMessageTime);
         }
 
-        @Override
-        public void onClick(View view) {
-            if (getBindingAdapterPosition() == RecyclerView.NO_POSITION) return;
-
-            selectedPosition = getBindingAdapterPosition();
-            view.findViewById(R.id.selectedLinearLayout)
-                    .setBackgroundColor(context.getColor(R.color.colorPrimary));
-
-
-            notifyDataSetChanged();
-
-        }
     }
 
     /**

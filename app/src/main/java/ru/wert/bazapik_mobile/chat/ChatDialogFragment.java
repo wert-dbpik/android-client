@@ -26,6 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.MessageApiInterface;
 import ru.wert.bazapik_mobile.data.api_interfaces.RoomApiInterface;
 import ru.wert.bazapik_mobile.data.models.Message;
@@ -105,7 +106,10 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         ibtnSendPhoto = view.findViewById(R.id.ibtnSendPhoto);
         ibtnSendImage = view.findViewById(R.id.ibtnSendImage);
         ibtnSendLink = view.findViewById(R.id.ibtnSendLink);
+
+        //кнопка ОТПРАВИТЬ
         ibtnSend = view.findViewById(R.id.ibtnSend);
+        ibtnSend.setOnClickListener(e->sendText());
 
         tvChatName.setText(chatActivity.getRoomName(room.getName()));
         if(room.getName().startsWith("one-to-one")) tvChatName.setTextColor(Color.YELLOW);
@@ -114,6 +118,43 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         createRecViewOfFoundMessages();
 
         return view;
+    }
+
+    /**
+     * Обработка нажатия на кнопку ОТПРАВИТЬ
+     * Эта кнопка отправляет только текстовые сообщения
+     */
+    public void sendText() {
+        String text = etMessage.getText().toString();
+        Message message = createChatMessage(Message.MessageType.CHAT_TEXT, text);
+        etMessage.setText("");
+
+        sendMessageToRecipient(message);
+    }
+
+    /**
+     * Метода создает сообщение Message
+     * @param text String
+     */
+    public Message createChatMessage(Message.MessageType type, String text){
+        Message message = new Message();
+        message.setType(type);
+        message.setSender(CURRENT_USER);
+        message.setCreationTime(ThisApplication.getCurrentTime());
+        message.setText(text);
+
+        return message;
+    }
+
+    /**
+     * Собственно отправка сообщения пользователю
+     * @param message
+     */
+    private void sendMessageToRecipient(Message message) {
+        adapter.getData().add(message);
+        adapter.notifyItemInserted(adapter.getData().size() - 1);
+
+
     }
 
 
