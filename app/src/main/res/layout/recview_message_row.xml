@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/llMessageContainer"
+            android:id="@+id/llMainContainer"
             android:weightSum="100"
             android:gravity="end"
             android:orientation="horizontal"
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:id="@+id/selectedLinearLayout"
+                android:id="@+id/llSelectedContainer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="80"
@@ -28,49 +28,51 @@
                 android:background="@color/colorPrimaryDark"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvMessageSender"
-                    android:text="Симонов Алексей"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
-                    android:textAlignment="viewEnd"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/tvMessageDate"
-                    android:text="12.09.2022"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
-                    android:textAlignment="viewEnd"
-                    android:textSize="10sp" />
-
                 <LinearLayout
-                    android:id="@+id/llMessage"
-                    android:layout_width="match_parent"
+                    android:id="@+id/llFitContainer"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"/>
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:layout_gravity="end"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvSender"
+                        android:text="Симонов Алексей"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:textAlignment="viewEnd"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tvDate"
+                        android:text="12.09.2022"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:textAlignment="viewEnd"
+                        android:textSize="10sp" />
+
+                    <LinearLayout
+                        android:id="@+id/llMessageContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
 
 
-<!--                <TextView-->
-<!--                    -->
-<!--                    android:text="Некое длинное сообщение на несколько строк"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:textColor="#FFFFFF"-->
-<!--                    android:lines="1"-->
-<!--                    android:maxLines="200"-->
-<!--                    android:textSize="16sp" />-->
+                    <TextView
+                        android:id="@+id/tvTime"
+                        android:text="12:10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FFFFFF"
+                        android:textAlignment="viewEnd"
+                        android:textSize="10sp" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvMessageTime"
-                    android:text="12:10"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
-                    android:textAlignment="viewEnd"
-                    android:textSize="10sp" />
+
 
 
             </LinearLayout>

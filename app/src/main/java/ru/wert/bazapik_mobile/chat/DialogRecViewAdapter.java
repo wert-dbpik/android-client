@@ -1,5 +1,7 @@
 package ru.wert.bazapik_mobile.chat;
 
+import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -58,8 +61,8 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdap
     @Override
     public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
-        View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
-        selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
+        View llSelectedContainer = holder.itemView.findViewById(R.id.llSelectedContainer);
+        llSelectedContainer.setBackgroundColor((position == selectedPosition) ?
                 context.getColor(R.color.colorPrimary) : //Цвет выделения
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
@@ -69,11 +72,35 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdap
         holder.date.setText(ThisApplication.parseStringToDate(message.getCreationTime()));
         holder.time.setText(ThisApplication.parseStringToTime(message.getCreationTime()));
 
+        switch(message.getType()){
+            case CHAT_SERVICE:
+                ChatCards.createServiceCard(context, holder.llMessageContainer, message.getText());
+                break;
+            case CHAT_TEXT:
+                ChatCards.createTextCard(context, holder.llMessageContainer, message.getText());
+                break;
+            case CHAT_PICS:
+                ChatCards.createPicsCard(context, holder.llMessageContainer, message.getText());
+                break;
+            case CHAT_DRAFTS:
+                ChatCards.createDraftsCard(context, holder.llMessageContainer, message.getText());
+                break;
+            case CHAT_FOLDERS:
+                ChatCards.createFoldersCard(context, holder.llMessageContainer, message.getText());
+                break;
+            case CHAT_PASSPORTS:
+                ChatCards.createPassportsCard(context, holder.llMessageContainer, message.getText());
+                break;
+        }
 
-
-
-        new ChatCards().create(context, holder.llMessage, message.getText());
-
+        if(message.getSender().getId().equals(CURRENT_USER.getId()))
+            ChatCards.useMessageOUT_Style(context,
+                    holder.llMainContainer, holder.llSelectedContainer, holder.llFitContainer,
+                    holder.sender, holder.date, holder.llMessageContainer, holder.time);
+        else
+            ChatCards.useMessageIN_Style(context,
+                    holder.llMainContainer, holder.llSelectedContainer, holder.llFitContainer,
+                    holder.sender, holder.date, holder.llMessageContainer, holder.time);
     }
 
     /**
@@ -91,17 +118,34 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdap
      */
     public class ViewHolder extends RecyclerView.ViewHolder{
 
+        //  MainContainer ->
+        // {SelectedContainer ->
+        // {FitContainer ->
+        // {sender, date, MessageContainer ->
+        //          {MESSAGE},
+        // time}}}
+
+
+        LinearLayout llMainContainer;
+        LinearLayout llSelectedContainer;
+        LinearLayout llFitContainer;
+
         TextView sender;
         TextView date;
-        LinearLayout llMessage;
+        LinearLayout llMessageContainer;
         TextView time;
 
         ViewHolder(View itemView) {
             super(itemView);
-            sender = itemView.findViewById(R.id.tvMessageSender);
-            date = itemView.findViewById(R.id.tvMessageDate);
-            llMessage = itemView.findViewById(R.id.llMessage);
-            time = itemView.findViewById(R.id.tvMessageTime);
+
+            llMainContainer = itemView.findViewById(R.id.llMainContainer);
+            llSelectedContainer = itemView.findViewById(R.id.llSelectedContainer);
+            llFitContainer = itemView.findViewById(R.id.llFitContainer);
+
+            sender = itemView.findViewById(R.id.tvSender);
+            date = itemView.findViewById(R.id.tvDate);
+            llMessageContainer = itemView.findViewById(R.id.llMessageContainer);
+            time = itemView.findViewById(R.id.tvTime);
         }
 
     }

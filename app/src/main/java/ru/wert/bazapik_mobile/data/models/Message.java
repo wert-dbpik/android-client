@@ -16,11 +16,13 @@ public class Message extends _BaseEntity implements Item {
     }
 
     public enum MessageType {
+        CHAT_SERVICE("сервисная запись"),
         CHAT_TEXT("текст"),
         CHAT_DRAFTS("чертежи"),
         CHAT_FOLDERS("комплекты чертежей"),
         CHAT_PICS("изображения"),
         CHAT_PASSPORTS("пасспорта");
+
 
         @Getter String typeName;
 

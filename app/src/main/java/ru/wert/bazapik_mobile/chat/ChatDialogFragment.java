@@ -49,6 +49,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
     private ImageButton ibtnSend;
 
     private DialogRecViewAdapter adapter;
+    private Room currentRoom;
 
     private ChatActivityInteraction chatActivity;
 
@@ -98,7 +99,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_dialog, container, false);
 
-        Room room = getArguments().getParcelable($ROOM);
+        currentRoom = getArguments().getParcelable($ROOM);
 
         tvChatName = view.findViewById(R.id.tvChatName);
         rv = view.findViewById(R.id.rvMessages);
@@ -111,9 +112,9 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         ibtnSend = view.findViewById(R.id.ibtnSend);
         ibtnSend.setOnClickListener(e->sendText());
 
-        tvChatName.setText(chatActivity.getRoomName(room.getName()));
-        if(room.getName().startsWith("one-to-one")) tvChatName.setTextColor(Color.YELLOW);
-        else if (room.getName().startsWith("group")) tvChatName.setTextColor(Color.CYAN);
+        tvChatName.setText(chatActivity.getRoomName(currentRoom.getName()));
+        if(currentRoom.getName().startsWith("one-to-one")) tvChatName.setTextColor(Color.YELLOW);
+        else if (currentRoom.getName().startsWith("group")) tvChatName.setTextColor(Color.CYAN);
 
         createRecViewOfFoundMessages();
 
@@ -167,7 +168,14 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
             @Override
             public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
                 if(response.isSuccessful()){
-                    fillRecViewWithItems(response.body());
+                    List<Message> allMessages = response.body();
+                    if(allMessages == null) return;
+                    List<Message> roomMessages = new ArrayList<>();
+                    for(Message m : allMessages){
+                        if(m.getRoom().getId().equals(currentRoom.getId()))
+                            roomMessages.add(m);
+                    }
+                    fillRecViewWithItems(roomMessages);
                 }
             }
 
@@ -177,9 +185,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
             }
         });
 
-        //Для красоты используем разделитель между элементами списка
-        rv.addItemDecoration(new DividerItemDecoration(getContext(),
-                DividerItemDecoration.VERTICAL));
+
     }
 
     public void fillRecViewWithItems(List<Message> items){
