@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.Arrays;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import lombok.Getter;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
@@ -67,15 +67,21 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdap
                 context.getColor(R.color.colorPrimaryDark)); //Цвет фона
 
         Message message = (Message) data.get(position);
+
+        if(message.getType().equals(Message.MessageType.CHAT_SERVICE)){
+            ChatCards.createServiceCard(context,
+                    message.getText(),
+                    holder.llMainContainer, holder.llSelectedContainer, holder.llFitContainer,
+                    holder.sender, holder.date, holder.llMessageContainer, holder.time);
+            return;
+        }
+
         //Наименование
         holder.sender.setText(message.getSender().getName());
         holder.date.setText(ThisApplication.parseStringToDate(message.getCreationTime()));
         holder.time.setText(ThisApplication.parseStringToTime(message.getCreationTime()));
 
         switch(message.getType()){
-            case CHAT_SERVICE:
-                ChatCards.createServiceCard(context, holder.llMessageContainer, message.getText());
-                break;
             case CHAT_TEXT:
                 ChatCards.createTextCard(context, holder.llMessageContainer, message.getText());
                 break;
@@ -93,7 +99,8 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdap
                 break;
         }
 
-        if(message.getSender().getId().equals(CURRENT_USER.getId()))
+
+        if (message.getSender().getId().equals(CURRENT_USER.getId()))
             ChatCards.useMessageOUT_Style(context,
                     holder.llMainContainer, holder.llSelectedContainer, holder.llFitContainer,
                     holder.sender, holder.date, holder.llMessageContainer, holder.time);
@@ -101,6 +108,7 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<DialogRecViewAdap
             ChatCards.useMessageIN_Style(context,
                     holder.llMainContainer, holder.llSelectedContainer, holder.llFitContainer,
                     holder.sender, holder.date, holder.llMessageContainer, holder.time);
+
     }
 
     /**

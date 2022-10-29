@@ -19,6 +19,8 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -372,6 +374,17 @@ public class ThisApplication extends Application {
         Date date = Calendar.getInstance().getTime();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         return df.format(date);
+    }
+
+    /**
+     * Метод возвращает черашнее время в формате "yyyy-MM-dd'T'HH:mm:ss"
+     */
+    public static String getYesterdayTime(){
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        Date yesterday = cal.getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return df.format(yesterday);
     }
 
     public static byte[] getBytes(InputStream inputStream) throws IOException {

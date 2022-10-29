@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
@@ -28,7 +27,6 @@ import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
 import ru.wert.bazapik_mobile.data.api_interfaces.MessageApiInterface;
-import ru.wert.bazapik_mobile.data.api_interfaces.RoomApiInterface;
 import ru.wert.bazapik_mobile.data.models.Message;
 import ru.wert.bazapik_mobile.data.models.Room;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
@@ -50,11 +48,15 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
 
     private DialogRecViewAdapter adapter;
     private Room currentRoom;
+    private final String $TODAY = ThisApplication.parseStringToDate(ThisApplication.getCurrentTime());
+    private final String $YESTERDAY = ThisApplication.parseStringToDate(ThisApplication.getYesterdayTime());
 
     private ChatActivityInteraction chatActivity;
 
     private final String KEY_RECYCLER_STATE = "recycler_state";
     private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
+
+    private List<Message> roomMessages;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -121,6 +123,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         return view;
     }
 
+
     /**
      * Обработка нажатия на кнопку ОТПРАВИТЬ
      * Эта кнопка отправляет только текстовые сообщения
@@ -129,7 +132,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         String text = etMessage.getText().toString();
         Message message = createChatMessage(Message.MessageType.CHAT_TEXT, text);
         etMessage.setText("");
-
+        checkUpForMessageDate(message);
         sendMessageToRecipient(message);
     }
 
@@ -154,8 +157,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
     private void sendMessageToRecipient(Message message) {
         adapter.getData().add(message);
         adapter.notifyItemInserted(adapter.getData().size() - 1);
-
-
+        rv.scrollToPosition(roomMessages.size() -1);
     }
 
 
@@ -170,10 +172,12 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
                 if(response.isSuccessful()){
                     List<Message> allMessages = response.body();
                     if(allMessages == null) return;
-                    List<Message> roomMessages = new ArrayList<>();
+                    roomMessages = new ArrayList<>();
                     for(Message m : allMessages){
-                        if(m.getRoom().getId().equals(currentRoom.getId()))
+                        if(m.getRoom().getId().equals(currentRoom.getId())) {
+                            checkUpForMessageDate(m);
                             roomMessages.add(m);
+                        }
                     }
                     fillRecViewWithItems(roomMessages);
                 }
@@ -188,10 +192,35 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
 
     }
 
+    private Message checkUpForMessageDate(Message m) {
+        Message serviceMessage = null;
+        if (roomMessages.isEmpty()) {
+            serviceMessage = createServiceMessage(m);
+            roomMessages.add(serviceMessage);
+        } else if (!ThisApplication.parseStringToDate(roomMessages.get(roomMessages.size() - 1).getCreationTime())
+                .equals(ThisApplication.parseStringToDate(m.getCreationTime()))) {
+            serviceMessage = createServiceMessage(m);
+            roomMessages.add(serviceMessage);
+        }
+        return serviceMessage;
+    }
+
+    private Message createServiceMessage(Message m) {
+        Message serviceMessage = new Message();
+        serviceMessage.setType(Message.MessageType.CHAT_SERVICE);
+        String date = ThisApplication.parseStringToDate(m.getCreationTime());
+        if(date.equals($TODAY)) date = "Сегодня";
+        else if(date.equals($YESTERDAY)) date = "Вчера";
+        serviceMessage.setText(date);
+
+        return serviceMessage;
+    }
+
     public void fillRecViewWithItems(List<Message> items){
         ((Activity)chatActivity.getChatContext()).runOnUiThread(()->{
             adapter = new DialogRecViewAdapter(this, chatActivity.getChatContext(), items);
             rv.setAdapter(adapter);
+            rv.scrollToPosition(roomMessages.size() -1);
         });
     }
 }
