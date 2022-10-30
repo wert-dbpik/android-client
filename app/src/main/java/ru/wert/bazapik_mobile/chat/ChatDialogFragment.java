@@ -130,9 +130,11 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
      */
     public void sendText() {
         String text = etMessage.getText().toString();
+        if(text.equals("")) return;
         Message message = createChatMessage(Message.MessageType.CHAT_TEXT, text);
         etMessage.setText("");
-        checkUpForMessageDate(message);
+
+        insertDateMessageIfNeeded(message, true);
         sendMessageToRecipient(message);
     }
 
@@ -156,8 +158,10 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
      */
     private void sendMessageToRecipient(Message message) {
         adapter.getData().add(message);
-        adapter.notifyItemInserted(adapter.getData().size() - 1);
-        rv.scrollToPosition(roomMessages.size() -1);
+        int lastPosition = adapter.getData().size() - 1;
+        adapter.notifyItemInserted(lastPosition);
+        adapter.notifyItemRangeChanged(lastPosition, adapter.getData().size());
+        rv.scrollToPosition(lastPosition);
     }
 
 
@@ -175,11 +179,12 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
                     roomMessages = new ArrayList<>();
                     for(Message m : allMessages){
                         if(m.getRoom().getId().equals(currentRoom.getId())) {
-                            checkUpForMessageDate(m);
+                            Message serviceDateMessage = insertDateMessageIfNeeded(m, false);
+                            if(serviceDateMessage != null) roomMessages.add(serviceDateMessage);
                             roomMessages.add(m);
                         }
                     }
-                    fillRecViewWithItems(roomMessages);
+                    fillRecViewWithItems(new ArrayList<>(roomMessages));
                 }
             }
 
@@ -192,15 +197,19 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
 
     }
 
-    private Message checkUpForMessageDate(Message m) {
+    private Message insertDateMessageIfNeeded(Message m, boolean addToAdapter) {
         Message serviceMessage = null;
         if (roomMessages.isEmpty()) {
             serviceMessage = createServiceMessage(m);
-            roomMessages.add(serviceMessage);
         } else if (!ThisApplication.parseStringToDate(roomMessages.get(roomMessages.size() - 1).getCreationTime())
                 .equals(ThisApplication.parseStringToDate(m.getCreationTime()))) {
             serviceMessage = createServiceMessage(m);
-            roomMessages.add(serviceMessage);
+        }
+        if(addToAdapter){
+            adapter.getData().add(serviceMessage);
+            int lastPosition = adapter.getData().size() - 1;
+            adapter.notifyItemInserted(lastPosition);
+            adapter.notifyItemRangeChanged(lastPosition, adapter.getData().size());
         }
         return serviceMessage;
     }
@@ -208,6 +217,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
     private Message createServiceMessage(Message m) {
         Message serviceMessage = new Message();
         serviceMessage.setType(Message.MessageType.CHAT_SERVICE);
+        serviceMessage.setSender(null);
         String date = ThisApplication.parseStringToDate(m.getCreationTime());
         if(date.equals($TODAY)) date = "Сегодня";
         else if(date.equals($YESTERDAY)) date = "Вчера";
@@ -220,7 +230,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         ((Activity)chatActivity.getChatContext()).runOnUiThread(()->{
             adapter = new DialogRecViewAdapter(this, chatActivity.getChatContext(), items);
             rv.setAdapter(adapter);
-            rv.scrollToPosition(roomMessages.size() -1);
+            rv.scrollToPosition(adapter.getData().size()-1);
         });
     }
 }

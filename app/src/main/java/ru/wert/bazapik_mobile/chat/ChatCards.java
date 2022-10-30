@@ -12,55 +12,40 @@ import ru.wert.bazapik_mobile.R;
 
 public class ChatCards {
 
-    public static void createServiceCard(Context context,
-                                         String text,
-                                         LinearLayout llMainContainer, LinearLayout llSelectedContainer, LinearLayout llFitContainer,
-                                         TextView sender, TextView date, LinearLayout llMessageContainer, TextView time){
+    public static void createServiceCard(Context context, LinearLayout llMessageContainer, String text){
+        //В первую очередь очищаем контейнер, чтобы не дублировать запись
+        llMessageContainer.removeAllViews();
+
         TextView textView = new TextView(context);
         textView.setTextColor(Color.GRAY);
         textView.setTypeface(null, Typeface.ITALIC);
         textView.setText(String.format("---  %s  ---", text));
 
-        llFitContainer.removeView(sender);
-        llFitContainer.removeView(date);
-        llFitContainer.removeView(time);
-
-        llMainContainer.setBackgroundColor(Color.WHITE);
-        llMainContainer.setBackgroundColor(Color.WHITE);
-        llSelectedContainer.setBackgroundColor(Color.WHITE);
-        llMessageContainer.setBackgroundColor(Color.WHITE);
-
-        //Смещаем в центр
-        llMainContainer.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER;
-        llFitContainer.setLayoutParams(params);
-
-
         llMessageContainer.addView(textView);
     }
 
     public static void createTextCard(Context context, LinearLayout llMessageContainer, String text){
+        llMessageContainer.removeAllViews();
         TextView textView = new TextView(context);
         textView.setText(text);
         textView.setTextColor(Color.BLACK);
         llMessageContainer.addView(textView);
     }
 
-    public static void createPicsCard(Context context, LinearLayout llMessage, String text){
-
+    public static void createPicsCard(Context context, LinearLayout llMessageContainer, String text){
+        llMessageContainer.removeAllViews();
     }
 
-    public static void createDraftsCard(Context context, LinearLayout llMessage, String text){
-
+    public static void createDraftsCard(Context context, LinearLayout llMessageContainer, String text){
+        llMessageContainer.removeAllViews();
     }
 
-    public static void createFoldersCard(Context context, LinearLayout llMessage, String text){
-
+    public static void createFoldersCard(Context context, LinearLayout llMessageContainer, String text){
+        llMessageContainer.removeAllViews();
     }
 
-    public static void createPassportsCard(Context context, LinearLayout llMessage, String text){
-
+    public static void createPassportsCard(Context context, LinearLayout llMessageContainer, String text){
+        llMessageContainer.removeAllViews();
     }
 
     /**
@@ -89,6 +74,7 @@ public class ChatCards {
 
 
         llFitContainer.setBackground(context.getDrawable(R.drawable.borders_message_out));
+        llMessageContainer.setBackgroundColor(context.getColor(R.color.out_message_background));
 
     }
 
@@ -97,6 +83,9 @@ public class ChatCards {
                                           TextView sender, TextView date, LinearLayout llMessageContainer, TextView time){
 
         useCommonStyle(llMainContainer, llSelectedContainer, time);
+
+//        llFitContainer.addView(sender, 1);
+//        llFitContainer.addView(date, 1);
 
         sender.setTextColor(Color.BLUE);
         date.setTextColor(Color.BLUE);
@@ -110,6 +99,7 @@ public class ChatCards {
 
 //        llFitContainer.setBackgroundColor(context.getResources().getColor(R.color.in_message_background, null));
         llFitContainer.setBackground(context.getDrawable(R.drawable.borders_message_in));
+        llMessageContainer.setBackgroundColor(context.getColor(R.color.in_message_background));
     }
 
     private static void useCommonStyle(LinearLayout llMainContainer, LinearLayout llSelectedContainer, TextView time){

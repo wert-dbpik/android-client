@@ -9,7 +9,8 @@
     <color name="colorMyDarkerGray">#7E7D7D</color>
     <color name="colorMyRed">#F60707</color>
     <color name="picture_background_gray">#c4c4c4</color>
-    <color name="out_message_background">#edf8eb</color>
-    <color name="in_message_background">#f6ebf8</color>
+    <color name="dialog_background">#FFFFFFFF</color>
+    <color name="out_message_background">#FFF0F4C7</color>
+    <color name="in_message_background">#FFF4EEDA</color>
 
 </resources>

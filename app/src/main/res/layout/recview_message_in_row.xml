@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="2dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/llMainContainer"
+            android:weightSum="100"
+            android:gravity="start"
+            android:orientation="horizontal"
+            android:background="@color/dialog_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/llSelectedContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="80"
+                android:paddingHorizontal="5dp"
+                android:paddingVertical="5dp"
+                android:background="@color/dialog_background"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/llFitContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:layout_gravity="start"
+                    android:background="@drawable/borders_message_in"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvSender"
+                        android:text="Симонов Алексей"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#3F51B5"
+                        android:textAlignment="viewStart"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:id="@+id/llMessageContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+
+                    <TextView
+                        android:id="@+id/tvTime"
+                        android:text="12:10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorMyGray"
+                        android:textAlignment="viewEnd"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
