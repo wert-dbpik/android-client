@@ -134,7 +134,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         Message message = createChatMessage(Message.MessageType.CHAT_TEXT, text);
         etMessage.setText("");
 
-        insertDateMessageIfNeeded(message, true);
+        insertDateMessageIfNeeded(adapter.getData(), message, true);
         sendMessageToRecipient(message);
     }
 
@@ -179,7 +179,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
                     roomMessages = new ArrayList<>();
                     for(Message m : allMessages){
                         if(m.getRoom().getId().equals(currentRoom.getId())) {
-                            Message serviceDateMessage = insertDateMessageIfNeeded(m, false);
+                            Message serviceDateMessage = insertDateMessageIfNeeded(roomMessages, m, false);
                             if(serviceDateMessage != null) roomMessages.add(serviceDateMessage);
                             roomMessages.add(m);
                         }
@@ -197,15 +197,15 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
 
     }
 
-    private Message insertDateMessageIfNeeded(Message m, boolean addToAdapter) {
+    private Message insertDateMessageIfNeeded(List<Message> list, Message m, boolean addToAdapter) {
         Message serviceMessage = null;
-        if (roomMessages.isEmpty()) {
+        if (list.isEmpty()) {
             serviceMessage = createServiceMessage(m);
-        } else if (!ThisApplication.parseStringToDate(roomMessages.get(roomMessages.size() - 1).getCreationTime())
+        } else if (!ThisApplication.parseStringToDate(list.get(list.size() - 1).getCreationTime())
                 .equals(ThisApplication.parseStringToDate(m.getCreationTime()))) {
             serviceMessage = createServiceMessage(m);
         }
-        if(addToAdapter){
+        if(serviceMessage != null && addToAdapter){
             adapter.getData().add(serviceMessage);
             int lastPosition = adapter.getData().size() - 1;
             adapter.notifyItemInserted(lastPosition);
