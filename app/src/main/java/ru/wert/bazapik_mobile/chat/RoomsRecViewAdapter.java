@@ -3,23 +3,19 @@ package ru.wert.bazapik_mobile.chat;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.chat.fragments.RoomsFragment;
 import ru.wert.bazapik_mobile.data.models.Room;
-import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 
 public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapter.ViewHolder> {
 
@@ -28,14 +24,14 @@ public class RoomsRecViewAdapter extends RecyclerView.Adapter<RoomsRecViewAdapte
     private RoomsClickListener clickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
-    private ChatRoomsFragment fragment;
+    private RoomsFragment fragment;
 
     /**
      * Конструктор получает на входе список элементов List<P>
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public RoomsRecViewAdapter(ChatRoomsFragment fragment, Context context, List<Room> items) {
+    public RoomsRecViewAdapter(RoomsFragment fragment, Context context, List<Room> items) {
         this.fragment = fragment;
         this.context = context;
         this.inflater = LayoutInflater.from(context);

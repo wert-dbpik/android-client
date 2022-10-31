@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/GitHub/PIK/android-client/app/src/main/res/drawable/back_chat.xml" value="0.36875" />
         <entry key="..\:/GitHub/PIK/android-client/app/src/main/res/drawable/borders.xml" value="0.22864583333333333" />
         <entry key="..\:/GitHub/PIK/android-client/app/src/main/res/drawable/borders_message_in.xml" value="0.382051282051282" />
         <entry key="..\:/GitHub/PIK/android-client/app/src/main/res/drawable/borders_message_out.xml" value="0.382051282051282" />
+        <entry key="..\:/GitHub/PIK/android-client/app/src/main/res/drawable/chat_message_string.xml" value="0.2125" />
         <entry key="..\:/GitHub/PIK/android-client/app/src/main/res/layout-land/activity_login.xml" value="0.3148148148148148" />
         <entry key="..\:/GitHub/PIK/android-client/app/src/main/res/layout-land/activity_main.xml" value="0.2985008818342152" />
         <entry key="..\:/GitHub/PIK/android-client/app/src/main/res/layout-land/activity_start.xml" value="0.21164021164021163" />

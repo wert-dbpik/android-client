@@ -1,17 +1,20 @@
-package ru.wert.bazapik_mobile.chat;
+package ru.wert.bazapik_mobile.chat.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,19 +29,25 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.chat.ChatActivityInteraction;
+import ru.wert.bazapik_mobile.chat.RoomsRecViewAdapter;
 import ru.wert.bazapik_mobile.data.api_interfaces.RoomApiInterface;
+import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.Room;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
+import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
 
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
-public class ChatRoomsFragment extends Fragment implements ChatFragment, RoomsRecViewAdapter.RoomsClickListener{
+public class RoomsFragment extends Fragment implements ChatFragment, RoomsRecViewAdapter.RoomsClickListener {
 
     private ChatActivityInteraction chatActivity;
     private FragmentManager fm;
     private RecyclerView rv;
     private RoomsRecViewAdapter adapter;
+    private ImageButton ibtnReturnToBaza;
+    private ImageButton ibtnShowChatMenu;
 
     public static final String COMMON_CHAT = "Общий чат";
     private final String KEY_RECYCLER_STATE = "recycler_state";
@@ -88,6 +97,30 @@ public class ChatRoomsFragment extends Fragment implements ChatFragment, RoomsRe
         View view = inflater.inflate(R.layout.fragment_chat_rooms, container, false);
         rv = view.findViewById(R.id.recycle_view_rooms);
 
+        ibtnReturnToBaza = view.findViewById(R.id.ibtnBackToBaza);
+        ibtnReturnToBaza.setOnClickListener(e->{
+            Intent settingsIntent = new Intent(getContext(), OrganizerActivity.class);
+            startActivity(settingsIntent);
+        });
+        ibtnShowChatMenu = view.findViewById(R.id.ibtnShowChatMenu);
+        ibtnShowChatMenu.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+            PopupMenu popup = new PopupMenu(v.getContext(), v);
+            popup.getMenuInflater().inflate(R.menu.menu_chat, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case R.id.action_people:
+                            chatActivity.openPeopleFragment();
+                            break;
+                    }
+                    return true;
+                }
+            });
+            popup.show();
+
+        });
+
         createRecViewOfFoundRooms();
 
         return view;
@@ -136,7 +169,7 @@ public class ChatRoomsFragment extends Fragment implements ChatFragment, RoomsRe
     public void fillRecViewWithItems(List<Room> items){
         ((Activity)chatActivity.getChatContext()).runOnUiThread(()->{
             adapter = new RoomsRecViewAdapter(this, chatActivity.getChatContext(), items);
-            adapter.setClickListener(ChatRoomsFragment.this);
+            adapter.setClickListener(RoomsFragment.this);
             rv.setAdapter(adapter);
         });
     }

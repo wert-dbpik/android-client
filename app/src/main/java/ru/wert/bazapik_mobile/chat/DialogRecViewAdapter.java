@@ -17,6 +17,7 @@ import java.util.List;
 import lombok.Getter;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.chat.fragments.DialogFragment;
 import ru.wert.bazapik_mobile.data.models.Message;
 
 public class DialogRecViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -29,14 +30,14 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final LayoutInflater inflater;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
-    private ChatDialogFragment fragment;
+    private DialogFragment fragment;
 
     /**
      * Конструктор получает на входе список элементов List<P>
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public DialogRecViewAdapter(ChatDialogFragment fragment, Context context, List<Message> items) {
+    public DialogRecViewAdapter(DialogFragment fragment, Context context, List<Message> items) {
         this.fragment = fragment;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
@@ -109,7 +110,7 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<RecyclerView.View
      */
     private void initTypeMessageService(ViewHolderMessageService holder, int position){
         Message message = (Message) data.get(position);
-        ChatCards.createServiceCard(context, holder.llMessageContainer, message.getText());
+        Cards.createServiceCard(context, holder.llMessageContainer, message.getText());
     }
 
     /**
@@ -138,19 +139,19 @@ public class DialogRecViewAdapter extends RecyclerView.Adapter<RecyclerView.View
     private void createMessageCard(LinearLayout llMessageContainer, Message message) {
         switch(message.getType()){
             case CHAT_TEXT:
-                ChatCards.createTextCard(context, llMessageContainer, message.getText());
+                Cards.createTextCard(context, llMessageContainer, message.getText());
                 break;
             case CHAT_PICS:
-                ChatCards.createPicsCard(context, llMessageContainer, message.getText());
+                Cards.createPicsCard(context, llMessageContainer, message.getText());
                 break;
             case CHAT_DRAFTS:
-                ChatCards.createDraftsCard(context, llMessageContainer, message.getText());
+                Cards.createDraftsCard(context, llMessageContainer, message.getText());
                 break;
             case CHAT_FOLDERS:
-                ChatCards.createFoldersCard(context, llMessageContainer, message.getText());
+                Cards.createFoldersCard(context, llMessageContainer, message.getText());
                 break;
             case CHAT_PASSPORTS:
-                ChatCards.createPassportsCard(context, llMessageContainer, message.getText());
+                Cards.createPassportsCard(context, llMessageContainer, message.getText());
                 break;
         }
     }

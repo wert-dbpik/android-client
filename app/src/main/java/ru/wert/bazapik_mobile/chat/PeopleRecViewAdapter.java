@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -14,8 +13,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.chat.fragments.PeopleFragment;
 import ru.wert.bazapik_mobile.data.models.User;
-import ru.wert.bazapik_mobile.organizer.OrganizerRecViewAdapter;
 
 public class PeopleRecViewAdapter extends RecyclerView.Adapter<PeopleRecViewAdapter.ViewHolder> {
 
@@ -24,14 +23,14 @@ public class PeopleRecViewAdapter extends RecyclerView.Adapter<PeopleRecViewAdap
     private PeopleClickListener clickListener;
     private final Context context;
     private int selectedPosition = RecyclerView.NO_POSITION;
-    private ChatPeopleFragment fragment;
+    private PeopleFragment fragment;
 
     /**
      * Конструктор получает на входе список элементов List<P>
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public PeopleRecViewAdapter(ChatPeopleFragment fragment, Context context, List<User> items) {
+    public PeopleRecViewAdapter(PeopleFragment fragment, Context context, List<User> items) {
         this.fragment = fragment;
         this.context = context;
         this.inflater = LayoutInflater.from(context);

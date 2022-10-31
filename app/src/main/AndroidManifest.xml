@@ -15,8 +15,7 @@
         <activity
             android:name=".chat.ChatActivity"
             android:configChanges="orientation|screenSize"
-            android:exported="false"
-            android:theme="@style/AppTheme"  />
+            android:exported="false"/>
         <activity
             android:name=".remark.RemarksEditorActivity"
             android:exported="false" />

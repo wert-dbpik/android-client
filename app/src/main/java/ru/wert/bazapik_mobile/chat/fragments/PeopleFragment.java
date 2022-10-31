@@ -1,4 +1,4 @@
-package ru.wert.bazapik_mobile.chat;
+package ru.wert.bazapik_mobile.chat.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,18 +24,19 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
+import ru.wert.bazapik_mobile.chat.ChatActivityInteraction;
+import ru.wert.bazapik_mobile.chat.PeopleRecViewAdapter;
 import ru.wert.bazapik_mobile.data.api_interfaces.RoomApiInterface;
 import ru.wert.bazapik_mobile.data.models.Room;
 import ru.wert.bazapik_mobile.data.models.User;
 import ru.wert.bazapik_mobile.data.retrofit.RetrofitClient;
-import ru.wert.bazapik_mobile.info.InfoActivity;
 import ru.wert.bazapik_mobile.warnings.AppWarnings;
 
 import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_USERS;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 
-public class ChatPeopleFragment extends Fragment implements ChatFragment, PeopleRecViewAdapter.PeopleClickListener{
+public class PeopleFragment extends Fragment implements ChatFragment, PeopleRecViewAdapter.PeopleClickListener {
     private ChatActivityInteraction chatActivity;
     private FragmentManager fm;
     private RecyclerView rv;
@@ -107,7 +108,7 @@ public class ChatPeopleFragment extends Fragment implements ChatFragment, People
     public void fillRecViewWithItems(List<User> items){
         ((Activity)chatActivity.getChatContext()).runOnUiThread(()->{
             adapter = new PeopleRecViewAdapter(this, chatActivity.getChatContext(), items);
-            adapter.setClickListener(ChatPeopleFragment.this);
+            adapter.setClickListener(PeopleFragment.this);
             rv.setAdapter(adapter);
         });
     }

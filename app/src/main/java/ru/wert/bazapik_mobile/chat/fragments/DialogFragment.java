@@ -1,8 +1,7 @@
-package ru.wert.bazapik_mobile.chat;
+package ru.wert.bazapik_mobile.chat.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -26,6 +25,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
+import ru.wert.bazapik_mobile.chat.ChatActivity;
+import ru.wert.bazapik_mobile.chat.ChatActivityInteraction;
+import ru.wert.bazapik_mobile.chat.DialogRecViewAdapter;
 import ru.wert.bazapik_mobile.data.api_interfaces.MessageApiInterface;
 import ru.wert.bazapik_mobile.data.models.Message;
 import ru.wert.bazapik_mobile.data.models.Room;
@@ -36,7 +38,7 @@ import static ru.wert.bazapik_mobile.chat.ChatActivity.$ROOM;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
 
 
-public class ChatDialogFragment extends Fragment implements ChatFragment {
+public class DialogFragment extends Fragment implements ChatFragment {
 
     private TextView tvChatName;
     private RecyclerView rv;
@@ -45,6 +47,7 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
     private ImageButton ibtnSendImage;
     private ImageButton ibtnSendLink;
     private ImageButton ibtnSend;
+    private ImageButton ibtnReturnToRooms;
 
     private DialogRecViewAdapter adapter;
     private Room currentRoom;
@@ -100,6 +103,8 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat_dialog, container, false);
+        //Убираем верхнее меню
+
 
         currentRoom = getArguments().getParcelable($ROOM);
 
@@ -109,14 +114,17 @@ public class ChatDialogFragment extends Fragment implements ChatFragment {
         ibtnSendPhoto = view.findViewById(R.id.ibtnSendPhoto);
         ibtnSendImage = view.findViewById(R.id.ibtnSendImage);
         ibtnSendLink = view.findViewById(R.id.ibtnSendLink);
+        ibtnReturnToRooms = view.findViewById(R.id.ibtnBack);
+        ibtnReturnToRooms.setOnClickListener(e-> {
+            view.clearFocus();
+            chatActivity.openRoomsFragment();
+        });
 
         //кнопка ОТПРАВИТЬ
         ibtnSend = view.findViewById(R.id.ibtnSend);
         ibtnSend.setOnClickListener(e->sendText());
 
         tvChatName.setText(chatActivity.getRoomName(currentRoom.getName()));
-        if(currentRoom.getName().startsWith("one-to-one")) tvChatName.setTextColor(Color.YELLOW);
-        else if (currentRoom.getName().startsWith("group")) tvChatName.setTextColor(Color.CYAN);
 
         createRecViewOfFoundMessages();
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import ru.wert.bazapik_mobile.R;
 
-public class ChatCards {
+public class Cards {
 
     public static void createServiceCard(Context context, LinearLayout llMessageContainer, String text){
         //В первую очередь очищаем контейнер, чтобы не дублировать запись

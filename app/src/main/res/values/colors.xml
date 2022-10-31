@@ -12,5 +12,6 @@
     <color name="dialog_background">#FFFFFFFF</color>
     <color name="out_message_background">#FFF0F4C7</color>
     <color name="in_message_background">#FFF4EEDA</color>
+    <color name="border_gray">#B1BCBE</color>
 
 </resources>
