@@ -1,8 +1,10 @@
 package ru.wert.bazapik_mobile;
 
 import static ru.wert.bazapik_mobile.ThisApplication.DATA_BASE_URL;
+import static ru.wert.bazapik_mobile.ThisApplication.getAppContext;
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.constants.Consts.CURRENT_USER;
+import static ru.wert.bazapik_mobile.constants.Consts.SEND_ERROR_REPORTS;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -11,6 +13,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.widget.ImageView;
+
+import org.acra.ACRA;
+import org.acra.util.ToastSender;
 
 import java.util.List;
 
@@ -48,6 +53,7 @@ public class StartActivity extends BaseActivity {
         setContentView(R.layout.activity_start);
 
 
+
         Log.i(TAG, "onCreate: IP = " + getProp("IP"));
         Log.i(TAG, "onCreate: PORT = " + getProp("PORT"));
         Log.i(TAG, "onCreate: SHOW_SOLID_FILES = " + getProp("SHOW_SOLID_FILES"));
@@ -66,6 +72,9 @@ public class StartActivity extends BaseActivity {
                 if(!logoTapped) {
                     startRetrofit();
                     ThisApplication.loadSettings();
+
+                    ACRA.getErrorReporter().setEnabled(SEND_ERROR_REPORTS);
+
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();

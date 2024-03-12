@@ -43,12 +43,12 @@ public class ACRA_config {
                                 //defaults to true
                                 .withReportAsFile(true)
                                 //defaults to ACRA-report.stacktrace
-                                .withReportFileName("BazaPIK_Crash.txt")
+                                .withReportFileName("TubusM_Crash.txt")
                                 //defaults to "<applicationId> Crash Report"
-                                .withSubject("BazaPIK-android : сбой в программе")
+                                .withSubject("TubusM-android : сбой в программе")
                                 //defaults to empty
                                 .withBody(String.format("%s сообщает о сбое.\nОтчет во вложенном файле " +
-                                        "BazaPIK_Crash.txt", user))
+                                        "TubusM_Crash.txt", user))
                                 .build()
                 )
 

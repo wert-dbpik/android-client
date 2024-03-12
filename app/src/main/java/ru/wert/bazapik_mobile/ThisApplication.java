@@ -1,6 +1,7 @@
 package ru.wert.bazapik_mobile;
 
 import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
+import static ru.wert.bazapik_mobile.constants.Consts.SEND_ERROR_REPORTS;
 import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
 
 import android.annotation.SuppressLint;
@@ -13,14 +14,14 @@ import android.net.Uri;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import org.acra.util.ToastSender;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -44,7 +45,6 @@ import ru.wert.bazapik_mobile.data.servicesREST.DraftService;
 import ru.wert.bazapik_mobile.data.servicesREST.FileService;
 import ru.wert.bazapik_mobile.data.servicesREST.FolderService;
 import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
-import ru.wert.bazapik_mobile.organizer.passports.PassportsRecViewAdapter;
 
 public class ThisApplication extends Application {
 
@@ -100,7 +100,6 @@ public class ThisApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         editor = settings.edit();
         ThisApplication.appContext = this.getApplicationContext();
 
@@ -118,7 +117,9 @@ public class ThisApplication extends Application {
             case "SHOW_SOLID_FILES":
                 return settings.getString(name, "false");
             case "HIDE_PREFIXES":
-                return settings.getString(name, "false");
+                return settings.getString(name, "false");            
+            case "SEND_ERROR_REPORTS":
+                return settings.getString(name, "true");
             default:
                 return "NotFoundProperty";
         }
@@ -131,9 +132,9 @@ public class ThisApplication extends Application {
     }
 
     public static void loadSettings() {
-
         SHOW_SOLID_FILES = Boolean.parseBoolean(getProp("SHOW_SOLID_FILES"));
         HIDE_PREFIXES = Boolean.parseBoolean(getProp("HIDE_PREFIXES"));
+        SEND_ERROR_REPORTS = Boolean.parseBoolean(getProp("SEND_ERROR_REPORTS"));
 
     }
 

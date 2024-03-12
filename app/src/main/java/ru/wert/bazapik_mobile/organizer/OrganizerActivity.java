@@ -4,6 +4,7 @@ import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
 import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
 import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_PASSPORTS;
+import static ru.wert.bazapik_mobile.constants.Consts.SEND_ERROR_REPORTS;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.acra.util.ToastSender;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
@@ -29,6 +32,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.wert.bazapik_mobile.ACRA_config;
 import ru.wert.bazapik_mobile.ChangePassActivity;
 import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
@@ -108,6 +112,9 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             }
             return false;
         });
+
+//        String message = Boolean.toString(SEND_ERROR_REPORTS) ;
+//        ToastSender.sendToast(getApplication().getApplicationContext(), message, 0);
 
         // Слушатель на изменение активного фрагмента меняет содержимое строки поиска
         fm.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
@@ -349,15 +356,18 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     }
 
     public void openFoldersFragment() {
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-        ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
-//        ft.addToBackStack(null);
-        ft.commit();
-        //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
-        if (currentFoldersFragment.getUpperProductGroupId() != null &&
-                currentFoldersFragment.getUpperProductGroupId().equals(1L))
-            getFm().getFragments().clear();
+
+        throw new RuntimeException();
+
+//        FragmentTransaction ft = fm.beginTransaction();
+//        ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+//        ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
+////        ft.addToBackStack(null);
+//        ft.commit();
+//        //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
+//        if (currentFoldersFragment.getUpperProductGroupId() != null &&
+//                currentFoldersFragment.getUpperProductGroupId().equals(1L))
+//            getFm().getFragments().clear();
     }
 
     //=======================  M E N U  ================================

@@ -2,10 +2,10 @@ package ru.wert.bazapik_mobile.settings;
 
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
-import static ru.wert.bazapik_mobile.ThisApplication.FILE_SERVICE;
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 import static ru.wert.bazapik_mobile.ThisApplication.loadSettings;
 import static ru.wert.bazapik_mobile.ThisApplication.setProp;
+import static ru.wert.bazapik_mobile.constants.Consts.SEND_ERROR_REPORTS;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -14,6 +14,8 @@ import android.os.Environment;
 import android.text.method.LinkMovementMethod;
 import android.widget.CheckBox;
 import android.widget.TextView;
+
+import org.acra.ACRA;
 
 import java.io.File;
 
@@ -28,6 +30,7 @@ public class SettingsActivity extends BaseActivity {
 
     private CheckBox cbShowSolidFiles;
     private CheckBox cbHidePrefixes;
+    private CheckBox cbSendErrorReports;
     private TextView tvVersion;
     private TextView tvVersionAvailable, tvLoadEDrawings;
     private AsyncTask<String, String, Boolean> downloadTask;
@@ -40,6 +43,7 @@ public class SettingsActivity extends BaseActivity {
 
         cbShowSolidFiles = findViewById(R.id.cbShowSolidFiles);
         cbHidePrefixes = findViewById(R.id.cbHidePrefixes);
+        cbSendErrorReports = findViewById(R.id.cbSendErrorMails);
         tvVersion = findViewById(R.id.tvVersion);
         tvVersionAvailable = findViewById(R.id.tvVersionAvalable);
         tvLoadEDrawings = findViewById(R.id.tvLoadEDrawings);
@@ -80,10 +84,10 @@ public class SettingsActivity extends BaseActivity {
                 new AlertDialog.Builder(SettingsActivity.this)
                         .setTitle("ВНИМАНИЕ!")
                         .setMessage( String.format("Файл с новой версией приложения %s будет сохранен в папку Загрузки",
-                                "BazaPIK-" + APPLICATION_VERSION_AVAILABLE))
+                                "Tubus-" + APPLICATION_VERSION_AVAILABLE))
                         .setNegativeButton(android.R.string.no, null)
                         .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
-                            String fileName = "BazaPIK-" + APPLICATION_VERSION_AVAILABLE + ".apk";
+                            String fileName = "Tubus-" + APPLICATION_VERSION_AVAILABLE + ".apk";
                             File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
                             downloadTask = new DownloadFileTask(
@@ -109,6 +113,7 @@ public class SettingsActivity extends BaseActivity {
         super.onResume();
         cbShowSolidFiles.setChecked(Boolean.parseBoolean(getProp("SHOW_SOLID_FILES")));
         cbHidePrefixes.setChecked(Boolean.parseBoolean(getProp("HIDE_PREFIXES")));
+        cbSendErrorReports.setChecked(Boolean.parseBoolean(getProp("SEND_ERROR_REPORTS")));
     }
 
 
@@ -116,10 +121,13 @@ public class SettingsActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-            setProp("SHOW_SOLID_FILES", String.valueOf(cbShowSolidFiles.isChecked()));
-            setProp("HIDE_PREFIXES", String.valueOf(cbHidePrefixes.isChecked()));
+        setProp("SHOW_SOLID_FILES", String.valueOf(cbShowSolidFiles.isChecked()));
+        setProp("HIDE_PREFIXES", String.valueOf(cbHidePrefixes.isChecked()));
+        setProp("SEND_ERROR_REPORTS", String.valueOf(cbSendErrorReports.isChecked()));
 
-            loadSettings();
+        loadSettings();
+
+        ACRA.getErrorReporter().setEnabled(SEND_ERROR_REPORTS);
 
     }
 }
