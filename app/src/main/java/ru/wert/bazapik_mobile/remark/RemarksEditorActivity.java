@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -378,6 +379,7 @@ public class RemarksEditorActivity extends BaseActivity {
                         ext = str.equals("jpeg") ? "jpg" : str;
                     } else
                         break; //Если картинка не картинка, то переходим к следующему uri
+                    newPic.setInitName("no_name");
                     newPic.setExtension(ext);
                     newPic.setWidth(bmp.getWidth());
                     newPic.setHeight(bmp.getHeight());

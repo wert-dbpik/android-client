@@ -30,7 +30,6 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark">
 
-
         <Button
             android:id="@+id/btnFoldersTab"
             android:text="Комплекты"
@@ -45,6 +44,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
+
+
     </LinearLayout>
 
     <FrameLayout
@@ -55,8 +56,8 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/organizer_fragment_container"
-            android:tag="folders1"
-            android:name="ru.wert.bazapik_mobile.organizer.folders.FoldersFragment"
+            android:tag="passports1"
+            android:name="ru.wert.bazapik_mobile.organizer.passports.PassportsFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

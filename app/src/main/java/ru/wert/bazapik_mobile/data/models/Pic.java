@@ -16,6 +16,7 @@ import ru.wert.bazapik_mobile.data.interfaces.Item;
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"user", "time"}, callSuper = true)
 public class Pic extends _BaseEntity implements Item, Parcelable {
+    private String initName;
     private String extension;
     private Integer width;
     private Integer height;

@@ -33,7 +33,7 @@ import ru.wert.bazapik_mobile.ChangePassActivity;
 import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
 import ru.wert.bazapik_mobile.ThisApplication;
-import ru.wert.bazapik_mobile.chat.ChatActivity;
+//import ru.wert.bazapik_mobile.chat.ChatActivity;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Folder;
 import ru.wert.bazapik_mobile.data.models.VersionAndroid;
@@ -84,8 +84,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         setContentView(R.layout.activity_organizer);
 
         fm = getSupportFragmentManager();
-        currentPassportsFragment = new PassportsFragment();
         currentFoldersFragment = new FoldersFragment();
+        currentPassportsFragment = new PassportsFragment();
 
         keyboardContainer = findViewById(R.id.keyboard_container);
         editTextSearch = findViewById(R.id.edit_text_search);
@@ -355,7 +355,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 //        ft.addToBackStack(null);
         ft.commit();
         //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
-        if (currentFoldersFragment.getUpperProductGroupId().equals(1L))
+        if (currentFoldersFragment.getUpperProductGroupId() != null &&
+                currentFoldersFragment.getUpperProductGroupId().equals(1L))
             getFm().getFragments().clear();
     }
 
@@ -394,11 +395,11 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 startActivity(updateView);
                 return true;
 
-            case R.id.action_showChat:
-                editTextSearch.setText("");
-                Intent chatView = new Intent(OrganizerActivity.this, ChatActivity.class);
-                startActivity(chatView);
-                return true;
+//            case R.id.action_showChat:
+//                editTextSearch.setText("");
+//                Intent chatView = new Intent(OrganizerActivity.this, ChatActivity.class);
+//                startActivity(chatView);
+//                return true;
 
             case R.id.action_changeUser:
                 editTextSearch.setText("");
