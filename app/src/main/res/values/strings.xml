@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">ТУБУС</string>
+    <string name="app_version">#1.3</string>
+    <string name="app_years">2022-2024гг</string>
     <string name="ip">IP-адрес</string>
     <string name="user">Пользователь</string>
     <string name="password">Пароль</string>
     <string name="enter">ВОЙТИ</string>
-<!--    <string name="pikovka">pikovka270</string>-->
-<!--    <string name="BazaDannyh">База данных</string>-->
     <string name="EnterProperURL">Сервер не доступен\nИзмените URL :</string>
     <string name="OK">ОК</string>
     <string name="Error_in_app">ОШИБКА В ПРИЛОЖЕНИИ</string>
@@ -28,6 +28,7 @@
     <string name="my_email">wert001@yandex.ru</string>
 
     <string name="videoYouTube"><a href="https://www.youtube.com/playlist?list=PLlXRdu_fwDGUorUERVsuC1JTjQXAeNp0E">YouTube</a></string>
+
 
 
 </resources>

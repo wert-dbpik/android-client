@@ -20,21 +20,25 @@
         <ImageView
             android:id="@+id/imageViewLogo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10pt"
-            android:layout_marginVertical="10dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="20pt"
+            android:layout_marginVertical="20pt"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
             app:srcCompat="@drawable/tubus_logo" />
 
         <TextView
-            android:id="@+id/tvEmpty"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:textSize="60sp" />
+            android:layout_gravity="center_horizontal"
+            android:text="@string/app_version"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10pt"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/app_years"/>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
