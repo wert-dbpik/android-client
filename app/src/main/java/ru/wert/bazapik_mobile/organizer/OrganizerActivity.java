@@ -4,8 +4,9 @@ import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION;
 import static ru.wert.bazapik_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE;
 import static ru.wert.bazapik_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
 import static ru.wert.bazapik_mobile.ThisApplication.LIST_OF_ALL_PASSPORTS;
-import static ru.wert.bazapik_mobile.constants.Consts.SEND_ERROR_REPORTS;
+import static ru.wert.bazapik_mobile.constants.Consts.USE_APP_KEYBOARD;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -16,10 +17,9 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-
-import org.acra.util.ToastSender;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -32,7 +32,6 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
-import ru.wert.bazapik_mobile.ACRA_config;
 import ru.wert.bazapik_mobile.ChangePassActivity;
 import ru.wert.bazapik_mobile.LoginActivity;
 import ru.wert.bazapik_mobile.R;
@@ -79,7 +78,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     @Getter@Setter private String foldersTextSearch = "";
     @Getter@Setter private String passportsTextSearch = "";
-    private AsyncTask<String, String, Boolean> downloadTask;
+//    private AsyncTask<String, String, Boolean> downloadTask;
 
 
     @Override
@@ -113,9 +112,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             return false;
         });
 
-//        String message = Boolean.toString(SEND_ERROR_REPORTS) ;
-//        ToastSender.sendToast(getApplication().getApplicationContext(), message, 0);
-
         // Слушатель на изменение активного фрагмента меняет содержимое строки поиска
         fm.registerFragmentLifecycleCallbacks(new FragmentManager.FragmentLifecycleCallbacks() {
             @Override
@@ -148,6 +144,11 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     @Override
     public void onResume() {
         super.onResume();
+        editTextSearch.clearFocus();
+
+        if(USE_APP_KEYBOARD) switchOffStandardKeyboard();
+        else switchOnStandardKeyboard();
+
         if (bundleRecyclerViewState != null) {
             currentTypeFragment = FragmentTag.valueOf(bundleRecyclerViewState.getString(FRAGMENT_TAG));
             openCurrentFragment();
@@ -204,36 +205,45 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
      * Создается поле для набора искомого текста
      */
     private void createSearchEditText() {
-
-        //Чтобы исключить появление стандартной клавиатуры
-        editTextSearch.setShowSoftInputOnFocus (false);
         editTextSearch.setCursorVisible(true);
         editTextSearch.setRawInputType(InputType.TYPE_CLASS_TEXT);
         editTextSearch.setTextIsSelectable(true);
-        //Исключить фокус при создании активити
-        editTextSearch.clearFocus();
 
         createTextWatcher(editTextSearch);
+
+    }
+    
+    private void switchOffStandardKeyboard(){
+        editTextSearch.setShowSoftInputOnFocus(false);
 
         //При нажатии на поле ввода клавиатура появляется, при потере фокуса
         //при нажатии на список или рестарте активити - клавиатура исчезает
         editTextSearch.setOnFocusChangeListener((view, hasFocus) -> {
-            if(hasFocus){
+            if (hasFocus) {
                 keyboardContainer.setVisibility(View.VISIBLE);
             } else {
                 keyboardContainer.setVisibility(View.GONE);
             }
         });
-
     }
+
+    private void switchOnStandardKeyboard(){
+        editTextSearch.setShowSoftInputOnFocus(true);
+        editTextSearch.setOnFocusChangeListener(null);
+    }
+
 
     @Override
     public void onBackPressed() {
         OrganizerFragment<Item> fr = (OrganizerFragment) fm.findFragmentById(R.id.organizer_fragment_container);
 
-        if(keyboardContainer.getVisibility() == View.VISIBLE) {
+        if(USE_APP_KEYBOARD && keyboardContainer.getVisibility() == View.VISIBLE) {
             editTextSearch.clearFocus();
-            keyboardContainer.setVisibility(View.GONE);
+            if(USE_APP_KEYBOARD) keyboardContainer.setVisibility(View.GONE);
+            else {
+                ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                        .hideSoftInputFromWindow(editTextSearch.getWindowToken(), 0);
+            }
         } else if(fr instanceof FoldersFragment) {
             if(currentFoldersFragment.getUpperProductGroupId().equals(1L))
                 showAlertDialogAndExit();
@@ -249,6 +259,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         }
 
     }
+
 
     private void showAlertDialogAndExit(){
         new AlertDialog.Builder(this)

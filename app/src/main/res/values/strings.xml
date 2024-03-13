@@ -1,13 +1,11 @@
 <resources>
-    <string name="app_name">Тубус</string>
-<!--    <string name="Dostup">Доступ к базе данных</string>-->
-<!--    <string name="company_name">ООО НТЦ ПИК</string>-->
+    <string name="app_name">ТУБУС</string>
     <string name="ip">IP-адрес</string>
     <string name="user">Пользователь</string>
     <string name="password">Пароль</string>
     <string name="enter">ВОЙТИ</string>
-    <string name="pikovka">pikovka270</string>
-    <string name="BazaDannyh">База данных</string>
+<!--    <string name="pikovka">pikovka270</string>-->
+<!--    <string name="BazaDannyh">База данных</string>-->
     <string name="EnterProperURL">Сервер не доступен\nИзмените URL :</string>
     <string name="OK">ОК</string>
     <string name="Error_in_app">ОШИБКА В ПРИЛОЖЕНИИ</string>
@@ -25,8 +23,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="crash_toast_text">Произошел сбой в программе! Пожалйста, отправьте отчет</string>
-    <string name="mail_subject">База ПИК, Андроид - Отчет об ошибке</string>
-    <string name="mail_body">Отчет во вложенном файле BazaPIK_Crash.txt</string>
+    <string name="mail_subject">ТубусМобайл, Андроид - Отчет об ошибке</string>
+    <string name="mail_body">Отчет во вложенном файле TubusMobile_Crash.txt</string>
     <string name="my_email">wert001@yandex.ru</string>
 
     <string name="videoYouTube"><a href="https://www.youtube.com/playlist?list=PLlXRdu_fwDGUorUERVsuC1JTjQXAeNp0E">YouTube</a></string>

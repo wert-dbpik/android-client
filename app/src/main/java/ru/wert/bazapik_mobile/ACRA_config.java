@@ -43,9 +43,9 @@ public class ACRA_config {
                                 //defaults to true
                                 .withReportAsFile(true)
                                 //defaults to ACRA-report.stacktrace
-                                .withReportFileName("TubusM_Crash.txt")
+                                .withReportFileName("TubusMobile_Crash.txt")
                                 //defaults to "<applicationId> Crash Report"
-                                .withSubject("TubusM-android : сбой в программе")
+                                .withSubject("TubusMobile-android : сбой в программе")
                                 //defaults to empty
                                 .withBody(String.format("%s сообщает о сбое.\nОтчет во вложенном файле " +
                                         "TubusM_Crash.txt", user))
