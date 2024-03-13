@@ -98,7 +98,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/tvVersionAvalable"
+            android:id="@+id/tvVersionAvailable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"

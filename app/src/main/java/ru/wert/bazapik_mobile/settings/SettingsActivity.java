@@ -47,7 +47,7 @@ public class SettingsActivity extends BaseActivity {
         cbSendErrorReports = findViewById(R.id.cbSendErrorMails);
         cbUseAppKeyboard = findViewById(R.id.cbUseAppKeyboard);
         tvVersion = findViewById(R.id.tvVersion);
-        tvVersionAvailable = findViewById(R.id.tvVersionAvalable);
+        tvVersionAvailable = findViewById(R.id.tvVersionAvailable);
         tvLoadEDrawings = findViewById(R.id.tvLoadEDrawings);
 
         tvLoadEDrawings.setTextColor(ContextCompat.getColor(this, R.color.colorAccent));
@@ -86,10 +86,10 @@ public class SettingsActivity extends BaseActivity {
                 new AlertDialog.Builder(SettingsActivity.this)
                         .setTitle("ВНИМАНИЕ!")
                         .setMessage( String.format("Файл с новой версией приложения %s будет сохранен в папку Загрузки",
-                                "Tubus-" + APPLICATION_VERSION_AVAILABLE))
+                                "TubusMobile-" + APPLICATION_VERSION_AVAILABLE))
                         .setNegativeButton(android.R.string.no, null)
                         .setPositiveButton(android.R.string.yes, (arg0, arg1) -> {
-                            String fileName = "Tubus-" + APPLICATION_VERSION_AVAILABLE + ".apk";
+                            String fileName = "TubusMobile-" + APPLICATION_VERSION_AVAILABLE + ".apk";
                             File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
                             downloadTask = new DownloadFileTask(
