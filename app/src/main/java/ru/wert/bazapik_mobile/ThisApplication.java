@@ -3,6 +3,7 @@ package ru.wert.bazapik_mobile;
 import static ru.wert.bazapik_mobile.constants.Consts.HIDE_PREFIXES;
 import static ru.wert.bazapik_mobile.constants.Consts.SEND_ERROR_REPORTS;
 import static ru.wert.bazapik_mobile.constants.Consts.SHOW_SOLID_FILES;
+import static ru.wert.bazapik_mobile.constants.Consts.USE_APP_KEYBOARD;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -120,6 +121,8 @@ public class ThisApplication extends Application {
                 return settings.getString(name, "false");            
             case "SEND_ERROR_REPORTS":
                 return settings.getString(name, "true");
+            case "USE_APP_KEYBOARD":
+                return settings.getString(name, "true");
             default:
                 return "NotFoundProperty";
         }
@@ -135,6 +138,7 @@ public class ThisApplication extends Application {
         SHOW_SOLID_FILES = Boolean.parseBoolean(getProp("SHOW_SOLID_FILES"));
         HIDE_PREFIXES = Boolean.parseBoolean(getProp("HIDE_PREFIXES"));
         SEND_ERROR_REPORTS = Boolean.parseBoolean(getProp("SEND_ERROR_REPORTS"));
+        USE_APP_KEYBOARD = Boolean.parseBoolean(getProp("USE_APP_KEYBOARD"));
 
     }
 

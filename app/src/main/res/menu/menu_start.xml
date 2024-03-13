@@ -13,10 +13,10 @@
         android:orderInCategory="3"
         app:showAsAction="never"/>
 
-    <item android:title="Чат"
-        android:id="@+id/action_showChat"
-        android:orderInCategory="4"
-        app:showAsAction="always"/>
+<!--    <item android:title="Чат"-->
+<!--        android:id="@+id/action_showChat"-->
+<!--        android:orderInCategory="4"-->
+<!--        app:showAsAction="always"/>-->
 
     <item
         android:orderInCategory="5"

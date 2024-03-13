@@ -31,6 +31,7 @@ public class SettingsActivity extends BaseActivity {
     private CheckBox cbShowSolidFiles;
     private CheckBox cbHidePrefixes;
     private CheckBox cbSendErrorReports;
+    private CheckBox cbUseAppKeyboard;
     private TextView tvVersion;
     private TextView tvVersionAvailable, tvLoadEDrawings;
     private AsyncTask<String, String, Boolean> downloadTask;
@@ -44,6 +45,7 @@ public class SettingsActivity extends BaseActivity {
         cbShowSolidFiles = findViewById(R.id.cbShowSolidFiles);
         cbHidePrefixes = findViewById(R.id.cbHidePrefixes);
         cbSendErrorReports = findViewById(R.id.cbSendErrorMails);
+        cbUseAppKeyboard = findViewById(R.id.cbUseAppKeyboard);
         tvVersion = findViewById(R.id.tvVersion);
         tvVersionAvailable = findViewById(R.id.tvVersionAvalable);
         tvLoadEDrawings = findViewById(R.id.tvLoadEDrawings);
@@ -114,6 +116,7 @@ public class SettingsActivity extends BaseActivity {
         cbShowSolidFiles.setChecked(Boolean.parseBoolean(getProp("SHOW_SOLID_FILES")));
         cbHidePrefixes.setChecked(Boolean.parseBoolean(getProp("HIDE_PREFIXES")));
         cbSendErrorReports.setChecked(Boolean.parseBoolean(getProp("SEND_ERROR_REPORTS")));
+        cbUseAppKeyboard.setChecked(Boolean.parseBoolean(getProp("USE_APP_KEYBOARD")));
     }
 
 
@@ -124,6 +127,7 @@ public class SettingsActivity extends BaseActivity {
         setProp("SHOW_SOLID_FILES", String.valueOf(cbShowSolidFiles.isChecked()));
         setProp("HIDE_PREFIXES", String.valueOf(cbHidePrefixes.isChecked()));
         setProp("SEND_ERROR_REPORTS", String.valueOf(cbSendErrorReports.isChecked()));
+        setProp("USE_APP_KEYBOARD", String.valueOf(cbUseAppKeyboard.isChecked()));
 
         loadSettings();
 

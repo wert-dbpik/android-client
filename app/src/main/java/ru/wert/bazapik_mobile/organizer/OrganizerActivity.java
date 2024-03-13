@@ -357,17 +357,15 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     public void openFoldersFragment() {
 
-        throw new RuntimeException();
-
-//        FragmentTransaction ft = fm.beginTransaction();
-//        ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
-//        ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
-////        ft.addToBackStack(null);
-//        ft.commit();
-//        //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
-//        if (currentFoldersFragment.getUpperProductGroupId() != null &&
-//                currentFoldersFragment.getUpperProductGroupId().equals(1L))
-//            getFm().getFragments().clear();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+        ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
+//        ft.addToBackStack(null);
+        ft.commit();
+        //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
+        if (currentFoldersFragment.getUpperProductGroupId() != null &&
+                currentFoldersFragment.getUpperProductGroupId().equals(1L))
+            getFm().getFragments().clear();
     }
 
     //=======================  M E N U  ================================

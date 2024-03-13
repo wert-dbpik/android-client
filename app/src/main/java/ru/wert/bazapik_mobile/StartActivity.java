@@ -52,12 +52,12 @@ public class StartActivity extends BaseActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_start);
 
-
-
         Log.i(TAG, "onCreate: IP = " + getProp("IP"));
         Log.i(TAG, "onCreate: PORT = " + getProp("PORT"));
         Log.i(TAG, "onCreate: SHOW_SOLID_FILES = " + getProp("SHOW_SOLID_FILES"));
         Log.i(TAG, "onCreate: HIDE_PREFIXES = " + getProp("HIDE_PREFIXES"));
+        Log.i(TAG, "onCreate: SEND_ERROR_REPORTS = " + getProp("SEND_ERROR_REPORTS"));
+        Log.i(TAG, "onCreate: USE_APP_KEYBOARD = " + getProp("USE_APP_KEYBOARD"));
 
         ImageView logo = findViewById(R.id.imageViewLogo);
         logo.setOnClickListener(v -> {
@@ -68,7 +68,7 @@ public class StartActivity extends BaseActivity {
 
         new Thread(()->{  //Вход без нажатия на логотип
             try {
-                Thread.sleep(1000);
+                Thread.sleep(5000);
                 if(!logoTapped) {
                     startRetrofit();
                     ThisApplication.loadSettings();

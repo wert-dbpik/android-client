@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">База ПИК</string>
-    <string name="Dostup">Доступ к базе данных</string>
-    <string name="company_name">ООО НТЦ ПИК</string>
+    <string name="app_name">Тубус</string>
+<!--    <string name="Dostup">Доступ к базе данных</string>-->
+<!--    <string name="company_name">ООО НТЦ ПИК</string>-->
     <string name="ip">IP-адрес</string>
     <string name="user">Пользователь</string>
     <string name="password">Пароль</string>

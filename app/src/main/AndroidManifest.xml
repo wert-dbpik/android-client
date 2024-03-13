@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.AppCompat"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".chat.ChatActivity"
-            android:configChanges="orientation|screenSize"
-            android:exported="false"/>
+<!--        <activity-->
+<!--            android:name=".chat.ChatActivity"-->
+<!--            android:configChanges="orientation|screenSize"-->
+<!--            android:exported="false"/>-->
         <activity
             android:name=".remark.RemarksEditorActivity"
             android:exported="false" />
