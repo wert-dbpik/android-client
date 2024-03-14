@@ -11,7 +11,7 @@
     <string name="Error_in_app">ОШИБКА В ПРИЛОЖЕНИИ</string>
     <string name="text_of_error">текст ошибки</string>
     <string name="title_activity_main">MainActivity</string>
-    <string name="textOnBtnPIK">ПИК</string>
+    <string name="defPrefix">ПИК</string>
     <string name="TextOnBtnSearch">Искать</string>
     <string name="menuSearch">Поиск</string>
     <string name="menuSettings">Настройки</string>

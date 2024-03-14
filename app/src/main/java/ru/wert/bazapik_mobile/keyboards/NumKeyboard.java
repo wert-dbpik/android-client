@@ -2,6 +2,7 @@ package ru.wert.bazapik_mobile.keyboards;
 
 import static ru.wert.bazapik_mobile.organizer.OrganizerActivity.RU_KEYBOARD;
 
+import android.content.Context;
 import android.os.Bundle;
 
 
@@ -26,7 +27,7 @@ import ru.wert.bazapik_mobile.R;
 public class NumKeyboard extends Fragment implements MyKeyboard{
 
     private final String TAG = getClass().getSimpleName();
-    static final String DEFAULT_PREFIX = "ПИК"; //использовать дефолтное
+    private String DEFAULT_PREFIX;
 
     @Setter private EditText editTextSearch;//Связь с EditText
     @Setter private KeyboardSwitcher keyboardSwitcher;
@@ -36,7 +37,7 @@ public class NumKeyboard extends Fragment implements MyKeyboard{
                              Bundle savedInstanceState) {
         container.setVisibility(View.GONE);
         View view = inflater.inflate(R.layout.fragment_number_keyboard, container, false);
-
+        DEFAULT_PREFIX = view.getResources().getString(R.string.defPrefix);
         init(view);
 
         return view;
@@ -110,9 +111,10 @@ public class NumKeyboard extends Fragment implements MyKeyboard{
             editTextSearch.setSelection(editTextSearch.length());
         });
 
-        //Специальная кнопка PIK - выводт префикс по умолчанию
-        final Button mBtnPIK = view.findViewById(R.id.mBtnPIK);
-        mBtnPIK.setOnClickListener(v->{
+        //Специальная кнопка префикса по умолчанию
+        final Button mBtnDefPrefix = view.findViewById(R.id.mBtnDefPrefix);
+        mBtnDefPrefix.setText(DEFAULT_PREFIX);
+        mBtnDefPrefix.setOnClickListener(v->{
             editTextSearch.setText(DEFAULT_PREFIX);
             editTextSearch.setSelection(DEFAULT_PREFIX.length());
         });

@@ -27,11 +27,22 @@
             android:layout_gravity="center_horizontal"
             app:srcCompat="@drawable/tubus_logo" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/app_version"/>
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="#"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_version"/>
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="wrap_content"
