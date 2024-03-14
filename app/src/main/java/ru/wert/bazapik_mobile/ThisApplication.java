@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import ru.wert.bazapik_mobile.constants.Consts;
 import ru.wert.bazapik_mobile.data.enums.EDraftStatus;
 import ru.wert.bazapik_mobile.data.interfaces.Item;
 import ru.wert.bazapik_mobile.data.models.Draft;
@@ -50,7 +49,7 @@ import ru.wert.bazapik_mobile.data.servicesREST.PassportService;
 public class ThisApplication extends Application {
 
     //Версия приложения
-    public static final String APPLICATION_VERSION = "1.3.0";
+    public static String APPLICATION_VERSION;
     public static boolean APP_VERSION_NOTIFICATION_SHOWN = false;
     public static String APPLICATION_VERSION_AVAILABLE;
 
@@ -103,6 +102,7 @@ public class ThisApplication extends Application {
         super.onCreate();
         editor = settings.edit();
         ThisApplication.appContext = this.getApplicationContext();
+        APPLICATION_VERSION = getResources().getString(R.string.app_version);
 
     }
 
