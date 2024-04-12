@@ -56,13 +56,13 @@ public class AppWarnings {
     public static void showAlert_NewAppVersionAvailable(Context context){
         new AlertDialog.Builder(context)
                 .setTitle("ВНИМАНИЕ!")
-                .setMessage(String.format("Версия установленной программы - %s. Доступна новая версия 'BazaPIK-%s.apk'. " +
+                .setMessage(String.format("Версия установленной программы - %s. Доступна новая версия 'TubusMobile-%s.apk'. " +
                                 "Для обновления программы загрузите установочный файл apk и устновите программу самостоятельно. " +
                                 "Загрузить новую версию в папку 'Загрузки'? "
                         , ThisApplication.APPLICATION_VERSION, APPLICATION_VERSION_AVAILABLE))
                 .setNegativeButton(R.string.later, null)
                 .setPositiveButton(R.string.download, (arg0, arg1) -> {
-                    String fileName = "BazaPIK-" + APPLICATION_VERSION_AVAILABLE + ".apk";
+                    String fileName = "TubusMobile-" + APPLICATION_VERSION_AVAILABLE + ".apk";
 
                     File destinationFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 

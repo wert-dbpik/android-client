@@ -56,7 +56,8 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".main.BaseActivity" />
         <activity android:name=".warnings.Error" />
-        <activity android:name=".StartActivity">
+        <activity android:name=".StartActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
