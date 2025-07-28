@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 33
-    buildToolsVersion "29.0.3"
+//    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "ru.wert.bazapik_mobile"
@@ -85,7 +85,7 @@ dependencies {
     implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.20'
 
     //android-pdf-viewer barteksc
-    implementation group: 'com.github.barteksc', name: 'android-pdf-viewer', version : '3.2.0-beta.1'
+    implementation group: 'com.github.mhiew', name: 'android-pdf-viewer', version : '3.2.0-beta.3'
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
