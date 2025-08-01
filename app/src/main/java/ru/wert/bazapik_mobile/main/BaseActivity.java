@@ -124,7 +124,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        DataLoader.LoadDataTask task = new DataLoader.LoadDataTask(BaseActivity.this);
 //        task.execute();
 
-        AsyncTask<Void, Void, Void> task = new DataLoadingAsyncTask(this);
+        DataLoadingAsyncTask task = new DataLoadingAsyncTask(this);
         task.execute();
     }
 

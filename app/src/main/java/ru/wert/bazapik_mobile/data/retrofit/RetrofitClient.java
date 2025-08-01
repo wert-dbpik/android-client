@@ -15,17 +15,19 @@ import ru.wert.bazapik_mobile.main.BaseActivity;
 
 import static ru.wert.bazapik_mobile.ThisApplication.getProp;
 
+import java.util.concurrent.TimeUnit;
+
 @Log
 public class RetrofitClient extends Application {
+    private static final long CONNECT_TIMEOUT = 30; // seconds
+    private static final long READ_TIMEOUT = 30;    // seconds
+    private static final long WRITE_TIMEOUT = 30;   // seconds
     private static final String TAG = "RetrofitClient";
     public static String BASE_URL = "";
     private static RetrofitClient mInstance;
     private static Retrofit mRetrofit;
-    private Gson gson;
+    private final Gson gson;
 
-    /**
-     * Приватный конструктор
-     */
     private RetrofitClient() {
 
         gson = new GsonBuilder()
@@ -36,12 +38,18 @@ public class RetrofitClient extends Application {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .build();
 
 
         //На всякий случай
-        if(BASE_URL.equals("")){
+        if (BASE_URL.equals("")) {
             String ip = getProp("IP");
             String port = getProp("PORT");
             BASE_URL = "http://" + ip + ":" + port + "/";
@@ -51,8 +59,7 @@ public class RetrofitClient extends Application {
                 .baseUrl(BASE_URL)
                 .addConverterFactory(new NullOnEmptyConverterFactory()) //Исправляет исключение на null, когда приходит пустое тело
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .addConverterFactory(GsonConverterFactory.create(gson))
-//                .client(client.build()) // логгирование ответа
+                .client(okHttpClient) // логгирование ответа
                 .build();
 
     }
@@ -76,7 +83,6 @@ public class RetrofitClient extends Application {
     public Retrofit getRetrofit(){
         return mRetrofit;
     }
-
 
 }
 

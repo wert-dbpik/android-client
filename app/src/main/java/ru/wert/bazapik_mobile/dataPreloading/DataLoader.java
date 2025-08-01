@@ -24,7 +24,7 @@ public class DataLoader {
         new DraftService();
 //        new DraftQuickService();
 
-        AsyncTask<Void, Void, Void> task = new DataLoadingAsyncTask(activity);
+        DataLoadingAsyncTask task = new DataLoadingAsyncTask(activity);
         task.execute();
     }
 

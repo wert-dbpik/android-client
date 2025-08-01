@@ -82,9 +82,10 @@ public class ThisApplication extends Application {
     public static List<User> LIST_OF_ALL_USERS;
     public static List<Room> LIST_OF_ALL_ROOMS;
     public static List<ProductGroup> LIST_OF_ALL_PRODUCT_GROUPS;
-    public static List<Folder> LIST_OF_ALL_FOLDERS;
     public static List<Draft> LIST_OF_ALL_DRAFTS;
+    public static List<Folder> LIST_OF_ALL_FOLDERS;
     public static List<Passport> LIST_OF_ALL_PASSPORTS;
+
 
     public static Context getAppContext(){
         return ThisApplication.appContext;
