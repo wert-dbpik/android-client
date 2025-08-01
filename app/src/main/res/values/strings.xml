@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">ТУБУС</string>
-    <string name="app_version">1.4</string>
-    <string name="app_years">2022-2024гг</string>
+    <string name="app_version">1.5</string>
+    <string name="app_years">2022-2025гг</string>
     <string name="ip">IP-адрес</string>
     <string name="user">Пользователь</string>
     <string name="password">Пароль</string>

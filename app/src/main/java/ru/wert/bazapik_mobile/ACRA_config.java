@@ -21,6 +21,8 @@ public class ACRA_config {
         ACRA.init(application, new CoreConfigurationBuilder()
                 //core configuration:
                 .withBuildConfigClass(BuildConfig.class)
+                // Отключаем повторную отправку неотправленных отчетов при старте приложения
+                .withDeleteUnapprovedReportsOnApplicationStart(false)
                 .withReportFormat(StringFormat.JSON)
                 .withPluginConfigurations(
                         new DialogConfigurationBuilder()
