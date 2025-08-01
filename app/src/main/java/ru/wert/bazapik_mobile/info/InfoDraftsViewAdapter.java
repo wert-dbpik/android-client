@@ -51,26 +51,68 @@ public class InfoDraftsViewAdapter extends RecyclerView.Adapter<InfoDraftsViewAd
     }
 
     /**
-     * Связывает каждый ViewHolder с позицией в списке в позиции int с данными
-     * @param holder ViewHolder
-     * @param position int
+     * Связывает данные чертежа с ViewHolder для указанной позиции в списке.
+     * Обрабатывает выделение элемента, отображение типа чертежа и его статуса.
+     *
+     * @param holder ViewHolder, который должен быть обновлен
+     * @param position Позиция элемента в списке данных
      */
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        // Проверка на null для holder и context
+        if (holder == null || holder.itemView == null || context == null) {
+            return;
+        }
 
+        // Обработка выделения элемента
         View selectedLinearLayout = holder.itemView.findViewById(R.id.selectedLinearLayout);
-        selectedLinearLayout.setBackgroundColor((position == selectedPosition) ?
-                context.getColor(R.color.colorPrimary) : //Цвет выделения
-                context.getColor(R.color.colorPrimaryDark)); //Цвет фона
+        if (selectedLinearLayout != null) {
+            int highlightColor = ContextCompat.getColor(context, R.color.colorPrimary);
+            int backgroundColor = ContextCompat.getColor(context, R.color.colorPrimaryDark);
+            selectedLinearLayout.setBackgroundColor(position == selectedPosition ? highlightColor : backgroundColor);
+        }
 
+        // Проверка наличия данных и корректности позиции
+        if (mData == null || position < 0 || position >= mData.size()) {
+            return;
+        }
 
         Draft item = mData.get(position);
-        String draftType = EDraftType.getDraftTypeById(item.getDraftType()).getTypeName() + " - " + item.getPageNumber();
-        holder.tvDraft.setText(draftType);
-        EDraftStatus status = EDraftStatus.getStatusById(item.getStatus());
-        holder.tvStatus.setText(status.getStatusName());
-        if(status.equals(EDraftStatus.CHANGED) || status.equals(EDraftStatus.ANNULLED))
-            holder.tvStatus.setTextColor(ContextCompat.getColor(context, R.color.colorMyRed));
+        if (item == null) {
+            return;
+        }
+
+        // Обработка типа чертежа
+        try {
+            EDraftType draftType = EDraftType.getDraftTypeById(item.getDraftType());
+            String draftText = (draftType != null ? draftType.getTypeName() : "Неизвестный тип") +
+                    " - " + (item.getPageNumber() != null ? item.getPageNumber() : "");
+            holder.tvDraft.setText(draftText);
+        } catch (Exception e) {
+            holder.tvDraft.setText("Ошибка типа чертежа");
+        }
+
+        // Обработка статуса чертежа
+        try {
+            EDraftStatus status = EDraftStatus.getStatusById(item.getStatus());
+            if (status != null && holder.tvStatus != null) {
+                holder.tvStatus.setText(status.getStatusName());
+
+                // Установка цвета для особых статусов
+                if (status.equals(EDraftStatus.CHANGED) || status.equals(EDraftStatus.ANNULLED)) {
+                    int errorColor = ContextCompat.getColor(context, R.color.colorMyRed);
+                    holder.tvStatus.setTextColor(errorColor);
+                } else {
+                    // Возврат к цвету по умолчанию
+                    int defaultColor = ContextCompat.getColor(context, android.R.color.primary_text_dark);
+                    holder.tvStatus.setTextColor(defaultColor);
+                }
+            }
+        } catch (Exception e) {
+            if (holder.tvStatus != null) {
+                holder.tvStatus.setText("Ошибка статуса");
+            }
+        }
     }
 
     /**

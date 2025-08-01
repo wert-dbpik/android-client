@@ -13,12 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -38,36 +40,67 @@ import ru.wert.bazapik_mobile.organizer.OrgActivityAndPassportsFragmentInteracti
 import ru.wert.bazapik_mobile.organizer.OrganizerActivity;
 import ru.wert.bazapik_mobile.organizer.OrganizerFragment;
 
+/**
+ * Фрагмент для отображения и управления списком паспортов.
+ * Реализует интерфейсы для взаимодействия с элементами списка и организатором.
+ */
+public class PassportsFragment extends Fragment implements
+        PassportsRecViewAdapter.passportsClickListener,
+        OrganizerFragment<Item> {
 
-public class PassportsFragment extends Fragment implements PassportsRecViewAdapter.passportsClickListener, OrganizerFragment<Item> {
+    // Константы для сохранения состояния
+    private static final String KEY_RECYCLER_STATE = "recycler_state";
+    private static final String SAVED_STATE_BUNDLE = "saved_state_bundle";
+    public static final String PASSPORT = "passport";
 
     private Context orgContext;
     private OrgActivityAndPassportsFragmentInteraction org;
+
     @Setter private PassportsRecViewAdapter adapter;
-    @Getter@Setter private RecyclerView rv;
-    @Getter@Setter private List<Item> allItems;
-    @Getter@Setter private List<Item> foundItems;
+    @Getter @Setter private RecyclerView rv;
+    @Getter @Setter private List<Item> allItems;
+    @Getter @Setter private List<Item> foundItems;
 
-    private final String KEY_RECYCLER_STATE = "recycler_state";
-    private final String SAVED_STATE_BUNDLE = "saved_state_bundle";
-    public static final String PASSPORT = "passport";
+    // Флаг, указывающий, отображаются ли все паспорта (true) или только из выбранной папки (false)
+    @Getter @Setter private boolean global = true;
+    @Setter @Getter private Integer localSelectedPosition;
+    @Getter @Setter private List<Item> currentData;
 
-    //В ресайклере отображаются все паспорта в базе
-    @Getter@Setter private boolean global = true;
-    @Setter@Getter private Integer localSelectedPosition;
-
-    @Getter@Setter private List<Item> currentData;
-
+    // ======================= Жизненный цикл фрагмента =======================
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        org = (OrgActivityAndPassportsFragmentInteraction) context;
+        // Проверяем, что активность реализует необходимый интерфейс
+        if (context instanceof OrgActivityAndPassportsFragmentInteraction) {
+            org = (OrgActivityAndPassportsFragmentInteraction) context;
+        } else {
+            throw new RuntimeException(context + " must implement OrgActivityAndPassportsFragmentInteraction");
+        }
     }
 
     @Override
-    public PassportsRecViewAdapter getAdapter() {
-        return adapter;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_passports, container, false);
+
+        // Инициализация компонентов
+        this.org = (OrganizerActivity) getActivity();
+        this.orgContext = getContext();
+        rv = view.findViewById(R.id.recycle_view_passports);
+
+        // Создаем и настраиваем RecyclerView
+        createRecycleViewOfFoundPassportsAndFolders();
+
+        // Уведомляем активность об изменении фрагмента
+        if (org != null) {
+            org.fragmentChanged(this);
+            org.setCurrentTypeFragment(FragmentTag.PASSPORT_TAG);
+        }
+
+        // Инициализируем текущие данные
+        currentData = adapter != null ? new ArrayList<>(adapter.getData()) : new ArrayList<>();
+
+        return view;
     }
 
     @Override
@@ -77,23 +110,17 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
     }
 
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if(savedInstanceState != null){
+        if (savedInstanceState != null && rv != null) {
             Bundle b = savedInstanceState.getBundle(SAVED_STATE_BUNDLE);
-
-            Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
-            Objects.requireNonNull(rv.getLayoutManager()).onRestoreInstanceState(savedRecyclerLayoutState);
+            if (b != null) {
+                Parcelable savedRecyclerLayoutState = b.getParcelable(KEY_RECYCLER_STATE);
+                if (rv.getLayoutManager() != null && savedRecyclerLayoutState != null) {
+                    rv.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+                }
+            }
         }
-    }
-
-    private Bundle createSaveStateBundle(){
-        Bundle bundle = new Bundle();
-
-        Parcelable listState = Objects.requireNonNull(rv.getLayoutManager()).onSaveInstanceState();
-        bundle.putParcelable(KEY_RECYCLER_STATE, listState);
-
-        return bundle;
     }
 
     @Override
@@ -102,117 +129,166 @@ public class PassportsFragment extends Fragment implements PassportsRecViewAdapt
         onSaveInstanceState(createSaveStateBundle());
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_passports, container, false);
-        this.org = (OrganizerActivity) getActivity();
-        this.orgContext = getContext();
-
-        rv = v.findViewById(R.id.recycle_view_passports);
-
-        createRecycleViewOfFoundPassportsAndFolders();
-
-        org.fragmentChanged(this);
-        org.setCurrentTypeFragment(FragmentTag.PASSPORT_TAG);
-
-        currentData = new ArrayList<>(adapter.getData());
-
-        return v;
-    }
+    // ======================= Методы работы с состоянием =======================
 
     /**
-     * При клике на элемент списка открывается информация об элементе
+     * Создает Bundle для сохранения текущего состояния фрагмента
+     * @return Bundle с сохраненным состоянием
      */
-    @Override
-    public void onItemClick(View view, int position) {
-        localSelectedPosition = position;
-        openInfoView(position);
+    private Bundle createSaveStateBundle() {
+        Bundle bundle = new Bundle();
+        if (rv != null && rv.getLayoutManager() != null) {
+            Parcelable listState = rv.getLayoutManager().onSaveInstanceState();
+            bundle.putParcelable(KEY_RECYCLER_STATE, listState);
+        }
+        return bundle;
     }
 
+    // ======================= Методы работы с RecyclerView =======================
 
     /**
-     * Открываем окно с информацией об элементе, и доступных чертежах
-     * @param position
-     */
-    private void openInfoView(int position){
-        Intent intent = new Intent(((Activity)org), InfoActivity.class);
-        Passport passport = adapter.getItem(position);
-        intent.putExtra(PASSPORT, passport);
-        startActivity(intent);
-    }
-
-    /**
-     * Создаем список состоящий из найденных элементов
+     * Создает и настраивает RecyclerView для отображения паспортов и папок
      */
     private void createRecycleViewOfFoundPassportsAndFolders() {
+        if (rv == null || getContext() == null) return;
 
+        // Настройка LayoutManager
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        fillRecViewWithItems(findPassports(org.getSelectedFolder()));
+        // Заполнение RecyclerView данными
+        List<Item> items = findPassports(org != null ? org.getSelectedFolder() : null);
+        fillRecViewWithItems(items);
 
-        //При касании списка, поле ввода должно потерять фокус
-        //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
+        // Обработка касания списка (скрытие клавиатуры)
         rv.setOnTouchListener((v, event) -> {
-            org.getEditTextSearch().clearFocus();
-            return false; //если возвращать true, то список ограничится видимой частью
+            if (org != null && org.getEditTextSearch() != null) {
+                org.getEditTextSearch().clearFocus();
+            }
+            return false;
         });
 
-        //Для красоты используем разделитель между элементами списка
-        rv.addItemDecoration(new DividerItemDecoration(getContext(),
-                DividerItemDecoration.VERTICAL));
-
+        // Добавление разделителей между элементами
+        rv.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
     }
 
-    private List<Item> findPassports(Folder selectedFolder){
-        List<Item> foundPassports = null;
-        if(selectedFolder == null) {
-            foundPassports = new ArrayList<>(LIST_OF_ALL_PASSPORTS);
+    /**
+     * Заполняет RecyclerView элементами
+     * @param items список элементов для отображения
+     */
+    @Override
+    public void fillRecViewWithItems(List<Item> items) {
+        if (org == null || orgContext == null) return;
+
+        ((Activity) org).runOnUiThread(() -> {
+            adapter = new PassportsRecViewAdapter(this, orgContext, items != null ? items : Collections.emptyList());
+            adapter.setClickListener(this);
+            rv.setAdapter(adapter);
+        });
+    }
+
+    // ======================= Методы поиска и фильтрации =======================
+
+    /**
+     * Находит паспорта в зависимости от выбранной папки
+     * @param selectedFolder папка для поиска (null - поиск по всем паспортам)
+     * @return список найденных элементов (никогда не null)
+     */
+    private List<Item> findPassports(@Nullable Folder selectedFolder) {
+        if (selectedFolder == null) {
             global = true;
+            // Возвращаем копию общего списка с защитой от null
+            return new ArrayList<>(LIST_OF_ALL_PASSPORTS != null ?
+                    LIST_OF_ALL_PASSPORTS :
+                    Collections.emptyList());
         } else {
-            foundPassports = findPassportsInFolder(selectedFolder);
             global = false;
+            List<Item> foundInFolder = findPassportsInFolder(selectedFolder);
+            return foundInFolder != null ? foundInFolder : Collections.emptyList();
         }
-        return foundPassports;
     }
 
-
-    public List<Item> findPassportsInFolder(Folder folder){
-        Set<Passport> foundPassports = new HashSet<>();
-        for(Draft d: LIST_OF_ALL_DRAFTS){
-            if(d.getFolder().equals(folder))
-                foundPassports.add(d.getPassport());
+    /**
+     * Находит все паспорта в указанной папке
+     * @param folder папка для поиска
+     * @return отсортированный список паспортов (никогда не null)
+     */
+    public List<Item> findPassportsInFolder(Folder folder) {
+        if (folder == null || LIST_OF_ALL_DRAFTS == null) {
+            return Collections.emptyList();
         }
+
+        Set<Passport> foundPassports = new HashSet<>();
+        for (Draft draft : LIST_OF_ALL_DRAFTS) {
+            if (draft != null && folder.equals(draft.getFolder())) {
+                foundPassports.add(draft.getPassport());
+            }
+        }
+
         List<Passport> sortedList = new ArrayList<>(foundPassports);
         sortedList.sort(ThisApplication.usefulStringComparator());
         return new ArrayList<>(sortedList);
     }
 
-    @Override //OrganizerFragment
-    public void fillRecViewWithItems(List<Item> items) {
-        ((Activity)org).runOnUiThread(() -> {
-            adapter = new PassportsRecViewAdapter(this, orgContext, items);
-            adapter.setClickListener(PassportsFragment.this);
-            rv.setAdapter(adapter);
-        });
-    }
-
     /**
-     * Здесь происходит высев подходящих под ПОИСК элементов
-     * @param text набранный в ПОИСКе текст
-     * @return List<P> список подходящих элементов
+     * Фильтрует элементы по тексту поиска
+     * @param text текст для поиска
+     * @return список подходящих элементов (никогда не null)
      */
     @Override
     public List<Item> findProperItems(String text) {
+        if (text == null || currentData == null) {
+            return Collections.emptyList();
+        }
+
         List<Item> foundItems = new ArrayList<>();
+        String searchText = text.toLowerCase();
+
         for (Item item : currentData) {
-            if (item.toUsefulString().toLowerCase().contains(text.toLowerCase())){
+            if (item != null && item.toUsefulString().toLowerCase().contains(searchText)) {
                 foundItems.add(item);
             }
-
         }
+
         foundItems.sort(ThisApplication.usefulStringComparator());
         return foundItems;
     }
 
+    // ======================= Обработка кликов =======================
 
+    /**
+     * Обрабатывает клик по элементу списка
+     * @param view нажатое представление
+     * @param position позиция элемента
+     */
+    @Override
+    public void onItemClick(View view, int position) {
+        if (adapter == null) return;
+
+        localSelectedPosition = position;
+        openInfoView(position);
+    }
+
+    /**
+     * Открывает окно с информацией о паспорте
+     * @param position позиция паспорта в списке
+     */
+    private void openInfoView(int position) {
+        if (org == null || adapter == null || position < 0 || position >= adapter.getItemCount()) {
+            return;
+        }
+
+        Passport passport = adapter.getItem(position);
+        if (passport != null) {
+            Intent intent = new Intent(((Activity) org), InfoActivity.class);
+            intent.putExtra(PASSPORT, passport);
+            startActivity(intent);
+        }
+    }
+
+    // ======================= Геттеры =======================
+
+    @Override
+    public PassportsRecViewAdapter getAdapter() {
+        return adapter;
+    }
 }
