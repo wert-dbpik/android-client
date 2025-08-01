@@ -39,8 +39,9 @@ public class PdfViewerFragment extends Fragment {
         PDFView pdfView = v.findViewById(R.id.pdfView);
 
         pdfView.fromFile(localFile)
-                .defaultPage(0)
-                .pageFitPolicy(FitPolicy.WIDTH)
+                .enableSwipe(true)
+                .swipeHorizontal(false) // Вертикальный скролл
+                .pageFitPolicy(FitPolicy.BOTH)
                 .fitEachPage(true)
                 .defaultPage(0)
                 .load();
