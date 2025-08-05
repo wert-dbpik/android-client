@@ -57,7 +57,7 @@
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/organizer_fragment_container"
             android:tag="passports1"
-            android:name="ru.wert.bazapik_mobile.organizer.passports.PassportsFragment"
+            android:name="ru.wert.tubus_mobile.organizer.passports.PassportsFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -65,7 +65,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/keyboard_container"
-        android:name="ru.wert.bazapik_mobile.keyboards.NumKeyboard"
+        android:name="ru.wert.tubus_mobile.keyboards.NumKeyboard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom" />

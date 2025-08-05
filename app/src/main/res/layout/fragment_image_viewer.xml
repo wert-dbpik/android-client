@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".viewer.ImageViewerFragment">
 
-    <ru.wert.bazapik_mobile.viewer.ZoomableImageView
+    <ru.wert.tubus_mobile.viewer.ZoomableImageView
         android:id="@+id/draftImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

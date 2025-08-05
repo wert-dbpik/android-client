@@ -8,7 +8,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/draft_fragment_container"
-        android:name="ru.wert.bazapik_mobile.viewer.ProgressIndicatorFragment"
+        android:name="ru.wert.tubus_mobile.viewer.ProgressIndicatorFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -82,7 +82,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/allRemarksContainer"
-        android:name="ru.wert.bazapik_mobile.remark.AllRemarksFragment"
+        android:name="ru.wert.tubus_mobile.remark.AllRemarksFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom" />

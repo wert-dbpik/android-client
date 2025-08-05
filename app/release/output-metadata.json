@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "ru.wert.bazapik_mobile",
+  "applicationId": "ru.wert.tubus_mobile",
   "variantName": "release",
   "elements": [
     {
@@ -13,7 +13,7 @@
       "attributes": [],
       "versionCode": 1,
       "versionName": "1.4",
-      "outputFile": "TubusMobile-1.4-release.apk"
+      "outputFile": "TubusMobile-1.5-release.apk"
     }
   ],
   "elementType": "File"
