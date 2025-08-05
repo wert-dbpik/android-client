@@ -1,9 +1,16 @@
 package ru.wert.tubus_mobile.viewer;
 
+import static android.content.Intent.ACTION_VIEW;
+
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -11,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
@@ -26,6 +34,7 @@ import retrofit2.Call;
 import ru.wert.tubus_mobile.R;
 import ru.wert.tubus_mobile.data.api_interfaces.RemarkApiInterface;
 import ru.wert.tubus_mobile.data.enums.EDraftStatus;
+import ru.wert.tubus_mobile.data.enums.EDraftType;
 import ru.wert.tubus_mobile.data.models.Draft;
 import ru.wert.tubus_mobile.data.models.Passport;
 import ru.wert.tubus_mobile.data.models.Remark;
@@ -33,10 +42,15 @@ import ru.wert.tubus_mobile.data.retrofit.RetrofitClient;
 import ru.wert.tubus_mobile.main.BaseActivity;
 import ru.wert.tubus_mobile.organizer.AppOnSwipeTouchListener;
 import ru.wert.tubus_mobile.utils.AnimationDest;
+import ru.wert.tubus_mobile.warnings.WarningDialog1;
 
 import static ru.wert.tubus_mobile.ThisApplication.DATA_BASE_URL;
+import static ru.wert.tubus_mobile.ThisApplication.IMAGE_EXTENSIONS;
 import static ru.wert.tubus_mobile.ThisApplication.PDF_EXTENSIONS;
+import static ru.wert.tubus_mobile.ThisApplication.SOLID_EXTENSIONS;
 import static ru.wert.tubus_mobile.constants.Consts.TEMP_DIR;
+
+import org.apache.commons.io.FileUtils;
 
 /**
  * Активность для просмотра чертежей и документов.
@@ -134,6 +148,14 @@ public class ViewerActivity extends BaseActivity {
         currentPassportId = currentPassport.getId();
         allDrafts = getIntent().getParcelableArrayListExtra($ALL_DRAFTS);
         iterator = findInitPosition();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(allRemarksContainer.getVisibility() == View.VISIBLE) {
+            allRemarksContainer.setVisibility(View.INVISIBLE);
+        } else
+            super.onBackPressed();
     }
 
     @Override
@@ -382,6 +404,71 @@ public class ViewerActivity extends BaseActivity {
 
     // Остальные методы (onCreateContextMenu, onContextItemSelected, showInfo, showInOuterApp и т.д.)
     // остаются без изменений, но также должны быть проверены на безопасность выполнения
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater viewerMenu = getMenuInflater();
+        viewerMenu.inflate(R.menu.viewer_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.showInfo:
+                showInfo();
+                break;
+            case R.id.showInApplication:
+                showInOuterApp();
+                break;
+        }
+        return true;
+    }
+
+    private void showInfo() {
+        String decNumber = currentDraft.getPassport().getNumberWithPrefix();
+        String name = currentDraft.getPassport().getName();
+        String notes = currentDraft.getNote() == null || currentDraft.getNote().equals("")? "-отсутствует-": currentDraft.getNote();
+        String annul = currentDraft.getStatus().equals(EDraftStatus.ANNULLED.getStatusId())?
+                "c " + parseLDTtoDate(currentDraft.getWithdrawalTime())  + "\n" +  currentDraft.getWithdrawalUser().getName() + "\n\n" :
+                "\n";
+
+        new WarningDialog1().show(ViewerActivity.this,
+                decNumber + "\n" + name,
+                "Добавил:  " + parseLDTtoDate(currentDraft.getCreationTime()) + "\n" +
+                        currentDraft.getCreationUser().getName() + "\n\n" +
+                        "Тип-стр:  " + EDraftType.getDraftTypeById(currentDraft.getDraftType()).getShortName() + "-" + currentDraft.getPageNumber() + "\n"  +
+                        "Статус:   " + EDraftStatus.getStatusById(currentDraft.getStatus()).getStatusName() + "\n" + annul +
+                        "Источник: \n" + currentDraft.getFolder().toUsefulString() + "\n\n" +
+                        "Примечание: \n" + notes
+        );
+    }
+
+    public void showInOuterApp() {
+        String bundleString = fileOnScreen.toString();
+        String ext = FileUtils.getExtension(bundleString);
+        String mimeType;
+        if (PDF_EXTENSIONS.contains(ext))
+            mimeType = "application/pdf";
+        else if (IMAGE_EXTENSIONS.contains(ext))
+            mimeType = "image/*";
+        else if (SOLID_EXTENSIONS.contains(ext))
+            mimeType = "application/solidworks-file";
+        else return;
+
+        Intent intent = new Intent();
+        intent.setAction(ACTION_VIEW);
+
+        Uri contentUri = FileProvider.getUriForFile(this, getApplication().getPackageName() + ".fileprovider", fileOnScreen);
+        intent.setDataAndType(contentUri, mimeType);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        startActivity(intent);
+
+    }
+
+
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
