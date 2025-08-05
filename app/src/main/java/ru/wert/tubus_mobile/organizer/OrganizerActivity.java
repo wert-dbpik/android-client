@@ -278,25 +278,42 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
      */
     private void createTextWatcher(EditText mEditTextSearch) {
         mEditTextSearch.addTextChangedListener(new TextWatcher() {
+            private boolean isFormatting = false;
 
             @Override
             public void afterTextChanged(Editable s) {
-                //Реагируем только если editText меняется вручную
-                if(!editTextSearch.hasFocus()) return;
+                if (!mEditTextSearch.hasFocus() || isFormatting) return;
+
                 String text = s.toString();
+
+                if (text.matches("\\d{7}")) {
+                    isFormatting = true;
+                    String formattedText = text.substring(0, 6) + "." + text.substring(6);
+
+                    // Устанавливаем новый текст
+                    mEditTextSearch.setText(formattedText);
+
+                    // Задержка для корректного позиционирования курсора
+                    mEditTextSearch.post(() -> {
+                        mEditTextSearch.setSelection(formattedText.length()); // Курсор в конец
+                        isFormatting = false;
+                    });
+
+                    searchByText(formattedText);
+                    return;
+                }
+
                 searchByText(text);
             }
 
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
     }
+
 
     private void searchByText(String text) {
 
@@ -306,13 +323,16 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
             if(fr instanceof FoldersFragment){
                 foldersTextSearch = text;
-                if(text.isEmpty())  items = ((FoldersFragment) fr).currentListWithGlobalOff(null);
-                else items = fr.findProperItems(text);
+                if(text.isEmpty())
+                    items = ((FoldersFragment) fr).currentListWithGlobalOff(null);
+                else
+                    items = fr.findProperItems(text);
             } else if(fr instanceof PassportsFragment){
                 passportsTextSearch = text;
                 if(text.isEmpty())
                     items = currentPassportsFragment.getCurrentData();
-                else items = fr.findProperItems(text);
+                else
+                    items = fr.findProperItems(text);
             }
 
             List<Item> finalItems = items;
@@ -353,7 +373,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.keyboard_container, (Fragment) myKeyboard, "keyboard_tag");
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
 
@@ -362,7 +382,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
         ft.replace(R.id.organizer_fragment_container, currentPassportsFragment);
 //        ft.addToBackStack(null);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     public void openFoldersFragment() {
@@ -371,7 +391,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
         ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
 //        ft.addToBackStack(null);
-        ft.commit();
+        ft.commitAllowingStateLoss();
         //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
         if (currentFoldersFragment.getUpperProductGroupId() != null &&
                 currentFoldersFragment.getUpperProductGroupId().equals(1L))
