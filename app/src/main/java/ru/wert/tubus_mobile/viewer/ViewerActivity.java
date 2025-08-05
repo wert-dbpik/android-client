@@ -402,9 +402,6 @@ public class ViewerActivity extends BaseActivity {
         ft.commitAllowingStateLoss();
     }
 
-    // Остальные методы (onCreateContextMenu, onContextItemSelected, showInfo, showInOuterApp и т.д.)
-    // остаются без изменений, но также должны быть проверены на безопасность выполнения
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
