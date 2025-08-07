@@ -1,4 +1,4 @@
-package ru.wert.tubus_mobile;
+package ru.wert.tubus_mobile.acra;
 
 import android.app.Application;
 
@@ -7,6 +7,10 @@ import org.acra.config.CoreConfigurationBuilder;
 import org.acra.config.DialogConfigurationBuilder;
 import org.acra.config.MailSenderConfigurationBuilder;
 import org.acra.data.StringFormat;
+
+import ru.wert.tubus_mobile.BuildConfig;
+import ru.wert.tubus_mobile.R;
+import ru.wert.tubus_mobile.ThisApplication;
 
 /**
  * ACRA предоставляет возможность перехватывать сбой, произошедший в программе во время выполнения
@@ -24,6 +28,8 @@ public class ACRA_config {
                 // Отключаем повторную отправку неотправленных отчетов при старте приложения
                 .withDeleteUnapprovedReportsOnApplicationStart(false)
                 .withReportFormat(StringFormat.JSON)
+                .withReportSendSuccessToast("Отчет отправлен!")
+                .withSendReportsInDevMode(true)
                 .withPluginConfigurations(
                         new DialogConfigurationBuilder()
                                 //optional, enables the dialog title
@@ -49,8 +55,8 @@ public class ACRA_config {
                                 //defaults to "<applicationId> Crash Report"
                                 .withSubject("TubusMobile-android : сбой в программе")
                                 //defaults to empty
-                                .withBody(String.format("%s сообщает о сбое.\nОтчет во вложенном файле " +
-                                        "TubusM_Crash.txt", user))
+                                .withBody("Товарищ сообщает о сбое.\nОтчет во вложенном файле " +
+                                        "TubusM_Crash.txt")
                                 .build()
                 )
 
