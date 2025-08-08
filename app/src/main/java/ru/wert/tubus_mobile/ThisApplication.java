@@ -10,12 +10,26 @@ import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.Toast;
+
+import androidx.core.content.FileProvider;
+
+import org.acra.ACRA;
+import org.acra.BuildConfig;
+import org.acra.config.Configuration;
+import org.acra.config.CoreConfiguration;
+import org.acra.config.CoreConfigurationBuilder;
+import org.acra.config.DialogConfigurationBuilder;
+import org.acra.data.StringFormat;
+import org.apache.commons.io.FileUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -31,7 +45,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import ru.wert.tubus_mobile.acra.ACRA_config;
 import ru.wert.tubus_mobile.data.enums.EDraftStatus;
 import ru.wert.tubus_mobile.data.interfaces.Item;
 import ru.wert.tubus_mobile.data.models.Draft;
@@ -77,7 +90,6 @@ public class ThisApplication extends Application {
     static SharedPreferences settings;
     static SharedPreferences.Editor editor;
     private static Context appContext;
-
     public static List<User> LIST_OF_ALL_USERS;
     public static List<Room> LIST_OF_ALL_ROOMS;
     public static List<ProductGroup> LIST_OF_ALL_PRODUCT_GROUPS;
@@ -85,16 +97,33 @@ public class ThisApplication extends Application {
     public static List<Folder> LIST_OF_ALL_FOLDERS;
     public static List<Passport> LIST_OF_ALL_PASSPORTS;
 
-
-    public static Context getAppContext(){
-        return ThisApplication.appContext;
-    }
-
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
-        ACRA_config.create(this);
+
+        // Создаём конфигурацию через CoreConfigurationBuilder
+        CoreConfigurationBuilder builder = new CoreConfigurationBuilder()
+                .withBuildConfigClass(BuildConfig.class)
+                .withReportFormat(StringFormat.JSON)
+                .withDeleteUnapprovedReportsOnApplicationStart(true)
+                .withSendReportsInDevMode(true)
+                .withReportSendSuccessToast("Отчет отправлен!")
+                .withPluginConfigurations(
+                        new DialogConfigurationBuilder()
+                                .withResTheme(R.style.AppTheme)
+                                .withTitle("Внимание!")
+                                .withText("В программе произошел досадный сбой. " +
+                                        "Для скорейшего исправления ошибки необходимо " +
+                                        "ОТПРАВИТЬ ОТЧЕТ разработчику.")
+                                .withPositiveButtonText("Отправить отчет")
+                                .withNegativeButtonText("Нет")
+                                .withEnabled(true)
+                                .build()
+                );
+
+        // Инициализируем ACRA
+        ACRA.init(this, builder);
     }
 
     @Override
@@ -103,7 +132,6 @@ public class ThisApplication extends Application {
         editor = settings.edit();
         ThisApplication.appContext = this.getApplicationContext();
         APPLICATION_VERSION = getResources().getString(R.string.app_version);
-
     }
 
     public static String getProp(String name){

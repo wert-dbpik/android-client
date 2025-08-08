@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <paths>
-        <cache-path name="cache" path="/" />
+        <cache-path name="crash_reports" path="crash_reports/" />
         <files-path name="files" path="/" />
     </paths>
 </resources>
