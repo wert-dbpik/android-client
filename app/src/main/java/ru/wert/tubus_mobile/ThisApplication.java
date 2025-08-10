@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import ru.wert.tubus_mobile.acra.ACRA_config;
 import ru.wert.tubus_mobile.data.enums.EDraftStatus;
 import ru.wert.tubus_mobile.data.interfaces.Item;
 import ru.wert.tubus_mobile.data.models.Draft;
@@ -102,28 +103,7 @@ public class ThisApplication extends Application {
         super.attachBaseContext(base);
         settings = getSharedPreferences("DBPIKSettings", MODE_PRIVATE);
 
-        // Создаём конфигурацию через CoreConfigurationBuilder
-        CoreConfigurationBuilder builder = new CoreConfigurationBuilder()
-                .withBuildConfigClass(BuildConfig.class)
-                .withReportFormat(StringFormat.JSON)
-                .withDeleteUnapprovedReportsOnApplicationStart(true)
-                .withSendReportsInDevMode(true)
-                .withReportSendSuccessToast("Отчет отправлен!")
-                .withPluginConfigurations(
-                        new DialogConfigurationBuilder()
-                                .withResTheme(R.style.AppTheme)
-                                .withTitle("Внимание!")
-                                .withText("В программе произошел досадный сбой. " +
-                                        "Для скорейшего исправления ошибки необходимо " +
-                                        "ОТПРАВИТЬ ОТЧЕТ разработчику.")
-                                .withPositiveButtonText("Отправить отчет")
-                                .withNegativeButtonText("Нет")
-                                .withEnabled(true)
-                                .build()
-                );
-
-        // Инициализируем ACRA
-        ACRA.init(this, builder);
+        ACRA_config.create(this);
     }
 
     @Override

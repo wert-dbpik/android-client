@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <paths>
+        <!-- Для внутреннего кэша -->
         <cache-path name="crash_reports" path="crash_reports/" />
+
+        <!-- Для внешнего хранилища -->
+        <external-path name="external_downloads" path="Download/" />
+
+        <!-- Для файлов в files/ -->
         <files-path name="files" path="/" />
     </paths>
 </resources>
