@@ -12,6 +12,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.acra.ACRA;
+
 import java.util.AbstractList;
 import java.util.List;
 

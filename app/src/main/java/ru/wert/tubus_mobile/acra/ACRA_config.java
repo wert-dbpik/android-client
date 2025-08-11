@@ -1,15 +1,20 @@
 package ru.wert.tubus_mobile.acra;
 
+import static ru.wert.tubus_mobile.ThisApplication.APPLICATION_VERSION;
+
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
 import org.acra.ACRA;
+import org.acra.BuildConfig;
+import org.acra.ReportField;
 import org.acra.config.CoreConfigurationBuilder;
 import org.acra.config.DialogConfigurationBuilder;
 import org.acra.config.HttpSenderConfigurationBuilder;
 import org.acra.data.StringFormat;
 import org.acra.sender.HttpSender;
 
-import ru.wert.tubus_mobile.BuildConfig;
 import ru.wert.tubus_mobile.R;
 import ru.wert.tubus_mobile.ThisApplication;
 
@@ -17,9 +22,7 @@ public class ACRA_config {
 
     public static void create(Application application) {
 
-        String userName = ThisApplication.getProp("USER_NAME");
-        String serverUrl = "http://192.168.2.132:8080/crash-reports/create";
-
+        String serverUrl = "http://192.168.2.175:8080/crash-reports/create";
 
         // Основная конфигурация
         CoreConfigurationBuilder builder = new CoreConfigurationBuilder()
@@ -44,13 +47,8 @@ public class ACRA_config {
                                 .build()
                 );
 
+        // Инициализируем ACRA
         ACRA.init(application, builder);
 
-        // Устанавливаем пользовательские данные
-        ACRA.getErrorReporter().putCustomData("crash_user_name", userName);
-        ACRA.getErrorReporter().putCustomData("crash_device", "mobile");
-        ACRA.getErrorReporter().putCustomData("crash_version",
-                BuildConfig.VERSION_NAME != null ? BuildConfig.VERSION_NAME : "unknown");
     }
-
 }

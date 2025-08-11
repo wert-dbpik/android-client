@@ -62,7 +62,7 @@ import ru.wert.tubus_mobile.data.servicesREST.PassportService;
 public class ThisApplication extends Application {
 
     //Версия приложения
-    public static String APPLICATION_VERSION;
+    public static String APPLICATION_VERSION = "1.5";
     public static boolean APP_VERSION_NOTIFICATION_SHOWN = false;
     public static String APPLICATION_VERSION_AVAILABLE;
 
@@ -112,6 +112,10 @@ public class ThisApplication extends Application {
         editor = settings.edit();
         ThisApplication.appContext = this.getApplicationContext();
         APPLICATION_VERSION = getResources().getString(R.string.app_version);
+
+        String userName = ThisApplication.getProp("USER_NAME");
+        ACRA.getErrorReporter().putCustomData("crash_user_name", userName);
+        ACRA.getErrorReporter().putCustomData("crash_device", "ANDROID");
     }
 
     public static String getProp(String name){
