@@ -28,7 +28,8 @@ public class ACRA_config {
         CoreConfigurationBuilder builder = new CoreConfigurationBuilder()
                 .withBuildConfigClass(BuildConfig.class)
                 .withReportFormat(StringFormat.JSON)
-                .withDeleteUnapprovedReportsOnApplicationStart(true)
+                .withDeleteUnapprovedReportsOnApplicationStart(false)
+                .withSendReportsInDevMode(true)
                 .withPluginConfigurations(
                         new DialogConfigurationBuilder()
                                 .withResTheme(R.style.AppTheme)
