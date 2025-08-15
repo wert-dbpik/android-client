@@ -20,7 +20,8 @@ public class HistoryManager {
     }
 
     // Добавление нового элемента в историю
-    public void addToHistory(String drawingNumber) {
+    public synchronized void addToHistory(String drawingNumber) {
+        if (drawingNumber == null || drawingNumber.trim().isEmpty()) return;
         List<String> history = getHistory();
         // Удаляем если уже есть (чтобы не дублировать)
         history.remove(drawingNumber);
@@ -34,7 +35,7 @@ public class HistoryManager {
     }
 
     // Получение всей истории
-    public List<String> getHistory() {
+    public synchronized List<String> getHistory() {
         List<String> history = new ArrayList<>();
         try {
             File file = new File(context.getFilesDir(), HISTORY_FILE);
@@ -49,6 +50,7 @@ public class HistoryManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return new ArrayList<>();
         }
         return history;
     }

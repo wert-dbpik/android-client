@@ -425,6 +425,9 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
 
     public void openPassportFragment() {
+        currentPassportsFragment = new PassportsFragment();
+        currentPassportsFragment.setHistoryManager(historyManager);
+
         FragmentTransaction ft = fm.beginTransaction();
         ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
         ft.replace(R.id.organizer_fragment_container, currentPassportsFragment);

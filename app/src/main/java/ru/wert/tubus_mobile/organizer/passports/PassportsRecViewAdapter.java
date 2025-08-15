@@ -211,7 +211,9 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
 
             // Добавляем запись в историю при клике
             Passport passport = (Passport) data.get(getBindingAdapterPosition());
-            historyManager.addToHistory(passport.toUsefulString());
+            if (historyManager != null) {
+                historyManager.addToHistory(passport.toUsefulString());
+            }
 
             if (clickListener != null)
                 clickListener.onItemClick(view, getBindingAdapterPosition());

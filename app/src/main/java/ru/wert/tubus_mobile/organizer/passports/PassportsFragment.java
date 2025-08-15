@@ -55,7 +55,7 @@ public class PassportsFragment extends Fragment implements
 
     private Context orgContext;
     private OrgActivityAndPassportsFragmentInteraction org;
-    private HistoryManager historyManager;
+    @Setter private HistoryManager historyManager;
 
     @Setter private PassportsRecViewAdapter adapter;
     @Getter @Setter private RecyclerView rv;
