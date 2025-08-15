@@ -126,6 +126,11 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
                 itemView.setBackgroundColor(context.getColor(R.color.colorPrimary)); //Выделяем строку
                 notifyDataSetChanged(); //Сбрасываем остальные выделения
 
+                // Добавляем запись в историю при нажатии на иконку чертежа
+                if (historyManager != null) {
+                    historyManager.addToHistory(passport.toUsefulString());
+                }
+
                 openViewer(passport);
             });
         }
