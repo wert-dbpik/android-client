@@ -384,7 +384,9 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
             List<Item> finalItems = items;
             runOnUiThread(() -> {
-                fr.getAdapter().changeListOfItems(finalItems);
+                if (fr != null && fr.getAdapter() != null && finalItems != null) {
+                    fr.getAdapter().changeListOfItems(finalItems);
+                }
             });
         }).start();
     }

@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
@@ -177,12 +178,14 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
 
     /**
      * Обновляет отображаемые данные
-     * @param items List<P>
+     * @param newItems List<P>
      */
-    public void changeListOfItems(List items){
-        selectedPosition = RecyclerView.NO_POSITION;
-        data.clear();
-        data.addAll(items);
+    public void changeListOfItems(List newItems){
+        if (newItems == null) {
+            newItems = Collections.emptyList(); // Защита от null
+        }
+        this.data.clear();
+        this.data.addAll(newItems);
         notifyDataSetChanged();
     }
 

@@ -85,6 +85,8 @@ public class PassportsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_passports, container, false);
 
+        currentData = new ArrayList<>(LIST_OF_ALL_PASSPORTS != null ? LIST_OF_ALL_PASSPORTS : Collections.emptyList());
+
         // Инициализация компонентов
         this.org = (OrganizerActivity) getActivity();
         this.orgContext = getContext();
@@ -159,7 +161,7 @@ public class PassportsFragment extends Fragment implements
 
         // Заполнение RecyclerView данными
         List<Item> items = findPassports(org != null ? org.getSelectedFolder() : null);
-        fillRecViewWithItems(items);
+        fillRecViewWithItems(items != null ? items : Collections.emptyList());
 
         // Обработка касания списка (скрытие клавиатуры)
         rv.setOnTouchListener((v, event) -> {
@@ -181,10 +183,14 @@ public class PassportsFragment extends Fragment implements
     public void fillRecViewWithItems(List<Item> items) {
         if (org == null || orgContext == null) return;
 
+        // Создаем локальную копию items, чтобы избежать изменения параметра
+        List<Item> finalItems = items != null ? items : Collections.emptyList();
+
         ((Activity) org).runOnUiThread(() -> {
-            adapter = new PassportsRecViewAdapter(this, orgContext, items != null ? items : Collections.emptyList(), historyManager);
+            adapter = new PassportsRecViewAdapter(this, orgContext, finalItems, historyManager);
             adapter.setClickListener(this);
             rv.setAdapter(adapter);
+            currentData = new ArrayList<>(finalItems); // Обновляем currentData
         });
     }
 
@@ -238,7 +244,7 @@ public class PassportsFragment extends Fragment implements
      */
     @Override
     public List<Item> findProperItems(String text) {
-        if (text == null || currentData == null) {
+        if (text == null || currentData == null || currentData.isEmpty()) {
             return Collections.emptyList();
         }
 

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -246,7 +247,7 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
         if (items == null)
             fillRecViewWithItems(currentListWithGlobalOff(null));
         else
-            fillRecViewWithItems(items);
+            fillRecViewWithItems(items != null ? items : Collections.emptyList());
 
         //При касании списка, поле ввода должно потерять фокус
         //чтобы наша клавиатура скрылась с экрана и мы увидели весь список
