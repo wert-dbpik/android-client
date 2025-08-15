@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -49,6 +51,7 @@ import ru.wert.tubus_mobile.keyboards.RuKeyboard;
 import ru.wert.tubus_mobile.main.BaseActivity;
 import ru.wert.tubus_mobile.organizer.folders.FoldersFragment;
 import ru.wert.tubus_mobile.organizer.folders.FoldersRecViewAdapter;
+import ru.wert.tubus_mobile.organizer.history.HistoryManager;
 import ru.wert.tubus_mobile.organizer.passports.PassportsFragment;
 import ru.wert.tubus_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.tubus_mobile.settings.SettingsActivity;
@@ -79,11 +82,30 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     @Getter@Setter private String passportsTextSearch = "";
 //    private AsyncTask<String, String, Boolean> downloadTask;
 
+    private ImageButton btnHistory;
+    private HistoryManager historyManager;
+    private PopupMenu historyPopup;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer);
+
+        // Инициализация HistoryManager
+        historyManager = new HistoryManager(this);
+
+        // Находим кнопку истории
+        btnHistory = findViewById(R.id.btnHistory);
+
+        // Создаем PopupMenu для отображения истории
+        historyPopup = new PopupMenu(this, btnHistory);
+        historyPopup.getMenuInflater().inflate(R.menu.empty_menu, historyPopup.getMenu());
+
+        // Обработчик нажатия на кнопку истории
+        btnHistory.setOnClickListener(v -> {
+            showHistoryPopup();
+        });
 
         fm = getSupportFragmentManager();
         currentFoldersFragment = new FoldersFragment();
@@ -129,6 +151,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         checkUpNewVersion();
 
     }
+
+
 
     @Override
     public void onPause() {
@@ -314,6 +338,29 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         });
     }
 
+    // Показываем popup с историей
+    private void showHistoryPopup() {
+        Menu menu = historyPopup.getMenu();
+        menu.clear();
+
+        List<String> history = historyManager.getHistory();
+        if (history.isEmpty()) {
+            menu.add("История пуста").setEnabled(false);
+        } else {
+            for (int i = 0; i < history.size(); i++) {
+                menu.add(0, i, 0, history.get(i));
+            }
+        }
+
+        historyPopup.setOnMenuItemClickListener(item -> {
+            String selectedDrawing = history.get(item.getItemId());
+            editTextSearch.setText(selectedDrawing);
+            searchByText(selectedDrawing);
+            return true;
+        });
+
+        historyPopup.show();
+    }
 
     private void searchByText(String text) {
 

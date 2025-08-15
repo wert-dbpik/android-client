@@ -36,6 +36,7 @@ import ru.wert.tubus_mobile.data.models.Passport;
 import ru.wert.tubus_mobile.data.retrofit.RetrofitClient;
 import ru.wert.tubus_mobile.organizer.OrganizerActivity;
 import ru.wert.tubus_mobile.organizer.OrganizerRecViewAdapter;
+import ru.wert.tubus_mobile.organizer.history.HistoryManager;
 import ru.wert.tubus_mobile.viewer.ViewerActivity;
 import ru.wert.tubus_mobile.warnings.AppWarnings;
 
@@ -47,17 +48,20 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
     private final Context context;
     @Setter@Getter private int selectedPosition = RecyclerView.NO_POSITION;
     private PassportsFragment fragment;
+    private final HistoryManager historyManager;
 
     /**
      * Конструктор получает на входе список элементов List<P>
      * Для отображения в RecycleView список преобразуется в List<String>
      * @param context Context
      */
-    public PassportsRecViewAdapter(PassportsFragment fragment, Context context, List<Item> items) {
+    public PassportsRecViewAdapter(PassportsFragment fragment, Context context, List<Item> items,
+                                   HistoryManager historyManager) {
         this.fragment = fragment;
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.data = items;
+        this.historyManager = historyManager;
     }
 
     /**
@@ -205,6 +209,10 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
             view.findViewById(R.id.selectedLinearLayout)
                     .setBackgroundColor(context.getColor(R.color.colorPrimary));
 
+            // Добавляем запись в историю при клике
+            Passport passport = (Passport) data.get(getBindingAdapterPosition());
+            historyManager.addToHistory(passport.toUsefulString());
+
             if (clickListener != null)
                 clickListener.onItemClick(view, getBindingAdapterPosition());
 
@@ -219,7 +227,8 @@ public class PassportsRecViewAdapter extends RecyclerView.Adapter<PassportsRecVi
      * @return P extends Item
      */
     public Passport getItem(int index) {
-        return (Passport) data.get(index);
+        Passport passport = (Passport) data.get(index);
+        return passport ;
     }
 
     public void setClickListener(passportsClickListener passportsClickListener) {

@@ -38,6 +38,7 @@ import ru.wert.tubus_mobile.organizer.FragmentTag;
 import ru.wert.tubus_mobile.organizer.OrgActivityAndPassportsFragmentInteraction;
 import ru.wert.tubus_mobile.organizer.OrganizerActivity;
 import ru.wert.tubus_mobile.organizer.OrganizerFragment;
+import ru.wert.tubus_mobile.organizer.history.HistoryManager;
 
 /**
  * Фрагмент для отображения и управления списком паспортов.
@@ -54,6 +55,7 @@ public class PassportsFragment extends Fragment implements
 
     private Context orgContext;
     private OrgActivityAndPassportsFragmentInteraction org;
+    private HistoryManager historyManager;
 
     @Setter private PassportsRecViewAdapter adapter;
     @Getter @Setter private RecyclerView rv;
@@ -73,6 +75,7 @@ public class PassportsFragment extends Fragment implements
         // Проверяем, что активность реализует необходимый интерфейс
         if (context instanceof OrgActivityAndPassportsFragmentInteraction) {
             org = (OrgActivityAndPassportsFragmentInteraction) context;
+            historyManager = new HistoryManager(context);
         } else {
             throw new RuntimeException(context + " must implement OrgActivityAndPassportsFragmentInteraction");
         }
@@ -179,7 +182,7 @@ public class PassportsFragment extends Fragment implements
         if (org == null || orgContext == null) return;
 
         ((Activity) org).runOnUiThread(() -> {
-            adapter = new PassportsRecViewAdapter(this, orgContext, items != null ? items : Collections.emptyList());
+            adapter = new PassportsRecViewAdapter(this, orgContext, items != null ? items : Collections.emptyList(), historyManager);
             adapter.setClickListener(this);
             rv.setAdapter(adapter);
         });
