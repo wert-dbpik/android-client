@@ -289,7 +289,11 @@ public class PassportsFragment extends Fragment implements
         if (passport != null) {
             Intent intent = new Intent(((Activity) org), InfoActivity.class);
             intent.putExtra(PASSPORT, passport);
+            // Убираем стандартную анимацию перехода
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
+            // Убираем анимацию для текущей активности
+            ((Activity) org).overridePendingTransition(0, 0);
         }
     }
 

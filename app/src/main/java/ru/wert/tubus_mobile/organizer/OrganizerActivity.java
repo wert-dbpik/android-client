@@ -277,13 +277,22 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 Item i = ((FoldersRecViewAdapter)currentFoldersFragment.getAdapter()).getItem(0);
                 if(i instanceof Folder){ //Если папка, значит имеем список папок
                     showAlertDialogAndExit();
-                } else
-                currentFoldersFragment.onItemClick(currentFoldersFragment.getView(), 0);
+                } else {
+                    FragmentTransaction ft = fm.beginTransaction();
+                    // Убираем анимацию для возврата
+                    ft.setCustomAnimations(0, 0);
+                    ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
+                    ft.commit();
+                    currentFoldersFragment.onItemClick(currentFoldersFragment.getView(), 0);
+                }
             }
         } else if(fr instanceof PassportsFragment){
-                openFoldersFragment();
+            FragmentTransaction ft = fm.beginTransaction();
+            // Анимация только справа налево при переходе к папкам
+            ft.setCustomAnimations(R.animator.to_right_in, R.animator.to_right_out);
+            ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
+            ft.commit();
         }
-
     }
 
 
@@ -434,9 +443,16 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         currentPassportsFragment.setHistoryManager(historyManager);
 
         FragmentTransaction ft = fm.beginTransaction();
-        ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+
+        // Применяем анимацию только если текущий фрагмент - FoldersFragment
+        if (fm.findFragmentById(R.id.organizer_fragment_container) instanceof FoldersFragment) {
+            ft.setCustomAnimations(R.animator.to_left_in, R.animator.to_left_out);
+        } else {
+            // Без анимации для других случаев
+            ft.setCustomAnimations(0, 0);
+        }
+
         ft.replace(R.id.organizer_fragment_container, currentPassportsFragment);
-//        ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
     }
 
