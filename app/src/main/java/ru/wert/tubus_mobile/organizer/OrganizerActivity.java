@@ -123,6 +123,9 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             openPassportFragment();
         });
         btnPassportsTab.setOnLongClickListener(v -> {
+            // Сбрасываем выбранную папку
+            setSelectedFolder(null);
+
             PassportsRecViewAdapter adapter = currentPassportsFragment.getAdapter();
             if(adapter == null) {
                 openPassportFragment();
@@ -130,7 +133,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 adapter.changeListOfItems(new ArrayList<>(LIST_OF_ALL_PASSPORTS));
                 currentPassportsFragment.setCurrentData(new ArrayList<>(currentPassportsFragment.getAdapter().getData()));
             }
-            return false;
+            return true; // Возвращаем true, чтобы показать, что событие обработано
         });
 
         // Слушатель на изменение активного фрагмента меняет содержимое строки поиска
