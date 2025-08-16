@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -142,6 +143,15 @@ public class InfoActivity extends BaseActivity  implements
 
         AsyncTask<Void, Void, Void> fillInfoActivityTask = new FillInfoActivityTask();
         fillInfoActivityTask.execute();
+
+        // Замена onBackPressed()
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finish();
+                overridePendingTransition(R.animator.to_right_in, R.animator.to_right_out);
+            }
+        });
 
     }
 
