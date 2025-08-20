@@ -26,6 +26,7 @@ import ru.wert.tubus_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.tubus_mobile.main.BaseActivity;
 import ru.wert.tubus_mobile.data.models.User;
 import ru.wert.tubus_mobile.data.servicesREST.UserService;
+import ru.wert.tubus_mobile.organizer.OrganizerActivity;
 
 /**
  * Отправная точка работы приложения
@@ -105,7 +106,10 @@ public class StartActivity extends BaseActivity {
                                 }
                             }
                             runOnUiThread(() -> {
-                                Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
+//                                Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
+//                                startActivity(dataLoading);
+
+                                Intent dataLoading = new Intent(StartActivity.this, OrganizerActivity.class);
                                 startActivity(dataLoading);
                             });
                         }else {
