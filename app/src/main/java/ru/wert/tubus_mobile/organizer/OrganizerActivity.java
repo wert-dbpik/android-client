@@ -55,6 +55,8 @@ import ru.wert.tubus_mobile.organizer.history.HistoryManager;
 import ru.wert.tubus_mobile.organizer.passports.PassportsFragment;
 import ru.wert.tubus_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.tubus_mobile.settings.SettingsActivity;
+import ru.wert.tubus_mobile.tobusToolbar.ToolbarHelper;
+import ru.wert.tubus_mobile.tobusToolbar.TubusToolbar;
 import ru.wert.tubus_mobile.warnings.AppWarnings;
 
 public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
@@ -86,11 +88,18 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     private HistoryManager historyManager;
     private PopupMenu historyPopup;
 
+    // Кастомный Toolbar
+    private TubusToolbar tubusToolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer);
+
+        // Инициализация кастомного Toolbar
+        tubusToolbar = findViewById(R.id.tubusToolbar);
+        ToolbarHelper.setupToolbar(this, tubusToolbar, "Организатор", "Главный экран");
 
         // Инициализация HistoryManager
         historyManager = new HistoryManager(this);
@@ -454,6 +463,10 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
         ft.replace(R.id.organizer_fragment_container, currentPassportsFragment);
         ft.commitAllowingStateLoss();
+
+        // Обновляем Toolbar
+        ToolbarHelper.updateTitle(tubusToolbar, "Чертежи");
+        ToolbarHelper.updateSubtitle(tubusToolbar, "Просмотр чертежей");
     }
 
     public void openFoldersFragment() {
@@ -463,6 +476,11 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
 //        ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
+
+        // Обновляем Toolbar
+        ToolbarHelper.updateTitle(tubusToolbar, "Комплекты");
+        ToolbarHelper.updateSubtitle(tubusToolbar, "Просмотр комплектов");
+
         //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
         if (currentFoldersFragment.getUpperProductGroupId() != null &&
                 currentFoldersFragment.getUpperProductGroupId().equals(1L))

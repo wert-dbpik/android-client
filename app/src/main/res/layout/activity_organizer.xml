@@ -8,6 +8,13 @@
     android:orientation="vertical"
     tools:context=".viewer.ViewerActivity">
 
+    <!-- Кастомный Toolbar -->
+    <ru.wert.tubus_mobile.tobusToolbar.TubusToolbar
+        android:id="@+id/tubusToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
