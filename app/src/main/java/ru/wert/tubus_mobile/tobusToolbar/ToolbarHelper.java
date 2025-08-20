@@ -12,25 +12,30 @@ public class ToolbarHelper {
                                     String title, String subtitle) {
         if (tubusToolbar == null) return;
 
-        // Устанавливаем кастомный Toolbar как ActionBar
-        activity.setSupportActionBar(tubusToolbar);
+        try {
+            // Устанавливаем кастомный Toolbar как ActionBar
+            activity.setSupportActionBar(tubusToolbar);
 
-        // Скрываем стандартный заголовок
-        if (activity.getSupportActionBar() != null) {
-            activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
+            // Скрываем стандартный заголовок
+            if (activity.getSupportActionBar() != null) {
+                activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+            }
 
-        // Настраиваем заголовок и подзаголовок
-        if (title != null && !title.isEmpty()) {
-            tubusToolbar.setTitle(title);
-        } else {
-            tubusToolbar.hideTitle();
-        }
+            // Настраиваем заголовок и подзаголовок
+            if (title != null && !title.isEmpty()) {
+                tubusToolbar.setTitle(title);
+            } else {
+                tubusToolbar.hideTitle();
+            }
 
-        if (subtitle != null && !subtitle.isEmpty()) {
-            tubusToolbar.setSubtitle(subtitle);
-        } else {
-            tubusToolbar.hideSubtitle();
+            if (subtitle != null && !subtitle.isEmpty()) {
+                tubusToolbar.setSubtitle(subtitle);
+            } else {
+                tubusToolbar.hideSubtitle();
+            }
+        } catch (IllegalStateException e) {
+            // Логируем ошибку, но не падаем
+            e.printStackTrace();
         }
     }
 

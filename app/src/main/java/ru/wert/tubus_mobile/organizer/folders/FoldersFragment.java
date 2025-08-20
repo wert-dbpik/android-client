@@ -329,6 +329,8 @@ public class FoldersFragment extends Fragment implements FoldersRecViewAdapter.I
 
     private List<ProductGroup> findProductGroupChildren(Long productGroupId){
         List<ProductGroup> foundGroups = new ArrayList<>();
+        if(LIST_OF_ALL_PRODUCT_GROUPS == null)
+            LIST_OF_ALL_PRODUCT_GROUPS = new ArrayList<>();
         for(ProductGroup pg: LIST_OF_ALL_PRODUCT_GROUPS){
             if(pg.getParentId().equals(productGroupId))
             foundGroups.add(pg);
