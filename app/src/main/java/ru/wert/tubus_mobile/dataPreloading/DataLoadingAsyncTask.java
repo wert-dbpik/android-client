@@ -23,10 +23,10 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MS = 2000;
 
-    private Activity activity;
-    private TextView tvLoadingStatus;
+    private final Activity activity;
+    private final TextView tvLoadingStatus;
     private int retryCount = 0;
-    private CacheManager cacheManager;
+    private final CacheManager cacheManager;
     private boolean useCache = true;
 
     public DataLoadingAsyncTask(Activity activity) {
@@ -91,7 +91,7 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
 
     private Boolean attemptDataLoadingWithTempCache() throws IOException {
         try {
-            publishProgress("Установка соединения с сервером...");
+            publishProgress("Подключаемся к серверу...");
             BatchResponse response = BatchService.loadInitialData();
 
             if (response == null) {
@@ -210,66 +210,6 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    private Boolean attemptDataLoading() throws IOException {
-        try {
-            publishProgress("Установка соединения...");
-            BatchResponse response = BatchService.loadInitialData();
-
-            if (response == null) {
-                throw new IOException("Пустой ответ от сервера");
-            }
-
-            processResponseWithProgress(response);
-
-            // Сохраняем данные в кэш
-            publishProgress("Сохранение в кэш...");
-            cacheManager.saveDataToCache(response);
-
-            return true;
-
-        } catch (IOException e) {
-            if (retryCount < MAX_RETRIES) {
-                retryCount++;
-                Log.w(TAG, "Attempt " + retryCount + " failed, retrying...", e);
-                publishProgress("Повторная попытка " + retryCount + "/" + MAX_RETRIES);
-
-                try {
-                    TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    return false;
-                }
-
-                return attemptDataLoading();
-            }
-
-            // При окончательной ошибке пробуем загрузить из кэша
-            if (cacheManager.hasAnyCachedData()) {
-                publishProgress("Используем данные из кэша...");
-                BatchResponse forcedResponse = cacheManager.loadDataFromCacheForce();
-                if (forcedResponse != null) {
-                    processResponseWithProgress(forcedResponse);
-                    return true;
-                }
-            }
-
-            throw e;
-        }
-    }
-
-    private void loadFreshDataInBackground() {
-        try {
-            Log.i(TAG, "Фоновая загрузка свежих данных...");
-            BatchResponse freshResponse = BatchService.loadInitialData();
-            if (freshResponse != null) {
-                cacheManager.saveDataToCache(freshResponse);
-                Log.i(TAG, "Данные успешно обновлены в фоне");
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "Не удалось обновить данные в фоне: " + e.getMessage());
-        }
-    }
-
     @Override
     protected void onProgressUpdate(String... values) {
         if (tvLoadingStatus != null && values.length > 0) {
@@ -277,7 +217,6 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
         }
     }
 
-    // Остальные методы processUsers, processRooms и т.д. остаются без изменений
     private void processUsers(List<User> users) {
         if (users != null) {
             ThisApplication.LIST_OF_ALL_USERS = users.stream()

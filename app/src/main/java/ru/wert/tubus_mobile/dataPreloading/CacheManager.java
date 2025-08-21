@@ -138,31 +138,6 @@ public class CacheManager {
         }
     }
 
-    /**
-     * ЗАГРУЗКА ДАННЫХ ИЗ ВРЕМЕННОГО КЭША
-     */
-    public BatchResponse loadDataFromTempCache() {
-        try {
-            File tempCacheDir = getTempCacheDirectory();
-            if (!tempCacheDir.exists()) return null;
-
-            BatchResponse response = new BatchResponse();
-
-            response.setUsers(loadListFromFile(tempCacheDir, FILE_USERS, new TypeToken<List<User>>(){}.getType()));
-            response.setRooms(loadListFromFile(tempCacheDir, FILE_ROOMS, new TypeToken<List<Room>>(){}.getType()));
-            response.setProductGroups(loadListFromFile(tempCacheDir, FILE_PRODUCT_GROUPS, new TypeToken<List<ProductGroup>>(){}.getType()));
-            response.setDrafts(loadListFromFile(tempCacheDir, FILE_DRAFTS, new TypeToken<List<Draft>>(){}.getType()));
-            response.setFolders(loadListFromFile(tempCacheDir, FILE_FOLDERS, new TypeToken<List<Folder>>(){}.getType()));
-            response.setPassports(loadListFromFile(tempCacheDir, FILE_PASSPORTS, new TypeToken<List<Passport>>(){}.getType()));
-
-            return response;
-
-        } catch (Exception e) {
-            Log.e(TAG, "Ошибка загрузки данных из временного кэша: " + e.getMessage());
-            return null;
-        }
-    }
-
     private File getTempCacheDirectory() {
         return new File(context.getFilesDir(), TEMP_CACHE_DIR);
     }
@@ -386,26 +361,6 @@ public class CacheManager {
         }
     }
 
-    /**
-     * ПОЛУЧЕНИЕ РАЗМЕРА КЭША
-     */
-    public long getCacheSize() {
-        File cacheDir = getCacheDirectory();
-        return getDirectorySize(cacheDir);
-    }
-
-    /**
-     * ПОЛУЧЕНИЕ ВРЕМЕНИ ПОСЛЕДНЕГО ОБНОВЛЕНИЯ КЭША
-     */
-    public Date getLastUpdateTime() {
-        try {
-            CacheMetadata metadata = loadFromFile(FILE_METADATA, CacheMetadata.class);
-            return metadata != null ? metadata.getCreatedAt() : null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     // ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
     private <T> void saveListToFile(String filename, List<T> list) {
         saveToFile(filename, list);
@@ -472,21 +427,6 @@ public class CacheManager {
             }
         }
         directory.delete();
-    }
-
-    private long getDirectorySize(File directory) {
-        long size = 0;
-        if (directory.isDirectory()) {
-            File[] files = directory.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    size += getDirectorySize(file);
-                }
-            }
-        } else if (directory.isFile()) {
-            size = directory.length();
-        }
-        return size;
     }
 
     /**

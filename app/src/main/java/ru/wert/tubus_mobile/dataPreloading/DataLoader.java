@@ -49,16 +49,16 @@ public class DataLoader {
         task.execute();
     }
 
-    public void refreshData(Activity activity) throws Exception {
-        CacheManager cacheManager = new CacheManager(activity);
-        cacheManager.clearCache();
-
-        BatchResponse response = BatchService.loadInitialData();
-        if (response != null) {
-            cacheManager.saveDataToCache(response);
-            processData(response);
-        }
-    }
+//    public void refreshData(Activity activity) throws Exception {
+//        CacheManager cacheManager = new CacheManager(activity);
+//        cacheManager.clearCache();
+//
+//        BatchResponse response = BatchService.loadInitialData();
+//        if (response != null) {
+//            cacheManager.saveDataToCache(response);
+//            processData(response);
+//        }
+//    }
 
     private void processData(BatchResponse response) {
         if (response == null) return;
