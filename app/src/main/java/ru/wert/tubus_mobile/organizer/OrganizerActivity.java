@@ -509,7 +509,9 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
             case R.id.action_update:
                 editTextSearch.setText("");
+                // Запускаем обновление с принудительной перезагрузкой с сервера
                 Intent updateView = new Intent(OrganizerActivity.this, DataLoadingActivity.class);
+                updateView.putExtra("FORCE_REFRESH", true); // Флаг принудительного обновления
                 startActivity(updateView);
                 return true;
 

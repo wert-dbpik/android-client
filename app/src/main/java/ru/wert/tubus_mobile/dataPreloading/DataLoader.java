@@ -40,64 +40,59 @@ public class DataLoader {
         task.execute();
     }
 
-    public void refreshData(Activity activity, boolean forceRefresh) throws Exception {
-        CacheManager cacheManager = new CacheManager(activity);
+    public void load(Activity activity, boolean forceRefresh) throws Exception {
+        FileService.getInstance();
+        new PassportService(activity);
+        new DraftService();
 
-        if (forceRefresh || !cacheManager.isCacheValid()) {
-            // Загружаем свежие данные
-            BatchResponse response = BatchService.loadInitialData();
-            if (response != null) {
-                cacheManager.saveDataToCache(response);
-                processData(response);
-            }
-        } else {
-            // Используем кэшированные данные
-            BatchResponse cachedResponse = cacheManager.loadDataFromCache();
-            if (cachedResponse != null) {
-                processData(cachedResponse);
-            }
+        DataLoadingAsyncTask task = new DataLoadingAsyncTask(activity, !forceRefresh);
+        task.execute();
+    }
+
+    public void refreshData(Activity activity) throws Exception {
+        CacheManager cacheManager = new CacheManager(activity);
+        cacheManager.clearCache();
+
+        BatchResponse response = BatchService.loadInitialData();
+        if (response != null) {
+            cacheManager.saveDataToCache(response);
+            processData(response);
         }
     }
 
     private void processData(BatchResponse response) {
         if (response == null) return;
 
-        // Обрабатываем пользователей
         if (response.getUsers() != null) {
             ThisApplication.LIST_OF_ALL_USERS = response.getUsers().stream()
                     .sorted(ThisApplication.usefulStringComparator())
                     .collect(Collectors.toList());
         }
 
-        // Обрабатываем комнаты/чаты
         if (response.getRooms() != null) {
             ThisApplication.LIST_OF_ALL_ROOMS = response.getRooms().stream()
                     .sorted(ThisApplication.usefulStringComparator())
                     .collect(Collectors.toList());
         }
 
-        // Обрабатываем группы изделий
         if (response.getProductGroups() != null) {
             ThisApplication.LIST_OF_ALL_PRODUCT_GROUPS = response.getProductGroups().stream()
                     .sorted(ThisApplication.usefulStringComparator())
                     .collect(Collectors.toList());
         }
 
-        // Обрабатываем чертежи
         if (response.getDrafts() != null) {
             ThisApplication.LIST_OF_ALL_DRAFTS = response.getDrafts().stream()
                     .sorted(ThisApplication.usefulStringComparator())
                     .collect(Collectors.toList());
         }
 
-        // Обрабатываем комплекты/папки
         if (response.getFolders() != null) {
             ThisApplication.LIST_OF_ALL_FOLDERS = response.getFolders().stream()
                     .sorted(ThisApplication.usefulStringComparator())
                     .collect(Collectors.toList());
         }
 
-        // Обрабатываем паспорта
         if (response.getPassports() != null) {
             ThisApplication.LIST_OF_ALL_PASSPORTS = response.getPassports().stream()
                     .sorted(ThisApplication.passportsComparatorDetailFirst())
