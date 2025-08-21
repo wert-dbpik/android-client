@@ -97,6 +97,7 @@ public class ThisApplication extends Application {
     public static List<Draft> LIST_OF_ALL_DRAFTS;
     public static List<Folder> LIST_OF_ALL_FOLDERS;
     public static List<Passport> LIST_OF_ALL_PASSPORTS;
+    public static long LAST_SYNC_TIME = 0;
 
     @Override
     protected void attachBaseContext(Context base) {

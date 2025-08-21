@@ -20,26 +20,45 @@ public class DataLoadingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_loading);
 
-
         new Thread(()->{
             //Получаем временную папку
-            Consts.TEMP_DIR = DataLoadingActivity.this.getCacheDir(); // context being the Activity pointer
+            Consts.TEMP_DIR = DataLoadingActivity.this.getCacheDir();
+
+            // Проверяем наличие кэша
+            CacheManager cacheManager = new CacheManager(this);
+            boolean hasCache = cacheManager.hasAnyCachedData();
+
             try {
-                new DataLoader().load(this);
+                if (hasCache) {
+                    // Используем асинхронную задачу с кэшированием
+                    new DataLoadingAsyncTask(this).execute();
+                } else {
+                    // Если кэша нет, загружаем напрямую
+                    new DataLoader().load(this);
+                }
 
             } catch (Exception e) {
                 runOnUiThread(()->{
-                    new AlertDialog.Builder(DataLoadingActivity.this)
-                            .setTitle("Внимание!")
-                            .setMessage("Не удалось загрузить данные, возможно сервер не доступен. Приложение будет закрыто!")
-                            .setPositiveButton(android.R.string.yes, (arg0, arg1) -> exitApplication()).create().show();
+                    // Пытаемся использовать кэш при ошибке
+                    if (cacheManager.hasAnyCachedData()) {
+                        new AlertDialog.Builder(DataLoadingActivity.this)
+                                .setTitle("Внимание!")
+                                .setMessage("Не удалось загрузить свежие данные. Используем данные из кэша.")
+                                .setPositiveButton("OK", (arg0, arg1) -> {
+                                    new DataLoadingAsyncTask(DataLoadingActivity.this).execute();
+                                })
+                                .setCancelable(false)
+                                .show();
+                    } else {
+                        new AlertDialog.Builder(DataLoadingActivity.this)
+                                .setTitle("Внимание!")
+                                .setMessage("Не удалось загрузить данные, возможно сервер не доступен. Приложение будет закрыто!")
+                                .setPositiveButton("OK", (arg0, arg1) -> exitApplication())
+                                .setCancelable(false)
+                                .show();
+                    }
                 });
-
             }
-
         }).start();
-
     }
-
-
 }

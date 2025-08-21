@@ -22,6 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import ru.wert.tubus_mobile.data.api_interfaces.UserApiInterface;
 import ru.wert.tubus_mobile.data.retrofit.RetrofitClient;
+import ru.wert.tubus_mobile.dataPreloading.CacheManager;
 import ru.wert.tubus_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.tubus_mobile.main.BaseActivity;
 import ru.wert.tubus_mobile.data.models.User;
@@ -42,10 +43,9 @@ import ru.wert.tubus_mobile.organizer.OrganizerActivity;
 public class StartActivity extends BaseActivity implements ConnectionManager.ConnectionStatusListener {
 
     private static final String TAG = "StartActivity";
-    private String ip;
-    private String baseUrl;
     private boolean logoTapped;
     private ConnectionManager connectionManager;
+    private CacheManager cacheManager;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -61,6 +61,9 @@ public class StartActivity extends BaseActivity implements ConnectionManager.Con
         Log.i(TAG, "onCreate: SEND_ERROR_REPORTS = " + getProp("SEND_ERROR_REPORTS"));
         Log.i(TAG, "onCreate: USE_APP_KEYBOARD = " + getProp("USE_APP_KEYBOARD"));
 
+        // Инициализируем менеджер кэша
+        cacheManager = new CacheManager(this);
+
         // Инициализируем менеджер соединения
         connectionManager = ConnectionManager.getInstance();
         connectionManager.setConnectionStatusListener(this);
@@ -72,10 +75,10 @@ public class StartActivity extends BaseActivity implements ConnectionManager.Con
             ThisApplication.loadSettings();
         });
 
-        new Thread(()->{  //Вход без нажатия на логотип
+        new Thread(() -> {  //Вход без нажатия на логотип
             try {
                 Thread.sleep(5000);
-                if(!logoTapped) {
+                if (!logoTapped) {
                     startRetrofit();
                     ThisApplication.loadSettings();
 
@@ -99,8 +102,10 @@ public class StartActivity extends BaseActivity implements ConnectionManager.Con
     @Override
     protected void onPause() {
         super.onPause();
-        // Останавливаем heartbeat при паузе активности (опционально)
-        // connectionManager.stop();
+        // Останавливаем heartbeat при паузе активности
+        if (connectionManager != null) {
+            connectionManager.stop();
+        }
     }
 
     @Override
@@ -126,8 +131,21 @@ public class StartActivity extends BaseActivity implements ConnectionManager.Con
     }
 
     private void startRetrofit() {
-        //Константа принимает первоначальное значение
         DATA_BASE_URL = "http://" + getProp("IP") + ":" + getProp("PORT") + "/";
+
+        // Проверяем наличие валидного кэша перед установкой соединения
+        if (cacheManager.isCacheValid()) {
+            Log.i(TAG, "Обнаружен валидный кэш, запускаем загрузку данных");
+            runOnUiThread(() -> {
+                Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
+                startActivity(dataLoading);
+            });
+
+            // Запускаем фоновую проверку соединения для обновления данных
+            startBackgroundConnectionCheck();
+            return;
+        }
+
         Thread t = new Thread(() -> {
             RetrofitClient.setBASE_URL(DATA_BASE_URL);
             Log.d(TAG, "startRetrofit: " + String.format("base url = %s", DATA_BASE_URL));
@@ -135,57 +153,111 @@ public class StartActivity extends BaseActivity implements ConnectionManager.Con
             // Запускаем heartbeat менеджер
             connectionManager.start();
 
-            //Проверка соединения по доступности пользователя с id = 1
+            // Проверка соединения по доступности пользователя с id = 1
             UserApiInterface api = UserService.getInstance().getApi();
             api.getAll().enqueue(new Callback<List<User>>() {
                 @Override
                 public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        //Если соединение с сервером удалось, то IP сохраняется в файл свойств
-                        String userNameInProps = getProp("USER_NAME");
-                        if (!userNameInProps.equals("")) {
-                            for (User u : response.body()) {
-                                if (u.getName().equals(userNameInProps)) {
-                                    CURRENT_USER = u;
-                                    createLog(true, "Подключился к серверу");
-                                }
-                            }
-                            runOnUiThread(() -> {
-                                Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
-                                startActivity(dataLoading);
-
-//                                Для тестирования
-//                                Intent dataLoading = new Intent(StartActivity.this, OrganizerActivity.class);
-//                                startActivity(dataLoading);
-                            });
-                        }else {
-                            runOnUiThread(() -> {
-                                Intent loginIntent = new Intent(StartActivity.this, LoginActivity.class);
-                                startActivity(loginIntent);
-                            });
-                        }
+                        handleSuccessfulConnection(response.body());
+                    } else {
+                        handleConnectionFailure();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<List<User>> call, Throwable t) {
-                    if (!ifConnectedToWifi(false))
-                        new AlertDialog.Builder(StartActivity.this)
-                                .setTitle("Внимание!")
-                                .setMessage("Wifi не включен")
-                                .setPositiveButton("Сейчас включу!", (dialog, which) -> {
-                                    Intent intent = new Intent(StartActivity.this, ConnectionToServerActivity.class);
-                                    startActivity(intent);
-                                })
-                                .show();
-                    else {
-                        Intent intent = new Intent(StartActivity.this, ConnectionToServerActivity.class);
-                        startActivity(intent);
-                    }
+                    handleConnectionFailure();
                 }
             });
         });
         t.start();
     }
-}
 
+    private void handleSuccessfulConnection(List<User> users) {
+        String userNameInProps = getProp("USER_NAME");
+        if (!userNameInProps.equals("")) {
+            for (User u : users) {
+                if (u.getName().equals(userNameInProps)) {
+                    CURRENT_USER = u;
+                    createLog(true, "Подключился к серверу");
+                    break;
+                }
+            }
+
+            runOnUiThread(() -> {
+                Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
+                startActivity(dataLoading);
+            });
+        } else {
+            runOnUiThread(() -> {
+                Intent loginIntent = new Intent(StartActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
+            });
+        }
+    }
+
+    private void handleConnectionFailure() {
+        // Проверяем наличие любых кэшированных данных
+        if (cacheManager.hasAnyCachedData()) {
+            Log.w(TAG, "Соединение с сервером недоступно, но есть кэшированные данные");
+            runOnUiThread(() -> {
+                new AlertDialog.Builder(StartActivity.this)
+                        .setTitle("Оффлайн режим")
+                        .setMessage("Сервер недоступен. Используем данные из кэша.")
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
+                            startActivity(dataLoading);
+                        })
+                        .setCancelable(false)
+                        .show();
+            });
+        } else {
+            // Нет кэша и нет соединения
+            runOnUiThread(() -> {
+                if (!ifConnectedToWifi(false)) {
+                    new AlertDialog.Builder(StartActivity.this)
+                            .setTitle("Внимание!")
+                            .setMessage("WiFi не включен")
+                            .setPositiveButton("Сейчас включу!", (dialog, which) -> {
+                                Intent intent = new Intent(StartActivity.this, ConnectionToServerActivity.class);
+                                startActivity(intent);
+                            })
+                            .show();
+                } else {
+                    Intent intent = new Intent(StartActivity.this, ConnectionToServerActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+    }
+
+    private void startBackgroundConnectionCheck() {
+        new Thread(() -> {
+            try {
+                Thread.sleep(2000); // Даем время основной активности запуститься
+
+                RetrofitClient.setBASE_URL(DATA_BASE_URL);
+                UserApiInterface api = UserService.getInstance().getApi();
+
+                // Фоновая проверка соединения для обновления данных
+                api.getAll().enqueue(new Callback<List<User>>() {
+                    @Override
+                    public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                        if (response.isSuccessful()) {
+                            Log.i(TAG, "Фоновая проверка соединения: успешно");
+                            // Соединение есть, данные будут обновлены в DataLoadingActivity
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<User>> call, Throwable t) {
+                        Log.w(TAG, "Фоновая проверка соединения: недоступно");
+                    }
+                });
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+}
