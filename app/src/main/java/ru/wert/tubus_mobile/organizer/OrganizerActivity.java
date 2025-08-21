@@ -30,6 +30,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -374,12 +376,42 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
         historyPopup.setOnMenuItemClickListener(item -> {
             String selectedDrawing = history.get(item.getItemId());
-            editTextSearch.setText(selectedDrawing);
-            searchByText(selectedDrawing);
+
+            // Извлекаем только децимальный номер из строки (если есть)
+            String decimalNumber = extractDrawingNumber(selectedDrawing);
+
+            // Устанавливаем в поле поиска и ищем по децимальному номеру
+            editTextSearch.setText(decimalNumber);
+            searchByText(decimalNumber);
             return true;
         });
 
         historyPopup.show();
+    }
+
+    private String extractDrawingNumber(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+
+        // Паттерн для децимального номера (например: ПИК.301222.255)
+        Pattern decimalPattern = Pattern.compile("[А-ЯA-Z]+\\.[0-9]+\\.[0-9]+");
+        Matcher decimalMatcher = decimalPattern.matcher(text);
+
+        if (decimalMatcher.find()) {
+            return decimalMatcher.group(); // Возвращаем найденный децимальный номер
+        }
+
+        // Паттерн для номера типа Э13457 (буква Э и 5 цифр)
+        Pattern ePattern = Pattern.compile("Э[0-9]{5}");
+        Matcher eMatcher = ePattern.matcher(text);
+
+        if (eMatcher.find()) {
+            return eMatcher.group(); // Возвращаем найденный номер типа Э13457
+        }
+
+        // Если ни одна маска не подошла, возвращаем исходный текст
+        return text;
     }
 
     private void searchByText(String text) {
