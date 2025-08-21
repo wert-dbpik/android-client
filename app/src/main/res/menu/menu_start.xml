@@ -33,6 +33,11 @@
                 android:title="Сменить пароль"
                 app:showAsAction="never" />
             <item
+                android:id="@+id/action_clearHistory"
+                android:orderInCategory="3"
+                android:title="Очистить историю"
+                app:showAsAction="never" />
+            <item
                 android:id="@+id/action_settings"
                 android:orderInCategory="1"
                 android:title="Настройки"

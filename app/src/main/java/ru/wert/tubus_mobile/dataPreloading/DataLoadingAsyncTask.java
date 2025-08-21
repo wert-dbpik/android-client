@@ -260,6 +260,7 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
     private void processPassports(List<Passport> passports) {
         if (passports != null) {
             ThisApplication.LIST_OF_ALL_PASSPORTS = passports.stream()
+                    .filter(passport -> passport.getDraftIds() != null && !passport.getDraftIds().isEmpty()) // Фильтруем паспорта без чертежей
                     .sorted(ThisApplication.passportsComparatorDetailFirst())
                     .collect(Collectors.toList());
         }

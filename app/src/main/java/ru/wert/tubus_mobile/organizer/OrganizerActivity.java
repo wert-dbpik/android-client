@@ -377,12 +377,19 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         historyPopup.setOnMenuItemClickListener(item -> {
             String selectedDrawing = history.get(item.getItemId());
 
-            // Извлекаем только децимальный номер из строки (если есть)
-            String decimalNumber = extractDrawingNumber(selectedDrawing);
+            // Извлекаем номер по маскам (децимальный номер или Э+5 цифр)
+            String searchNumber = extractDrawingNumber(selectedDrawing);
 
-            // Устанавливаем в поле поиска и ищем по децимальному номеру
-            editTextSearch.setText(decimalNumber);
-            searchByText(decimalNumber);
+            // Устанавливаем в поле поиска
+            editTextSearch.setText(searchNumber);
+
+            editTextSearch.requestFocus();
+
+            // Перемещаем курсор в конец текста
+            editTextSearch.setSelection(searchNumber.length());
+
+            // Ищем по извлеченному номеру
+            searchByText(searchNumber);
             return true;
         });
 
@@ -568,6 +575,10 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
             case R.id.action_showFilterDialog:
                 FilterDialog filterDialog = new FilterDialog(OrganizerActivity.this);
                 filterDialog.show();
+                return true;
+
+            case R.id.action_clearHistory:
+                historyManager.clearHistory();
                 return true;
 
             case R.id.action_exit:
