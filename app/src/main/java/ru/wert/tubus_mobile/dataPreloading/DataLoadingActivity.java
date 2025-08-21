@@ -1,5 +1,6 @@
 package ru.wert.tubus_mobile.dataPreloading;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -14,7 +15,7 @@ import ru.wert.tubus_mobile.main.BaseActivity;
  * Так же загрузка данных вызывается из меню окна Поиска для обновления данных
  */
 public class DataLoadingActivity extends BaseActivity {
-
+    private DataLoadingAsyncTask currentTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +33,14 @@ public class DataLoadingActivity extends BaseActivity {
 
             try {
                 if (hasCache && !forceRefresh) {
-                    new DataLoadingAsyncTask(this, true).execute();
+                    currentTask = new DataLoadingAsyncTask(this, true);
+                    currentTask.execute();
                 } else {
                     if (forceRefresh) {
                         cacheManager.clearCache();
                     }
-                    new DataLoader().load(this, forceRefresh);
+                    currentTask = new DataLoadingAsyncTask(this, false);
+                    currentTask.execute();
                 }
 
             } catch (Exception e) {
@@ -62,5 +65,18 @@ public class DataLoadingActivity extends BaseActivity {
                 });
             }
         }).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Отменяем задачу при уничтожении активности
+        if (currentTask != null && currentTask.getStatus() == AsyncTask.Status.RUNNING) {
+            currentTask.cancel(true);
+
+            // Очищаем временный кэш при прерывании
+            CacheManager cacheManager = new CacheManager(this);
+            cacheManager.clearTempCache();
+        }
     }
 }

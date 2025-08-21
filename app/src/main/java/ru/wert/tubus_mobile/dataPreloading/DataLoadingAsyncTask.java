@@ -53,7 +53,7 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
     @Override
     protected Boolean doInBackground(Void... voids) {
         try {
-            // Пытаемся загрузить из кэша, если доступен
+            // Пытаемся загрузить из кэша, если доступен и разрешено использование кэша
             if (useCache && cacheManager.isCacheValid()) {
                 publishProgress("Загрузка из кэша...");
                 BatchResponse cachedResponse = cacheManager.loadDataFromCache();
@@ -61,18 +61,18 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
                     processResponseWithProgress(cachedResponse);
                     publishProgress("Данные загружены из кэша");
 
-                    // Загружаем свежие данные в фоне
-                    new Thread(this::loadFreshDataInBackground).start();
+                    // Загружаем свежие данные в фоне для обновления кэша
+                    new Thread(this::loadFreshDataInBackgroundWithTempCache).start();
 
                     return true;
                 }
             }
 
-            // Если кэш недоступен, загружаем с сервера
-            return attemptDataLoading();
+            // Если кэш недоступен или использование кэша запрещено, загружаем с сервера
+            return attemptDataLoadingWithTempCache();
 
         } catch (Exception e) {
-            Log.e(TAG, "Critical error during data loading", e);
+            Log.e(TAG, "Критическая ошибка во время загрузки данных", e);
             publishProgress("Критическая ошибка");
 
             // Пытаемся загрузить устаревшие данные при ошибке
@@ -86,6 +86,127 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
             }
 
             return false;
+        }
+    }
+
+    private Boolean attemptDataLoadingWithTempCache() throws IOException {
+        try {
+            publishProgress("Установка соединения с сервером...");
+            BatchResponse response = BatchService.loadInitialData();
+
+            if (response == null) {
+                throw new IOException("Пустой ответ от сервера");
+            }
+
+            // Обрабатываем данные для немедленного использования
+            processResponseWithProgress(response);
+
+            // Сохраняем данные во ВРЕМЕННЫЙ кэш
+            publishProgress("Сохранение во временный кэш...");
+            cacheManager.saveDataToTempCache(response);
+
+            // АТОМАРНАЯ ОПЕРАЦИЯ: переносим временный кэш в основной
+            publishProgress("Перенос данных в основной кэш...");
+            boolean commitSuccess = cacheManager.commitTempCache();
+
+            if (!commitSuccess) {
+                Log.w(TAG, "Не удалось перенести временный кэш в основной, используем fallback...");
+                // Fallback: сохраняем напрямую в основной кэш
+                cacheManager.saveDataToCache(response);
+            }
+
+            publishProgress("Данные успешно загружены и сохранены");
+            return true;
+
+        } catch (IOException e) {
+            // Очищаем временный кэш при ошибке
+            cacheManager.clearTempCache();
+
+            if (retryCount < MAX_RETRIES) {
+                retryCount++;
+                Log.w(TAG, "Попытка " + retryCount + " не удалась, повторяем...", e);
+                publishProgress("Повторная попытка " + retryCount + "/" + MAX_RETRIES);
+
+                try {
+                    TimeUnit.MILLISECONDS.sleep(RETRY_DELAY_MS);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    return false;
+                }
+
+                return attemptDataLoadingWithTempCache();
+            }
+
+            // При окончательной ошибке пробуем загрузить из кэша
+            if (cacheManager.hasAnyCachedData()) {
+                publishProgress("Используем данные из кэша после ошибки...");
+                BatchResponse forcedResponse = cacheManager.loadDataFromCacheForce();
+                if (forcedResponse != null) {
+                    processResponseWithProgress(forcedResponse);
+                    return true;
+                }
+            }
+
+            throw e;
+        }
+    }
+
+    private void loadFreshDataInBackgroundWithTempCache() {
+        try {
+            Log.i(TAG, "Фоновая загрузка свежих данных для обновления кэша...");
+            BatchResponse freshResponse = BatchService.loadInitialData();
+
+            if (freshResponse != null) {
+                // Сохраняем во временный кэш
+                cacheManager.saveDataToTempCache(freshResponse);
+
+                // Атомарно переносим в основной кэш
+                boolean success = cacheManager.commitTempCache();
+
+                if (success) {
+                    Log.i(TAG, "Данные успешно обновлены в фоне");
+                } else {
+                    Log.w(TAG, "Не удалось обновить кэш в фоне");
+                }
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Не удалось обновить данные в фоне: " + e.getMessage());
+            // Очищаем временный кэш при ошибке
+            cacheManager.clearTempCache();
+        }
+    }
+
+    private void processResponseWithProgress(BatchResponse response) {
+        String[] steps = {
+                "пользователей", "чаты", "группы изделий",
+                "чертежи", "комплекты", "паспорта"
+        };
+
+        Runnable[] processors = {
+                () -> processUsers(response.getUsers()),
+                () -> processRooms(response.getRooms()),
+                () -> processProductGroups(response.getProductGroups()),
+                () -> processDrafts(response.getDrafts()),
+                () -> processFolders(response.getFolders()),
+                () -> processPassports(response.getPassports())
+        };
+
+        for (int i = 0; i < steps.length; i++) {
+            if (isCancelled()) {
+                Log.i(TAG, "Загрузка данных прервана пользователем");
+                return;
+            }
+
+            publishProgress("Обрабатываем " + steps[i] + "...");
+            processors[i].run();
+
+            // Небольшая задержка для плавного отображения прогресса
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
         }
     }
 
@@ -153,27 +274,6 @@ public class DataLoadingAsyncTask extends AsyncTask<Void, String, Boolean> {
     protected void onProgressUpdate(String... values) {
         if (tvLoadingStatus != null && values.length > 0) {
             tvLoadingStatus.setText(values[0]);
-        }
-    }
-
-    private void processResponseWithProgress(BatchResponse response) {
-        String[] steps = {
-                "пользователей", "чаты", "группы изделий",
-                "чертежи", "комплекты", "паспорта"
-        };
-
-        Runnable[] processors = {
-                () -> processUsers(response.getUsers()),
-                () -> processRooms(response.getRooms()),
-                () -> processProductGroups(response.getProductGroups()),
-                () -> processDrafts(response.getDrafts()),
-                () -> processFolders(response.getFolders()),
-                () -> processPassports(response.getPassports())
-        };
-
-        for (int i = 0; i < steps.length; i++) {
-            publishProgress("Обрабатываем " + steps[i] + "...");
-            processors[i].run();
         }
     }
 
