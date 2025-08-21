@@ -132,7 +132,7 @@ public class ConnectionManager {
     }
 
     void handleConnectionError(Exception e) {
-        Log.e(TAG, "Ошибка соединения: " + e.getMessage());
+//        Log.e(TAG, "Ошибка соединения: " + e.getMessage());
         updateConnectionStatus(false);
     }
 

@@ -71,7 +71,7 @@ public class MessageReceiver {
 
     private void checkHeartbeatTimeout() {
         if (System.currentTimeMillis() - lastHeartbeatTime > HEARTBEAT_TIMEOUT_MS) {
-            Log.w(TAG, "Превышен таймаут HEARTBEAT (30 сек)");
+//            Log.w(TAG, "Превышен таймаут HEARTBEAT (30 сек)");
             ConnectionManager.getInstance().handleConnectionError(new IOException("Таймаут heartbeat"));
         }
     }
@@ -85,7 +85,7 @@ public class MessageReceiver {
 
     private void handleIOException(IOException e) {
         if (isRunning) {
-            Log.e(TAG, "Ошибка соединения: " + e.getMessage());
+//            Log.e(TAG, "Ошибка соединения: " + e.getMessage());
             ConnectionManager.getInstance().handleConnectionError(e);
         }
     }
