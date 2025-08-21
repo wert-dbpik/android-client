@@ -37,7 +37,6 @@ import ru.wert.tubus_mobile.ChangePassActivity;
 import ru.wert.tubus_mobile.LoginActivity;
 import ru.wert.tubus_mobile.R;
 import ru.wert.tubus_mobile.ThisApplication;
-//import ru.wert.Tubus_mobile.chat.ChatActivity;
 import ru.wert.tubus_mobile.data.interfaces.Item;
 import ru.wert.tubus_mobile.data.models.Folder;
 import ru.wert.tubus_mobile.data.models.VersionAndroid;
@@ -99,7 +98,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
         // Инициализация кастомного Toolbar
         tubusToolbar = findViewById(R.id.tubusToolbar);
-        ToolbarHelper.setupToolbar(this, tubusToolbar, "Организатор", "Главный экран");
+        ToolbarHelper.setupToolbar(this, tubusToolbar);
 
         // Инициализация HistoryManager
         historyManager = new HistoryManager(this);
@@ -463,10 +462,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
         ft.replace(R.id.organizer_fragment_container, currentPassportsFragment);
         ft.commitAllowingStateLoss();
-
-        // Обновляем Toolbar
-        ToolbarHelper.updateTitle(tubusToolbar, "Чертежи");
-        ToolbarHelper.updateSubtitle(tubusToolbar, "Просмотр чертежей");
     }
 
     public void openFoldersFragment() {
@@ -476,10 +471,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         ft.replace(R.id.organizer_fragment_container, currentFoldersFragment);
 //        ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
-
-        // Обновляем Toolbar
-        ToolbarHelper.updateTitle(tubusToolbar, "Комплекты");
-        ToolbarHelper.updateSubtitle(tubusToolbar, "Просмотр комплектов");
 
         //Чтобы выделение строки не пропадало на первом фрагменте не пропадало
         if (currentFoldersFragment.getUpperProductGroupId() != null &&

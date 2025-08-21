@@ -11,47 +11,35 @@
     <!-- Название приложения слева -->
     <TextView
         android:id="@+id/tvAppName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tubus"
-        android:textColor="@color/colorWhite"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginEnd="16dp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
-
-    <!-- Вертикальный контейнер для заголовка и подзаголовка -->
-    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:text="ТУБУС"
+        android:textColor="@color/colorWhite"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:ellipsize="end"
+        android:maxLines="1"/>
 
-        <TextView
-            android:id="@+id/tvToolbarTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="@color/colorWhite"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            android:ellipsize="end"
-            android:maxLines="1"/>
+    <!-- Тревожное сообщение по центру -->
+    <TextView
+        android:id="@+id/tvAlarm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="НЕТ СВЯЗИ"
+        android:textColor="@color/colorMyRed"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/tvToolbarSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textColor="@color/colorWhite"
-            android:textSize="14sp"
-            android:visibility="gone"
-            android:ellipsize="end"
-            android:maxLines="1"/>
-
-    </LinearLayout>
+    <!-- Пустой элемент для выравнивания -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
 
 </LinearLayout>

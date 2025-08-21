@@ -1,9 +1,13 @@
 package ru.wert.tubus_mobile.tobusToolbar;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -13,9 +17,11 @@ import ru.wert.tubus_mobile.R;
 
 public class TubusToolbar extends Toolbar {
 
-    private TextView tvTitle;
-    private TextView tvSubtitle;
     private TextView tvAppName;
+    private TextView tvAlarm;
+    private Handler handler;
+    private Animation blinkAnimation;
+    private boolean isBlinking = false;
 
     public TubusToolbar(Context context) {
         super(context);
@@ -38,14 +44,19 @@ public class TubusToolbar extends Toolbar {
 
         // Инициализируем элементы
         tvAppName = findViewById(R.id.tvAppName);
-        tvTitle = findViewById(R.id.tvToolbarTitle);
-        tvSubtitle = findViewById(R.id.tvToolbarSubtitle);
+        tvAlarm = findViewById(R.id.tvAlarm);
 
         // Настраиваем внешний вид
         setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
 
-        // Устанавливаем название приложения
-        setAppName("Tubus Mobile");
+        // Инициализируем Handler для анимации
+        handler = new Handler(Looper.getMainLooper());
+
+        // Создаем анимацию мигания
+        blinkAnimation = new AlphaAnimation(0.2f, 1.0f);
+        blinkAnimation.setDuration(800);
+        blinkAnimation.setRepeatMode(Animation.REVERSE);
+        blinkAnimation.setRepeatCount(Animation.INFINITE);
     }
 
     // Методы для работы с названием приложения
@@ -55,70 +66,57 @@ public class TubusToolbar extends Toolbar {
         }
     }
 
-    public void setAppName(int resId) {
-        if (tvAppName != null) {
-            tvAppName.setText(resId);
+    // Методы для работы с тревожным сообщением
+    public void showAlarm(String message) {
+        if (tvAlarm != null) {
+            tvAlarm.setText(message);
+            tvAlarm.setVisibility(View.VISIBLE);
+            startBlinking();
         }
     }
 
-    // Методы для работы с заголовком
-    public void setTitle(String title) {
-        if (tvTitle != null) {
-            tvTitle.setText(title);
-            tvTitle.setVisibility(View.VISIBLE);
+    public void hideAlarm() {
+        if (tvAlarm != null) {
+            tvAlarm.setVisibility(View.GONE);
+            stopBlinking();
         }
     }
 
-    public void setTitle(int resId) {
-        if (tvTitle != null) {
-            tvTitle.setText(resId);
-            tvTitle.setVisibility(View.VISIBLE);
+    private void startBlinking() {
+        if (!isBlinking) {
+            isBlinking = true;
+            handler.post(() -> {
+                if (tvAlarm != null) {
+                    tvAlarm.startAnimation(blinkAnimation);
+                }
+            });
         }
     }
 
-    public void hideTitle() {
-        if (tvTitle != null) {
-            tvTitle.setVisibility(View.GONE);
-        }
-    }
-
-    // Методы для работы с подзаголовком
-    public void setSubtitle(String subtitle) {
-        if (tvSubtitle != null) {
-            tvSubtitle.setText(subtitle);
-            tvSubtitle.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void setSubtitle(int resId) {
-        if (tvSubtitle != null) {
-            tvSubtitle.setText(resId);
-            tvSubtitle.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void hideSubtitle() {
-        if (tvSubtitle != null) {
-            tvSubtitle.setVisibility(View.GONE);
+    private void stopBlinking() {
+        if (isBlinking) {
+            isBlinking = false;
+            handler.post(() -> {
+                if (tvAlarm != null) {
+                    tvAlarm.clearAnimation();
+                }
+            });
         }
     }
 
     // Дополнительные методы
-    public void setAppNameColor(int color) {
-        if (tvAppName != null) {
-            tvAppName.setTextColor(color);
+    public void setAlarmColor(int color) {
+        if (tvAlarm != null) {
+            tvAlarm.setTextColor(color);
         }
     }
 
-    public void setTitleColor(int color) {
-        if (tvTitle != null) {
-            tvTitle.setTextColor(color);
-        }
-    }
-
-    public void setSubtitleColor(int color) {
-        if (tvSubtitle != null) {
-            tvSubtitle.setTextColor(color);
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        stopBlinking();
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
         }
     }
 }

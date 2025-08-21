@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import ru.wert.tubus_mobile.tobusToolbar.TubusToolbar;
+
 /**
  * Менеджер соединения с сервером. Обеспечивает подключение, переподключение
  * и управление состоянием соединения.
@@ -33,6 +35,7 @@ public class ConnectionManager {
     private volatile boolean isRunning = false;
     private volatile boolean isConnected = false;
     private ConnectionStatusListener statusListener;
+    private TubusToolbar toolbar;
 
     /**
      * Интерфейс для слушателя изменения состояния соединения.
@@ -57,6 +60,14 @@ public class ConnectionManager {
     public void setConnectionStatusListener(ConnectionStatusListener listener) {
         Log.d(TAG, "Устанавливается слушатель: " + (listener != null ? "не-null" : "null"));
         this.statusListener = listener;
+    }
+
+    /**
+     * Устанавливает тулбар для отображения статуса соединения.
+     * @param toolbar тулбар
+     */
+    public void setToolbar(TubusToolbar toolbar) {
+        this.toolbar = toolbar;
     }
 
     /**
@@ -130,8 +141,21 @@ public class ConnectionManager {
             isConnected = connected;
             Log.i(TAG, "Статус соединения изменен: " + (connected ? "подключено" : "отключено"));
 
+            // Обновляем отображение в тулбаре
+            updateToolbarStatus(connected);
+
             if (statusListener != null) {
                 statusListener.onConnectionStatusChanged(connected);
+            }
+        }
+    }
+
+    private void updateToolbarStatus(boolean connected) {
+        if (toolbar != null) {
+            if (connected) {
+                toolbar.hideAlarm();
+            } else {
+                toolbar.showAlarm("НЕТ СВЯЗИ");
             }
         }
     }
@@ -178,5 +202,9 @@ public class ConnectionManager {
         }
 
         updateConnectionStatus(false);
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 }

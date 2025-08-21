@@ -26,6 +26,7 @@ import ru.wert.tubus_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.tubus_mobile.main.BaseActivity;
 import ru.wert.tubus_mobile.data.models.User;
 import ru.wert.tubus_mobile.data.servicesREST.UserService;
+import ru.wert.tubus_mobile.heartbeat.ConnectionManager;
 import ru.wert.tubus_mobile.organizer.OrganizerActivity;
 
 /**
@@ -36,13 +37,15 @@ import ru.wert.tubus_mobile.organizer.OrganizerActivity;
  *    указанного в файле Properties приложения и открывается Окно загрузки данных,
  *    иначе - открывается Окно подключения к серверу
  * 4) Загружаются настройки приложения
+ * 5) Запускается heartbeat для поддержания соединения
  */
-public class StartActivity extends BaseActivity {
+public class StartActivity extends BaseActivity implements ConnectionManager.ConnectionStatusListener {
 
     private static final String TAG = "StartActivity";
     private String ip;
     private String baseUrl;
     private boolean logoTapped;
+    private ConnectionManager connectionManager;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -57,6 +60,10 @@ public class StartActivity extends BaseActivity {
         Log.i(TAG, "onCreate: HIDE_PREFIXES = " + getProp("HIDE_PREFIXES"));
         Log.i(TAG, "onCreate: SEND_ERROR_REPORTS = " + getProp("SEND_ERROR_REPORTS"));
         Log.i(TAG, "onCreate: USE_APP_KEYBOARD = " + getProp("USE_APP_KEYBOARD"));
+
+        // Инициализируем менеджер соединения
+        connectionManager = ConnectionManager.getInstance();
+        connectionManager.setConnectionStatusListener(this);
 
         ImageView logo = findViewById(R.id.imageViewLogo);
         logo.setOnClickListener(v -> {
@@ -73,16 +80,50 @@ public class StartActivity extends BaseActivity {
                     ThisApplication.loadSettings();
 
                     ACRA.getErrorReporter().setEnabled(SEND_ERROR_REPORTS);
-
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
         }).start();
-
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Запускаем heartbeat при возобновлении активности
+        if (connectionManager != null) {
+            connectionManager.start();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Останавливаем heartbeat при паузе активности (опционально)
+        // connectionManager.stop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Останавливаем heartbeat при уничтожении активности
+        if (connectionManager != null) {
+            connectionManager.stop();
+        }
+    }
+
+    @Override
+    public void onConnectionStatusChanged(boolean isConnected) {
+        runOnUiThread(() -> {
+            if (isConnected) {
+                Log.i(TAG, "Соединение с сервером установлено");
+                // Можно добавить визуальную индикацию успешного соединения
+            } else {
+                Log.w(TAG, "Соединение с сервером потеряно");
+                // Можно добавить визуальную индикацию потери соединения
+            }
+        });
+    }
 
     private void startRetrofit() {
         //Константа принимает первоначальное значение
@@ -90,6 +131,10 @@ public class StartActivity extends BaseActivity {
         Thread t = new Thread(() -> {
             RetrofitClient.setBASE_URL(DATA_BASE_URL);
             Log.d(TAG, "startRetrofit: " + String.format("base url = %s", DATA_BASE_URL));
+
+            // Запускаем heartbeat менеджер
+            connectionManager.start();
+
             //Проверка соединения по доступности пользователя с id = 1
             UserApiInterface api = UserService.getInstance().getApi();
             api.getAll().enqueue(new Callback<List<User>>() {
@@ -106,11 +151,12 @@ public class StartActivity extends BaseActivity {
                                 }
                             }
                             runOnUiThread(() -> {
-//                                Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
-//                                startActivity(dataLoading);
-
-                                Intent dataLoading = new Intent(StartActivity.this, OrganizerActivity.class);
+                                Intent dataLoading = new Intent(StartActivity.this, DataLoadingActivity.class);
                                 startActivity(dataLoading);
+
+//                                Для тестирования
+//                                Intent dataLoading = new Intent(StartActivity.this, OrganizerActivity.class);
+//                                startActivity(dataLoading);
                             });
                         }else {
                             runOnUiThread(() -> {
@@ -138,13 +184,8 @@ public class StartActivity extends BaseActivity {
                     }
                 }
             });
-
         });
         t.start();
-
     }
-
-
-
 }
 

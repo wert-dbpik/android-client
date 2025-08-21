@@ -2,14 +2,16 @@ package ru.wert.tubus_mobile.tobusToolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import ru.wert.tubus_mobile.heartbeat.ConnectionManager;
+
 public class ToolbarHelper {
 
-    public static void setupToolbar(AppCompatActivity activity, TubusToolbar tubusToolbar, String title) {
-        setupToolbar(activity, tubusToolbar, title, null);
+    public static void setupToolbar(AppCompatActivity activity, TubusToolbar tubusToolbar, String appName) {
+        setupToolbar(activity, tubusToolbar);
+        updateAppName(tubusToolbar, appName);
     }
 
-    public static void setupToolbar(AppCompatActivity activity, TubusToolbar tubusToolbar,
-                                    String title, String subtitle) {
+    public static void setupToolbar(AppCompatActivity activity, TubusToolbar tubusToolbar) {
         if (tubusToolbar == null) return;
 
         try {
@@ -21,18 +23,9 @@ public class ToolbarHelper {
                 activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
             }
 
-            // Настраиваем заголовок и подзаголовок
-            if (title != null && !title.isEmpty()) {
-                tubusToolbar.setTitle(title);
-            } else {
-                tubusToolbar.hideTitle();
-            }
+            // Регистрируем тулбар в ConnectionManager для отображения статуса
+            ConnectionManager.getInstance().setToolbar(tubusToolbar);
 
-            if (subtitle != null && !subtitle.isEmpty()) {
-                tubusToolbar.setSubtitle(subtitle);
-            } else {
-                tubusToolbar.hideSubtitle();
-            }
         } catch (IllegalStateException e) {
             // Логируем ошибку, но не падаем
             e.printStackTrace();
@@ -46,26 +39,6 @@ public class ToolbarHelper {
 
             // Обработчик нажатия на кнопку "Назад"
             tubusToolbar.setNavigationOnClickListener(v -> activity.onBackPressed());
-        }
-    }
-
-    public static void updateTitle(TubusToolbar tubusToolbar, String newTitle) {
-        if (tubusToolbar != null) {
-            if (newTitle != null && !newTitle.isEmpty()) {
-                tubusToolbar.setTitle(newTitle);
-            } else {
-                tubusToolbar.hideTitle();
-            }
-        }
-    }
-
-    public static void updateSubtitle(TubusToolbar tubusToolbar, String newSubtitle) {
-        if (tubusToolbar != null) {
-            if (newSubtitle != null && !newSubtitle.isEmpty()) {
-                tubusToolbar.setSubtitle(newSubtitle);
-            } else {
-                tubusToolbar.hideSubtitle();
-            }
         }
     }
 
