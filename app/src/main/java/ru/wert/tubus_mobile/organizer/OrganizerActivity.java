@@ -5,6 +5,7 @@ import static ru.wert.tubus_mobile.ThisApplication.APPLICATION_VERSION_AVAILABLE
 import static ru.wert.tubus_mobile.ThisApplication.APP_VERSION_NOTIFICATION_SHOWN;
 import static ru.wert.tubus_mobile.ThisApplication.LIST_OF_ALL_PASSPORTS;
 import static ru.wert.tubus_mobile.constants.Consts.USE_APP_KEYBOARD;
+import static ru.wert.tubus_mobile.data.retrofit.RetrofitClient.BASE_URL;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -40,6 +41,8 @@ import ru.wert.tubus_mobile.ConnectionToServerActivity;
 import ru.wert.tubus_mobile.LoginActivity;
 import ru.wert.tubus_mobile.R;
 import ru.wert.tubus_mobile.ThisApplication;
+import ru.wert.tubus_mobile.data.enums.EDraftStatus;
+import ru.wert.tubus_mobile.data.enums.EDraftType;
 import ru.wert.tubus_mobile.data.interfaces.Item;
 import ru.wert.tubus_mobile.data.models.Folder;
 import ru.wert.tubus_mobile.data.models.VersionAndroid;
@@ -59,7 +62,9 @@ import ru.wert.tubus_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.tubus_mobile.settings.SettingsActivity;
 import ru.wert.tubus_mobile.tobusToolbar.ToolbarHelper;
 import ru.wert.tubus_mobile.tobusToolbar.TubusToolbar;
+import ru.wert.tubus_mobile.viewer.ViewerActivity;
 import ru.wert.tubus_mobile.warnings.AppWarnings;
+import ru.wert.tubus_mobile.warnings.WarningDialog1;
 
 public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         OrgActivityAndFoldersFragmentInteraction, OrgActivityAndPassportsFragmentInteraction {
@@ -589,11 +594,24 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 historyManager.clearHistory();
                 return true;
 
+            case R.id.action_showReport:
+                showInfo();
+                return true;
+
             case R.id.action_exit:
                 exitApplication();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showInfo() {
+        String baseUrl = BASE_URL;
+
+        new WarningDialog1().show(OrganizerActivity.this,
+                "Общая информация\n",
+                "Сервер:\n  " + baseUrl + "\n\n"
+        );
     }
 
 }
