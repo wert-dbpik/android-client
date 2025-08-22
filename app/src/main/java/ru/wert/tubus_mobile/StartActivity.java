@@ -27,7 +27,6 @@ import ru.wert.tubus_mobile.dataPreloading.DataLoadingActivity;
 import ru.wert.tubus_mobile.main.BaseActivity;
 import ru.wert.tubus_mobile.data.models.User;
 import ru.wert.tubus_mobile.data.servicesREST.UserService;
-import ru.wert.tubus_mobile.heartbeat.ConnectionManager;
 import ru.wert.tubus_mobile.organizer.OrganizerActivity;
 
 /**
@@ -38,13 +37,11 @@ import ru.wert.tubus_mobile.organizer.OrganizerActivity;
  *    указанного в файле Properties приложения и открывается Окно загрузки данных,
  *    иначе - открывается Окно подключения к серверу
  * 4) Загружаются настройки приложения
- * 5) Запускается heartbeat для поддержания соединения
  */
-public class StartActivity extends BaseActivity implements ConnectionManager.ConnectionStatusListener {
+public class StartActivity extends BaseActivity{
 
     private static final String TAG = "StartActivity";
     private boolean logoTapped;
-    private ConnectionManager connectionManager;
     private CacheManager cacheManager;
 
     @SuppressLint("SetTextI18n")
@@ -63,10 +60,6 @@ public class StartActivity extends BaseActivity implements ConnectionManager.Con
 
         // Инициализируем менеджер кэша
         cacheManager = new CacheManager(this);
-
-        // Инициализируем менеджер соединения
-        connectionManager = ConnectionManager.getInstance();
-        connectionManager.setConnectionStatusListener(this);
 
         ImageView logo = findViewById(R.id.imageViewLogo);
         logo.setOnClickListener(v -> {
@@ -90,46 +83,6 @@ public class StartActivity extends BaseActivity implements ConnectionManager.Con
         }).start();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Запускаем heartbeat при возобновлении активности
-        if (connectionManager != null) {
-            connectionManager.start();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Останавливаем heartbeat при паузе активности
-        if (connectionManager != null) {
-            connectionManager.stop();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Останавливаем heartbeat при уничтожении активности
-        if (connectionManager != null) {
-            connectionManager.stop();
-        }
-    }
-
-    @Override
-    public void onConnectionStatusChanged(boolean isConnected) {
-        runOnUiThread(() -> {
-            if (isConnected) {
-                Log.i(TAG, "Соединение с сервером установлено");
-                // Можно добавить визуальную индикацию успешного соединения
-            } else {
-                Log.w(TAG, "Соединение с сервером потеряно");
-                // Можно добавить визуальную индикацию потери соединения
-            }
-        });
-    }
-
     private void startRetrofit() {
         DATA_BASE_URL = "http://" + getProp("IP") + ":" + getProp("PORT") + "/";
 
@@ -149,9 +102,6 @@ public class StartActivity extends BaseActivity implements ConnectionManager.Con
         Thread t = new Thread(() -> {
             RetrofitClient.setBASE_URL(DATA_BASE_URL);
             Log.d(TAG, "startRetrofit: " + String.format("base url = %s", DATA_BASE_URL));
-
-            // Запускаем heartbeat менеджер
-            connectionManager.start();
 
             // Проверка соединения по доступности пользователя с id = 1
             UserApiInterface api = UserService.getInstance().getApi();

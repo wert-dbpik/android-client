@@ -9,31 +9,33 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import ru.wert.tubus_mobile.ThisApplication;
 import ru.wert.tubus_mobile.tobusToolbar.TubusToolbar;
 
 /**
  * Менеджер соединения с сервером. Обеспечивает подключение, переподключение
- * и управление состоянием соединения.
+ * и управление состоянием соединения. Работает на уровне всего приложения.
  */
 public class ConnectionManager {
 
     private static final String TAG = "ConnectionManager";
-    private static final String SERVER_ADDRESS = "192.168.2.132";
-    private static final int SERVER_PORT = 8080;
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int SOCKET_TIMEOUT_MS = 30000;
     private static final int INITIAL_RECONNECT_DELAY_MS = 1000;
     private static final int MAX_RECONNECT_DELAY_MS = 30000;
+    private static final int HEARTBEAT_INTERVAL_MS = 15000; // 15 секунд
 
     private static volatile ConnectionManager instance;
+
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
     private MessageReceiver messageReceiver;
-    private HeartbeatManager heartbeatManager;
+
     private int reconnectAttempts = 0;
     private volatile boolean isRunning = false;
     private volatile boolean isConnected = false;
+
     private ConnectionStatusListener statusListener;
     private TubusToolbar toolbar;
 
@@ -44,8 +46,14 @@ public class ConnectionManager {
         void onConnectionStatusChanged(boolean isConnected);
     }
 
-    private ConnectionManager() {}
+    private ConnectionManager() {
+        // Приватный конструктор для синглтона
+    }
 
+    /**
+     * Возвращает единственный экземпляр ConnectionManager.
+     * @return экземпляр ConnectionManager
+     */
     public static synchronized ConnectionManager getInstance() {
         if (instance == null) {
             instance = new ConnectionManager();
@@ -71,28 +79,53 @@ public class ConnectionManager {
     }
 
     /**
-     * Запускает сервис соединения.
+     * Запускает сервис соединения с сервером.
+     * Должен вызываться при старте приложения.
      */
     public void start() {
-        if (isRunning) return;
+        if (isRunning) {
+            Log.d(TAG, "Сервис соединения уже запущен");
+            return;
+        }
 
         isRunning = true;
+        Log.i(TAG, "Запуск сервиса соединения");
         new Thread(this::connectLoop).start();
     }
 
     /**
      * Останавливает сервис соединения.
+     * Должен вызываться при завершении приложения.
      */
     public void stop() {
         isRunning = false;
+        Log.i(TAG, "Остановка сервиса соединения");
         closeResources();
     }
 
+    /**
+     * Перезапускает сервис соединения с новыми параметрами.
+     * Используется при смене сервера.
+     */
+    public void restart() {
+        Log.i(TAG, "Перезапуск сервиса соединения");
+        stop();
+        try {
+            Thread.sleep(1000); // Даем время для корректного завершения
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        start();
+    }
+
+    /**
+     * Основной цикл подключения и поддержания соединения.
+     */
     private void connectLoop() {
         while (isRunning) {
             try {
-                connect();
-                startComponents();
+                connectToServer();
+                startCommunicationComponents();
                 waitWhileConnected();
             } catch (Exception e) {
                 handleConnectionError(e);
@@ -103,39 +136,100 @@ public class ConnectionManager {
         Log.i(TAG, "Сервис соединения остановлен");
     }
 
-    private void connect() throws IOException {
-        Log.i(TAG, "Попытка подключения к серверу...");
+    /**
+     * Подключается к серверу используя текущие настройки из ThisApplication.
+     * @throws IOException если подключение не удалось
+     */
+    private void connectToServer() throws IOException {
+        String serverAddress = ThisApplication.getProp("IP");
+        String serverPort = ThisApplication.getProp("PORT");
+
+        if (serverAddress == null || serverAddress.isEmpty() ||
+                serverPort == null || serverPort.isEmpty()) {
+            throw new IOException("Не заданы адрес или порт сервера");
+        }
+
+        Log.i(TAG, "Попытка подключения к серверу: " + serverAddress + ":" + serverPort);
+
         socket = new Socket();
-        socket.connect(new InetSocketAddress(SERVER_ADDRESS, SERVER_PORT), CONNECT_TIMEOUT_MS);
+        socket.connect(new InetSocketAddress(serverAddress, Integer.parseInt(serverPort)),
+                CONNECT_TIMEOUT_MS);
         socket.setSoTimeout(SOCKET_TIMEOUT_MS);
 
         out = new PrintWriter(socket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-        Log.i(TAG, "Подключение к серверу установлено");
+        Log.i(TAG, "Подключение к серверу установлено: " + serverAddress + ":" + serverPort);
         updateConnectionStatus(true);
         reconnectAttempts = 0;
     }
 
-    private void startComponents() {
+    /**
+     * Запускает компоненты для обмена сообщениями.
+     */
+    private void startCommunicationComponents() {
         messageReceiver = new MessageReceiver(in);
-        heartbeatManager = new HeartbeatManager(out);
-
         messageReceiver.start();
-        heartbeatManager.start();
+
+        // Запускаем отправку heartbeat
+        startHeartbeat();
     }
 
+    /**
+     * Запускает периодическую отправку heartbeat-сообщений.
+     */
+    private void startHeartbeat() {
+        new Thread(() -> {
+            while (isRunning && isConnected && out != null && !out.checkError()) {
+                try {
+                    sendHeartbeat();
+                    Thread.sleep(HEARTBEAT_INTERVAL_MS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                } catch (Exception e) {
+                    Log.e(TAG, "Ошибка отправки heartbeat: " + e.getMessage());
+                    handleConnectionError(e);
+                    break;
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * Отправляет heartbeat-сообщение на сервер.
+     */
+    private void sendHeartbeat() {
+        if (out != null && !out.checkError()) {
+            out.println("HEARTBEAT");
+            out.flush();
+            Log.d(TAG, "Heartbeat отправлен");
+        }
+    }
+
+    /**
+     * Ожидает пока соединение активно.
+     * @throws InterruptedException если поток прерван
+     */
     private void waitWhileConnected() throws InterruptedException {
         while (isRunning && socket != null && socket.isConnected() && !socket.isClosed()) {
             Thread.sleep(1000);
         }
     }
 
+    /**
+     * Обрабатывает ошибки соединения.
+     * @param e исключение
+     */
     void handleConnectionError(Exception e) {
-//        Log.e(TAG, "Ошибка соединения: " + e.getMessage());
+        Log.e(TAG, "Ошибка соединения: " + e.getMessage());
         updateConnectionStatus(false);
     }
 
+    /**
+     * Обновляет статус соединения и уведомляет слушателей.
+     * @param connected true если соединение установлено
+     */
     void updateConnectionStatus(boolean connected) {
         if (isConnected != connected) {
             isConnected = connected;
@@ -144,12 +238,17 @@ public class ConnectionManager {
             // Обновляем отображение в тулбаре
             updateToolbarStatus(connected);
 
+            // Уведомляем слушателей
             if (statusListener != null) {
                 statusListener.onConnectionStatusChanged(connected);
             }
         }
     }
 
+    /**
+     * Обновляет отображение статуса соединения в тулбаре.
+     * @param connected true если соединение установлено
+     */
     private void updateToolbarStatus(boolean connected) {
         if (toolbar != null) {
             if (connected) {
@@ -160,6 +259,9 @@ public class ConnectionManager {
         }
     }
 
+    /**
+     * Очищает ресурсы и планирует переподключение.
+     */
     private void cleanupAndScheduleReconnect() {
         closeResources();
 
@@ -175,27 +277,33 @@ public class ConnectionManager {
         }
     }
 
+    /**
+     * Вычисляет задержку перед переподключением с экспоненциальным откатом.
+     * @return задержка в миллисекундах
+     */
     private int calculateReconnectDelay() {
         reconnectAttempts++;
         return Math.min(INITIAL_RECONNECT_DELAY_MS * (1 << Math.min(reconnectAttempts, 10)),
                 MAX_RECONNECT_DELAY_MS);
     }
 
+    /**
+     * Закрывает все ресурсы соединения.
+     */
     private void closeResources() {
-        if (heartbeatManager != null) {
-            heartbeatManager.stop();
-            heartbeatManager = null;
-        }
-
-        if (messageReceiver != null) {
-            messageReceiver.stop();
-            messageReceiver = null;
-        }
-
         try {
-            if (out != null) out.close();
-            if (in != null) in.close();
-            if (socket != null) socket.close();
+            if (out != null) {
+                out.close();
+                out = null;
+            }
+            if (in != null) {
+                in.close();
+                in = null;
+            }
+            if (socket != null) {
+                socket.close();
+                socket = null;
+            }
             Log.i(TAG, "Ресурсы соединения закрыты");
         } catch (IOException e) {
             Log.e(TAG, "Ошибка при закрытии ресурсов: " + e.getMessage());
@@ -204,7 +312,19 @@ public class ConnectionManager {
         updateConnectionStatus(false);
     }
 
+    /**
+     * Проверяет, установлено ли соединение с сервером.
+     * @return true если соединение активно
+     */
     public boolean isConnected() {
         return isConnected;
+    }
+
+    /**
+     * Проверяет, запущен ли сервис соединения.
+     * @return true если сервис запущен
+     */
+    public boolean isRunning() {
+        return isRunning;
     }
 }
