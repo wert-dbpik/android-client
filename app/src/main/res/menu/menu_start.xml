@@ -47,6 +47,25 @@
     </item>
 
     <item
+        android:orderInCategory="6"
+        android:title="Админ">
+        <menu>
+            <item
+                android:id="@+id/action_changeServer"
+                android:orderInCategory="1"
+                android:title="Сменить сервер"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_showReport"
+                android:orderInCategory="2"
+                android:title="Показать отчет"
+                app:showAsAction="never" />
+
+        </menu>
+    </item>
+
+
+    <item
         android:title="@string/menuExit"
         android:id="@+id/action_exit"
         android:orderInCategory="6"

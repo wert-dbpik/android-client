@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 import ru.wert.tubus_mobile.ChangePassActivity;
+import ru.wert.tubus_mobile.ConnectionToServerActivity;
 import ru.wert.tubus_mobile.LoginActivity;
 import ru.wert.tubus_mobile.R;
 import ru.wert.tubus_mobile.ThisApplication;
@@ -564,6 +565,13 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
                 editTextSearch.setText("");
                 Intent loginView = new Intent(OrganizerActivity.this, LoginActivity.class);
                 startActivity(loginView);
+                return true;
+
+            case R.id.action_changeServer:
+                editTextSearch.setText("");
+                Intent сonnectionToServer = new Intent(OrganizerActivity.this, ConnectionToServerActivity.class);
+                сonnectionToServer.putExtra("RECONNECT", true); // Флаг принудительного обновления
+                startActivity(сonnectionToServer);
                 return true;
 
             case R.id.action_changePass:
