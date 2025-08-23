@@ -20,6 +20,11 @@ public class HistoryManager {
         this.context = context;
     }
 
+    public synchronized void forceReload() {
+        cachedHistory = null; // Принудительно сбрасываем кэш
+        loadHistoryFromFile(); // Загружаем актуальные данные
+    }
+
     public synchronized void addToHistory(String drawingNumber) {
         if (drawingNumber == null || drawingNumber.trim().isEmpty()) return;
 
@@ -32,13 +37,19 @@ public class HistoryManager {
         }
 
         saveHistory(history);
+        // ОЧИСТКА КЭША ПОСЛЕ ДОБАВЛЕНИЯ НОВОГО ЭЛЕМЕНТА
+        cachedHistory = null;
     }
 
     public synchronized List<String> getHistory() {
-        if (cachedHistory != null) {
-            return new ArrayList<>(cachedHistory);
+        // Если кэш пустой - загружаем из файла
+        if (cachedHistory == null) {
+            loadHistoryFromFile();
         }
+        return new ArrayList<>(cachedHistory);
+    }
 
+    private synchronized void loadHistoryFromFile() {
         List<String> history = new ArrayList<>();
         try {
             File file = new File(context.getFilesDir(), HISTORY_FILE);
@@ -54,12 +65,11 @@ public class HistoryManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         cachedHistory = new ArrayList<>(history);
-        return history;
     }
 
     private synchronized void saveHistory(List<String> history) {
+        // ОБНОВЛЯЕМ КЭШ ПРИ СОХРАНЕНИИ
         cachedHistory = new ArrayList<>(history);
         try (FileOutputStream fos = context.openFileOutput(HISTORY_FILE, Context.MODE_PRIVATE);
              OutputStreamWriter writer = new OutputStreamWriter(fos)) {
@@ -72,6 +82,7 @@ public class HistoryManager {
     }
 
     public synchronized void clearHistory() {
+        // ОЧИЩАЕМ КЭШ ПРИ ОЧИСТКЕ ИСТОРИИ
         cachedHistory = new ArrayList<>();
         try (FileOutputStream fos = context.openFileOutput(HISTORY_FILE, Context.MODE_PRIVATE)) {
             fos.write("".getBytes());

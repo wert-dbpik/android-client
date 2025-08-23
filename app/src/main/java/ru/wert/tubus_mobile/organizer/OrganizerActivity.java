@@ -93,8 +93,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     private ImageButton btnHistory;
     private HistoryManager historyManager;
-    private PopupMenu historyPopup;
-
     // Кастомный Toolbar
     private TubusToolbar tubusToolbar;
 
@@ -113,10 +111,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
         // Находим кнопку истории
         btnHistory = findViewById(R.id.btnHistory);
-
-        // Создаем PopupMenu для отображения истории
-        historyPopup = new PopupMenu(this, btnHistory);
-        historyPopup.getMenuInflater().inflate(R.menu.empty_menu, historyPopup.getMenu());
 
         // Обработчик нажатия на кнопку истории
         btnHistory.setOnClickListener(v -> {
@@ -368,9 +362,15 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     // Показываем popup с историей
     private void showHistoryPopup() {
+        // ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ ИСТОРИЮ ПЕРЕД ПОКАЗОМ
+        historyManager.forceReload();
+        // Создаем новый PopupMenu при каждом нажатии
+        PopupMenu historyPopup = new PopupMenu(this, btnHistory);
+
         Menu menu = historyPopup.getMenu();
         menu.clear();
 
+        // Получаем актуальную историю (принудительно загружаем из файла)
         List<String> history = historyManager.getHistory();
         if (history.isEmpty()) {
             menu.add("История пуста").setEnabled(false);
@@ -388,7 +388,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
             // Устанавливаем в поле поиска
             editTextSearch.setText(searchNumber);
-
             editTextSearch.requestFocus();
 
             // Перемещаем курсор в конец текста
@@ -400,6 +399,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         });
 
         historyPopup.show();
+
     }
 
     private String extractDrawingNumber(String text) {
