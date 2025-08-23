@@ -362,8 +362,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     // Показываем popup с историей
     private void showHistoryPopup() {
-        // ПРИНУДИТЕЛЬНО ОБНОВЛЯЕМ ИСТОРИЮ ПЕРЕД ПОКАЗОМ
-        historyManager.forceReload();
+        historyManager.getHistory(); // Это вызовет loadHistoryFromFile() если cachedHistory == null
+
         // Создаем новый PopupMenu при каждом нажатии
         PopupMenu historyPopup = new PopupMenu(this, btnHistory);
 
