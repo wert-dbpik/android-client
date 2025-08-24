@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,8 +42,6 @@ import ru.wert.tubus_mobile.ConnectionToServerActivity;
 import ru.wert.tubus_mobile.LoginActivity;
 import ru.wert.tubus_mobile.R;
 import ru.wert.tubus_mobile.ThisApplication;
-import ru.wert.tubus_mobile.data.enums.EDraftStatus;
-import ru.wert.tubus_mobile.data.enums.EDraftType;
 import ru.wert.tubus_mobile.data.interfaces.Item;
 import ru.wert.tubus_mobile.data.models.Folder;
 import ru.wert.tubus_mobile.data.models.VersionAndroid;
@@ -60,9 +59,9 @@ import ru.wert.tubus_mobile.organizer.history.HistoryManager;
 import ru.wert.tubus_mobile.organizer.passports.PassportsFragment;
 import ru.wert.tubus_mobile.organizer.passports.PassportsRecViewAdapter;
 import ru.wert.tubus_mobile.settings.SettingsActivity;
+import ru.wert.tubus_mobile.socketwork.SocketService;
 import ru.wert.tubus_mobile.tobusToolbar.ToolbarHelper;
 import ru.wert.tubus_mobile.tobusToolbar.TubusToolbar;
-import ru.wert.tubus_mobile.viewer.ViewerActivity;
 import ru.wert.tubus_mobile.warnings.AppWarnings;
 import ru.wert.tubus_mobile.warnings.WarningDialog1;
 
@@ -75,6 +74,7 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     @Getter@Setter private FragmentTag currentTypeFragment = FragmentTag.FOLDERS_TAG;
 
     private final String FRAGMENT_TAG = "fragment_tag";
+    private final String TAG = "OrganizerActivity";
     private static Bundle bundleRecyclerViewState;
 
     private FragmentContainerView keyboardContainer;
@@ -96,7 +96,6 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
     // Кастомный Toolbar
     private TubusToolbar tubusToolbar;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +104,8 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         // Инициализация кастомного Toolbar
         tubusToolbar = findViewById(R.id.tubusToolbar);
         ToolbarHelper.setupToolbar(this, tubusToolbar);
+
+        initSocketService();
 
         // Инициализация HistoryManager
         historyManager = new HistoryManager(this);
@@ -165,7 +166,43 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
     }
 
+    public void initSocketService(){
+        SocketService socketService = SocketService.getInstance();
+        socketService.setConnectionStatusListener(new SocketService.ConnectionStatusListener() {
+            @Override
+            public void onConnectionStatusChanged(boolean isConnected) {
+                runOnUiThread(() -> {
+                    if (isConnected) {
+                        tubusToolbar.showServerStatus(true);
+                        Log.d(TAG, "Соединение с сервером установлено");
+                    } else {
+                        tubusToolbar.showServerStatus(false);
+                        Log.w(TAG, "Соединение с сервером потеряно");
+                    }
+                });
+            }
+        });
 
+        // Проверяем настройки перед запуском
+        String serverAddress = ThisApplication.getProp("IP");
+        String serverPort = ThisApplication.getProp("PORT");
+
+        if (serverAddress != null && !serverAddress.isEmpty() &&
+                serverPort != null && !serverPort.isEmpty()) {
+            socketService.start();
+        } else {
+            Log.w(TAG, "Не заданы настройки сервера, SocketService не запущен");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Останавливаем SocketService при уничтожении активности
+        SocketService.getInstance().stop();
+        // Сбрасываем слушатель при уничтожении активности
+        ToolbarHelper.resetConnectionStatusListener();
+    }
 
     @Override
     public void onPause() {
@@ -188,6 +225,11 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
         if (bundleRecyclerViewState != null) {
             currentTypeFragment = FragmentTag.valueOf(bundleRecyclerViewState.getString(FRAGMENT_TAG));
             openCurrentFragment();
+        }
+
+        // Перезапускаем SocketService если он не запущен
+        if (!SocketService.getInstance().isConnected()) {
+            SocketService.getInstance().start();
         }
     }
 
@@ -568,12 +610,16 @@ public class OrganizerActivity extends BaseActivity implements KeyboardSwitcher,
 
             case R.id.action_changeUser:
                 editTextSearch.setText("");
+                // Останавливаем сервис перед сменой пользователя
+                SocketService.getInstance().stop();
                 Intent loginView = new Intent(OrganizerActivity.this, LoginActivity.class);
                 startActivity(loginView);
                 return true;
 
             case R.id.action_changeServer:
                 editTextSearch.setText("");
+                // Останавливаем сервис перед сменой сервера
+                SocketService.getInstance().stop();
                 Intent сonnectionToServer = new Intent(OrganizerActivity.this, ConnectionToServerActivity.class);
                 сonnectionToServer.putExtra("RECONNECT", true); // Флаг принудительного обновления
                 startActivity(сonnectionToServer);

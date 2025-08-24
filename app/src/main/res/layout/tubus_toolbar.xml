@@ -34,7 +34,7 @@
         android:textColor="@color/colorMyRed"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <!-- Пустой элемент для выравнивания -->
     <View

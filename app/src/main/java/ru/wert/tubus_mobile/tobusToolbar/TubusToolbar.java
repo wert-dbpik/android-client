@@ -59,6 +59,34 @@ public class TubusToolbar extends Toolbar {
         blinkAnimation.setRepeatCount(Animation.INFINITE);
     }
 
+    // Методы для работы с статусом сервера
+    public void showServerStatus(boolean isConnected) {
+        if (tvAlarm != null) {
+            tvAlarm.setText("СЕРВЕР");
+            if (isConnected) {
+                // Зеленый цвет при подключении
+                tvAlarm.setTextColor(ContextCompat.getColor(getContext(), R.color.colorGreen));
+            } else {
+                // Красный цвет при отключении
+                tvAlarm.setTextColor(ContextCompat.getColor(getContext(), R.color.colorMyRed));
+            }
+            tvAlarm.setVisibility(View.VISIBLE);
+
+            if (!isConnected) {
+                startBlinking(); // Мигаем только при отсутствии связи
+            } else {
+                stopBlinking(); // Прекращаем мигание при подключении
+            }
+        }
+    }
+
+    public void hideServerStatus() {
+        if (tvAlarm != null) {
+            tvAlarm.setVisibility(View.GONE);
+            stopBlinking();
+        }
+    }
+
     // Методы для работы с названием приложения
     public void setAppName(String appName) {
         if (tvAppName != null) {

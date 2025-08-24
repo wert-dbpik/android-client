@@ -25,6 +25,7 @@ import ru.wert.tubus_mobile.data.api_interfaces.AppLogApiInterface;
 import ru.wert.tubus_mobile.data.models.AppLog;
 import ru.wert.tubus_mobile.data.retrofit.RetrofitClient;
 import ru.wert.tubus_mobile.dataPreloading.DataLoadingAsyncTask;
+import ru.wert.tubus_mobile.socketwork.SocketService;
 import ru.wert.tubus_mobile.warnings.WarningDialog1;
 
 import static ru.wert.tubus_mobile.ThisApplication.APPLICATION_VERSION;
@@ -126,6 +127,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void exitApplication(){
         createLog(true, "Вышел из приложения");
         StaticMethods.clearAppCash();
+
+        // Отправляем сообщение о выходе пользователя
+        SocketService.sendMessageUserOut();
+
+        // Останавливаем сервис
+        SocketService.getInstance().stop();
 
         Intent sweetHome = new Intent(Intent.ACTION_MAIN);
         sweetHome.addCategory(Intent.CATEGORY_HOME);
